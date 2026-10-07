@@ -9,7 +9,7 @@ PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # A code an allergy states that the concept map allergy.rq reads it through
-# does not hold. A path holds the values of every observation an allergy nests,
+# does not hold, or holds in another code system. A path holds the values of every observation an allergy nests,
 # so the accounting cannot name the map; this does, by template.
 
 CONSTRUCT {
@@ -51,11 +51,12 @@ WHERE {
           STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?actSlot), "#_"), ".", ?innerSlots))
   {
     ?allergy ?vS ?coded . ?coded a v3:value ; xyz:code ?value .
-    FILTER NOT EXISTS {
+    OPTIONAL { ?coded xyz:codeSystem ?codeSystem }
+    FILTER (COALESCE(REPLACE(?codeSystem, "^urn:oid:", ""), "") != "2.16.840.1.113883.6.96" || NOT EXISTS {
       ?concept skos:inScheme ?scheme ; skos:notation ?key .
       FILTER (?scheme IN (ccda:allergyIntoleranceTypes, ccda:allergyIntoleranceCategories))
       FILTER (?key = LCASE(REPLACE(?value, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
-    }
+    })
     BIND (ccda:allergyTypeNotMapped AS ?gap)
   }
   UNION
@@ -64,15 +65,16 @@ WHERE {
     ?observation a v3:observation ; ?otS ?ot ; ?ovS ?coded .
     ?ot a v3:templateId ; xyz:root ?nested .
     ?coded a v3:value ; xyz:code ?value .
-    VALUES (?nested ?scheme ?gap) {
-      ("2.16.840.1.113883.10.20.22.4.28"  ccda:allergyStatuses ccda:allergyStatusNotMapped)
-      ("2.16.840.1.113883.10.20.22.4.145" ccda:criticalities   ccda:criticalityNotMapped)
-      ("2.16.840.1.113883.10.20.22.4.8"   ccda:severities      ccda:severityNotMapped)
+    OPTIONAL { ?coded xyz:codeSystem ?codeSystem }
+    VALUES (?nested ?scheme ?gap ?system) {
+      ("2.16.840.1.113883.10.20.22.4.28"  ccda:allergyStatuses ccda:allergyStatusNotMapped "2.16.840.1.113883.6.96")
+      ("2.16.840.1.113883.10.20.22.4.145" ccda:criticalities   ccda:criticalityNotMapped   "2.16.840.1.113883.5.1063")
+      ("2.16.840.1.113883.10.20.22.4.8"   ccda:severities      ccda:severityNotMapped      "2.16.840.1.113883.6.96")
     }
-    FILTER NOT EXISTS {
+    FILTER (COALESCE(REPLACE(?codeSystem, "^urn:oid:", ""), "") != ?system || NOT EXISTS {
       ?concept skos:inScheme ?scheme ; skos:notation ?key .
       FILTER (?key = LCASE(REPLACE(?value, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
-    }
+    })
   }
   UNION
   {
