@@ -1,0 +1,21 @@
+{
+  "xml.fileAssociations": [
+    {
+      "pattern": "fixtures/in/*.xml",
+      "systemId": "schema/infrastructure/cda/CDA_SDTC.xsd"
+    }
+  ],
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  // Every Turtle and SPARQL file is digested (see .editorconfig). JSON is not
+  // overridden: the crate and compatibility.json are JSON and carry no digest.
+  "[turtle]": {
+    "files.insertFinalNewline": false,
+    "files.trimTrailingWhitespace": false
+  },
+  "[sparql]": {
+    "files.insertFinalNewline": false,
+    "files.trimTrailingWhitespace": false
+  }
+}
