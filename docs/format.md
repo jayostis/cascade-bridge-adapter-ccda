@@ -35,21 +35,30 @@ wraps it:
 | a problem | a Problem Observation (`4.4`) in an entry's Problem Concern Act | `Condition` |
 | an immunization | an Immunization Activity (`4.52`), the entry's own statement | `Immunization` |
 | a procedure | a Procedure Activity Procedure (`4.14`), the entry's own statement | `Procedure` |
+| a medication | a Medication Activity (`4.16`), the entry's own statement in a Medications section, in mood `INT` or `EVN` | `MedicationRequest` |
+| a lab result | a Result Observation (`4.2`) in a Result Organizer (`4.1`), the entry's own statement in a Results section | `Observation` |
 
 The custodian's organisation is the document's author.
 
 A section is mapped by its `templateId`: Allergies (`2.16.840.1.113883.10.20.22.2.6.1`),
-Problems (`2.5.1`), Immunizations (`2.2.1`) and Procedures (`2.7.1`), each also
-by the root without `.1`, where its entries are optional. Every other section is
-a finding: medications, results and narrative-only sections alike, until a
-release maps it. An entry of a mapped section holding a statement this release
-does not read, a Procedure Activity Act or Observation among them, is a finding
-too.
+Problems (`2.5.1`), Immunizations (`2.2.1`), Procedures (`2.7.1`), Medications
+(`2.1.1`) and Results (`2.3.1`), each also by the root without `.1`, where its
+entries are optional. Every other section is a finding: vital signs and
+narrative-only sections alike, until a release maps it. An entry of a mapped
+section holding a statement this release does not read, a Procedure Activity
+Act or Observation among them, is a finding too.
 
 A problem's status is its Problem Status Observation's, else its concern act's
 where that is `active`; its category is its section's, by the section's code. An
 immunization whose `negationInd` is true was not done, whatever its
 `statusCode` says.
+
+A Medication Activity's mood says what it is: `INT`, a medication intended, is
+a prescription, and `EVN`, one taken, an entry on a list of what the person
+takes. Both are one kind of record, told apart by their intent. A Result
+Organizer is a panel, and no record; each Result Observation in it is one, and
+any other statement in it, a Vital Sign Observation (`4.27`) among them, is a
+finding.
 
 The class is the FHIR resource type a record of its kind is mapped from, and
 one input of its name ([Naming a C-CDA record](https://github.com/jayostis/cascade-bridge-spec/blob/main/engine/sparql.md#naming-a-c-cda-record)).
@@ -92,6 +101,20 @@ vocabulary's FHIR codes through the concept maps in `../vocab/`.
 Epic writes a code system as `urn:oid:` and the OID, which CDA's schema refuses;
 the mappings read the OID after the prefix.
 
+An RxNorm code and a LOINC code are written in the IRI space the vocabulary
+names for each, `http://www.nlm.nih.gov/research/umls/rxnorm/` and
+`http://loinc.org/rdf/`, wherever they stand: a portal often codes a drug or a
+test in its own code system and gives the RxNorm or LOINC code as a
+`translation`.
+
+## Values
+
+An observation's `value` is typed by its `xsi:type`. A `PQ` is a number as
+written and a unit, an `INT` or a `REAL` a number, an `ST` a text, and a `CD`,
+`CE`, `CV` or `CO` a code with its name. A result carries each of these as its
+source wrote it; any other type, an `IVL_PQ` or an `RTO` among them, is a
+finding.
+
 ## Timestamps
 
 A `ts` is `YYYYMMDDHHMMSS.UUUU[+|-ZZzz]`, digits left off the right to state
@@ -104,7 +127,8 @@ states one. One stating less than a day fits no Cascade date and is not carried.
 A section's `text` is its narrative, the human-readable copy of its entries,
 whose elements may carry an `ID`. An entry points into it with a `reference`
 whose `value` is `#` and that `ID`, from a statement's `text` or a code's
-`originalText`. An allergen's name is read through such a reference first. A
+`originalText`. An allergen's, a drug's and a test's name, a coded result and a
+reference range's text are each read through such a reference first. A
 portal's next download of one document may number the `ID`s afresh, so neither
 an `ID` nor a reference is part of a key or a member.
 

@@ -1,0 +1,192 @@
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos:     <http://www.w3.org/2004/02/skos/core#>
+PREFIX fx:       <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:      <http://sparql.xyz/facade-x/data/>
+PREFIX v3:       <urn:hl7-org:v3>
+PREFIX clinical: <https://ns.cascadeprotocol.org/clinical/v1#>
+PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# A Medication Activity the document table makes a record of. A prescription
+# and an entry on a list of what the person takes are one kind, told apart by
+# the intent the mood states.
+#
+# Where the vocabulary holds one value and the source states several, the first
+# in document order is carried:
+#   - the drug's name, read in this order: the narrative its code's
+#     originalText references, the originalText's own text, the material's
+#     name, the code's displayName, a translation's displayName;
+#   - the RxNorm code, the drug's code before its translations, since a
+#     medication states one; a code in another system is not carried;
+#   - the dosage, a Medication Free Text Sig's text, through its reference
+#     first. A structured dosage is a finding of medication-findings.rq.
+# An RxNorm code is written in the IRI space the vocabulary names, not through
+# the code system map. A time is read as allergy.rq reads an onset.
+
+CONSTRUCT {
+  ?version ?p ?o .
+}
+WHERE {
+  ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
+  ?outer a v3:component ; ?bodySlot ?body .
+  ?body a v3:structuredBody ; ?componentSlot ?component .
+  ?component a v3:component ; ?sectionSlot ?section .
+  ?section a v3:section ; ?entrySlot ?entry .
+  ?entry a v3:entry ; ?statementSlot ?medication .
+  ?medication a v3:substanceAdministration .
+  BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
+               STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
+               STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?statementSlot), "#_")) AS ?slots)
+  ?row ccda:statementAt ?slots ; ccda:recordClass "MedicationRequest" .
+  BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(?slots))) AS ?version)
+
+  {
+    ?medication xyz:moodCode ?mood .
+    VALUES (?mood ?o) { ("INT" "prescribed") ("EVN" "reportedUse") }
+    BIND (clinical:clinicalIntent AS ?p)
+  }
+  UNION
+  {
+    {
+      SELECT ?medication ?p (MIN(?ranked) AS ?first) WHERE {
+        ?medication a v3:substanceAdministration ; ?tS ?t .
+        ?t a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.16" .
+        {
+          ?medication ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
+          ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial .
+          BIND (STRAFTER(STR(?cnS), "#_") AS ?at)
+          {
+            BIND (clinical:drugName AS ?p)
+            {
+              ?material ?cS ?code . ?code a v3:code ; ?otS ?originalText .
+              ?originalText a v3:originalText ; ?rfS ?reference .
+              ?reference a v3:reference ; xyz:value ?pointer .
+              ?narrative xyz:ID ?anchor ; ?nS ?value .
+              FILTER (?anchor = STRAFTER(?pointer, "#") && isLiteral(?value) && STRSTARTS(STR(?nS), STR(rdf:_)))
+              BIND ("1" AS ?tier)
+              BIND (STRAFTER(STR(?nS), "#_") AS ?within)
+            }
+            UNION
+            {
+              ?material ?cS ?code . ?code a v3:code ; ?otS ?originalText .
+              ?originalText a v3:originalText ; ?vS ?value .
+              FILTER (isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
+              BIND ("2" AS ?tier)
+              BIND (STRAFTER(STR(?vS), "#_") AS ?within)
+            }
+            UNION
+            {
+              ?material ?nmS ?name . ?name a v3:name ; ?vS ?value .
+              FILTER (isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
+              BIND ("3" AS ?tier)
+              BIND (CONCAT(SUBSTR("0000000000", STRLEN(STRAFTER(STR(?nmS), "#_")) + 1), STRAFTER(STR(?nmS), "#_"),
+                           STRAFTER(STR(?vS), "#_")) AS ?within)
+            }
+            UNION
+            {
+              ?material ?cS ?code . ?code a v3:code ; xyz:displayName ?value .
+              BIND ("4" AS ?tier)
+            }
+            UNION
+            {
+              ?material ?cS ?code . ?code a v3:code ; ?trS ?translation .
+              ?translation a v3:translation ; xyz:displayName ?value .
+              BIND ("5" AS ?tier)
+              BIND (STRAFTER(STR(?trS), "#_") AS ?within)
+            }
+          }
+          UNION
+          {
+            BIND (clinical:rxNormCode AS ?p)
+            {
+              ?material ?cS ?coding . ?coding a v3:code .
+              BIND ("1" AS ?tier)
+            }
+            UNION
+            {
+              ?material ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation .
+              BIND ("2" AS ?tier)
+              BIND (STRAFTER(STR(?trS), "#_") AS ?within)
+            }
+            ?coding xyz:code ?value ; xyz:codeSystem ?codeSystem .
+            FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.88")
+          }
+        }
+        UNION
+        {
+          ?medication ?eS ?time . ?time a v3:effectiveTime .
+          BIND (STRAFTER(STR(?eS), "#_") AS ?at)
+          {
+            ?time ?lS ?low . ?low a v3:low ; xyz:value ?value .
+            BIND (clinical:startDate AS ?p)
+            BIND ("1" AS ?tier)
+          }
+          UNION
+          {
+            ?time xyz:value ?value .
+            BIND (clinical:startDate AS ?p)
+            BIND ("2" AS ?tier)
+          }
+          UNION
+          {
+            ?time ?hS ?high . ?high a v3:high ; xyz:value ?value .
+            BIND (clinical:endDate AS ?p)
+            BIND ("1" AS ?tier)
+          }
+          FILTER (REGEX(?value, "^[0-9]{8}"))
+        }
+        UNION
+        {
+          ?medication ?rS ?relationship . ?relationship a v3:entryRelationship ; ?sigS ?sig .
+          ?sig a v3:substanceAdministration ; ?stS ?st ; ?txS ?text .
+          ?st a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.147" .
+          ?text a v3:text .
+          BIND (clinical:dosage AS ?p)
+          BIND (STRAFTER(STR(?rS), "#_") AS ?at)
+          {
+            ?text ?rfS ?reference . ?reference a v3:reference ; xyz:value ?pointer .
+            ?narrative xyz:ID ?anchor ; ?nS ?value .
+            FILTER (?anchor = STRAFTER(?pointer, "#") && isLiteral(?value) && STRSTARTS(STR(?nS), STR(rdf:_)))
+            BIND ("1" AS ?tier)
+            BIND (STRAFTER(STR(?nS), "#_") AS ?within)
+          }
+          UNION
+          {
+            ?text ?vS ?value .
+            FILTER (isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
+            BIND ("2" AS ?tier)
+            BIND (STRAFTER(STR(?vS), "#_") AS ?within)
+          }
+        }
+        UNION
+        {
+          ?medication ?sS ?statusCode . ?statusCode a v3:statusCode ; xyz:code ?code .
+          ?concept skos:inScheme ccda:medicationStatuses ; skos:notation ?key ; skos:exactMatch ?match .
+          FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+          BIND (clinical:status AS ?p)
+          BIND (STRAFTER(STR(?sS), "#_") AS ?at)
+          BIND (REPLACE(STR(?match), "^.*/", "") AS ?value)
+          BIND ("1" AS ?tier)
+        }
+        BIND (COALESCE(?within, "") AS ?inner)
+        BIND (CONCAT(?tier, SUBSTR("0000000000", STRLEN(?at) + 1), ?at,
+                     SUBSTR("00000000000000000000", STRLEN(?inner) + 1), ?inner, "|", ?value) AS ?ranked)
+      } GROUP BY ?medication ?p
+    }
+    BIND (STRAFTER(?first, "|") AS ?value)
+    BIND (IF(?p = clinical:rxNormCode,
+             IRI(CONCAT("http://www.nlm.nih.gov/research/umls/rxnorm/", ENCODE_FOR_URI(?value))),
+          IF(?p NOT IN (clinical:startDate, clinical:endDate), ?value,
+          IF(REGEX(?value, "^[0-9]{12}([0-9]{2}(\\.[0-9]+)?)?([+-][0-9]{4})?$"),
+             STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),
+                          "T", SUBSTR(?value, 9, 2), ":", SUBSTR(?value, 11, 2), ":",
+                          IF(REGEX(?value, "^[0-9]{14}"), REPLACE(?value, "^[0-9]{12}([0-9]{2}(\\.[0-9]+)?).*$", "$1"), "00"),
+                          IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")),
+                   xsd:dateTime),
+          IF(REGEX(?value, "^[0-9]{8}([0-9]{2})?([+-][0-9]{4})?$"),
+             STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),
+                          IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")),
+                   xsd:date),
+             1/0)))) AS ?o)
+  }
+}

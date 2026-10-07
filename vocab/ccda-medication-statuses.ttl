@@ -1,0 +1,30 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
+
+ccda:medicationStatuses a skos:ConceptScheme ;
+  skos:prefLabel "C-CDA medication activity status to FHIR MedicationRequest status"@en .
+
+ccda:medicationStatusActive a skos:Concept ;
+  skos:inScheme ccda:medicationStatuses ;
+  skos:notation "active" ;
+  skos:exactMatch <http://hl7.org/fhir/CodeSystem/medicationrequest-status/active> .
+
+ccda:medicationStatusSuspended a skos:Concept ;
+  skos:inScheme ccda:medicationStatuses ;
+  skos:notation "suspended" ;
+  skos:exactMatch <http://hl7.org/fhir/CodeSystem/medicationrequest-status/on-hold> .
+
+ccda:medicationStatusAborted a skos:Concept ;
+  skos:inScheme ccda:medicationStatuses ;
+  skos:notation "aborted" ;
+  skos:exactMatch <http://hl7.org/fhir/CodeSystem/medicationrequest-status/stopped> .
+
+ccda:medicationStatusCompleted a skos:Concept ;
+  skos:inScheme ccda:medicationStatuses ;
+  skos:notation "completed" ;
+  skos:exactMatch <http://hl7.org/fhir/CodeSystem/medicationrequest-status/completed> .
+
+ccda:medicationStatusNullified a skos:Concept ;
+  skos:inScheme ccda:medicationStatuses ;
+  skos:notation "nullified" ;
+  skos:exactMatch <http://hl7.org/fhir/CodeSystem/medicationrequest-status/entered-in-error> .
