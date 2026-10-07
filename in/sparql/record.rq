@@ -54,7 +54,7 @@ WHERE {
                    "-", ?variant, SUBSTR(?hash, 18, 3), "-", SUBSTR(?hash, 21, 12))) AS ?record)
   BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(?slots))) AS ?version)
   BIND (CONCAT(?recordSelector, "/", ?refinement) AS ?selector)
-  BIND (IF(CONTAINS(COALESCE(?identifier, ""), ":"), IRI(CONCAT("urn:hl7ii:", ?identifier)),
+  BIND (IF(CONTAINS(COALESCE(?identifier, ""), ":"), IRI(CONCAT("urn:hl7ii:", STRBEFORE(?identifier, ":"), ":", ENCODE_FOR_URI(STRAFTER(?identifier, ":")))),
         IF(REGEX(?identifier, "^[0-2](\\.(0|[1-9][0-9]*))+$"), IRI(CONCAT("urn:oid:", ?identifier)),
         IF(REGEX(?identifier, "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"),
            IRI(CONCAT("urn:uuid:", LCASE(?identifier))), 1/0))) AS ?sourceUrl)

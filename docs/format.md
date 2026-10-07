@@ -85,9 +85,9 @@ the mappings read the OID after the prefix.
 ## Timestamps
 
 A `ts` is `YYYYMMDDHHMMSS.UUUU[+|-ZZzz]`, digits left off the right to state
-less precision. A time stating a day is an `xsd:date`; one stating the minute
-or the second is an `xsd:dateTime`, with its offset where it states one. One
-stating less than a day fits no Cascade date and is not carried.
+less precision. A time stating the minute or the second is an `xsd:dateTime`,
+and one stating a day or an hour an `xsd:date`, each with its offset where it
+states one. One stating less than a day fits no Cascade date and is not carried.
 
 ## Narrative references
 

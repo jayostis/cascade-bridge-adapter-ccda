@@ -93,8 +93,11 @@ WHERE {
           BIND (STRAFTER(STR(?statementSlot), "#_") AS ?innerSlots)
           BIND ("" AS ?innerStep)
         }
-        ?statement a v3:observation ; ?templateSlot ?template .
-        ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.7" .
+        ?statement a v3:observation .
+        FILTER EXISTS {
+          ?statement ?templateSlot ?template .
+          ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.7" .
+        }
         {
           SELECT ?outer (COUNT(?earlierOuter) + 1 AS ?outerAt) WHERE {
             ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
@@ -123,8 +126,9 @@ WHERE {
           } GROUP BY ?entry
         }
         {
-          SELECT ?statement (COUNT(?earlierObservation) + 1 AS ?observationAt) WHERE {
-            ?observationParent ?observationS ?statement . ?statement a v3:observation .
+          SELECT ?statement (COUNT(DISTINCT ?earlierObservation) + 1 AS ?observationAt) WHERE {
+            ?observationParent ?observationS ?statement . ?statement a v3:observation ; ?oT ?oTemplate .
+            ?oTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.7" .
             OPTIONAL {
               ?observationParent ?observationE ?earlierObservation . ?earlierObservation a v3:observation .
               FILTER (xsd:integer(STRAFTER(STR(?observationE), "#_")) < xsd:integer(STRAFTER(STR(?observationS), "#_")))
@@ -245,8 +249,14 @@ WHERE {
       SELECT ?statement (STR(SUM(?memberValue)) AS ?membersFingerprint) WHERE {
         {
           SELECT DISTINCT ?statement ?member WHERE {
-            ?statement a ?statementType .
-            FILTER (?statementType IN (v3:patientRole, v3:observation))
+            {
+              ?statement a v3:patientRole .
+            }
+            UNION
+            {
+              ?statement a v3:observation ; ?mT ?mTemplate .
+              ?mTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.7" .
+            }
             ?statement (!rdf:type)* ?node .
             ?node a ?nodeType ; ?predicate ?held .
             FILTER (isLiteral(?held) && ?predicate != xyz:ID)

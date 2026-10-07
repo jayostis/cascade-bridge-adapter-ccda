@@ -39,8 +39,11 @@ WHERE {
     ?act ?statementSlot ?allergy .
     BIND (STRAFTER(STR(?statementSlot), "#_") AS ?innerSlots)
   }
-  ?allergy a v3:observation ; ?templateSlot ?template .
-  ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.7" .
+  ?allergy a v3:observation .
+  FILTER EXISTS {
+    ?allergy ?templateSlot ?template .
+    ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.7" .
+  }
   ?row ccda:statementAt ?slots ; ccda:refinement ?refinement .
   FILTER (?slots = CONCAT(
           STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",

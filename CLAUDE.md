@@ -33,7 +33,7 @@ the layout the README's. Do not re-derive them.
   name is the specification's
   ([Naming a C-CDA record](https://github.com/jayostis/cascade-bridge-spec/blob/main/engine/sparql.md#naming-a-c-cda-record)).
   The key fields and member exclusions of each class are declared once, in
-  `in/sparql/record.rq`.
+  `in/sparql/document-table.rq`.
 
 ## Before pushing
 
