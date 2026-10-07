@@ -1,0 +1,30 @@
+PREFIX health: <https://ns.cascadeprotocol.org/health/v1#>
+PREFIX clinical: <https://ns.cascadeprotocol.org/clinical/v1#>
+PREFIX cascade: <https://ns.cascadeprotocol.org/core/v1#>
+PREFIX rec: <https://ns.cascadeprotocol.org/records/v1-draft#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+SELECT DISTINCT ?record ?sourceRecordId ?conditionName ?status ?verificationStatus ?onsetDate ?abatementDate ?snomedCode ?icd10Code
+WHERE {
+  ?record a health:ConditionRecord .
+  ?version prov:specializationOf ?record .
+  OPTIONAL { ?record rec:currentRevision/rec:version ?current }
+  FILTER (!BOUND(?current) || ?current = ?version)
+  OPTIONAL { { ?record health:sourceRecordId ?id } UNION { ?version health:sourceRecordId ?id } }
+  OPTIONAL { ?version health:conditionName ?n }
+  OPTIONAL { ?version health:status ?s }
+  OPTIONAL { ?version clinical:verificationStatus ?v }
+  OPTIONAL { ?version health:onsetDate ?o }
+  OPTIONAL { ?version clinical:abatementDate ?e }
+  OPTIONAL { ?version health:snomedCode ?sct }
+  OPTIONAL { ?version health:icd10Code ?icd }
+  BIND (STR(?id) AS ?sourceRecordId)
+  BIND (STR(?n) AS ?conditionName)
+  BIND (STR(?s) AS ?status)
+  BIND (STR(?v) AS ?verificationStatus)
+  BIND (STR(?o) AS ?onsetDate)
+  BIND (STR(?e) AS ?abatementDate)
+  BIND (REPLACE(STR(?sct), "^http://snomed.info/sct/", "") AS ?snomedCode)
+  BIND (REPLACE(STR(?icd), "^http://hl7.org/fhir/sid/icd-10-cm/", "") AS ?icd10Code)
+}
