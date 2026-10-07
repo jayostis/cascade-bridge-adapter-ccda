@@ -60,5 +60,5 @@ WHERE {
     BIND (ccda:structuredDosage AS ?gap)
     BIND (CONCAT("/*[local-name()='", ?value, "' and namespace-uri()='urn:hl7-org:v3'][", STR(?dosingAt), "]") AS ?dosingStep)
   }
-  BIND (CONCAT(?medicationAt, COALESCE(?dosingStep, "")) AS ?refinement)
+  BIND (CONCAT(?medicationAt, ?dosingStep) AS ?refinement)
 }
