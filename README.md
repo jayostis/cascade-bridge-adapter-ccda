@@ -22,6 +22,7 @@ docs/format.md           C-CDA R2.1 as the adapter sees it
 schema/                  HL7's CDA schema with the SDTC extensions, byte for byte
 in/sparql/               the detect rule, the mappings and the findings queries
 vocab/                   this adapter's own namespace: its gap scheme, source accounting and concept maps
+views/                   the records-layer views the comparison with cascade-cli ran
 fixtures/                the test manifest, its inputs, and the expected graphs and findings
 .github/workflows/       runs the specification's checks; no logic of its own
 ```

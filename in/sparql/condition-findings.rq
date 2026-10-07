@@ -59,10 +59,11 @@ WHERE {
     ?observation a v3:observation ; ?otS ?ot ; ?ovS ?coded .
     ?ot a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.6" .
     ?coded a v3:value ; xyz:code ?value .
-    FILTER NOT EXISTS {
+    OPTIONAL { ?coded xyz:codeSystem ?codeSystem }
+    FILTER (COALESCE(REPLACE(?codeSystem, "^urn:oid:", ""), "") != "2.16.840.1.113883.6.96" || NOT EXISTS {
       ?concept skos:inScheme ccda:problemStatuses ; skos:notation ?key .
       FILTER (?key = LCASE(REPLACE(?value, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
-    }
+    })
     BIND (ccda:problemStatusNotMapped AS ?gap)
   }
   UNION

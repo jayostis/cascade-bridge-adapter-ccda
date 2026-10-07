@@ -40,8 +40,18 @@ commit. A gap nothing names at all, no query and no entry, is dead, and goes.
 ## A verdict on a path is read, never inferred from its name
 
 The source accounting holds one `bridge:PathEntry` for each path a mapping
-reads. A path runs from the `ClinicalDocument` down, each step in its namespace,
-and carries no position and no section: one path holds an allergy's value and a
-problem's alike, so a verdict is settled against `../in/sparql/`, and a section
-this release does not map is a finding of `section-findings.rq`, not of the
-accounting.
+reads and each path the judged inputs carry. A path runs from the
+`ClinicalDocument` down, each step in its namespace, and carries no position and
+no section: one path holds an allergy's value and a problem's alike, so a
+verdict is settled against `../in/sparql/`, and a section this release does not
+map is a finding of `section-findings.rq`, not of the accounting.
+
+- **A loss is reported once.** An element whose content no predicate carries
+  (`/author`, a section's `text`, an `addr`) is `bridge:noHome` and names its
+  gap; every path under it is `bridge:ignored`, held under it.
+- **A path a later release maps is left to it.** A result organizer's paths are
+  step 8's, which maps them.
+- **The narrative is open-ended.** A section's `text` holds any tree of
+  NarrativeBlock elements, and only those the inputs carry have an entry; a
+  new one is a `bridge:pathNotAccounted` until it is added, as no verdict covers
+  a path and all below it.

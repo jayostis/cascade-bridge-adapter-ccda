@@ -16,7 +16,7 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 #   - the severity, from a Severity Observation on the allergy itself, else on
 #     its first reaction, where C-CDA R2.1 puts it.
 # A coded value is carried only through the concept map its rows were
-# transcribed into; a code outside it is a finding of allergy-findings.rq. A
+# transcribed into, and only in the code system that map reads; a code outside it is a finding of allergy-findings.rq. A
 # time stating the minute is a date-time, one stating a day or an hour a date,
 # and one stating less fits no Cascade date and is not carried.
 
@@ -90,7 +90,8 @@ WHERE {
         }
         UNION
         {
-          ?allergy ?vS ?coded . ?coded a v3:value ; xyz:code ?code .
+          ?allergy ?vS ?coded . ?coded a v3:value ; xyz:code ?code ; xyz:codeSystem ?codeSystem .
+          FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.96")
           VALUES (?p ?scheme) { (clinical:allergyType ccda:allergyIntoleranceTypes) (health:allergyCategory ccda:allergyIntoleranceCategories) }
           ?concept skos:inScheme ?scheme ; skos:notation ?key ; skos:exactMatch ?match .
           FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
@@ -103,12 +104,13 @@ WHERE {
           ?allergy ?rS ?relationship . ?relationship a v3:entryRelationship ; ?oS ?observation .
           ?observation a v3:observation ; ?otS ?ot ; ?ovS ?coded .
           ?ot a v3:templateId ; xyz:root ?template .
-          ?coded a v3:value ; xyz:code ?code .
-          VALUES (?template ?p ?scheme) {
-            ("2.16.840.1.113883.10.20.22.4.28"  clinical:status        ccda:allergyStatuses)
-            ("2.16.840.1.113883.10.20.22.4.145" clinical:criticality   ccda:criticalities)
-            ("2.16.840.1.113883.10.20.22.4.8"   health:allergySeverity ccda:severities)
+          ?coded a v3:value ; xyz:code ?code ; xyz:codeSystem ?codeSystem .
+          VALUES (?template ?p ?scheme ?system) {
+            ("2.16.840.1.113883.10.20.22.4.28"  clinical:status        ccda:allergyStatuses "2.16.840.1.113883.6.96")
+            ("2.16.840.1.113883.10.20.22.4.145" clinical:criticality   ccda:criticalities   "2.16.840.1.113883.5.1063")
+            ("2.16.840.1.113883.10.20.22.4.8"   health:allergySeverity ccda:severities      "2.16.840.1.113883.6.96")
           }
+          FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = ?system)
           ?concept skos:inScheme ?scheme ; skos:notation ?key ; skos:exactMatch ?match .
           FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
           BIND (STRAFTER(STR(?rS), "#_") AS ?at)
@@ -123,7 +125,8 @@ WHERE {
           ?severityRelationship a v3:entryRelationship ; ?sS ?severity .
           ?severity a v3:observation ; ?stS ?st ; ?svS ?coded .
           ?st a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.8" .
-          ?coded a v3:value ; xyz:code ?code .
+          ?coded a v3:value ; xyz:code ?code ; xyz:codeSystem ?codeSystem .
+          FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.96")
           ?concept skos:inScheme ccda:severities ; skos:notation ?key ; skos:exactMatch ?match .
           FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
           BIND (health:allergySeverity AS ?p)
