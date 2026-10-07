@@ -1,0 +1,46 @@
+PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
+PREFIX fx:      <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:     <http://sparql.xyz/facade-x/data/>
+PREFIX v3:      <urn:hl7-org:v3>
+PREFIX cascade: <https://ns.cascadeprotocol.org/core/v1#>
+PREFIX foaf:    <http://xmlns.com/foaf/0.1/>
+
+# The vocabulary holds one name, so the first given and the first family the
+# patient's names state, in document order, are carried. A birth time states a
+# day at least, or fits no Cascade date and is not carried; its time of day is
+# not carried.
+
+CONSTRUCT {
+  ?version ?p ?o .
+}
+WHERE {
+  ?root a fx:root, v3:ClinicalDocument ; ?rtSlot ?recordTarget .
+  ?recordTarget a v3:recordTarget ; ?prSlot ?patientRole .
+  ?patientRole a v3:patientRole .
+  BIND (IRI(CONCAT("urn:cascade:version-at:",
+          SHA256(CONCAT(STRAFTER(STR(?rtSlot), "#_"), ".", STRAFTER(STR(?prSlot), "#_"))))) AS ?version)
+  {
+    {
+      SELECT ?patientRole ?p (MIN(?ranked) AS ?first) WHERE {
+        ?patientRole a v3:patientRole ; ?pS ?patient . ?patient a v3:patient ; ?nS ?name .
+        ?name a v3:name ; ?partS ?part . ?part a ?partType ; ?tS ?text .
+        FILTER (isLiteral(?text) && STRSTARTS(STR(?tS), STR(rdf:_)))
+        VALUES (?partType ?p) { (v3:given foaf:givenName) (v3:family foaf:familyName) }
+        BIND (STRAFTER(STR(?nS), "#_") AS ?nameAt)
+        BIND (STRAFTER(STR(?partS), "#_") AS ?partAt)
+        BIND (CONCAT(SUBSTR("0000000000", STRLEN(?nameAt) + 1), ?nameAt,
+                     SUBSTR("0000000000", STRLEN(?partAt) + 1), ?partAt, "|", ?text) AS ?ranked)
+      } GROUP BY ?patientRole ?p
+    }
+    BIND (STRAFTER(?first, "|") AS ?o)
+  }
+  UNION
+  {
+    ?patientRole ?pS ?patient . ?patient a v3:patient ; ?bS ?birth .
+    ?birth a v3:birthTime ; xyz:value ?born .
+    FILTER (REGEX(?born, "^[0-9]{8}([0-9]{2}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?)?([+-][0-9]{4})?$"))
+    BIND (cascade:dateOfBirth AS ?p)
+    BIND (STRDT(CONCAT(SUBSTR(?born, 1, 4), "-", SUBSTR(?born, 5, 2), "-", SUBSTR(?born, 7, 2)), xsd:date) AS ?o)
+  }
+}

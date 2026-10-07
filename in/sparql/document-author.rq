@@ -1,0 +1,29 @@
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX prov:   <http://www.w3.org/ns/prov#>
+PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
+PREFIX v3:     <urn:hl7-org:v3>
+PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
+PREFIX rec:    <https://ns.cascadeprotocol.org/records/v1-draft#>
+
+# The organisation that keeps the document is its author, as a supplied
+# attribution would say it: https://github.com/jayostis/cascade-bridge-spec/blob/main/engine/stages.md#what-a-bridge-writes-after-the-mapping.
+# A name is carried where it is one text, as an agent carries one label.
+
+CONSTRUCT {
+  ?document prov:qualifiedAttribution [
+    prov:agent [ rdfs:label ?label ] ;
+    prov:hadRole rec:author
+  ] .
+}
+WHERE {
+  bridge:thisDocument bridge:sha256 ?sha256 .
+  BIND (IRI(?sha256) AS ?document)
+  ?root a fx:root, v3:ClinicalDocument ; ?cS ?custodian .
+  ?custodian a v3:custodian ; ?aS ?assigned .
+  ?assigned a v3:assignedCustodian ; ?oS ?organization .
+  ?organization a v3:representedCustodianOrganization ; ?nS ?name .
+  ?name a v3:name ; rdf:_1 ?label .
+  FILTER (isLiteral(?label))
+  FILTER NOT EXISTS { ?name rdf:_2 ?more }
+}

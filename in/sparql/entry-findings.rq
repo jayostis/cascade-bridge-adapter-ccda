@@ -1,0 +1,85 @@
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#>
+PREFIX sh:     <http://www.w3.org/ns/shacl#>
+PREFIX oa:     <http://www.w3.org/ns/oa#>
+PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:    <http://sparql.xyz/facade-x/data/>
+PREFIX v3:     <urn:hl7-org:v3>
+PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
+PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# An entry of a mapped section from which no record is made: its statement is
+# not one this release reads, or not where it reads one. Its value is the least
+# templateId root its statement claims.
+
+CONSTRUCT {
+  [] a oa:Annotation ;
+    oa:hasTarget [
+      oa:hasSource bridge:thisRecord ;
+      oa:hasSelector [ a oa:XPathSelector ; rdf:value ?refinement ]
+    ] ;
+    oa:hasBody ccda:entryNotMapped ;
+    oa:motivatedBy oa:classifying ;
+    sh:value ?value .
+}
+WHERE {
+  ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
+  ?outer a v3:component ; ?bodySlot ?body .
+  ?body a v3:structuredBody ; ?componentSlot ?component .
+  ?component a v3:component ; ?sectionSlot ?section .
+  ?section a v3:section ; ?entrySlot ?entry .
+  ?entry a v3:entry .
+  FILTER EXISTS {
+    ?section ?templateSlot ?template .
+    ?template a v3:templateId ; xyz:root ?mapped .
+    VALUES ?mapped { "2.16.840.1.113883.10.20.22.2.6" "2.16.840.1.113883.10.20.22.2.6.1" }
+  }
+  BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
+               STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
+               STRAFTER(STR(?entrySlot), "#_"), ".") AS ?entrySlots)
+  FILTER NOT EXISTS {
+    ?row ccda:recordClass "AllergyIntolerance" ; ccda:statementAt ?slots .
+    FILTER (STRSTARTS(?slots, ?entrySlots))
+  }
+  OPTIONAL {
+    {
+      SELECT ?entry (MIN(?claimed) AS ?value) WHERE {
+        ?entry a v3:entry ; ?statementSlot ?statement .
+        ?statement ?tS ?t . ?t a v3:templateId ; xyz:root ?claimed .
+      } GROUP BY ?entry
+    }
+  }
+  {
+    SELECT ?outer (COUNT(?earlierOuter) + 1 AS ?outerAt) WHERE {
+      ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
+      OPTIONAL {
+        ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
+        FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) < xsd:integer(STRAFTER(STR(?outerS), "#_")))
+      }
+    } GROUP BY ?outer
+  }
+  {
+    SELECT ?component (COUNT(?earlierComponent) + 1 AS ?componentAt) WHERE {
+      ?componentParent ?componentS ?component . ?componentParent a v3:structuredBody . ?component a v3:component .
+      OPTIONAL {
+        ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
+        FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) < xsd:integer(STRAFTER(STR(?componentS), "#_")))
+      }
+    } GROUP BY ?component
+  }
+  {
+    SELECT ?entry (COUNT(?earlierEntry) + 1 AS ?entryAt) WHERE {
+      ?entryParent ?entryS ?entry . ?entry a v3:entry .
+      OPTIONAL {
+        ?entryParent ?entryE ?earlierEntry . ?earlierEntry a v3:entry .
+        FILTER (xsd:integer(STRAFTER(STR(?entryE), "#_")) < xsd:integer(STRAFTER(STR(?entryS), "#_")))
+      }
+    } GROUP BY ?entry
+  }
+  BIND (CONCAT(
+    "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?outerAt), "]",
+    "/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]",
+    "/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?componentAt), "]",
+    "/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]",
+    "/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][", STR(?entryAt), "]") AS ?refinement)
+}

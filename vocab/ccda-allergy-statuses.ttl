@@ -1,0 +1,20 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
+
+ccda:allergyStatuses a skos:ConceptScheme ;
+  skos:prefLabel "C-CDA allergy status to FHIR AllergyIntolerance clinical status"@en .
+
+ccda:allergyStatusActive a skos:Concept ;
+  skos:inScheme ccda:allergyStatuses ;
+  skos:notation "55561003" ;
+  skos:exactMatch <http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical/active> .
+
+ccda:allergyStatusInactive a skos:Concept ;
+  skos:inScheme ccda:allergyStatuses ;
+  skos:notation "73425007" ;
+  skos:exactMatch <http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical/inactive> .
+
+ccda:allergyStatusResolved a skos:Concept ;
+  skos:inScheme ccda:allergyStatuses ;
+  skos:notation "413322009" ;
+  skos:exactMatch <http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical/resolved> .

@@ -1,0 +1,30 @@
+# No logic here on purpose: the checks live in cascade-bridge-spec, at the
+# version the run picks. Why: CLAUDE.md here.
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  adapter:
+    name: adapter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: jayostis/cascade-bridge-spec/.github/actions/start@main
+  ready-to-merge:
+    name: ready-to-merge
+    runs-on: ubuntu-latest
+    steps:
+      - uses: jayostis/cascade-bridge-spec/.github/actions/start@main
+        with:
+          check: ready-to-merge

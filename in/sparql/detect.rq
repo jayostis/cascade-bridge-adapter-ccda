@@ -1,0 +1,13 @@
+PREFIX fx:  <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz: <http://sparql.xyz/facade-x/data/>
+PREFIX v3:  <urn:hl7-org:v3>
+
+# A C-CDA is a CDA whose header claims the US Realm Header, by its templateId's
+# root and whatever its extension; any other CDA, Apple's export_cda.xml among
+# them, is not one. docs/format.md, "What a C-CDA is".
+
+ASK {
+  ?root a fx:root, v3:ClinicalDocument ; ?slot ?template .
+  ?template a v3:templateId ;
+    xyz:root "2.16.840.1.113883.10.20.22.1.1" .
+}

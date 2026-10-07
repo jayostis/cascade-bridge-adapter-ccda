@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <realmCode code="US"/>
+  <typeId root="2.16.840.1.113883.1.3" extension="POCD_HD000040"/>
+  <templateId root="2.16.840.1.113883.10.20.22.1.1" extension="2015-08-01"/>
+  <templateId root="2.16.840.1.113883.10.20.22.1.2" extension="2015-08-01"/>
+  <id root="2.16.840.1.113883.19.5.99999.1" extension="CCD-2025-0701-A"/>
+  <code code="34133-9" displayName="Summarization of Episode Note" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+  <title>Continuity of Care Document</title>
+  <effectiveTime value="20250701120000-0500"/>
+  <confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25"/>
+  <languageCode code="en-US"/>
+  <recordTarget>
+    <patientRole>
+      <id root="2.16.840.1.113883.19.5.99999.2" extension="MRN-448120"/>
+      <patient>
+        <name use="L">
+          <given>Robin</given>
+          <family>Ahmadi</family>
+        </name>
+        <administrativeGenderCode code="F" codeSystem="2.16.840.1.113883.5.1"/>
+        <birthTime value="19780214"/>
+      </patient>
+    </patientRole>
+  </recordTarget>
+  <author>
+    <time value="20250701120000-0500"/>
+    <assignedAuthor>
+      <id root="2.16.840.1.113883.19.5.99999.3"/>
+      <representedOrganization>
+        <name>Riverside Community Hospital</name>
+      </representedOrganization>
+    </assignedAuthor>
+  </author>
+  <custodian>
+    <assignedCustodian>
+      <representedCustodianOrganization>
+        <id root="2.16.840.1.113883.19.5.99999.3"/>
+        <name>Riverside Community Hospital</name>
+      </representedCustodianOrganization>
+    </assignedCustodian>
+  </custodian>
+  <component>
+    <structuredBody>
+      <component>
+        <section>
+          <templateId root="2.16.840.1.113883.10.20.22.2.6.1" extension="2015-08-01"/>
+          <code code="48765-2" displayName="Allergies and Adverse Reactions" codeSystem="2.16.840.1.113883.6.1"/>
+          <title>Allergies</title>
+          <text>
+            <list>
+              <item><content ID="alg-a-1">Penicillin G</content></item>
+              <item><content ID="alg-a-2">Latex</content></item>
+            </list>
+          </text>
+          <entry typeCode="DRIV">
+            <act classCode="ACT" moodCode="EVN">
+              <templateId root="2.16.840.1.113883.10.20.22.4.30" extension="2015-08-01"/>
+              <id nullFlavor="NI"/>
+              <code code="CONC" codeSystem="2.16.840.1.113883.5.6"/>
+              <statusCode code="active"/>
+              <entryRelationship typeCode="SUBJ">
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.7" extension="2014-06-09"/>
+                  <id root="2.16.840.1.113883.19.5.99999.4" extension="ALG-7731"/>
+                  <code code="ASSERTION" codeSystem="2.16.840.1.113883.5.4"/>
+                  <statusCode code="completed"/>
+                  <value xsi:type="CD" code="416098002" displayName="Drug allergy" codeSystem="2.16.840.1.113883.6.96"/>
+                  <participant typeCode="CSM">
+                    <participantRole classCode="MANU">
+                      <playingEntity classCode="MMAT">
+                        <code code="7980" displayName="Penicillin G" codeSystem="2.16.840.1.113883.6.88">
+                          <originalText>
+                            <reference value="#alg-a-1"/>
+                          </originalText>
+                        </code>
+                      </playingEntity>
+                    </participantRole>
+                  </participant>
+                  <entryRelationship typeCode="SUBJ" inversionInd="true">
+                    <observation classCode="OBS" moodCode="EVN">
+                      <templateId root="2.16.840.1.113883.10.20.22.4.28" extension="2019-06-20"/>
+                      <code code="33999-4" displayName="Status" codeSystem="2.16.840.1.113883.6.1"/>
+                      <statusCode code="completed"/>
+                      <value xsi:type="CE" code="55561003" codeSystem="2.16.840.1.113883.6.96"/>
+                    </observation>
+                  </entryRelationship>
+                </observation>
+              </entryRelationship>
+            </act>
+          </entry>
+          <entry typeCode="DRIV">
+            <act classCode="ACT" moodCode="EVN">
+              <templateId root="2.16.840.1.113883.10.20.22.4.30" extension="2015-08-01"/>
+              <id nullFlavor="NI"/>
+              <code code="CONC" codeSystem="2.16.840.1.113883.5.6"/>
+              <statusCode code="active"/>
+              <entryRelationship typeCode="SUBJ">
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.7" extension="2014-06-09"/>
+                  <id nullFlavor="UNK"/>
+                  <code code="ASSERTION" codeSystem="2.16.840.1.113883.5.4"/>
+                  <statusCode code="completed"/>
+                  <value xsi:type="CD" code="416098002" displayName="Drug allergy" codeSystem="2.16.840.1.113883.6.96"/>
+                  <participant typeCode="CSM">
+                    <participantRole classCode="MANU">
+                      <playingEntity classCode="MMAT">
+                        <code code="1311629" displayName="Latex" codeSystem="2.16.840.1.113883.6.88">
+                          <originalText>
+                            <reference value="#alg-a-2"/>
+                          </originalText>
+                        </code>
+                      </playingEntity>
+                    </participantRole>
+                  </participant>
+                  <entryRelationship typeCode="SUBJ" inversionInd="true">
+                    <observation classCode="OBS" moodCode="EVN">
+                      <templateId root="2.16.840.1.113883.10.20.22.4.28" extension="2019-06-20"/>
+                      <code code="33999-4" displayName="Status" codeSystem="2.16.840.1.113883.6.1"/>
+                      <statusCode code="completed"/>
+                      <value xsi:type="CE" code="55561003" codeSystem="2.16.840.1.113883.6.96"/>
+                    </observation>
+                  </entryRelationship>
+                </observation>
+              </entryRelationship>
+            </act>
+          </entry>
+        </section>
+      </component>
+    </structuredBody>
+  </component>
+</ClinicalDocument>

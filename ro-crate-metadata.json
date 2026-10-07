@@ -1,0 +1,1472 @@
+{
+  "@context": [
+    "https://w3id.org/ro/crate/1.2/context",
+    {
+      "bridge": "https://ns.cascadeprotocol.org/bridge/v1-draft#",
+      "bridge:requiresProfile": "bridge:requiresProfile",
+      "bridge:cascadeVocabularyRepository": "bridge:cascadeVocabularyRepository",
+      "bridge:vocabulary": "bridge:vocabulary",
+      "bridge:vocabularyFile": "bridge:vocabularyFile",
+      "bridge:sourceMediaType": "bridge:sourceMediaType",
+      "bridge:sourceSchema": "bridge:sourceSchema",
+      "bridge:gapScheme": "bridge:gapScheme",
+      "bridge:envelope": "bridge:envelope",
+      "bridge:docRootElementName": "bridge:docRootElementName",
+      "bridge:elementNameOfEachRecord": "bridge:elementNameOfEachRecord",
+      "bridge:testManifest": "bridge:testManifest",
+      "bridge:detectQuery": "bridge:detectQuery",
+      "bridge:mapping": "bridge:mapping",
+      "bridge:findingsQuery": "bridge:findingsQuery",
+      "bridge:documentTableQuery": "bridge:documentTableQuery",
+      "bridge:table": "bridge:table",
+      "bridge:sourceAccounting": "bridge:sourceAccounting"
+    }
+  ],
+  "@graph": [
+    {
+      "@id": "ro-crate-metadata.json",
+      "@type": "CreativeWork",
+      "conformsTo": {
+        "@id": "https://w3id.org/ro/crate/1.2"
+      },
+      "about": {
+        "@id": "./"
+      }
+    },
+    {
+      "@id": "./",
+      "@type": [
+        "Dataset",
+        "bridge:Adapter"
+      ],
+      "identifier": "ccda",
+      "name": "C-CDA R2.1 XML",
+      "version": "0.1.0",
+      "description": "The Cascade Bridge Adapter for C-CDA R2.1 XML: the package of data a Cascade Bridge runs to turn a C-CDA ClinicalDocument, as a patient portal hands one out, into Cascade records. Import-only. This crate is the adapter's manifest: a Bridge reads the root entity first, for the format id, the source media type, the source schema, the envelope, the detect rule, the document table query, the mappings and the findings queries, the concept maps, the profile the Bridge must offer, the vocabulary repository and the paths, in it, of the ontology and shapes files the adapter is read against, the gap scheme every finding takes its body from, each gap declaring the sh:resultSeverity its findings carry where that is not sh:Info, the source accounting, and the test manifest. The data entities carry provenance for every committed file, and a sha256 computed locally over the committed bytes of each digested one. Seven inputs are copied byte for byte from the conformance repository's fixtures/ccda at the commit isBasedOn names; the others are authored here, and each says so.",
+      "datePublished": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "conformsTo": {
+        "@id": "https://ns.cascadeprotocol.org/bridge/v1-draft/adapter-profile/"
+      },
+      "isBasedOn": {
+        "@id": "https://github.com/jayostis/conformance/tree/6c332fdd4f5e92548e37edcde2c6df7667932eac/fixtures/ccda"
+      },
+      "bridge:requiresProfile": [
+        {
+          "@id": "bridge:sparql-1.1"
+        }
+      ],
+      "bridge:cascadeVocabularyRepository": {
+        "@id": "https://github.com/jayostis/cascade-vocabulary"
+      },
+      "bridge:vocabulary": [
+        {
+          "@id": "https://ns.cascadeprotocol.org/core/v1#"
+        },
+        {
+          "@id": "https://ns.cascadeprotocol.org/health/v1#"
+        },
+        {
+          "@id": "https://ns.cascadeprotocol.org/clinical/v1#"
+        },
+        {
+          "@id": "https://ns.cascadeprotocol.org/records/v1-draft#"
+        }
+      ],
+      "bridge:vocabularyFile": [
+        "ontologies/core/v1/core.ttl",
+        "ontologies/core/v1/core.shapes.ttl",
+        "ontologies/health/v1/health.ttl",
+        "ontologies/health/v1/health.shapes.ttl",
+        "ontologies/clinical/v1/clinical.ttl",
+        "ontologies/clinical/v1/clinical.shapes.ttl",
+        "ontologies/records/v1-draft/records.ttl",
+        "ontologies/records/v1-draft/records.shapes.ttl"
+      ],
+      "bridge:sourceMediaType": "application/cda+xml",
+      "bridge:sourceSchema": {
+        "@id": "schema/infrastructure/cda/CDA_SDTC.xsd"
+      },
+      "bridge:envelope": [
+        {
+          "@id": "#envelope-document"
+        }
+      ],
+      "bridge:elementNameOfEachRecord": "ClinicalDocument",
+      "bridge:detectQuery": {
+        "@id": "in/sparql/detect.rq"
+      },
+      "bridge:documentTableQuery": {
+        "@id": "in/sparql/document-table.rq"
+      },
+      "bridge:mapping": [
+        {
+          "@id": "in/sparql/record.rq"
+        },
+        {
+          "@id": "in/sparql/patient.rq"
+        },
+        {
+          "@id": "in/sparql/allergy.rq"
+        },
+        {
+          "@id": "in/sparql/document-author.rq"
+        }
+      ],
+      "bridge:findingsQuery": [
+        {
+          "@id": "in/sparql/section-findings.rq"
+        },
+        {
+          "@id": "in/sparql/entry-findings.rq"
+        },
+        {
+          "@id": "in/sparql/allergy-findings.rq"
+        },
+        {
+          "@id": "in/sparql/name-findings.rq"
+        }
+      ],
+      "bridge:table": [
+        {
+          "@id": "vocab/ccda-allergy-statuses.ttl"
+        },
+        {
+          "@id": "vocab/ccda-allergy-intolerance-types.ttl"
+        },
+        {
+          "@id": "vocab/ccda-allergy-intolerance-categories.ttl"
+        },
+        {
+          "@id": "vocab/ccda-criticalities.ttl"
+        },
+        {
+          "@id": "vocab/ccda-severities.ttl"
+        },
+        {
+          "@id": "vocab/ccda-code-systems.ttl"
+        }
+      ],
+      "bridge:gapScheme": {
+        "@id": "vocab/ccda-gaps.ttl"
+      },
+      "bridge:sourceAccounting": {
+        "@id": "vocab/ccda-accounting.ttl"
+      },
+      "bridge:testManifest": {
+        "@id": "fixtures/manifest.ttl"
+      },
+      "hasPart": [
+        {
+          "@id": "schema/infrastructure/cda/CDA_SDTC.xsd"
+        },
+        {
+          "@id": "schema/infrastructure/cda/POCD_MT000040_SDTC.xsd"
+        },
+        {
+          "@id": "schema/infrastructure/cda/SDTC.xsd"
+        },
+        {
+          "@id": "schema/processable/coreschemas/NarrativeBlock.xsd"
+        },
+        {
+          "@id": "schema/processable/coreschemas/datatypes-base_SDTC.xsd"
+        },
+        {
+          "@id": "schema/processable/coreschemas/datatypes.xsd"
+        },
+        {
+          "@id": "schema/processable/coreschemas/infrastructureRoot.xsd"
+        },
+        {
+          "@id": "schema/processable/coreschemas/voc.xsd"
+        },
+        {
+          "@id": "in/sparql/detect.rq"
+        },
+        {
+          "@id": "in/sparql/document-table.rq"
+        },
+        {
+          "@id": "in/sparql/record.rq"
+        },
+        {
+          "@id": "in/sparql/patient.rq"
+        },
+        {
+          "@id": "in/sparql/allergy.rq"
+        },
+        {
+          "@id": "in/sparql/document-author.rq"
+        },
+        {
+          "@id": "in/sparql/section-findings.rq"
+        },
+        {
+          "@id": "in/sparql/entry-findings.rq"
+        },
+        {
+          "@id": "in/sparql/allergy-findings.rq"
+        },
+        {
+          "@id": "in/sparql/name-findings.rq"
+        },
+        {
+          "@id": "vocab/ccda-gaps.ttl"
+        },
+        {
+          "@id": "vocab/ccda-accounting.ttl"
+        },
+        {
+          "@id": "vocab/ccda-code-systems.ttl"
+        },
+        {
+          "@id": "vocab/ccda-allergy-statuses.ttl"
+        },
+        {
+          "@id": "vocab/ccda-allergy-intolerance-types.ttl"
+        },
+        {
+          "@id": "vocab/ccda-allergy-intolerance-categories.ttl"
+        },
+        {
+          "@id": "vocab/ccda-criticalities.ttl"
+        },
+        {
+          "@id": "vocab/ccda-severities.ttl"
+        },
+        {
+          "@id": "fixtures/facts/portal-download.ttl"
+        },
+        {
+          "@id": "fixtures/in/allergies-section.xml"
+        },
+        {
+          "@id": "fixtures/in/cerner-summarization.xml"
+        },
+        {
+          "@id": "fixtures/in/epic-summarization.xml"
+        },
+        {
+          "@id": "fixtures/in/full-summarization.xml"
+        },
+        {
+          "@id": "fixtures/in/immunizations-section.xml"
+        },
+        {
+          "@id": "fixtures/in/labs-section.xml"
+        },
+        {
+          "@id": "fixtures/in/narrative-only-section.xml"
+        },
+        {
+          "@id": "fixtures/in/custodian-and-author.xml"
+        },
+        {
+          "@id": "fixtures/in/several-ids.xml"
+        },
+        {
+          "@id": "fixtures/in/repeated-ids.xml"
+        },
+        {
+          "@id": "fixtures/in/download-a.xml"
+        },
+        {
+          "@id": "fixtures/in/download-b.xml"
+        },
+        {
+          "@id": "fixtures/in/not-a-ccda.xml"
+        },
+        {
+          "@id": "fixtures/expected/allergies-section.ttl"
+        },
+        {
+          "@id": "fixtures/findings/allergies-section.ttl"
+        },
+        {
+          "@id": "fixtures/expected/cerner-summarization.ttl"
+        },
+        {
+          "@id": "fixtures/findings/cerner-summarization.ttl"
+        },
+        {
+          "@id": "fixtures/expected/epic-summarization.ttl"
+        },
+        {
+          "@id": "fixtures/findings/epic-summarization.ttl"
+        },
+        {
+          "@id": "fixtures/expected/full-summarization.ttl"
+        },
+        {
+          "@id": "fixtures/findings/full-summarization.ttl"
+        },
+        {
+          "@id": "fixtures/expected/immunizations-section.ttl"
+        },
+        {
+          "@id": "fixtures/findings/immunizations-section.ttl"
+        },
+        {
+          "@id": "fixtures/expected/labs-section.ttl"
+        },
+        {
+          "@id": "fixtures/findings/labs-section.ttl"
+        },
+        {
+          "@id": "fixtures/expected/narrative-only-section.ttl"
+        },
+        {
+          "@id": "fixtures/findings/narrative-only-section.ttl"
+        },
+        {
+          "@id": "fixtures/expected/custodian-and-author.ttl"
+        },
+        {
+          "@id": "fixtures/findings/custodian-and-author.ttl"
+        },
+        {
+          "@id": "fixtures/expected/several-ids.ttl"
+        },
+        {
+          "@id": "fixtures/findings/several-ids.ttl"
+        },
+        {
+          "@id": "fixtures/expected/repeated-ids.ttl"
+        },
+        {
+          "@id": "fixtures/findings/repeated-ids.ttl"
+        },
+        {
+          "@id": "fixtures/expected/download-a.ttl"
+        },
+        {
+          "@id": "fixtures/findings/download-a.ttl"
+        },
+        {
+          "@id": "fixtures/expected/download-b.ttl"
+        },
+        {
+          "@id": "fixtures/findings/download-b.ttl"
+        },
+        {
+          "@id": "fixtures/expected/not-a-ccda.ttl"
+        },
+        {
+          "@id": "fixtures/findings/not-a-ccda.ttl"
+        },
+        {
+          "@id": "fixtures/CLAUDE.md"
+        },
+        {
+          "@id": "schema/CLAUDE.md"
+        },
+        {
+          "@id": "vocab/CLAUDE.md"
+        },
+        {
+          "@id": "fixtures/manifest.ttl"
+        },
+        {
+          "@id": "docs/format.md"
+        },
+        {
+          "@id": "https://github.com/jayostis/cascade-vocabulary"
+        }
+      ]
+    },
+    {
+      "@id": "#envelope-document",
+      "@type": "bridge:Envelope",
+      "name": "document",
+      "bridge:docRootElementName": "ClinicalDocument",
+      "description": "A C-CDA as a portal hands it out: the ClinicalDocument is the document element and the one source record, and the mappings make a record of each clinical statement in it; docs/format.md, \"The envelope\"."
+    },
+    {
+      "@id": "bridge:sparql-1.1",
+      "@type": "bridge:Profile",
+      "name": "sparql-1.1",
+      "description": "Declared in the Cascade Bridge Specification's vocabulary, vocab/bridge.ttl in cascade-bridge-spec."
+    },
+    {
+      "@id": "https://ns.cascadeprotocol.org/bridge/v1-draft/adapter-profile/",
+      "@type": [
+        "CreativeWork",
+        "Profile"
+      ],
+      "name": "Cascade Bridge Adapter profile",
+      "description": "The RO-Crate 1.2 Profile Crate a conforming adapter package names in conformsTo; the Profile Crate describing it is adapter/profile/ro-crate-metadata.json in cascade-bridge-spec."
+    },
+    {
+      "@id": "https://github.com/jayostis/cascade-vocabulary",
+      "@type": [
+        "SoftwareSourceCode",
+        "File"
+      ],
+      "name": "cascade-vocabulary",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The repository the adapter's vocabularies are read from, at the version a run picks; the paths in bridge:vocabularyFile are read there. A web-based data entity, referenced and not committed: the RO-Crate 1.2 validator reads every SoftwareSourceCode as a script that must be a File in hasPart."
+    },
+    {
+      "@id": "https://ns.cascadeprotocol.org/core/v1#",
+      "@type": "DefinedTermSet",
+      "name": "Cascade core vocabulary",
+      "description": "One of the vocabularies the adapter writes, as cascade-vocabulary declares it."
+    },
+    {
+      "@id": "https://ns.cascadeprotocol.org/health/v1#",
+      "@type": "DefinedTermSet",
+      "name": "Cascade health vocabulary",
+      "description": "One of the vocabularies the adapter writes, as cascade-vocabulary declares it."
+    },
+    {
+      "@id": "https://ns.cascadeprotocol.org/clinical/v1#",
+      "@type": "DefinedTermSet",
+      "name": "Cascade clinical vocabulary",
+      "description": "One of the vocabularies the adapter writes, as cascade-vocabulary declares it."
+    },
+    {
+      "@id": "https://ns.cascadeprotocol.org/records/v1-draft#",
+      "@type": "DefinedTermSet",
+      "name": "Cascade records vocabulary",
+      "description": "One of the vocabularies the adapter writes, as cascade-vocabulary declares it."
+    },
+    {
+      "@id": "schema/infrastructure/cda/CDA_SDTC.xsd",
+      "@type": "File",
+      "name": "HL7 CDA schema with SDTC extensions: CDA_SDTC.xsd",
+      "encodingFormat": "application/xml",
+      "contentSize": "2439",
+      "sha256": "d596141f0a457b7b31c1a5b4e97ae55d16bedf8c08356e644475c339263d76e7",
+      "version": "e922fc35586fd2629f0c8a021080bca9ab424e18",
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/CDA-core-2.0/blob/e922fc35586fd2629f0c8a021080bca9ab424e18/schema/extensions/SDTC/infrastructure/cda/CDA_SDTC.xsd"
+      },
+      "license": {
+        "@id": "https://spdx.org/licenses/BSD-4-Clause"
+      },
+      "description": "HL7's CDA R2 schema with the SDTC extensions, the entry point, declaring ClinicalDocument: the adapter's bridge:sourceSchema. Copied byte for byte from HL7/CDA-core-2.0 at e922fc3, the copy jayostis/cascade-bridge-rs holds under crates/bridge/tests/cda/schema/, and equal to the file at the isBasedOn URL on 2026-10-07; sha256 is computed locally over the committed bytes. Copyright (c) 2015 Health Level Seven, under the 4-clause BSD licence its notice states. Never edited."
+    },
+    {
+      "@id": "schema/infrastructure/cda/POCD_MT000040_SDTC.xsd",
+      "@type": "File",
+      "name": "HL7 CDA schema with SDTC extensions: POCD_MT000040_SDTC.xsd",
+      "encodingFormat": "application/xml",
+      "contentSize": "103074",
+      "sha256": "a9d1169721efe71124f2c5f7a7d53441a2129424742336e8324f27bce80e1eaf",
+      "version": "e922fc35586fd2629f0c8a021080bca9ab424e18",
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/CDA-core-2.0/blob/e922fc35586fd2629f0c8a021080bca9ab424e18/schema/extensions/SDTC/infrastructure/cda/POCD_MT000040_SDTC.xsd"
+      },
+      "license": {
+        "@id": "https://spdx.org/licenses/BSD-4-Clause"
+      },
+      "description": "HL7's CDA R2 schema with the SDTC extensions, the CDA classes, participations and act relationships. Copied byte for byte from HL7/CDA-core-2.0 at e922fc3, the copy jayostis/cascade-bridge-rs holds under crates/bridge/tests/cda/schema/, and equal to the file at the isBasedOn URL on 2026-10-07; sha256 is computed locally over the committed bytes. Copyright (c) 2015 Health Level Seven, under the 4-clause BSD licence its notice states. Never edited."
+    },
+    {
+      "@id": "schema/infrastructure/cda/SDTC.xsd",
+      "@type": "File",
+      "name": "HL7 CDA schema with SDTC extensions: SDTC.xsd",
+      "encodingFormat": "application/xml",
+      "contentSize": "20795",
+      "sha256": "3a16dbaa0526005850eaf32f4f061ba4db63ee1f9e1267783c8f734feaf73a58",
+      "version": "e922fc35586fd2629f0c8a021080bca9ab424e18",
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/CDA-core-2.0/blob/e922fc35586fd2629f0c8a021080bca9ab424e18/schema/extensions/SDTC/infrastructure/cda/SDTC.xsd"
+      },
+      "license": {
+        "@id": "https://spdx.org/licenses/BSD-4-Clause"
+      },
+      "description": "HL7's CDA R2 schema with the SDTC extensions, the elements of the urn:hl7-org:sdtc namespace. Copied byte for byte from HL7/CDA-core-2.0 at e922fc3, the copy jayostis/cascade-bridge-rs holds under crates/bridge/tests/cda/schema/, and equal to the file at the isBasedOn URL on 2026-10-07; sha256 is computed locally over the committed bytes. Copyright (c) 2015 Health Level Seven, under the 4-clause BSD licence its notice states. Never edited."
+    },
+    {
+      "@id": "schema/processable/coreschemas/NarrativeBlock.xsd",
+      "@type": "File",
+      "name": "HL7 CDA schema with SDTC extensions: NarrativeBlock.xsd",
+      "encodingFormat": "application/xml",
+      "contentSize": "23929",
+      "sha256": "92a9ec2c6c00d10cd40a9afdf4d70f18c823bdec15db9e8b116cb5076d11f66e",
+      "version": "e922fc35586fd2629f0c8a021080bca9ab424e18",
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/CDA-core-2.0/blob/e922fc35586fd2629f0c8a021080bca9ab424e18/schema/extensions/SDTC/processable/coreschemas/NarrativeBlock.xsd"
+      },
+      "license": {
+        "@id": "https://spdx.org/licenses/BSD-4-Clause"
+      },
+      "description": "HL7's CDA R2 schema with the SDTC extensions, a section's narrative text; it carries no notice of its own. Copied byte for byte from HL7/CDA-core-2.0 at e922fc3, the copy jayostis/cascade-bridge-rs holds under crates/bridge/tests/cda/schema/, and equal to the file at the isBasedOn URL on 2026-10-07; sha256 is computed locally over the committed bytes. Copyright (c) 2015 Health Level Seven, under the 4-clause BSD licence its notice states. Never edited."
+    },
+    {
+      "@id": "schema/processable/coreschemas/datatypes-base_SDTC.xsd",
+      "@type": "File",
+      "name": "HL7 CDA schema with SDTC extensions: datatypes-base_SDTC.xsd",
+      "encodingFormat": "application/xml",
+      "contentSize": "78891",
+      "sha256": "832527e03eac5cb671880b87c9515e55c2089e8ef3fc82634e69c7337adb440f",
+      "version": "e922fc35586fd2629f0c8a021080bca9ab424e18",
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/CDA-core-2.0/blob/e922fc35586fd2629f0c8a021080bca9ab424e18/schema/extensions/SDTC/processable/coreschemas/datatypes-base_SDTC.xsd"
+      },
+      "license": {
+        "@id": "https://spdx.org/licenses/BSD-4-Clause"
+      },
+      "description": "HL7's CDA R2 schema with the SDTC extensions, the base data types, with the SDTC extensions. Copied byte for byte from HL7/CDA-core-2.0 at e922fc3, the copy jayostis/cascade-bridge-rs holds under crates/bridge/tests/cda/schema/, and equal to the file at the isBasedOn URL on 2026-10-07; sha256 is computed locally over the committed bytes. Copyright (c) 2015 Health Level Seven, under the 4-clause BSD licence its notice states. Never edited."
+    },
+    {
+      "@id": "schema/processable/coreschemas/datatypes.xsd",
+      "@type": "File",
+      "name": "HL7 CDA schema with SDTC extensions: datatypes.xsd",
+      "encodingFormat": "application/xml",
+      "contentSize": "65795",
+      "sha256": "0238ba379eec458d9989ff2c2d9012da2964c9d29d5177cf2d74d4c17a7a6be2",
+      "version": "e922fc35586fd2629f0c8a021080bca9ab424e18",
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/CDA-core-2.0/blob/e922fc35586fd2629f0c8a021080bca9ab424e18/schema/extensions/SDTC/processable/coreschemas/datatypes.xsd"
+      },
+      "license": {
+        "@id": "https://spdx.org/licenses/BSD-4-Clause"
+      },
+      "description": "HL7's CDA R2 schema with the SDTC extensions, the data types built on the base ones. Copied byte for byte from HL7/CDA-core-2.0 at e922fc3, the copy jayostis/cascade-bridge-rs holds under crates/bridge/tests/cda/schema/, and equal to the file at the isBasedOn URL on 2026-10-07; sha256 is computed locally over the committed bytes. Copyright (c) 2015 Health Level Seven, under the 4-clause BSD licence its notice states. Never edited."
+    },
+    {
+      "@id": "schema/processable/coreschemas/infrastructureRoot.xsd",
+      "@type": "File",
+      "name": "HL7 CDA schema with SDTC extensions: infrastructureRoot.xsd",
+      "encodingFormat": "application/xml",
+      "contentSize": "1554",
+      "sha256": "dff44f710386745645ffe96c1d46629062e07d4f03b82ef26e9ba180082432c9",
+      "version": "e922fc35586fd2629f0c8a021080bca9ab424e18",
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/CDA-core-2.0/blob/e922fc35586fd2629f0c8a021080bca9ab424e18/schema/extensions/SDTC/processable/coreschemas/infrastructureRoot.xsd"
+      },
+      "license": {
+        "@id": "https://spdx.org/licenses/BSD-4-Clause"
+      },
+      "description": "HL7's CDA R2 schema with the SDTC extensions, realmCode, typeId and templateId; it carries no notice of its own. Copied byte for byte from HL7/CDA-core-2.0 at e922fc3, the copy jayostis/cascade-bridge-rs holds under crates/bridge/tests/cda/schema/, and equal to the file at the isBasedOn URL on 2026-10-07; sha256 is computed locally over the committed bytes. Copyright (c) 2015 Health Level Seven, under the 4-clause BSD licence its notice states. Never edited."
+    },
+    {
+      "@id": "schema/processable/coreschemas/voc.xsd",
+      "@type": "File",
+      "name": "HL7 CDA schema with SDTC extensions: voc.xsd",
+      "encodingFormat": "application/xml",
+      "contentSize": "84321",
+      "sha256": "63bacc8e6c0a662fe630b3377950a1bad8fa659242021a5db0d4778762ae8099",
+      "version": "e922fc35586fd2629f0c8a021080bca9ab424e18",
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/CDA-core-2.0/blob/e922fc35586fd2629f0c8a021080bca9ab424e18/schema/extensions/SDTC/processable/coreschemas/voc.xsd"
+      },
+      "license": {
+        "@id": "https://spdx.org/licenses/BSD-4-Clause"
+      },
+      "description": "HL7's CDA R2 schema with the SDTC extensions, the vocabulary domains; it carries no notice of its own. Copied byte for byte from HL7/CDA-core-2.0 at e922fc3, the copy jayostis/cascade-bridge-rs holds under crates/bridge/tests/cda/schema/, and equal to the file at the isBasedOn URL on 2026-10-07; sha256 is computed locally over the committed bytes. Copyright (c) 2015 Health Level Seven, under the 4-clause BSD licence its notice states. Never edited."
+    },
+    {
+      "@id": "in/sparql/detect.rq",
+      "@type": "File",
+      "name": "Detect rule",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "482",
+      "sha256": "43c2d2dac73e7fe92e7ceba8f5e5ba0e495404aafa882d2c3de7a6c184bdf53d",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "An ASK over the envelope skeleton: true where the ClinicalDocument has a templateId child whose root is the US Realm Header's, 2.16.840.1.113883.10.20.22.1.1."
+    },
+    {
+      "@id": "in/sparql/document-table.rq",
+      "@type": "File",
+      "name": "Document table: the clinical statements",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "14509",
+      "sha256": "ee256fad7a8beb834daac5c28ba5b9016fce005c8e7efb3fb86fbb8615ac0c75",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "One row per clinical statement this release maps: its slots, its class, its selector refined from the document element, its identifier, and the fingerprints of its key and of its members, with each class's key fields and member exclusions declared."
+    },
+    {
+      "@id": "in/sparql/record.rq",
+      "@type": "File",
+      "name": "Mapping: records, versions and arrivals",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "5037",
+      "sha256": "34eee1056df12b7a5ed28025e6c4ede7f02f53372cdd760bc16bb53e10c5ad58",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "For each row of the document table: the record, named by the Cascade Bridge Specification's rows for a C-CDA record from its class, identifier, key fingerprint or members fingerprint; its class, its source URL where its identifier names it, and its source id; its version, the patient the version is about, and the version's arrival with its selector."
+    },
+    {
+      "@id": "in/sparql/patient.rq",
+      "@type": "File",
+      "name": "Mapping: patient",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "2086",
+      "sha256": "ef77b2b2e4218e7f3f5402edd37d9e3bb33bc1d6fc5fdf95102621b6432f6b72",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A patientRole's first given and family name and its birth date."
+    },
+    {
+      "@id": "in/sparql/allergy.rq",
+      "@type": "File",
+      "name": "Mapping: allergy",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "9715",
+      "sha256": "dac00683653881a296770f7c2e37fb8bf51781a8f14e3378dab5a744927f2e20",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "An Allergy Intolerance Observation's allergen, allergen codes, type, category, status, criticality, severity, reaction, manifestation codes and onset."
+    },
+    {
+      "@id": "in/sparql/document-author.rq",
+      "@type": "File",
+      "name": "Mapping: the document's author",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "1216",
+      "sha256": "eaa430c5fc3325a42e25ad9cb9e1678b2719906e72c555bd682a7e0215dd32c8",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The custodian organisation's name, as the document's prov:qualifiedAttribution in the role rec:author."
+    },
+    {
+      "@id": "in/sparql/section-findings.rq",
+      "@type": "File",
+      "name": "Findings: sections not mapped",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "2698",
+      "sha256": "7d1a82aa0e82c3921514b0153152d1f770db918a5dddd277db9c3ce0a29cb945",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Each section whose templateIds name none this release maps, valued by its code."
+    },
+    {
+      "@id": "in/sparql/entry-findings.rq",
+      "@type": "File",
+      "name": "Findings: entries not mapped",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "3719",
+      "sha256": "9cc3ad65a288265dab80f58d5f364026c48030bb67c55af6cdb5baa8abe9d6fb",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Each entry of a mapped section from which no record is made, valued by the least templateId root its statement claims."
+    },
+    {
+      "@id": "in/sparql/allergy-findings.rq",
+      "@type": "File",
+      "name": "Findings: allergy codes not mapped",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "4114",
+      "sha256": "8a4e8146676c590fccd803bc4590620a4c8829b8ee3467d7d34a13210c5ad7ad",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Each code an allergy states outside the concept map that reads it: its type, status, criticality and severity, and the code system of its allergen's codes and its reactions' values."
+    },
+    {
+      "@id": "in/sparql/name-findings.rq",
+      "@type": "File",
+      "name": "Findings: records named by their class alone",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "996",
+      "sha256": "fa2d5549ffe35fa22848fd7021efea1ed3b00bd4633e8e97067615cc2b9b2671",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Each record that states no identifier, no key field and no member."
+    },
+    {
+      "@id": "vocab/ccda-gaps.ttl",
+      "@type": "File",
+      "name": "C-CDA R2.1 XML gaps",
+      "encodingFormat": "text/turtle",
+      "contentSize": "2579",
+      "sha256": "bc53161f52d94bda5c18ae52caa66acd4c7829923d9ac597794df9e6e791e3c6",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The scheme every finding this adapter reports takes its body from: one skos:Concept per gap, in this adapter's own namespace (https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#), each under one of the bridge:gapKinds the Cascade Bridge Specification declares."
+    },
+    {
+      "@id": "vocab/ccda-accounting.ttl",
+      "@type": "File",
+      "name": "C-CDA R2.1 XML source accounting",
+      "encodingFormat": "text/turtle",
+      "contentSize": "68502",
+      "sha256": "02ada75d9bec8791a315cb0c202856c6a209135b2b60c0b4e099a3a3f351622e",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The file the crate names as bridge:sourceAccounting: one bridge:PathEntry for each path a mapping in in/sparql/ reads, written from the ClinicalDocument down with each step in its namespace, with its verdict against in/sparql/."
+    },
+    {
+      "@id": "vocab/ccda-code-systems.ttl",
+      "@type": "File",
+      "name": "Concept map: code systems",
+      "encodingFormat": "text/turtle",
+      "contentSize": "1754",
+      "sha256": "5c7ef0e0b092ebb4da8b1a5d9f754272245bbe1c8d44b9b751add76fb50e5c31",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "isBasedOn": {
+        "@id": "https://terminology.hl7.org/"
+      },
+      "description": "HL7 code system OIDs to the URI FHIR names each code system by, from HL7 Terminology's naming systems, read on 2026-10-07; the OIDs are those cascade-cli's src/lib/ccda-converter/code-systems.ts lists. A code's IRI is that URI, / and the code, as the FHIR R4 adapter writes it."
+    },
+    {
+      "@id": "vocab/ccda-allergy-statuses.ttl",
+      "@type": "File",
+      "name": "Concept map: allergy statuses",
+      "encodingFormat": "text/turtle",
+      "contentSize": "887",
+      "sha256": "02ff9677b12a73fd4e871eead9db68d5bc5dbcb44b841cde3dc4416c7f707050",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-AllergyStatus.xml"
+      },
+      "description": "SNOMED CT allergy statuses to FHIR AllergyIntolerance clinical status codes, each written as its code system's URI, / and the code. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+    },
+    {
+      "@id": "vocab/ccda-allergy-intolerance-types.ttl",
+      "@type": "File",
+      "name": "Concept map: allergy types",
+      "encodingFormat": "text/turtle",
+      "contentSize": "1256",
+      "sha256": "4a94904645800c3d3ecea2b9d85ba2f7329e873afe3d5921f9cee45dc740923a",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-AllergyIntoleranceType.xml"
+      },
+      "description": "SNOMED CT allergy and intolerance types to FHIR AllergyIntolerance type codes; the rows HL7 marks unmatched are left out. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+    },
+    {
+      "@id": "vocab/ccda-allergy-intolerance-categories.ttl",
+      "@type": "File",
+      "name": "Concept map: allergy categories",
+      "encodingFormat": "text/turtle",
+      "contentSize": "1529",
+      "sha256": "6bc3a524d855501ab786ab40fa62497304330929039c8ad895052546d8b592b4",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-AllergyIntoleranceCategory.xml"
+      },
+      "description": "SNOMED CT allergy and intolerance types to FHIR AllergyIntolerance category codes; the rows HL7 marks unmatched are left out. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+    },
+    {
+      "@id": "vocab/ccda-criticalities.ttl",
+      "@type": "File",
+      "name": "Concept map: criticalities",
+      "encodingFormat": "text/turtle",
+      "contentSize": "814",
+      "sha256": "468b668bdf631569ed5bce1bb6cf127f825c874c727faef7476cc10905833539",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-Criticality.xml"
+      },
+      "description": "HL7 ObservationValue criticality codes to FHIR AllergyIntolerance criticality codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+    },
+    {
+      "@id": "vocab/ccda-severities.ttl",
+      "@type": "File",
+      "name": "Concept map: severities",
+      "encodingFormat": "text/turtle",
+      "contentSize": "754",
+      "sha256": "1de1463d024683d9766648fd4ef0af423bfbf4debb4a06ad8abe7f892fef142d",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-Severity.xml"
+      },
+      "description": "SNOMED CT severities to FHIR reaction severity codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+    },
+    {
+      "@id": "fixtures/facts/portal-download.ttl",
+      "@type": "File",
+      "name": "Facts supplied with a portal download",
+      "encodingFormat": "text/turtle",
+      "contentSize": "648",
+      "sha256": "4650c2756e0e7433e6b7ea1f1e8c707c501af185246e36f2caa6e1f0f709af55",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "dateCreated": "2026-10-07",
+      "description": "The facts a C-CDA importer could supply: when the document was retrieved, the patient portal as its transmitter, and the import's label and start. Made up here on 2026-10-07."
+    },
+    {
+      "@id": "fixtures/in/allergies-section.xml",
+      "@type": "File",
+      "name": "C-CDA: allergies-section",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "3335",
+      "sha256": "67b1bce6d308ab7c8eaec8e37fa4d2da93bfe5a94d79dbd00757f703d2bfac1f",
+      "sameAs": {
+        "@id": "https://github.com/jayostis/conformance/blob/6c332fdd4f5e92548e37edcde2c6df7667932eac/fixtures/ccda/allergies-section.xml"
+      },
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "An Allergies section alone, holding one penicillin allergy whose observation sits directly in its concern act, with a severity. Copied byte for byte from the conformance repository at 6c332fd (the file was added there at that commit, 2026-03-27). Written by hand for that corpus, not captured from a portal. It names no custodian and no author, which the CDA schema requires, so it fails the schema."
+    },
+    {
+      "@id": "fixtures/in/cerner-summarization.xml",
+      "@type": "File",
+      "name": "C-CDA: cerner-summarization",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "6094",
+      "sha256": "36a0b8ae6b64ba8ca36a536c128a6ce191bf96e4e4dd43a42885f0ab3bf585d2",
+      "sameAs": {
+        "@id": "https://github.com/jayostis/conformance/blob/6c332fdd4f5e92548e37edcde2c6df7667932eac/fixtures/ccda/cerner-summarization.xml"
+      },
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A summary written as Cerner writes one, a setId beside each id: a chronic kidney disease problem and an aspirin allergy whose observation sits directly in its concern act. Copied byte for byte from the conformance repository at 6c332fd (the file was added there at that commit, 2026-03-27). Written by hand for that corpus, not captured from a portal. It names no custodian and no author, which the CDA schema requires, so it fails the schema."
+    },
+    {
+      "@id": "fixtures/in/epic-summarization.xml",
+      "@type": "File",
+      "name": "C-CDA: epic-summarization",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "10381",
+      "sha256": "e6e498ee4c8c1e6198c668f957706f939580faa26c8cb6e1b26770b3e3ea47a2",
+      "sameAs": {
+        "@id": "https://github.com/jayostis/conformance/blob/6c332fdd4f5e92548e37edcde2c6df7667932eac/fixtures/ccda/epic-summarization.xml"
+      },
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A summary written as Epic writes one, code systems prefixed urn:oid:: a sulfa allergy, an influenza immunization, a metformin medication, a diabetes problem and an HbA1c result. Copied byte for byte from the conformance repository at 6c332fd (the file was added there at that commit, 2026-03-27). Written by hand for that corpus, not captured from a portal. It names no custodian and no author, which the CDA schema requires, so it fails the schema."
+    },
+    {
+      "@id": "fixtures/in/full-summarization.xml",
+      "@type": "File",
+      "name": "C-CDA: full-summarization",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "9383",
+      "sha256": "91e9e2aadd457b040582ad8b8fd4a680fb2fe4742c015755c8cb6611d8e54289",
+      "sameAs": {
+        "@id": "https://github.com/jayostis/conformance/blob/6c332fdd4f5e92548e37edcde2c6df7667932eac/fixtures/ccda/full-summarization.xml"
+      },
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A summary of five sections: a penicillin allergy, an influenza immunization, a lisinopril medication, a hypertension problem and a glucose result. Copied byte for byte from the conformance repository at 6c332fd (the file was added there at that commit, 2026-03-27). Written by hand for that corpus, not captured from a portal. It names no custodian and no author, which the CDA schema requires, so it fails the schema."
+    },
+    {
+      "@id": "fixtures/in/immunizations-section.xml",
+      "@type": "File",
+      "name": "C-CDA: immunizations-section",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "2403",
+      "sha256": "bc6c2d9b603f0dcbba34a168494cbd9f075a1313fe8d7cbdee81162a01f10d0a",
+      "sameAs": {
+        "@id": "https://github.com/jayostis/conformance/blob/6c332fdd4f5e92548e37edcde2c6df7667932eac/fixtures/ccda/immunizations-section.xml"
+      },
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "An Immunizations section alone, holding one influenza immunization. Copied byte for byte from the conformance repository at 6c332fd (the file was added there at that commit, 2026-03-27). Written by hand for that corpus, not captured from a portal. It names no custodian and no author, which the CDA schema requires, so it fails the schema."
+    },
+    {
+      "@id": "fixtures/in/labs-section.xml",
+      "@type": "File",
+      "name": "C-CDA: labs-section",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "2819",
+      "sha256": "2fd607d402a15bae83560ce2f1472070e1373c901de6c794b14038d2d5268f1b",
+      "sameAs": {
+        "@id": "https://github.com/jayostis/conformance/blob/6c332fdd4f5e92548e37edcde2c6df7667932eac/fixtures/ccda/labs-section.xml"
+      },
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A Results section alone, holding one glucose result in a panel. Copied byte for byte from the conformance repository at 6c332fd (the file was added there at that commit, 2026-03-27). Written by hand for that corpus, not captured from a portal. It names no custodian and no author, which the CDA schema requires, so it fails the schema."
+    },
+    {
+      "@id": "fixtures/in/narrative-only-section.xml",
+      "@type": "File",
+      "name": "C-CDA: narrative-only-section",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "3545",
+      "sha256": "c26c277a741f9842d2424640ff31b01d8b671b7aba98b45a69edb935422a8681",
+      "sameAs": {
+        "@id": "https://github.com/jayostis/conformance/blob/6c332fdd4f5e92548e37edcde2c6df7667932eac/fixtures/ccda/narrative-only-section.xml"
+      },
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A no-known-allergy entry, and a Plan of Treatment section holding narrative and no entry. Copied byte for byte from the conformance repository at 6c332fd (the file was added there at that commit, 2026-03-27). Written by hand for that corpus, not captured from a portal. It names no custodian and no author, which the CDA schema requires, so it fails the schema."
+    },
+    {
+      "@id": "fixtures/in/custodian-and-author.xml",
+      "@type": "File",
+      "name": "C-CDA: custodian-and-author",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "8378",
+      "sha256": "4b2ea9aa47a59a1c0a79fe8df5a329865d695ef5fc37bc6301b8b6c08d18c865",
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A document naming its custodian and its author, with one penicillin allergy stating every element this release maps: an allergen named through the narrative its originalText references and coded in RxNorm with a SNOMED CT translation, a status, a reaction with its severity, a criticality and an onset; and a Problems section holding narrative only. Authored here on 2026-10-07, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/several-ids.xml",
+      "@type": "File",
+      "name": "C-CDA: several-ids",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "4449",
+      "sha256": "805da4bc3c0755b1c3d24a1f7a9158025f2c878ec3958b5d32e975aa897e5b3b",
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "One sulfamethoxazole allergy whose observation carries three ids: a nullFlavor, then two usable ones. Authored here on 2026-10-07, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/repeated-ids.xml",
+      "@type": "File",
+      "name": "C-CDA: repeated-ids",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "10692",
+      "sha256": "5773ce4a2b367b5ac32e5db777db80e254677adcce2ddaa25d16d875782fd6b5",
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Four allergies of one section: two carrying one id with different allergens, and two carrying another id with the same allergen and status. Authored here on 2026-10-07, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/download-a.xml",
+      "@type": "File",
+      "name": "C-CDA: download-a",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "6412",
+      "sha256": "b15ad5f9f3ce282766b121764bacb62a96e48ea041164ea67af3c4ced39dd059",
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The first of two downloads of one summary: an allergy with an id, and one whose only id is a nullFlavor. Authored here on 2026-10-07, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/download-b.xml",
+      "@type": "File",
+      "name": "C-CDA: download-b",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "6400",
+      "sha256": "918b42064eab9dfd95954f132735076492496864c383a88ae32bd72333ef87d9",
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The second download of download-a's summary, a day later: a new document id and time, the narrative's IDs and the references to them moved, and the same clinical content. Authored here on 2026-10-07, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/not-a-ccda.xml",
+      "@type": "File",
+      "name": "C-CDA: not-a-ccda",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "1795",
+      "sha256": "eb3d73afb0ce273a9cdf84c1f853f53c9557d91965b0d7cdb7423d6cf6b4a574",
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A CDA progress note that claims no US Realm Header: a CDA, and not a C-CDA. Authored here on 2026-10-07, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/expected/allergies-section.ttl",
+      "@type": "File",
+      "name": "Expected graph for allergies-section",
+      "encodingFormat": "text/turtle",
+      "contentSize": "3496",
+      "sha256": "8ade32a5b9a0fc5151681ff8311a25a26c82397af928fce6ad87d6dd5d5f517d",
+      "about": {
+        "@id": "fixtures/in/allergies-section.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/allergies-section.ttl",
+      "@type": "File",
+      "name": "Expected findings for allergies-section",
+      "encodingFormat": "text/turtle",
+      "contentSize": "98885",
+      "sha256": "f4c509d42e56e001e99c4a65421a18d33c493fe32566a7169c46b32d9e2d4d11",
+      "about": {
+        "@id": "fixtures/in/allergies-section.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/cerner-summarization.ttl",
+      "@type": "File",
+      "name": "Expected graph for cerner-summarization",
+      "encodingFormat": "text/turtle",
+      "contentSize": "3503",
+      "sha256": "dd68fa49e12200c09dc27e28f51a1c15d6dc91b03767a973c9146e06ec1fe0de",
+      "about": {
+        "@id": "fixtures/in/cerner-summarization.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/cerner-summarization.ttl",
+      "@type": "File",
+      "name": "Expected findings for cerner-summarization",
+      "encodingFormat": "text/turtle",
+      "contentSize": "137954",
+      "sha256": "703de8d66935492d14616b2800d53cb91ef5d9c413a794deddd02baae4dd0c26",
+      "about": {
+        "@id": "fixtures/in/cerner-summarization.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/epic-summarization.ttl",
+      "@type": "File",
+      "name": "Expected graph for epic-summarization",
+      "encodingFormat": "text/turtle",
+      "contentSize": "3505",
+      "sha256": "5b317903a806ae40032873a9bfa35a453c3a33114097a3e552185bdbc83c5aa0",
+      "about": {
+        "@id": "fixtures/in/epic-summarization.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/epic-summarization.ttl",
+      "@type": "File",
+      "name": "Expected findings for epic-summarization",
+      "encodingFormat": "text/turtle",
+      "contentSize": "253627",
+      "sha256": "05048fc635e1afcfc4336a5a183d645ba0752a7bb383813c2028f453c96a60b5",
+      "about": {
+        "@id": "fixtures/in/epic-summarization.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/full-summarization.ttl",
+      "@type": "File",
+      "name": "Expected graph for full-summarization",
+      "encodingFormat": "text/turtle",
+      "contentSize": "3496",
+      "sha256": "b2302080930fca073e062b86bd1a50f05322ed560db80e6f9beb7ddc39355166",
+      "about": {
+        "@id": "fixtures/in/full-summarization.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/full-summarization.ttl",
+      "@type": "File",
+      "name": "Expected findings for full-summarization",
+      "encodingFormat": "text/turtle",
+      "contentSize": "258924",
+      "sha256": "47db6acce18c20c9d21d217575b55b1ae0c79133e71472ff046d3ae137bd02ae",
+      "about": {
+        "@id": "fixtures/in/full-summarization.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/immunizations-section.ttl",
+      "@type": "File",
+      "name": "Expected graph for immunizations-section",
+      "encodingFormat": "text/turtle",
+      "contentSize": "2082",
+      "sha256": "137b88aaf1ece048d3995154fcc8be1a665c29d3ffbb6724ad4f1cbf9477fe8c",
+      "about": {
+        "@id": "fixtures/in/immunizations-section.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/immunizations-section.ttl",
+      "@type": "File",
+      "name": "Expected findings for immunizations-section",
+      "encodingFormat": "text/turtle",
+      "contentSize": "81678",
+      "sha256": "0f54f5f590347d4157f0dc60975ede4d228bfc7ab48693454c9ed412c6bfd312",
+      "about": {
+        "@id": "fixtures/in/immunizations-section.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/labs-section.ttl",
+      "@type": "File",
+      "name": "Expected graph for labs-section",
+      "encodingFormat": "text/turtle",
+      "contentSize": "2082",
+      "sha256": "dbb786bd82ff21a4f78469a810dbf7d611e62977e7386355e6a6f3b6f541e5f3",
+      "about": {
+        "@id": "fixtures/in/labs-section.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/labs-section.ttl",
+      "@type": "File",
+      "name": "Expected findings for labs-section",
+      "encodingFormat": "text/turtle",
+      "contentSize": "110681",
+      "sha256": "cf42818ddfdb66d6e1e30174617528fcf959a285c7ca310c89528ccc834fb5da",
+      "about": {
+        "@id": "fixtures/in/labs-section.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/narrative-only-section.ttl",
+      "@type": "File",
+      "name": "Expected graph for narrative-only-section",
+      "encodingFormat": "text/turtle",
+      "contentSize": "3404",
+      "sha256": "a908e0d92e46e796c623696fc6daac0e102d9557bce81b55c6364b1991658636",
+      "about": {
+        "@id": "fixtures/in/narrative-only-section.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/narrative-only-section.ttl",
+      "@type": "File",
+      "name": "Expected findings for narrative-only-section",
+      "encodingFormat": "text/turtle",
+      "contentSize": "78998",
+      "sha256": "a3f850ef0c3f7efe97652ee569f2a38a38b88e8f2a6baa216d448adf9f60b4a2",
+      "about": {
+        "@id": "fixtures/in/narrative-only-section.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/custodian-and-author.ttl",
+      "@type": "File",
+      "name": "Expected graph for custodian-and-author",
+      "encodingFormat": "text/turtle",
+      "contentSize": "3971",
+      "sha256": "7fc45e71c09b5f5c152a76b331cf409bbc72932c555b59cd906b6fa87b0315fa",
+      "about": {
+        "@id": "fixtures/in/custodian-and-author.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/custodian-and-author.ttl",
+      "@type": "File",
+      "name": "Expected findings for custodian-and-author",
+      "encodingFormat": "text/turtle",
+      "contentSize": "236125",
+      "sha256": "16754f520dff45e3567e4363d6e1e011e436ad25bc23c5276475a8b3d25aa1c9",
+      "about": {
+        "@id": "fixtures/in/custodian-and-author.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/several-ids.ttl",
+      "@type": "File",
+      "name": "Expected graph for several-ids",
+      "encodingFormat": "text/turtle",
+      "contentSize": "3669",
+      "sha256": "eba271b01eb72656fdf231aea8ad36d7913c7bb7c0aa0855632d1fbcb7587ada",
+      "about": {
+        "@id": "fixtures/in/several-ids.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/several-ids.ttl",
+      "@type": "File",
+      "name": "Expected findings for several-ids",
+      "encodingFormat": "text/turtle",
+      "contentSize": "122869",
+      "sha256": "bc8c869ac3e9d7c9a15e3694819fa225ab9564f3e4218d222e546911ad70fc14",
+      "about": {
+        "@id": "fixtures/in/several-ids.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/repeated-ids.ttl",
+      "@type": "File",
+      "name": "Expected graph for repeated-ids",
+      "encodingFormat": "text/turtle",
+      "contentSize": "6604",
+      "sha256": "4645a61032ef6968e73a6d3eed8fbe28bce8c5ceb9c53547f70fa311092f63de",
+      "about": {
+        "@id": "fixtures/in/repeated-ids.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/repeated-ids.ttl",
+      "@type": "File",
+      "name": "Expected findings for repeated-ids",
+      "encodingFormat": "text/turtle",
+      "contentSize": "125195",
+      "sha256": "acba3ec0cd575cbea2fa32cd2d671a1ff72ee670babb534311c32af5e2ca7e8e",
+      "about": {
+        "@id": "fixtures/in/repeated-ids.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/download-a.ttl",
+      "@type": "File",
+      "name": "Expected graph for download-a",
+      "encodingFormat": "text/turtle",
+      "contentSize": "4989",
+      "sha256": "efaa3929012a7dc27b35d29eeac9bb10dbb76f3823f8c4925dcf0a1135fd9049",
+      "about": {
+        "@id": "fixtures/in/download-a.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/download-a.ttl",
+      "@type": "File",
+      "name": "Expected findings for download-a",
+      "encodingFormat": "text/turtle",
+      "contentSize": "123753",
+      "sha256": "212651bc6596ac830d7d5f87baed9c8a1cc6d15b86cdc6f78fd6a34cc5aefa47",
+      "about": {
+        "@id": "fixtures/in/download-a.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/download-b.ttl",
+      "@type": "File",
+      "name": "Expected graph for download-b",
+      "encodingFormat": "text/turtle",
+      "contentSize": "4989",
+      "sha256": "eb77ab62ecf2938b107004c1e85d62fe1f967f90c9ab4bc9a2312c0da037a34a",
+      "about": {
+        "@id": "fixtures/in/download-b.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/download-b.ttl",
+      "@type": "File",
+      "name": "Expected findings for download-b",
+      "encodingFormat": "text/turtle",
+      "contentSize": "123746",
+      "sha256": "2cbd69d3ca6547dce1df7570ec255e7e9c526a0b98820630143a53652cbcf408",
+      "about": {
+        "@id": "fixtures/in/download-b.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/not-a-ccda.ttl",
+      "@type": "File",
+      "name": "Expected graph for not-a-ccda",
+      "encodingFormat": "text/turtle",
+      "contentSize": "2195",
+      "sha256": "6b5ac21e1167159226c3cee1df664bf2c369cc0a377704b272ef19357331e5a6",
+      "about": {
+        "@id": "fixtures/in/not-a-ccda.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/not-a-ccda.ttl",
+      "@type": "File",
+      "name": "Expected findings for not-a-ccda",
+      "encodingFormat": "text/turtle",
+      "contentSize": "39395",
+      "sha256": "925b0318afa8b1dded29635843355848b0ab0f7483f1bcfc7c3fd2b69cb5359b",
+      "about": {
+        "@id": "fixtures/in/not-a-ccda.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/CLAUDE.md",
+      "@type": "File",
+      "name": "Agent context for the fixtures directory",
+      "encodingFormat": "text/markdown",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "How the fixtures are treated: every byte is recorded, an input is copied or authored here and never edited, and the checks the specification's lint cannot run."
+    },
+    {
+      "@id": "schema/CLAUDE.md",
+      "@type": "File",
+      "name": "Agent context for the schema directory",
+      "encodingFormat": "text/markdown",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The schema is HL7's verbatim copy, under its own licence, and how it is changed."
+    },
+    {
+      "@id": "vocab/CLAUDE.md",
+      "@type": "File",
+      "name": "Agent context for the vocab directory",
+      "encodingFormat": "text/markdown",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "What a concept map is and why no accounting entry names one, what a gap is, and how a path of the source gets its verdict."
+    },
+    {
+      "@id": "fixtures/manifest.ttl",
+      "@type": "File",
+      "name": "Test manifest",
+      "encodingFormat": "text/turtle",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      }
+    },
+    {
+      "@id": "docs/format.md",
+      "@type": "File",
+      "name": "C-CDA R2.1 XML, as the adapter sees it",
+      "encodingFormat": "text/markdown",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "What a C-CDA is, what a record is, the envelope, ids and nullFlavor, timestamps, narrative references, the schema, and what is known about the committed inputs. Read from HL7's C-CDA R2.1 and CDA R2 publications on 2026-10-07."
+    },
+    {
+      "@id": "https://github.com/jayostis/conformance/tree/6c332fdd4f5e92548e37edcde2c6df7667932eac/fixtures/ccda",
+      "@type": "CreativeWork",
+      "name": "conformance fixtures/ccda at 6c332fd",
+      "version": "6c332fdd4f5e92548e37edcde2c6df7667932eac",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The C-CDA fixtures the copied inputs are taken from. A contextual entity: the source of the fixtures, not part of the crate. The commit is on the fork, jayostis/conformance."
+    }
+  ]
+}

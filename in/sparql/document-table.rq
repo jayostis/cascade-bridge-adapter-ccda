@@ -1,0 +1,286 @@
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#>
+PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:    <http://sparql.xyz/facade-x/data/>
+PREFIX v3:     <urn:hl7-org:v3>
+PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# One row per clinical statement this release maps, holding what its name is
+# computed from, so that a statement's name can be weighed against every other
+# statement's. A row is keyed by the statement's slots, the rdf:_n numbers from
+# the document element down to it, which a mapping can compute without
+# counting siblings; a refinement counts them, as a selector must.
+#
+# The key fields and member exclusions are declared here, once per class:
+# https://github.com/jayostis/cascade-bridge-spec/blob/main/engine/sparql.md#naming-a-c-cda-record
+#
+#   Patient            given, family, birthTime and gender, as patient/name and
+#                      the patient's elements state them.
+#   AllergyIntolerance the allergen's code, code system and name; the
+#                      observation's value code (its type), its effectiveTime,
+#                      statusCode, and the value of its Allergy Status
+#                      Observation.
+#   Excluded members, every class: each ID attribute and each reference's
+#   value, which point into the narrative and move when nothing else does.
+
+CONSTRUCT {
+  [] ccda:statementAt ?slots ;
+    ccda:recordClass ?class ;
+    ccda:refinement ?refinement ;
+    ccda:identifier ?identifier ;
+    ccda:keyFingerprint ?keyFingerprint ;
+    ccda:membersFingerprint ?membersFingerprint .
+}
+WHERE {
+  {
+    SELECT ?statement ?class ?slots ?refinement WHERE {
+      ?root a fx:root, v3:ClinicalDocument .
+      {
+        ?root ?rtSlot ?recordTarget . ?recordTarget a v3:recordTarget .
+        ?recordTarget ?prSlot ?statement . ?statement a v3:patientRole .
+        {
+          SELECT ?recordTarget (COUNT(?earlierRt) + 1 AS ?rtAt) WHERE {
+            ?rtParent ?rtS ?recordTarget . ?recordTarget a v3:recordTarget .
+            OPTIONAL {
+              ?rtParent ?rtE ?earlierRt . ?earlierRt a v3:recordTarget .
+              FILTER (xsd:integer(STRAFTER(STR(?rtE), "#_")) < xsd:integer(STRAFTER(STR(?rtS), "#_")))
+            }
+          } GROUP BY ?recordTarget
+        }
+        {
+          SELECT ?statement (COUNT(?earlierPr) + 1 AS ?prAt) WHERE {
+            ?prParent ?prS ?statement . ?statement a v3:patientRole .
+            OPTIONAL {
+              ?prParent ?prE ?earlierPr . ?earlierPr a v3:patientRole .
+              FILTER (xsd:integer(STRAFTER(STR(?prE), "#_")) < xsd:integer(STRAFTER(STR(?prS), "#_")))
+            }
+          } GROUP BY ?statement
+        }
+        BIND ("Patient" AS ?class)
+        BIND (CONCAT(STRAFTER(STR(?rtSlot), "#_"), ".", STRAFTER(STR(?prSlot), "#_")) AS ?slots)
+        BIND (CONCAT(
+          "*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][", STR(?rtAt), "]",
+          "/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][", STR(?prAt), "]") AS ?refinement)
+      }
+      UNION
+      {
+        ?root ?outerSlot ?outer . ?outer a v3:component .
+        ?outer ?bodySlot ?body . ?body a v3:structuredBody .
+        ?body ?componentSlot ?component . ?component a v3:component .
+        ?component ?sectionSlot ?section . ?section a v3:section .
+        ?section ?entrySlot ?entry . ?entry a v3:entry .
+        ?entry ?actSlot ?act . ?act a v3:act .
+        {
+          ?act ?relationshipSlot ?relationship . ?relationship a v3:entryRelationship .
+          ?relationship ?statementSlot ?statement .
+          {
+            SELECT ?relationship (COUNT(?earlierEr) + 1 AS ?erAt) WHERE {
+              ?erParent ?erS ?relationship . ?relationship a v3:entryRelationship .
+              OPTIONAL {
+                ?erParent ?erE ?earlierEr . ?earlierEr a v3:entryRelationship .
+                FILTER (xsd:integer(STRAFTER(STR(?erE), "#_")) < xsd:integer(STRAFTER(STR(?erS), "#_")))
+              }
+            } GROUP BY ?relationship
+          }
+          BIND (CONCAT(STRAFTER(STR(?relationshipSlot), "#_"), ".", STRAFTER(STR(?statementSlot), "#_")) AS ?innerSlots)
+          BIND (CONCAT("/*[local-name()='entryRelationship' and namespace-uri()='urn:hl7-org:v3'][", STR(?erAt), "]") AS ?innerStep)
+        }
+        UNION
+        {
+          # Not CDA, which wraps an act's observation in an entryRelationship,
+          # but how the conformance corpus writes an allergy; docs/format.md.
+          ?act ?statementSlot ?statement .
+          BIND (STRAFTER(STR(?statementSlot), "#_") AS ?innerSlots)
+          BIND ("" AS ?innerStep)
+        }
+        ?statement a v3:observation .
+        FILTER EXISTS {
+          ?statement ?templateSlot ?template .
+          ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.7" .
+        }
+        {
+          SELECT ?outer (COUNT(?earlierOuter) + 1 AS ?outerAt) WHERE {
+            ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
+            OPTIONAL {
+              ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
+              FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) < xsd:integer(STRAFTER(STR(?outerS), "#_")))
+            }
+          } GROUP BY ?outer
+        }
+        {
+          SELECT ?component (COUNT(?earlierComponent) + 1 AS ?componentAt) WHERE {
+            ?componentParent ?componentS ?component . ?componentParent a v3:structuredBody . ?component a v3:component .
+            OPTIONAL {
+              ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
+              FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) < xsd:integer(STRAFTER(STR(?componentS), "#_")))
+            }
+          } GROUP BY ?component
+        }
+        {
+          SELECT ?entry (COUNT(?earlierEntry) + 1 AS ?entryAt) WHERE {
+            ?entryParent ?entryS ?entry . ?entry a v3:entry .
+            OPTIONAL {
+              ?entryParent ?entryE ?earlierEntry . ?earlierEntry a v3:entry .
+              FILTER (xsd:integer(STRAFTER(STR(?entryE), "#_")) < xsd:integer(STRAFTER(STR(?entryS), "#_")))
+            }
+          } GROUP BY ?entry
+        }
+        {
+          SELECT ?statement (COUNT(DISTINCT ?earlierObservation) + 1 AS ?observationAt) WHERE {
+            ?observationParent ?observationS ?statement . ?statement a v3:observation ; ?oT ?oTemplate .
+            ?oTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.7" .
+            OPTIONAL {
+              ?observationParent ?observationE ?earlierObservation . ?earlierObservation a v3:observation .
+              FILTER (xsd:integer(STRAFTER(STR(?observationE), "#_")) < xsd:integer(STRAFTER(STR(?observationS), "#_")))
+            }
+          } GROUP BY ?statement
+        }
+        BIND ("AllergyIntolerance" AS ?class)
+        BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
+                     STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
+                     STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?actSlot), "#_"), ".", ?innerSlots) AS ?slots)
+        BIND (CONCAT(
+          "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?outerAt), "]",
+          "/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]",
+          "/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?componentAt), "]",
+          "/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]",
+          "/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][", STR(?entryAt), "]",
+          "/*[local-name()='act' and namespace-uri()='urn:hl7-org:v3'][1]",
+          ?innerStep,
+          "/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][", STR(?observationAt), "]") AS ?refinement)
+      }
+    }
+  }
+
+  OPTIONAL {
+    {
+      SELECT ?statement (MIN(?ranked) AS ?firstIdentifier) WHERE {
+        ?statement ?idSlot ?id . ?id a v3:id ; xyz:root ?idRoot .
+        FILTER (STRLEN(?idRoot) > 0)
+        FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
+        OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }
+        BIND (STRAFTER(STR(?idSlot), "#_") AS ?idAt)
+        BIND (CONCAT(SUBSTR("0000000000", STRLEN(?idAt) + 1), ?idAt, "|",
+                     IF(BOUND(?idExtension), CONCAT(?idRoot, ":", ?idExtension), ?idRoot)) AS ?ranked)
+      } GROUP BY ?statement
+    }
+    BIND (STRAFTER(?firstIdentifier, "|") AS ?identifier)
+  }
+
+  OPTIONAL {
+    {
+      SELECT ?statement (STR(SUM(?keyValue)) AS ?keyFingerprint) WHERE {
+        {
+          SELECT DISTINCT ?statement ?field WHERE {
+            {
+              ?statement a v3:patientRole ; ?pS ?patient . ?patient a v3:patient .
+              {
+                ?patient ?nS ?name . ?name a v3:name ; ?gS ?part . ?part a ?partType ; ?tS ?text .
+                FILTER (?partType IN (v3:given, v3:family) && isLiteral(?text) && STRSTARTS(STR(?tS), STR(rdf:_)))
+                BIND (CONCAT(STRAFTER(STR(?partType), "urn:hl7-org:v3"), "=", ?text) AS ?field)
+              }
+              UNION
+              { ?patient ?bS ?birth . ?birth a v3:birthTime ; xyz:value ?v . BIND (CONCAT("birthTime=", ?v) AS ?field) }
+              UNION
+              { ?patient ?gcS ?gender . ?gender a v3:administrativeGenderCode ; xyz:code ?v . BIND (CONCAT("gender=", ?v) AS ?field) }
+            }
+            UNION
+            {
+              ?statement a v3:observation ; ?tplS ?tpl . ?tpl a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.7" .
+              {
+                ?statement ?paS ?participant . ?participant a v3:participant ; ?prS ?role . ?role a v3:participantRole ;
+                  ?peS ?entity . ?entity a v3:playingEntity .
+                {
+                  ?entity ?cS ?code . ?code a v3:code .
+                  { ?code xyz:code ?v . BIND (CONCAT("allergenCode=", ?v) AS ?field) }
+                  UNION
+                  { ?code xyz:codeSystem ?v . BIND (CONCAT("allergenCodeSystem=", ?v) AS ?field) }
+                }
+                UNION
+                {
+                  ?entity ?nmS ?name . ?name a v3:name ; ?tS ?text .
+                  FILTER (isLiteral(?text) && STRSTARTS(STR(?tS), STR(rdf:_)))
+                  BIND (CONCAT("allergenName=", ?text) AS ?field)
+                }
+              }
+              UNION
+              { ?statement ?vS ?value . ?value a v3:value ; xyz:code ?v . BIND (CONCAT("type=", ?v) AS ?field) }
+              UNION
+              { ?statement ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?v . BIND (CONCAT("effectiveTime=", ?v) AS ?field) }
+              UNION
+              {
+                ?statement ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a ?boundType ; xyz:value ?v .
+                FILTER (?boundType IN (v3:low, v3:high))
+                BIND (CONCAT("effectiveTime", STRAFTER(STR(?boundType), "urn:hl7-org:v3"), "=", ?v) AS ?field)
+              }
+              UNION
+              { ?statement ?sS ?status . ?status a v3:statusCode ; xyz:code ?v . BIND (CONCAT("statusCode=", ?v) AS ?field) }
+              UNION
+              {
+                ?statement ?rS ?relationship . ?relationship a v3:entryRelationship ; ?oS ?observation .
+                ?observation a v3:observation ; ?otS ?ot ; ?ovS ?ov .
+                ?ot a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.28" .
+                ?ov a v3:value ; xyz:code ?v .
+                BIND (CONCAT("status=", ?v) AS ?field)
+              }
+            }
+          }
+        }
+        BIND (SUBSTR(SHA256(?field), 1, 12) AS ?h)
+        BIND ("0123456789abcdef" AS ?digits)
+        BIND (STRLEN(STRBEFORE(?digits, SUBSTR(?h, 1, 1))) * 17592186044416
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 2, 1))) * 1099511627776
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 3, 1))) * 68719476736
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 4, 1))) * 4294967296
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 5, 1))) * 268435456
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 6, 1))) * 16777216
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 7, 1))) * 1048576
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 8, 1))) * 65536
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 9, 1))) * 4096
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 10, 1))) * 256
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 11, 1))) * 16
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 12, 1))) AS ?keyValue)
+      } GROUP BY ?statement
+    }
+  }
+
+  OPTIONAL {
+    {
+      SELECT ?statement (STR(SUM(?memberValue)) AS ?membersFingerprint) WHERE {
+        {
+          SELECT DISTINCT ?statement ?member WHERE {
+            {
+              ?statement a v3:patientRole .
+            }
+            UNION
+            {
+              ?statement a v3:observation ; ?mT ?mTemplate .
+              ?mTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.7" .
+            }
+            ?statement (!rdf:type)* ?node .
+            ?node a ?nodeType ; ?predicate ?held .
+            FILTER (isLiteral(?held) && ?predicate != xyz:ID)
+            FILTER (!(?nodeType = v3:reference && ?predicate = xyz:value))
+            BIND (IF(STRSTARTS(STR(?predicate), STR(rdf:_)),
+                     CONCAT(STR(?nodeType), "=", ?held),
+                     CONCAT(STR(?nodeType), "@", STR(?predicate), "=", ?held)) AS ?member)
+          }
+        }
+        BIND (SUBSTR(SHA256(?member), 1, 12) AS ?h)
+        BIND ("0123456789abcdef" AS ?digits)
+        BIND (STRLEN(STRBEFORE(?digits, SUBSTR(?h, 1, 1))) * 17592186044416
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 2, 1))) * 1099511627776
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 3, 1))) * 68719476736
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 4, 1))) * 4294967296
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 5, 1))) * 268435456
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 6, 1))) * 16777216
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 7, 1))) * 1048576
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 8, 1))) * 65536
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 9, 1))) * 4096
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 10, 1))) * 256
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 11, 1))) * 16
+            + STRLEN(STRBEFORE(?digits, SUBSTR(?h, 12, 1))) AS ?memberValue)
+      } GROUP BY ?statement
+    }
+  }
+}
