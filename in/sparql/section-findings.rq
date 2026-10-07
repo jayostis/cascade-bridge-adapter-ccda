@@ -1,0 +1,60 @@
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#>
+PREFIX sh:     <http://www.w3.org/ns/shacl#>
+PREFIX oa:     <http://www.w3.org/ns/oa#>
+PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:    <http://sparql.xyz/facade-x/data/>
+PREFIX v3:     <urn:hl7-org:v3>
+PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
+PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# A section is mapped by its templateId: the source accounting's paths carry no
+# section, so this, and not the accounting, says a section is not carried. Its
+# value is the section's code, where it states one.
+
+CONSTRUCT {
+  [] a oa:Annotation ;
+    oa:hasTarget [
+      oa:hasSource bridge:thisRecord ;
+      oa:hasSelector [ a oa:XPathSelector ; rdf:value ?refinement ]
+    ] ;
+    oa:hasBody ccda:sectionNotMapped ;
+    oa:motivatedBy oa:classifying ;
+    sh:value ?value .
+}
+WHERE {
+  ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
+  ?outer a v3:component ; ?bodySlot ?body .
+  ?body a v3:structuredBody ; ?componentSlot ?component .
+  ?component a v3:component ; ?sectionSlot ?section .
+  ?section a v3:section .
+  FILTER NOT EXISTS {
+    ?section ?templateSlot ?template .
+    ?template a v3:templateId ; xyz:root ?mapped .
+    VALUES ?mapped { "2.16.840.1.113883.10.20.22.2.6" "2.16.840.1.113883.10.20.22.2.6.1" }
+  }
+  OPTIONAL { ?section ?codeSlot ?code . ?code a v3:code ; xyz:code ?value }
+  {
+    SELECT ?outer (COUNT(?earlierOuter) + 1 AS ?outerAt) WHERE {
+      ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
+      OPTIONAL {
+        ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
+        FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) < xsd:integer(STRAFTER(STR(?outerS), "#_")))
+      }
+    } GROUP BY ?outer
+  }
+  {
+    SELECT ?component (COUNT(?earlierComponent) + 1 AS ?componentAt) WHERE {
+      ?componentParent ?componentS ?component . ?componentParent a v3:structuredBody . ?component a v3:component .
+      OPTIONAL {
+        ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
+        FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) < xsd:integer(STRAFTER(STR(?componentS), "#_")))
+      }
+    } GROUP BY ?component
+  }
+  BIND (CONCAT(
+    "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?outerAt), "]",
+    "/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]",
+    "/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?componentAt), "]",
+    "/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]") AS ?refinement)
+}

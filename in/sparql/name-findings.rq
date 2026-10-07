@@ -1,0 +1,27 @@
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sh:     <http://www.w3.org/ns/shacl#>
+PREFIX oa:     <http://www.w3.org/ns/oa#>
+PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
+PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# A record named by its class alone, the specification's last row: it states no
+# identifier, no key field and no member, so every such record of its class in
+# every document is one record.
+
+CONSTRUCT {
+  [] a oa:Annotation ;
+    oa:hasTarget [
+      oa:hasSource bridge:thisRecord ;
+      oa:hasSelector [ a oa:XPathSelector ; rdf:value ?refinement ]
+    ] ;
+    oa:hasBody ccda:namedByClassAlone ;
+    oa:motivatedBy oa:classifying ;
+    sh:value ?class .
+}
+WHERE {
+  ?row ccda:recordClass ?class ;
+    ccda:refinement ?refinement .
+  FILTER NOT EXISTS { ?row ccda:identifier ?identifier }
+  FILTER NOT EXISTS { ?row ccda:keyFingerprint ?key }
+  FILTER NOT EXISTS { ?row ccda:membersFingerprint ?members }
+}

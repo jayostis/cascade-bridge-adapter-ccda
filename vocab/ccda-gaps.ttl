@@ -1,0 +1,55 @@
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix sh:     <http://www.w3.org/ns/shacl#> .
+@prefix bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#> .
+@prefix ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
+
+ccda:gaps a skos:ConceptScheme ;
+  skos:prefLabel "C-CDA R2.1 XML gaps"@en .
+
+ccda:sectionNotMapped a skos:Concept ;
+  skos:prefLabel "A section is of a kind this release of the adapter does not map, and nothing in it is carried."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:valueNotMapped ;
+  sh:resultSeverity sh:Warning .
+
+ccda:entryNotMapped a skos:Concept ;
+  skos:prefLabel "An entry of a mapped section holds no statement this release of the adapter reads, where it reads one, and nothing in it is carried."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:valueNotMapped ;
+  sh:resultSeverity sh:Warning .
+
+ccda:namedByClassAlone a skos:Concept ;
+  skos:prefLabel "A record states no identifier, no key field and no member, so it is named by its class alone, as every such record of its class is."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:carriedWithLoss ;
+  sh:resultSeverity sh:Warning .
+
+ccda:allergyTypeNotMapped a skos:Concept ;
+  skos:prefLabel "An allergy states a type outside the concept maps of allergy types and categories, and neither is carried."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:valueNotMapped .
+
+ccda:allergyStatusNotMapped a skos:Concept ;
+  skos:prefLabel "An allergy states a status outside the concept map of allergy statuses, and it is not carried."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:valueNotMapped .
+
+ccda:criticalityNotMapped a skos:Concept ;
+  skos:prefLabel "An allergy states a criticality outside the concept map of criticalities, and it is not carried."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:valueNotMapped .
+
+ccda:severityNotMapped a skos:Concept ;
+  skos:prefLabel "An allergy or its reaction states a severity outside the concept map of severities, and it is not carried."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:valueNotMapped .
+
+ccda:codeSystemNotMapped a skos:Concept ;
+  skos:prefLabel "A code is stated in a code system outside the concept map of code systems, so no IRI names it and it is not carried."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:valueNotMapped .
+
+ccda:patientGender a skos:Concept ;
+  skos:prefLabel "A patient carries an administrative gender, and no Cascade predicate carries it."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:noPredicate .

@@ -1,0 +1,92 @@
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX bridge:   <https://ns.cascadeprotocol.org/bridge/v1-draft#>
+PREFIX rec:      <https://ns.cascadeprotocol.org/records/v1-draft#>
+PREFIX cascade:  <https://ns.cascadeprotocol.org/core/v1#>
+PREFIX health:   <https://ns.cascadeprotocol.org/health/v1#>
+PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# Names are the rows of
+# https://github.com/jayostis/cascade-bridge-spec/blob/main/engine/sparql.md#naming-a-c-cda-record,
+# hashed as that repository's fixtures/naming/name.rq hashes them, from what
+# document-table.rq holds of each statement: an identifier is an id's root, and
+# its extension where it states one. A version is written as an IRI of
+# the statement's slots, which each class's mapping computes alike.
+#
+# A version names its patient only where the document has one recordTarget:
+# with more, which one an entry is about is not stated.
+
+CONSTRUCT {
+  ?record a ?type ;
+    rec:sourceUrl ?sourceUrl ;
+    ?sourceIdPredicate ?identifier .
+  ?version prov:specializationOf ?record ;
+    rec:patient ?patient .
+  [] bridge:arrivedAs ?version ;
+    bridge:selector ?selector .
+}
+WHERE {
+  bridge:thisRecord bridge:selector ?recordSelector .
+  ?row ccda:statementAt ?slots ;
+    ccda:recordClass ?class ;
+    ccda:refinement ?refinement .
+  VALUES (?class ?type ?sourceIdPredicate) {
+    ("Patient"            cascade:PatientProfile cascade:sourceRecordId)
+    ("AllergyIntolerance" health:AllergyRecord   health:sourceRecordId)
+  }
+  OPTIONAL { ?row ccda:identifier ?identifier }
+  OPTIONAL { ?row ccda:keyFingerprint ?key }
+  OPTIONAL { ?row ccda:membersFingerprint ?members }
+  BIND (BOUND(?identifier) && EXISTS {
+          ?other ccda:recordClass ?class ;
+            ccda:identifier ?identifier .
+          OPTIONAL { ?other ccda:keyFingerprint ?otherKey }
+          FILTER (COALESCE(?otherKey, "") != COALESCE(?key, ""))
+        } AS ?repeated)
+  BIND (IF(BOUND(?identifier),
+           IF(?repeated, CONCAT(?class, "|", ?identifier, "|", COALESCE(?key, "0")), CONCAT(?class, "|", ?identifier)),
+        IF(BOUND(?key), CONCAT(?class, "||", ?key),
+        IF(BOUND(?members), CONCAT(?class, "|||", ?members),
+           ?class))) AS ?input)
+  BIND (SHA256(CONCAT("90c60849-c5ef-4ca6-bfb8-8662bd07d2b5|", ?input)) AS ?hash)
+  BIND (REPLACE(REPLACE(REPLACE(REPLACE(SUBSTR(?hash, 17, 1),
+          "[048c]", "8"), "[159d]", "9"), "[26ae]", "a"), "[37bf]", "b") AS ?variant)
+  BIND (IRI(CONCAT("urn:uuid:", SUBSTR(?hash, 1, 8), "-", SUBSTR(?hash, 9, 4), "-8", SUBSTR(?hash, 14, 3),
+                   "-", ?variant, SUBSTR(?hash, 18, 3), "-", SUBSTR(?hash, 21, 12))) AS ?record)
+  BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(?slots))) AS ?version)
+  BIND (CONCAT(?recordSelector, "/", ?refinement) AS ?selector)
+  BIND (IF(CONTAINS(COALESCE(?identifier, ""), ":"), IRI(CONCAT("urn:hl7ii:", ?identifier)),
+        IF(REGEX(?identifier, "^[0-2](\\.(0|[1-9][0-9]*))+$"), IRI(CONCAT("urn:oid:", ?identifier)),
+        IF(REGEX(?identifier, "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"),
+           IRI(CONCAT("urn:uuid:", LCASE(?identifier))), 1/0))) AS ?sourceUrl)
+
+  OPTIONAL {
+    FILTER (?class != "Patient")
+    {
+      SELECT (SAMPLE(?patientInput) AS ?onlyPatientInput) (COUNT(?patientRow) AS ?patients) WHERE {
+        ?patientRow ccda:recordClass "Patient" .
+        OPTIONAL { ?patientRow ccda:identifier ?patientIdentifier }
+        OPTIONAL { ?patientRow ccda:keyFingerprint ?patientKey }
+        OPTIONAL { ?patientRow ccda:membersFingerprint ?patientMembers }
+        BIND (BOUND(?patientIdentifier) && EXISTS {
+                ?otherPatient ccda:recordClass "Patient" ;
+                  ccda:identifier ?patientIdentifier .
+                OPTIONAL { ?otherPatient ccda:keyFingerprint ?otherPatientKey }
+                FILTER (COALESCE(?otherPatientKey, "") != COALESCE(?patientKey, ""))
+              } AS ?patientRepeated)
+        BIND (IF(BOUND(?patientIdentifier),
+                 IF(?patientRepeated, CONCAT("Patient|", ?patientIdentifier, "|", COALESCE(?patientKey, "0")),
+                    CONCAT("Patient|", ?patientIdentifier)),
+              IF(BOUND(?patientKey), CONCAT("Patient||", ?patientKey),
+              IF(BOUND(?patientMembers), CONCAT("Patient|||", ?patientMembers),
+                 "Patient"))) AS ?patientInput)
+      }
+    }
+    FILTER (?patients = 1)
+    BIND (SHA256(CONCAT("90c60849-c5ef-4ca6-bfb8-8662bd07d2b5|", ?onlyPatientInput)) AS ?patientHash)
+    BIND (REPLACE(REPLACE(REPLACE(REPLACE(SUBSTR(?patientHash, 17, 1),
+            "[048c]", "8"), "[159d]", "9"), "[26ae]", "a"), "[37bf]", "b") AS ?patientVariant)
+    BIND (IRI(CONCAT("urn:uuid:", SUBSTR(?patientHash, 1, 8), "-", SUBSTR(?patientHash, 9, 4), "-8",
+                     SUBSTR(?patientHash, 14, 3), "-", ?patientVariant, SUBSTR(?patientHash, 18, 3), "-",
+                     SUBSTR(?patientHash, 21, 12))) AS ?patient)
+  }
+}
