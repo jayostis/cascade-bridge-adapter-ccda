@@ -21,6 +21,7 @@
     <#not-a-ccda>
     <#procedures>
     <#shared-id>
+    <#negations>
     <#download-c>
     <#download-d>
     <#download-twice-names-one-allergy>
@@ -212,6 +213,18 @@
   mf:result [
     bridge:expectedGraph <expected/shared-id.ttl> ;
     bridge:expectedFindings <findings/shared-id.ttl>
+  ] .
+
+<#negations> a bridge:IsomorphicConversionTest ;
+  mf:name "negations" ;
+  mf:action [
+    bridge:input <in/negations.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/negations.ttl> ;
+    bridge:expectedFindings <findings/negations.ttl>
   ] .
 
 <#download-c> a bridge:IsomorphicConversionTest ;

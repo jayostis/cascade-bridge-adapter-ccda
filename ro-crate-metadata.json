@@ -346,6 +346,9 @@
           "@id": "fixtures/in/shared-id.xml"
         },
         {
+          "@id": "fixtures/in/negations.xml"
+        },
+        {
           "@id": "fixtures/in/download-c.xml"
         },
         {
@@ -440,6 +443,12 @@
         },
         {
           "@id": "fixtures/findings/shared-id.ttl"
+        },
+        {
+          "@id": "fixtures/expected/negations.ttl"
+        },
+        {
+          "@id": "fixtures/findings/negations.ttl"
         },
         {
           "@id": "fixtures/expected/download-c.ttl"
@@ -676,8 +685,8 @@
       "@type": "File",
       "name": "Document table: the clinical statements",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "22645",
-      "sha256": "a3d9c369e55359bda7318e7786c4a8f8f3a9d1b0f29c101be5ee6bb0302b6925",
+      "contentSize": "23261",
+      "sha256": "396c131d11a2c722ee9ad8c643bd83f55b7010faa8ddb81a4c4263ca21a2a7d3",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -736,8 +745,8 @@
       "@type": "File",
       "name": "Findings: sections not mapped",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "2930",
-      "sha256": "b8147a87daa2a3d51b4f9160a3d9e5d1a7bd79e29c0e0a1c7f69e626d665ed50",
+      "contentSize": "3305",
+      "sha256": "913ded186af8e254c790e9af364564cf13fbc2b28aa8c120d993287e10dc8316",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -772,8 +781,8 @@
       "@type": "File",
       "name": "Mapping: condition",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "7638",
-      "sha256": "24ba395771b65261e112c21a69b94b6aee7b6b4b7260b61724687765682da492",
+      "contentSize": "8268",
+      "sha256": "e4ea06e502a8d203948a92bf831fdbd90780dd1f927c1a6cfbeffa46001c09ac",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -796,8 +805,8 @@
       "@type": "File",
       "name": "Mapping: procedure",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "5770",
-      "sha256": "a64fd818b1ead0e038e18d03dda243475f4752f72b841151e75d44c19dfd8044",
+      "contentSize": "6051",
+      "sha256": "612d024f2d07f690c43d797ae6528c18e0cea26dae8ca880388673a3c0b0ff95",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -808,8 +817,8 @@
       "@type": "File",
       "name": "Findings: problem codes not mapped",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "2965",
-      "sha256": "34a6b11dfb90051b7dc611622ef85359c19321af9aa560ae06db7c2046cc5e31",
+      "contentSize": "3758",
+      "sha256": "3455a3f0db199d468a5dd85eb5a1ea2d32b494ef6f95cb83a3dacf1c29cf5a51",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -820,8 +829,8 @@
       "@type": "File",
       "name": "Findings: immunization and procedure codes not mapped",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "3035",
-      "sha256": "d8acd138a349baed504c5b02b8cefc3490794013d3cf929a4962e96a19969792",
+      "contentSize": "3030",
+      "sha256": "5d014208d2383d708f28fb9c95169b0e8333212ca94eca5303c250a96866495b",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -844,8 +853,8 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML gaps",
       "encodingFormat": "text/turtle",
-      "contentSize": "3532",
-      "sha256": "54580b8aaad5d26a769f179a2c326f0e4f41a5a1d7d2486aa326a877990904d7",
+      "contentSize": "3807",
+      "sha256": "f693b558042ba7c442488ad05a492b07338aa506d1254c6cff25ff0a43aa3343",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -856,8 +865,8 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML source accounting",
       "encodingFormat": "text/turtle",
-      "contentSize": "42521",
-      "sha256": "03af5118f4534f1a9c304e1fd62c446fa77cdedf46ca71b427c23ff3637c84d3",
+      "contentSize": "112886",
+      "sha256": "053f5864e7de0410155c7f08772735fd9acd43fbad9993440ed2fc05bf05b0dc",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1251,6 +1260,19 @@
       "description": "One id carried by an allergy observation in the Allergies section and by a problem observation in the Problems section. Authored here on 2026-10-07, for a case the conformance corpus does not hold; it validates against the CDA schema."
     },
     {
+      "@id": "fixtures/in/negations.xml",
+      "@type": "File",
+      "name": "C-CDA: negations",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "4435",
+      "sha256": "4ff120ae8fe00a43a1b7145a295c9516ab5c277c724ec2a63cfbc058fb8597ca",
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A problem stated absent by negationInd, in a concern act whose completed status maps to no clinical status, and a procedure not performed. Authored here on 2026-10-07, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
       "@id": "fixtures/in/download-c.xml",
       "@type": "File",
       "name": "C-CDA: download-c",
@@ -1297,8 +1319,8 @@
       "@type": "File",
       "name": "Expected findings for allergies-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "169919",
-      "sha256": "d0f75650199bbbec02d78e983eb2ce6dc7c4fdaea3772514c08c8578514e45aa",
+      "contentSize": "91891",
+      "sha256": "471b7efc235d7b1d6c7a3fb1bd18236dc5a1dc9793a8f22f5f68ec9534018a56",
       "about": {
         "@id": "fixtures/in/allergies-section.xml"
       },
@@ -1329,8 +1351,8 @@
       "@type": "File",
       "name": "Expected findings for cerner-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "231709",
-      "sha256": "ad744189aa67462af9d8a838ce172d76f946f0ab0abca46c739d11d9097068ce",
+      "contentSize": "126020",
+      "sha256": "763b6ab2bc30b8eaa88fb3261362a7228bfea67e7f81a6367eb8ca709de27ccc",
       "about": {
         "@id": "fixtures/in/cerner-summarization.xml"
       },
@@ -1361,8 +1383,8 @@
       "@type": "File",
       "name": "Expected findings for epic-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "304174",
-      "sha256": "8de78a8f06022afd4f28cd0c4ab5b651ba1fb7cbfab1c1957b7a1da7c90bd5e9",
+      "contentSize": "198516",
+      "sha256": "4ecf4936b192c6b76c39c614b8a274fac2dca111750dee32b81f9fde9b277e1a",
       "about": {
         "@id": "fixtures/in/epic-summarization.xml"
       },
@@ -1393,8 +1415,8 @@
       "@type": "File",
       "name": "Expected findings for full-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "309437",
-      "sha256": "52203f4f4e062a80363e7f5f5bf5e5ea2cc0fccb889a6638dbad66f4ea057014",
+      "contentSize": "203836",
+      "sha256": "a5e35d7cc7b81435a91e1062de30a2e75409ec2e768f6f18ac7e4bd5eaaf93e7",
       "about": {
         "@id": "fixtures/in/full-summarization.xml"
       },
@@ -1425,8 +1447,8 @@
       "@type": "File",
       "name": "Expected findings for immunizations-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "73020",
-      "sha256": "bd4a111cbb8f0315dee4c43a8543e9bbfae6c4c66eb1f095b8df0169821adcf3",
+      "contentSize": "47833",
+      "sha256": "0a714ca1fcdde143a01c13c2b2864ba5132a1bae95c3e0cf80580a4562bbd264",
       "about": {
         "@id": "fixtures/in/immunizations-section.xml"
       },
@@ -1457,8 +1479,8 @@
       "@type": "File",
       "name": "Expected findings for labs-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "135739",
-      "sha256": "421785fc8261ded5a3a61192e1af2f90ec6b7669fb048a63dc69dfd68a1d678d",
+      "contentSize": "110684",
+      "sha256": "3dfc081759e4fdf4db2033605707abeb2b81121d2f8132af5144dbb39a586721",
       "about": {
         "@id": "fixtures/in/labs-section.xml"
       },
@@ -1489,8 +1511,8 @@
       "@type": "File",
       "name": "Expected findings for narrative-only-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "134015",
-      "sha256": "81f24fcd57736300cd2e5dd10e270872940080fe6b7795de37e7b1539321afae",
+      "contentSize": "71975",
+      "sha256": "208082f433140e6ae25bbe19891f31c82dff6f486a35a9974664729f7838d476",
       "about": {
         "@id": "fixtures/in/narrative-only-section.xml"
       },
@@ -1521,8 +1543,8 @@
       "@type": "File",
       "name": "Expected findings for custodian-and-author",
       "encodingFormat": "text/turtle",
-      "contentSize": "354192",
-      "sha256": "c8a11ccfdaa397491f6071acda852cb2c6127f1a8148b56a8cb8481f06262f9c",
+      "contentSize": "227886",
+      "sha256": "e30c05701acb403c2f0bdeee6d063b8eae7def40f845bd0bc65c2e4ffa5fcbce",
       "about": {
         "@id": "fixtures/in/custodian-and-author.xml"
       },
@@ -1553,8 +1575,8 @@
       "@type": "File",
       "name": "Expected findings for several-ids",
       "encodingFormat": "text/turtle",
-      "contentSize": "210409",
-      "sha256": "9b04eda97e862f692d6ffb0e6d33a660fe4eef3fe9d3b8fc433c937cdc46d3ec",
+      "contentSize": "115614",
+      "sha256": "4d939719b06ed01f23a773a1a7f5faaaaa3707aed80a0d55134656502baa6872",
       "about": {
         "@id": "fixtures/in/several-ids.xml"
       },
@@ -1585,8 +1607,8 @@
       "@type": "File",
       "name": "Expected findings for repeated-ids",
       "encodingFormat": "text/turtle",
-      "contentSize": "211422",
-      "sha256": "02c77c9013caf33ad875dfb24e4b7e6ad1f1c90c7815f2a3d0b57a1a9e1811f0",
+      "contentSize": "117848",
+      "sha256": "b68388d6dd601b5fd49798206547141c324edad48176375f99c33c9ecdc751ef",
       "about": {
         "@id": "fixtures/in/repeated-ids.xml"
       },
@@ -1617,8 +1639,8 @@
       "@type": "File",
       "name": "Expected findings for download-a",
       "encodingFormat": "text/turtle",
-      "contentSize": "211771",
-      "sha256": "d5335f48af9a21b7638b94a4024e0c4e2a09aeced41f6e7944b63b4c30ae3c86",
+      "contentSize": "116409",
+      "sha256": "6baf5dacce11250d0bbd772a3ef026d33342f402ea98a079bd3dc71c63f44fa9",
       "about": {
         "@id": "fixtures/in/download-a.xml"
       },
@@ -1649,8 +1671,8 @@
       "@type": "File",
       "name": "Expected findings for download-b",
       "encodingFormat": "text/turtle",
-      "contentSize": "211770",
-      "sha256": "ec45ca68dc57e489bb31415508bbe151559984c70813346e7d2dc40b3ea89462",
+      "contentSize": "116382",
+      "sha256": "203f58d91754abb6cca2a9d376261b32909289663d2125688549eeea2868b219",
       "about": {
         "@id": "fixtures/in/download-b.xml"
       },
@@ -1681,8 +1703,8 @@
       "@type": "File",
       "name": "Expected findings for not-a-ccda",
       "encodingFormat": "text/turtle",
-      "contentSize": "62839",
-      "sha256": "8942e2b1c435cfa35100d710142de57b8acda9d9c42de9449a597c674771d8f0",
+      "contentSize": "39411",
+      "sha256": "cc6604649db74db38939f2b7f827f9da476dd5417bedab00d4aca8703176c8f2",
       "about": {
         "@id": "fixtures/in/not-a-ccda.xml"
       },
@@ -1713,8 +1735,8 @@
       "@type": "File",
       "name": "Expected findings for procedures",
       "encodingFormat": "text/turtle",
-      "contentSize": "118293",
-      "sha256": "765e03861f96c9625873f80848b686769f38f88d66526669e6edd813d91a3003",
+      "contentSize": "85401",
+      "sha256": "79ef27f9983266c6e0acdae9740d963cba8f314e46aee1cded9a754219fcee0c",
       "about": {
         "@id": "fixtures/in/procedures.xml"
       },
@@ -1745,10 +1767,42 @@
       "@type": "File",
       "name": "Expected findings for shared-id",
       "encodingFormat": "text/turtle",
-      "contentSize": "214532",
-      "sha256": "16cab32226d2cc37e74518ef1fa481e658c1ed11ec6940e0893c8e15747e4b0d",
+      "contentSize": "115298",
+      "sha256": "6441be4f275ecbbf45e118b1eea800564e635a903afd304a0c0b0b35d253c29a",
       "about": {
         "@id": "fixtures/in/shared-id.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/negations.ttl",
+      "@type": "File",
+      "name": "Expected graph for negations",
+      "encodingFormat": "text/turtle",
+      "contentSize": "5014",
+      "sha256": "01d0c3042cc1985ad27f01a2d96f2a7def23abd104ec71b8890e0b7c3578cb79",
+      "about": {
+        "@id": "fixtures/in/negations.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/negations.ttl",
+      "@type": "File",
+      "name": "Expected findings for negations",
+      "encodingFormat": "text/turtle",
+      "contentSize": "94236",
+      "sha256": "fa2b242362ce3f5a89472c16c8bdbcfd99d33f85b3790af932c97bc4b533dcf2",
+      "about": {
+        "@id": "fixtures/in/negations.xml"
       },
       "dateCreated": "2026-10-07",
       "license": {
@@ -1777,8 +1831,8 @@
       "@type": "File",
       "name": "Expected findings for download-c",
       "encodingFormat": "text/turtle",
-      "contentSize": "203931",
-      "sha256": "a5c8d63a90f3eb5b806cb26988ffd6cf4d9ee6c077a9efa3126bc0da94c01f2a",
+      "contentSize": "130438",
+      "sha256": "cbd423b8a09067b76a938f6c4cbf27eb0578798c1217eeb587a91ed3732962a8",
       "about": {
         "@id": "fixtures/in/download-c.xml"
       },
@@ -1809,8 +1863,8 @@
       "@type": "File",
       "name": "Expected findings for download-d",
       "encodingFormat": "text/turtle",
-      "contentSize": "203914",
-      "sha256": "cff21d69380a14d4ceaf84bbec07a309deed0f0897cf0c427e3d8535df23cac0",
+      "contentSize": "130430",
+      "sha256": "ab7dd8bce9519c63d9158bb12db10819163663ac071d08dbc490a888a2640bb7",
       "about": {
         "@id": "fixtures/in/download-d.xml"
       },

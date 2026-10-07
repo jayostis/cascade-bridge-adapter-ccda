@@ -17,7 +17,9 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # The category is the section's, by its code. A coded value is carried only
 # through the concept map its rows were transcribed into; a code outside it is
 # a finding of condition-findings.rq. Times are written as allergy.rq writes
-# them: the low of effectiveTime is the onset, its high the abatement.
+# them: effectiveTime's value, else its low, is the onset, its high the
+# abatement. A problem whose negationInd is true is refuted: the source states
+# it is absent.
 
 CONSTRUCT {
   ?version ?p ?o .
@@ -43,6 +45,10 @@ WHERE {
   FILTER EXISTS {
     ?condition ?templateSlot ?template .
     ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.4" .
+  }
+  FILTER EXISTS {
+    ?act ?concernSlot ?concern .
+    ?concern a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.3" .
   }
   BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(CONCAT(
           STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
@@ -107,10 +113,26 @@ WHERE {
         }
         UNION
         {
-          ?condition ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a ?boundType ; xyz:value ?value .
-          VALUES (?boundType ?p) { (v3:low health:onsetDate) (v3:high clinical:abatementDate) }
+          ?condition ?eS ?time . ?time a v3:effectiveTime .
+          {
+            ?time ?bS ?bound . ?bound a ?boundType ; xyz:value ?value .
+            VALUES (?boundType ?p ?tier) { (v3:low health:onsetDate "2") (v3:high clinical:abatementDate "1") }
+          }
+          UNION
+          {
+            ?time xyz:value ?value .
+            BIND (health:onsetDate AS ?p)
+            BIND ("1" AS ?tier)
+          }
           FILTER (REGEX(?value, "^[0-9]{8}"))
           BIND (STRAFTER(STR(?eS), "#_") AS ?at)
+        }
+        UNION
+        {
+          ?condition xyz:negationInd "true" .
+          BIND (clinical:verificationStatus AS ?p)
+          BIND ("refuted" AS ?value)
+          BIND ("" AS ?at)
           BIND ("1" AS ?tier)
         }
         BIND (COALESCE(?within, "") AS ?inner)

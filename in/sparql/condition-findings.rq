@@ -9,9 +9,9 @@ PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # A status a problem states that the concept map condition.rq reads it through
-# does not hold, and a code in a code system no predicate of a condition
+# does not hold: its Problem Status Observation's, or, where it has none, its
+# concern act's. And a code in a code system no predicate of a condition
 # carries.
-
 
 CONSTRUCT {
   [] a oa:Annotation ;
@@ -45,6 +45,10 @@ WHERE {
     ?condition ?templateSlot ?template .
     ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.4" .
   }
+  FILTER EXISTS {
+    ?act ?concernSlot ?concern .
+    ?concern a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.3" .
+  }
   ?row ccda:statementAt ?slots ; ccda:refinement ?refinement .
   FILTER (?slots = CONCAT(
           STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
@@ -60,6 +64,20 @@ WHERE {
       FILTER (?key = LCASE(REPLACE(?value, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
     }
     BIND (ccda:problemStatusNotMapped AS ?gap)
+  }
+  UNION
+  {
+    ?act ?sS ?status . ?status a v3:statusCode ; xyz:code ?value .
+    FILTER NOT EXISTS {
+      ?condition ?anyS ?anyRelationship . ?anyRelationship a v3:entryRelationship ; ?anyO ?anyStatus .
+      ?anyStatus a v3:observation ; ?anyT ?anyTemplate .
+      ?anyTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.6" .
+    }
+    FILTER NOT EXISTS {
+      ?concept skos:inScheme ccda:concernStatuses ; skos:notation ?key .
+      FILTER (?key = LCASE(REPLACE(?value, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+    }
+    BIND (ccda:concernStatusNotMapped AS ?gap)
   }
   UNION
   {

@@ -12,8 +12,10 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # in this order: the narrative its code's originalText references, the
 # originalText's own text, the code's displayName; and the SNOMED CT and CPT
 # codes, the code's own before a translation's, each written as the FHIR R4
-# adapter writes it, as the code alone. The status is the statusCode, where it
-# maps to a procedure status. A time is written as allergy.rq writes it.
+# adapter writes it, as the code alone. The status is not-done where
+# negationInd is true, the procedure not performed, and otherwise the
+# statusCode, where it maps to a procedure status. A time is written as
+# allergy.rq writes it.
 
 CONSTRUCT {
   ?version ?p ?o .
@@ -84,6 +86,14 @@ WHERE {
           }
           FILTER (?system = REPLACE(?codeSystem, "^urn:oid:", ""))
         }
+      }
+      UNION
+      {
+        ?procedure xyz:negationInd "true" .
+        BIND (clinical:status AS ?p)
+        BIND ("not-done" AS ?value)
+        BIND ("" AS ?at)
+        BIND ("0" AS ?tier)
       }
       UNION
       {

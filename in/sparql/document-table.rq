@@ -21,8 +21,8 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 #                      statusCode, and the value of its Allergy Status
 #                      Observation.
 #   Condition          the value's code, code system and originalText; the
-#                      effectiveTime's low and high, statusCode, and the value
-#                      of its Problem Status Observation.
+#                      effectiveTime, its low and high, statusCode, negationInd,
+#                      and the value of its Problem Status Observation.
 #   Immunization       the vaccine's code, code system and originalText; the
 #   Procedure          procedure's, its own; then effectiveTime, statusCode,
 #                      negationInd and the vaccine's lot.
@@ -109,6 +109,10 @@ WHERE {
             }
           }
         }
+        FILTER (?class != "Condition" || EXISTS {
+          ?act ?concernSlot ?concern .
+          ?concern a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.3" .
+        })
         {
           SELECT ?outer (COUNT(?earlierOuter) + 1 AS ?outerAt) WHERE {
             ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
@@ -295,7 +299,7 @@ WHERE {
             }
             UNION
             {
-              ?statement ?tplS ?tpl . ?tpl a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.4" .
+              ?statement a v3:observation ; ?tplS ?tpl . ?tpl a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.4" .
               {
                 ?statement ?vS ?value . ?value a v3:value .
                 { ?value xyz:code ?v . BIND (CONCAT("code=", ?v) AS ?field) }
@@ -309,6 +313,8 @@ WHERE {
                 }
               }
               UNION
+              { ?statement ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?v . BIND (CONCAT("effectiveTime=", ?v) AS ?field) }
+              UNION
               {
                 ?statement ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a ?boundType ; xyz:value ?v .
                 FILTER (?boundType IN (v3:low, v3:high))
@@ -316,6 +322,8 @@ WHERE {
               }
               UNION
               { ?statement ?sS ?status . ?status a v3:statusCode ; xyz:code ?v . BIND (CONCAT("statusCode=", ?v) AS ?field) }
+              UNION
+              { ?statement xyz:negationInd ?v . BIND (CONCAT("negationInd=", ?v) AS ?field) }
               UNION
               {
                 ?statement ?rS ?relationship . ?relationship a v3:entryRelationship ; ?oS ?observation .
@@ -327,15 +335,18 @@ WHERE {
             }
             UNION
             {
-              ?statement ?tplS ?tpl . ?tpl a v3:templateId ; xyz:root ?tplRoot .
-              VALUES ?tplRoot { "2.16.840.1.113883.10.20.22.4.52" "2.16.840.1.113883.10.20.22.4.14" }
+              ?statement a ?tplElement ; ?tplS ?tpl . ?tpl a v3:templateId ; xyz:root ?tplRoot .
+              VALUES (?tplRoot ?tplElement) {
+                ("2.16.840.1.113883.10.20.22.4.52" v3:substanceAdministration)
+                ("2.16.840.1.113883.10.20.22.4.14" v3:procedure)
+              }
               {
                 {
                   ?statement ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
                   ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial ; ?cS ?code .
                 }
                 UNION
-                { ?statement ?cS ?code . }
+                { ?statement a v3:procedure ; ?cS ?code . }
                 ?code a v3:code .
                 { ?code xyz:code ?v . BIND (CONCAT("code=", ?v) AS ?field) }
                 UNION
