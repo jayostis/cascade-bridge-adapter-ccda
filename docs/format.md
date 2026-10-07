@@ -129,7 +129,10 @@ A section's `text` is its narrative, the human-readable copy of its entries,
 whose elements may carry an `ID`. An entry points into it with a `reference`
 whose `value` is `#` and that `ID`, from a statement's `text` or a code's
 `originalText`. An allergen's, a drug's and a test's name, a coded result and a
-reference range's text are each read through such a reference first. A
+reference range's text are each read through such a reference first, where
+the element it points to holds one run of text. One holding markup, a
+`content` inside a `td` among them, is passed over for the next place the name
+is stated, so a name is never cut short. A
 portal's next download of one document may number the `ID`s afresh, so neither
 an `ID` nor a reference is part of a key or a member.
 
