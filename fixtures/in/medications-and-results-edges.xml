@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <realmCode code="US"/>
+  <typeId root="2.16.840.1.113883.1.3" extension="POCD_HD000040"/>
+  <templateId root="2.16.840.1.113883.10.20.22.1.1" extension="2015-08-01"/>
+  <templateId root="2.16.840.1.113883.10.20.22.1.2" extension="2015-08-01"/>
+  <id root="2.16.840.1.113883.19.5.99999.1" extension="CCD-2025-0902-E"/>
+  <code code="34133-9" displayName="Summarization of Episode Note" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+  <title>Continuity of Care Document</title>
+  <effectiveTime value="20250902090000-0500"/>
+  <confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25"/>
+  <languageCode code="en-US"/>
+  <recordTarget>
+    <patientRole>
+      <id root="2.16.840.1.113883.19.5.99999.2" extension="MRN-448120"/>
+      <patient>
+        <name use="L">
+          <given>Robin</given>
+          <family>Ahmadi</family>
+        </name>
+        <administrativeGenderCode code="F" codeSystem="2.16.840.1.113883.5.1"/>
+        <birthTime value="19780214"/>
+      </patient>
+    </patientRole>
+  </recordTarget>
+  <author>
+    <time value="20250902090000-0500"/>
+    <assignedAuthor>
+      <id root="2.16.840.1.113883.19.5.99999.3"/>
+      <representedOrganization>
+        <name>Riverside Community Hospital</name>
+      </representedOrganization>
+    </assignedAuthor>
+  </author>
+  <custodian>
+    <assignedCustodian>
+      <representedCustodianOrganization>
+        <id root="2.16.840.1.113883.19.5.99999.3"/>
+        <name>Riverside Community Hospital</name>
+      </representedCustodianOrganization>
+    </assignedCustodian>
+  </custodian>
+  <component>
+    <structuredBody>
+      <component>
+        <section>
+          <templateId root="2.16.840.1.113883.10.20.22.2.1.1" extension="2014-06-09"/>
+          <code code="10160-0" displayName="History of Medication use Narrative" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+          <title>Medications</title>
+          <text>
+            <table border="1" width="100%">
+              <thead>
+                <tr><th>Medication</th><th>Start</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td ID="med-e-1">lisinopril <content styleCode="Bold">10 mg</content> tablet</td>
+                  <td>March 1, 2024</td>
+                </tr>
+              </tbody>
+            </table>
+          </text>
+          <entry typeCode="DRIV">
+            <substanceAdministration classCode="SBADM" moodCode="EVN">
+              <templateId root="2.16.840.1.113883.10.20.22.4.16" extension="2014-06-09"/>
+              <id root="2.16.840.1.113883.19.5.99999.5" extension="MED-3401"/>
+              <statusCode code="active"/>
+              <effectiveTime xsi:type="IVL_TS">
+                <low value="20240301"/>
+              </effectiveTime>
+              <consumable>
+                <manufacturedProduct classCode="MANU">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.23" extension="2014-06-09"/>
+                  <manufacturedMaterial>
+                    <code code="314076" displayName="lisinopril 10 MG Oral Tablet" codeSystem="2.16.840.1.113883.6.88" codeSystemName="RxNorm">
+                      <originalText>
+                        <reference value="#med-e-1"/>
+                      </originalText>
+                    </code>
+                  </manufacturedMaterial>
+                </manufacturedProduct>
+              </consumable>
+            </substanceAdministration>
+          </entry>
+        </section>
+      </component>
+      <component>
+        <section>
+          <templateId root="2.16.840.1.113883.10.20.22.2.3.1" extension="2015-08-01"/>
+          <code code="30954-2" displayName="Relevant diagnostic tests/laboratory data Narrative" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+          <title>Results</title>
+          <text>
+            <paragraph>Glucose 182 mg/dL (high, abnormal; at most 99 mg/dL). Protein in urine: negative. Creatinine 0.9 mg/dL, 80 umol/L (at least 0.6 mg/dL).</paragraph>
+          </text>
+          <entry typeCode="DRIV">
+            <organizer classCode="BATTERY" moodCode="EVN">
+              <templateId root="2.16.840.1.113883.10.20.22.4.1" extension="2015-08-01"/>
+              <id root="2.16.840.1.113883.19.5.99999.6" extension="LABP-9500"/>
+              <code code="24323-8" displayName="Comprehensive metabolic 2000 panel - Serum or Plasma" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+              <statusCode code="completed"/>
+              <effectiveTime value="20250901083000-0500"/>
+              <component>
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.2" extension="2015-08-01"/>
+                  <id root="2.16.840.1.113883.19.5.99999.6" extension="LAB-9501"/>
+                  <code code="2345-7" displayName="Glucose [Mass/volume] in Serum or Plasma" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+                  <statusCode code="completed"/>
+                  <effectiveTime value="20250901083000-0500"/>
+                  <value xsi:type="PQ" value="182" unit="mg/dL"/>
+                  <interpretationCode code="H" displayName="High" codeSystem="2.16.840.1.113883.5.83" codeSystemName="ObservationInterpretation"/>
+                  <interpretationCode code="A" displayName="Abnormal" codeSystem="2.16.840.1.113883.5.83" codeSystemName="ObservationInterpretation"/>
+                  <referenceRange>
+                    <observationRange>
+                      <value xsi:type="IVL_PQ">
+                        <high value="99" unit="mg/dL"/>
+                      </value>
+                    </observationRange>
+                  </referenceRange>
+                </observation>
+              </component>
+              <component>
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.2" extension="2015-08-01"/>
+                  <id root="2.16.840.1.113883.19.5.99999.6" extension="LAB-9502"/>
+                  <code code="20454-5" displayName="Protein [Presence] in Urine by Test strip" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+                  <statusCode code="completed"/>
+                  <effectiveTime value="20250901"/>
+                  <value xsi:type="CD" code="260385009" codeSystem="2.16.840.1.113883.6.96"/>
+                </observation>
+              </component>
+              <component>
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.2" extension="2015-08-01"/>
+                  <id root="2.16.840.1.113883.19.5.99999.6" extension="LAB-9503"/>
+                  <code code="2160-0" displayName="Creatinine [Mass/volume] in Serum or Plasma" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+                  <statusCode code="completed"/>
+                  <effectiveTime value="20250901083000-0500"/>
+                  <value xsi:type="PQ" value="0.9" unit="mg/dL"/>
+                  <value xsi:type="PQ" value="80" unit="umol/L"/>
+                  <referenceRange>
+                    <observationRange>
+                      <value xsi:type="IVL_PQ">
+                        <low value="0.6" unit="mg/dL"/>
+                      </value>
+                    </observationRange>
+                  </referenceRange>
+                </observation>
+              </component>
+            </organizer>
+          </entry>
+        </section>
+      </component>
+    </structuredBody>
+  </component>
+</ClinicalDocument>

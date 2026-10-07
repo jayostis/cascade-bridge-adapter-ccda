@@ -81,6 +81,46 @@
   prov:wasDerivedFrom <ni:///sha-256;keniqt1FewQFgq2Lj9SmgPsv5HQsAVdVyMtmEdjlQok> ;
   prov:wasGeneratedBy _:import .
 
+<urn:uuid:dc33f629-17aa-83f4-b6f1-058a26190561>
+  a clinical:Medication ;
+  clinical:sourceRecordId "2.16.840.1.113883.3.88.11.32.1:MED-001" ;
+  rec:sourceUrl <urn:hl7ii:2.16.840.1.113883.3.88.11.32.1:MED-001> .
+
+<ni:///sha-256;LqBw-IvxKDzqFjMdLO-DTKpSd0RSHUgvNHy_I4jUtWI>
+  prov:specializationOf <urn:uuid:dc33f629-17aa-83f4-b6f1-058a26190561> ;
+  rec:patient <urn:uuid:98ebabcf-1e12-889e-8d31-4b1c618f61b9> ;
+  clinical:clinicalIntent "reportedUse" ;
+  clinical:drugName "Lisinopril 10 MG Oral Tablet" ;
+  clinical:rxNormCode <http://www.nlm.nih.gov/research/umls/rxnorm/29046> ;
+  clinical:startDate "2021-06-01"^^<http://www.w3.org/2001/XMLSchema#date> ;
+  clinical:status "active" .
+
+[] bridge:arrivedAs <ni:///sha-256;LqBw-IvxKDzqFjMdLO-DTKpSd0RSHUgvNHy_I4jUtWI> ;
+  bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][3]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='substanceAdministration' and namespace-uri()='urn:hl7-org:v3'][1]" ;
+  prov:wasDerivedFrom <ni:///sha-256;keniqt1FewQFgq2Lj9SmgPsv5HQsAVdVyMtmEdjlQok> ;
+  prov:wasGeneratedBy _:import .
+
+<urn:uuid:2fd58dc0-7a57-8a85-afc4-58bec0b4afae>
+  a health:LabResultRecord ;
+  health:sourceRecordId "2.16.840.1.113883.3.88.11.32.1:LAB-OBS-001" ;
+  rec:sourceUrl <urn:hl7ii:2.16.840.1.113883.3.88.11.32.1:LAB-OBS-001> .
+
+<ni:///sha-256;-_IWx-3fXif47V1RboqFvsCvpMBxJxCro_ynZteTPuI>
+  prov:specializationOf <urn:uuid:2fd58dc0-7a57-8a85-afc4-58bec0b4afae> ;
+  rec:patient <urn:uuid:98ebabcf-1e12-889e-8d31-4b1c618f61b9> ;
+  health:testName "Glucose [Mass/volume] in Serum or Plasma" ;
+  health:testCode <http://loinc.org/rdf/2345-7> ;
+  health:resultValue "95" ;
+  health:resultUnit "mg/dL" ;
+  health:referenceRange "70-100 mg/dL" ;
+  health:performedDate "2026-01-01"^^<http://www.w3.org/2001/XMLSchema#date> ;
+  clinical:status "final" .
+
+[] bridge:arrivedAs <ni:///sha-256;-_IWx-3fXif47V1RboqFvsCvpMBxJxCro_ynZteTPuI> ;
+  bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][5]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='organizer' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]" ;
+  prov:wasDerivedFrom <ni:///sha-256;keniqt1FewQFgq2Lj9SmgPsv5HQsAVdVyMtmEdjlQok> ;
+  prov:wasGeneratedBy _:import .
+
 <ni:///sha-256;keniqt1FewQFgq2Lj9SmgPsv5HQsAVdVyMtmEdjlQok>
   a prov:Entity ;
   pav:retrievedOn "2025-07-02T09:00:00Z"^^xsd:dateTime ;

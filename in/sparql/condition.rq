@@ -71,6 +71,7 @@ WHERE {
             ?coded ?otS ?originalText . ?originalText a v3:originalText ; ?rfS ?reference .
             ?reference a v3:reference ; xyz:value ?pointer .
             ?narrative xyz:ID ?anchor ; ?nS ?value .
+            FILTER NOT EXISTS { ?narrative ?oS ?other . FILTER (STRSTARTS(STR(?oS), STR(rdf:_)) && ?oS != ?nS) }
             FILTER (?anchor = STRAFTER(?pointer, "#") && isLiteral(?value) && STRSTARTS(STR(?nS), STR(rdf:_)))
             BIND ("1" AS ?tier)
             BIND (STRAFTER(STR(?nS), "#_") AS ?within)

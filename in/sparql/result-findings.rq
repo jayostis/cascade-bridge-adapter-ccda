@@ -1,0 +1,132 @@
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#>
+PREFIX xsi:    <http://www.w3.org/2001/XMLSchema-instance>
+PREFIX sh:     <http://www.w3.org/ns/shacl#>
+PREFIX oa:     <http://www.w3.org/ns/oa#>
+PREFIX skos:   <http://www.w3.org/2004/02/skos/core#>
+PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:    <http://sparql.xyz/facade-x/data/>
+PREFIX v3:     <urn:hl7-org:v3>
+PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
+PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# What a result organizer holds that result.rq does not carry: a status outside
+# its concept map, a value of a type no predicate takes or a coded one with no
+# name, a second value, range or interpretation, and a code in a code system
+# other than LOINC, at the result; and
+# a component of an organizer some result of which is a record, that is no
+# record itself, a vital sign among them, at the component, valued by the least
+# templateId root its statement claims. An organizer no result of which is a
+# record is entry-findings.rq's.
+
+CONSTRUCT {
+  [] a oa:Annotation ;
+    oa:hasTarget [
+      oa:hasSource bridge:thisRecord ;
+      oa:hasSelector [ a oa:XPathSelector ; rdf:value ?refinement ]
+    ] ;
+    oa:hasBody ?gap ;
+    oa:motivatedBy oa:classifying ;
+    sh:value ?value .
+}
+WHERE {
+  ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
+  ?outer a v3:component ; ?bodySlot ?body .
+  ?body a v3:structuredBody ; ?componentSlot ?component .
+  ?component a v3:component ; ?sectionSlot ?section .
+  ?section a v3:section ; ?entrySlot ?entry .
+  ?entry a v3:entry ; ?organizerSlot ?organizer .
+  ?organizer a v3:organizer ; ?memberSlot ?member .
+  ?member a v3:component .
+  BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
+               STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
+               STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?organizerSlot), "#_")) AS ?organizerSlots)
+  BIND (CONCAT(?organizerSlots, ".", STRAFTER(STR(?memberSlot), "#_"), ".") AS ?memberSlots)
+  {
+    ?member ?statementSlot ?result .
+    ?row ccda:recordClass "Observation" ; ccda:statementAt ?slots ; ccda:refinement ?refinement .
+    BIND (STRAFTER(STR(?statementSlot), "#_") AS ?statementAt)
+    {
+      ?result ?sS ?statusCode . ?statusCode a v3:statusCode ; xyz:code ?value .
+      FILTER NOT EXISTS {
+        ?concept skos:inScheme ccda:resultStatuses ; skos:notation ?key .
+        FILTER (?key = LCASE(REPLACE(?value, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+      }
+      BIND (ccda:resultStatusNotMapped AS ?gap)
+    }
+    UNION
+    {
+      ?result ?vS ?resultValue . ?resultValue a v3:value ; xsi:type ?written .
+      FILTER NOT EXISTS { ?resultValue xyz:nullFlavor ?absent }
+      BIND (REPLACE(?written, "^.*:", "") AS ?value)
+      FILTER (?value NOT IN ("PQ", "INT", "REAL", "ST", "CD", "CE", "CV", "CO"))
+      BIND (ccda:resultValueNotCarried AS ?gap)
+    }
+    UNION
+    {
+      ?result ?vS ?resultValue . ?resultValue a v3:value ; xsi:type ?written .
+      FILTER (REPLACE(?written, "^.*:", "") IN ("CD", "CE", "CV", "CO"))
+      FILTER NOT EXISTS { ?resultValue xyz:nullFlavor ?absent }
+      FILTER NOT EXISTS { ?resultValue xyz:displayName ?displayName }
+      FILTER NOT EXISTS { ?resultValue ?otS ?originalText . ?originalText a v3:originalText }
+      BIND (REPLACE(?written, "^.*:", "") AS ?value)
+      BIND (ccda:resultValueNotCarried AS ?gap)
+    }
+    UNION
+    {
+      ?result ?elementS ?element . ?element a ?elementType .
+      VALUES ?elementType { v3:value v3:referenceRange v3:interpretationCode }
+      FILTER EXISTS {
+        ?result ?earlierS ?earlier . ?earlier a ?elementType .
+        FILTER (xsd:integer(STRAFTER(STR(?earlierS), "#_")) < xsd:integer(STRAFTER(STR(?elementS), "#_")))
+      }
+      BIND (STRAFTER(STR(?elementType), "urn:hl7-org:v3") AS ?value)
+      BIND (ccda:onlyFirstCarried AS ?gap)
+    }
+    UNION
+    {
+      ?result ?cS ?code . ?code a v3:code .
+      { ?code xyz:codeSystem ?value . }
+      UNION
+      { ?code ?trS ?translation . ?translation a v3:translation ; xyz:codeSystem ?value . }
+      FILTER (REPLACE(?value, "^urn:oid:", "") != "2.16.840.1.113883.6.1")
+      BIND (ccda:codeNotCarried AS ?gap)
+    }
+  }
+  UNION
+  {
+    {
+      SELECT DISTINCT ?organizerSlots ?organizerAt WHERE {
+        ?sibling ccda:recordClass "Observation" ; ccda:statementAt ?siblingSlots ; ccda:refinement ?siblingAt .
+        BIND (REPLACE(?siblingSlots, "\\.[0-9]+\\.[0-9]+$", "") AS ?organizerSlots)
+        BIND (CONCAT(STRBEFORE(?siblingAt, "/*[local-name()='organizer'"),
+                     "/*[local-name()='organizer' and namespace-uri()='urn:hl7-org:v3'][1]") AS ?organizerAt)
+      }
+    }
+    {
+      SELECT ?member (COUNT(?earlierMember) + 1 AS ?memberAt) WHERE {
+        ?memberParent ?memberS ?member . ?memberParent a v3:organizer . ?member a v3:component .
+        OPTIONAL {
+          ?memberParent ?memberE ?earlierMember . ?earlierMember a v3:component .
+          FILTER (xsd:integer(STRAFTER(STR(?memberE), "#_")) < xsd:integer(STRAFTER(STR(?memberS), "#_")))
+        }
+      } GROUP BY ?member
+    }
+    OPTIONAL {
+      {
+        SELECT ?member (MIN(?claimed) AS ?value) WHERE {
+          ?member a v3:component ; ?statementS ?statement .
+          ?statement ?tS ?t . ?t a v3:templateId ; xyz:root ?claimed .
+        } GROUP BY ?member
+      }
+    }
+    BIND (ccda:resultComponentNotMapped AS ?gap)
+    BIND (CONCAT(?organizerAt, "/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?memberAt), "]") AS ?refinement)
+  }
+  FILTER (IF(?gap = ccda:resultComponentNotMapped,
+             NOT EXISTS {
+               ?own ccda:statementAt ?ownSlots .
+               FILTER (STRSTARTS(?ownSlots, ?memberSlots))
+             },
+             ?slots = CONCAT(?memberSlots, ?statementAt)))
+}

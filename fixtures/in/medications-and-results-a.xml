@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <realmCode code="US"/>
+  <typeId root="2.16.840.1.113883.1.3" extension="POCD_HD000040"/>
+  <templateId root="2.16.840.1.113883.10.20.22.1.1" extension="2015-08-01"/>
+  <templateId root="2.16.840.1.113883.10.20.22.1.2" extension="2015-08-01"/>
+  <id root="2.16.840.1.113883.19.5.99999.1" extension="CCD-2025-0802-A"/>
+  <code code="34133-9" displayName="Summarization of Episode Note" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+  <title>Continuity of Care Document</title>
+  <effectiveTime value="20250802101500-0500"/>
+  <confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25"/>
+  <languageCode code="en-US"/>
+  <recordTarget>
+    <patientRole>
+      <id root="2.16.840.1.113883.19.5.99999.2" extension="MRN-448120"/>
+      <patient>
+        <name use="L">
+          <given>Robin</given>
+          <family>Ahmadi</family>
+        </name>
+        <administrativeGenderCode code="F" codeSystem="2.16.840.1.113883.5.1"/>
+        <birthTime value="19780214"/>
+      </patient>
+    </patientRole>
+  </recordTarget>
+  <author>
+    <time value="20250802101500-0500"/>
+    <assignedAuthor>
+      <id root="2.16.840.1.113883.19.5.99999.3"/>
+      <representedOrganization>
+        <name>Riverside Community Hospital</name>
+      </representedOrganization>
+    </assignedAuthor>
+  </author>
+  <custodian>
+    <assignedCustodian>
+      <representedCustodianOrganization>
+        <id root="2.16.840.1.113883.19.5.99999.3"/>
+        <name>Riverside Community Hospital</name>
+      </representedCustodianOrganization>
+    </assignedCustodian>
+  </custodian>
+  <component>
+    <structuredBody>
+      <component>
+        <section>
+          <templateId root="2.16.840.1.113883.10.20.22.2.1.1" extension="2014-06-09"/>
+          <code code="10160-0" displayName="History of Medication use Narrative" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+          <title>Medications</title>
+          <text>
+            <table border="1" width="100%">
+              <thead>
+                <tr><th>Medication</th><th>Instructions</th><th>Start</th><th>End</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                <tr ID="med-a-1">
+                  <td ID="med-a-1-name">amoxicillin 500 mg capsule</td>
+                  <td ID="med-a-1-sig">Take 1 capsule by mouth every 12 hours for 10 days.</td>
+                  <td>January 15, 2024</td>
+                  <td>April 15, 2024</td>
+                  <td>Completed</td>
+                </tr>
+                <tr ID="med-a-2">
+                  <td>amlodipine 5 mg tablet</td>
+                  <td>Take 1 tablet by mouth once daily.</td>
+                  <td>June 10, 2023</td>
+                  <td></td>
+                  <td>Active</td>
+                </tr>
+                <tr ID="med-a-3">
+                  <td>metformin 500 mg extended release tablet</td>
+                  <td>Take 1 tablet by mouth with dinner.</td>
+                  <td>January 5, 2025</td>
+                  <td></td>
+                  <td>On hold</td>
+                </tr>
+              </tbody>
+            </table>
+          </text>
+          <entry typeCode="DRIV">
+            <substanceAdministration classCode="SBADM" moodCode="INT">
+              <templateId root="2.16.840.1.113883.10.20.22.4.16" extension="2014-06-09"/>
+              <id root="2.16.840.1.113883.19.5.99999.5" extension="MED-3301"/>
+              <text>
+                <reference value="#med-a-1"/>
+              </text>
+              <statusCode code="completed"/>
+              <effectiveTime xsi:type="IVL_TS">
+                <low value="202401150830-0500"/>
+                <high value="20240415"/>
+              </effectiveTime>
+              <effectiveTime xsi:type="PIVL_TS" institutionSpecified="true" operator="A">
+                <period value="12" unit="h"/>
+              </effectiveTime>
+              <routeCode code="C38288" displayName="ORAL" codeSystem="2.16.840.1.113883.3.26.1.1" codeSystemName="NCI Thesaurus"/>
+              <doseQuantity value="1"/>
+              <consumable>
+                <manufacturedProduct classCode="MANU">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.23" extension="2014-06-09"/>
+                  <manufacturedMaterial>
+                    <code code="RHC-881" displayName="Amoxicillin 500 mg capsule (formulary)" codeSystem="2.16.840.1.113883.19.5.99999.9" codeSystemName="Riverside Formulary">
+                      <originalText>
+                        <reference value="#med-a-1-name"/>
+                      </originalText>
+                      <translation code="308191" displayName="amoxicillin 500 MG Oral Capsule" codeSystem="2.16.840.1.113883.6.88" codeSystemName="RxNorm"/>
+                    </code>
+                  </manufacturedMaterial>
+                </manufacturedProduct>
+              </consumable>
+              <entryRelationship typeCode="COMP">
+                <substanceAdministration classCode="SBADM" moodCode="INT">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.147"/>
+                  <code code="76662-6" displayName="Instructions Medication" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+                  <text>
+                    <reference value="#med-a-1-sig"/>
+                  </text>
+                  <consumable>
+                    <manufacturedProduct>
+                      <manufacturedLabeledDrug nullFlavor="NA"/>
+                    </manufacturedProduct>
+                  </consumable>
+                </substanceAdministration>
+              </entryRelationship>
+            </substanceAdministration>
+          </entry>
+          <entry typeCode="DRIV">
+            <substanceAdministration classCode="SBADM" moodCode="EVN">
+              <templateId root="2.16.840.1.113883.10.20.22.4.16" extension="2014-06-09"/>
+              <id nullFlavor="NI"/>
+              <text>
+                <reference value="#med-a-2"/>
+              </text>
+              <statusCode code="active"/>
+              <effectiveTime xsi:type="IVL_TS">
+                <low value="20230610"/>
+              </effectiveTime>
+              <consumable>
+                <manufacturedProduct classCode="MANU">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.23" extension="2014-06-09"/>
+                  <manufacturedMaterial>
+                    <code code="197361" displayName="amlodipine 5 MG Oral Tablet" codeSystem="2.16.840.1.113883.6.88" codeSystemName="RxNorm">
+                      <originalText>amlodipine 5 mg tablet</originalText>
+                      <translation code="212549" displayName="Norvasc 5 MG Oral Tablet" codeSystem="2.16.840.1.113883.6.88" codeSystemName="RxNorm"/>
+                    </code>
+                  </manufacturedMaterial>
+                </manufacturedProduct>
+              </consumable>
+            </substanceAdministration>
+          </entry>
+          <entry typeCode="DRIV">
+            <substanceAdministration classCode="SBADM" moodCode="INT">
+              <templateId root="2.16.840.1.113883.10.20.22.4.16" extension="2014-06-09"/>
+              <id root="2.16.840.1.113883.19.5.99999.5" extension="MED-3302"/>
+              <text>
+                <reference value="#med-a-3"/>
+              </text>
+              <statusCode code="held"/>
+              <effectiveTime xsi:type="IVL_TS">
+                <low value="20250105"/>
+              </effectiveTime>
+              <consumable>
+                <manufacturedProduct classCode="MANU">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.23" extension="2014-06-09"/>
+                  <manufacturedMaterial>
+                    <code code="860975" displayName="24 HR metformin hydrochloride 500 MG Extended Release Oral Tablet" codeSystem="2.16.840.1.113883.6.88" codeSystemName="RxNorm"/>
+                  </manufacturedMaterial>
+                </manufacturedProduct>
+              </consumable>
+            </substanceAdministration>
+          </entry>
+        </section>
+      </component>
+      <component>
+        <section>
+          <templateId root="2.16.840.1.113883.10.20.22.2.3.1" extension="2015-08-01"/>
+          <code code="30954-2" displayName="Relevant diagnostic tests/laboratory data Narrative" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+          <title>Results</title>
+          <text>
+            <table border="1" width="100%">
+              <thead>
+                <tr><th>Test</th><th>Result</th><th>Reference range</th><th>Collected</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td ID="res-a-1-1-name">Potassium</td>
+                  <td>4.10 mmol/L</td>
+                  <td>3.5-5.1 mmol/L</td>
+                  <td>August 1, 2025 07:30</td>
+                </tr>
+                <tr>
+                  <td>Sodium</td>
+                  <td>139 mmol/L (entered in error)</td>
+                  <td></td>
+                  <td>August 1, 2025 07:30</td>
+                </tr>
+                <tr>
+                  <td>Heart rate</td>
+                  <td>72 /min</td>
+                  <td></td>
+                  <td>August 1, 2025 07:30</td>
+                </tr>
+                <tr>
+                  <td>Color of urine</td>
+                  <td>Yellow</td>
+                  <td></td>
+                  <td>August 1, 2025</td>
+                </tr>
+                <tr>
+                  <td>Nitrite in urine</td>
+                  <td ID="res-a-2-2-value">Negative</td>
+                  <td>Negative</td>
+                  <td>August 1, 2025</td>
+                </tr>
+                <tr>
+                  <td>Leukocytes in urine sediment</td>
+                  <td>0-5 /[HPF]</td>
+                  <td></td>
+                  <td>August 1, 2025</td>
+                </tr>
+                <tr>
+                  <td>Hemoglobin in urine</td>
+                  <td>Not reported</td>
+                  <td ID="res-a-2-4-range">Not detected</td>
+                  <td>August 1, 2025</td>
+                </tr>
+              </tbody>
+            </table>
+          </text>
+          <entry typeCode="DRIV">
+            <organizer classCode="BATTERY" moodCode="EVN">
+              <templateId root="2.16.840.1.113883.10.20.22.4.1" extension="2015-08-01"/>
+              <id root="2.16.840.1.113883.19.5.99999.6" extension="LABP-9100"/>
+              <code code="24323-8" displayName="Comprehensive metabolic 2000 panel - Serum or Plasma" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+              <statusCode code="completed"/>
+              <effectiveTime>
+                <low value="20250801073000-0500"/>
+                <high value="20250801073000-0500"/>
+              </effectiveTime>
+              <component>
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.2" extension="2015-08-01"/>
+                  <id root="2.16.840.1.113883.19.5.99999.6" extension="LAB-9101"/>
+                  <code code="RHL-K" displayName="Potassium, serum" codeSystem="2.16.840.1.113883.19.5.99999.10" codeSystemName="Riverside Laboratory">
+                    <originalText>
+                      <reference value="#res-a-1-1-name"/>
+                    </originalText>
+                    <translation code="2823-3" displayName="Potassium [Moles/volume] in Serum or Plasma" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+                  </code>
+                  <statusCode code="completed"/>
+                  <effectiveTime value="20250801073000-0500"/>
+                  <value xsi:type="PQ" value="4.10" unit="mmol/L"/>
+                  <interpretationCode code="N" displayName="Normal" codeSystem="2.16.840.1.113883.5.83" codeSystemName="ObservationInterpretation"/>
+                  <referenceRange>
+                    <observationRange>
+                      <value xsi:type="IVL_PQ">
+                        <low value="3.5" unit="mmol/L"/>
+                        <high value="5.1" unit="mmol/L"/>
+                      </value>
+                    </observationRange>
+                  </referenceRange>
+                </observation>
+              </component>
+              <component>
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.2" extension="2015-08-01"/>
+                  <id root="2.16.840.1.113883.19.5.99999.6" extension="LAB-9102"/>
+                  <code code="2951-2" displayName="Sodium [Moles/volume] in Serum or Plasma" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+                  <statusCode code="nullified"/>
+                  <effectiveTime value="20250801073000-0500"/>
+                  <value xsi:type="PQ" value="139" unit="mmol/L"/>
+                </observation>
+              </component>
+              <component>
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.27" extension="2014-06-09"/>
+                  <id root="2.16.840.1.113883.19.5.99999.7" extension="VS-9103"/>
+                  <code code="8867-4" displayName="Heart rate" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+                  <statusCode code="completed"/>
+                  <effectiveTime value="20250801073000-0500"/>
+                  <value xsi:type="PQ" value="72" unit="/min"/>
+                </observation>
+              </component>
+            </organizer>
+          </entry>
+          <entry typeCode="DRIV">
+            <organizer classCode="BATTERY" moodCode="EVN">
+              <templateId root="2.16.840.1.113883.10.20.22.4.1" extension="2015-08-01"/>
+              <id nullFlavor="NI"/>
+              <code code="24356-8" displayName="Urinalysis complete panel - Urine" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+              <statusCode code="completed"/>
+              <effectiveTime value="20250801"/>
+              <component>
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.2" extension="2015-08-01"/>
+                  <id nullFlavor="NI"/>
+                  <code code="5778-6" displayName="Color of Urine" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+                  <statusCode code="completed"/>
+                  <effectiveTime value="20250801"/>
+                  <value xsi:type="ST">Yellow</value>
+                </observation>
+              </component>
+              <component>
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.2" extension="2015-08-01"/>
+                  <id root="2.16.840.1.113883.19.5.99999.6" extension="LAB-9202"/>
+                  <code code="5802-4" displayName="Nitrite [Presence] in Urine by Test strip" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+                  <statusCode code="active"/>
+                  <effectiveTime value="20250801"/>
+                  <value xsi:type="CD" code="260385009" displayName="Negative (qualifier value)" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+                    <originalText>
+                      <reference value="#res-a-2-2-value"/>
+                    </originalText>
+                  </value>
+                  <referenceRange>
+                    <observationRange>
+                      <text>Negative</text>
+                    </observationRange>
+                  </referenceRange>
+                </observation>
+              </component>
+              <component>
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.2" extension="2015-08-01"/>
+                  <id root="2.16.840.1.113883.19.5.99999.6" extension="LAB-9203"/>
+                  <code code="5821-4" displayName="Leukocytes [#/area] in Urine sediment by Microscopy high power field" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+                  <statusCode code="completed"/>
+                  <effectiveTime value="20250801"/>
+                  <value xsi:type="IVL_PQ">
+                    <low value="0" unit="/[HPF]"/>
+                    <high value="5" unit="/[HPF]"/>
+                  </value>
+                </observation>
+              </component>
+              <component>
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.2" extension="2015-08-01"/>
+                  <id root="2.16.840.1.113883.19.5.99999.6" extension="LAB-9204"/>
+                  <code code="5794-3" displayName="Hemoglobin [Presence] in Urine by Test strip" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+                  <statusCode code="completed"/>
+                  <effectiveTime value="20250801"/>
+                  <value xsi:type="CD" nullFlavor="NI"/>
+                  <referenceRange>
+                    <observationRange>
+                      <text>
+                        <reference value="#res-a-2-4-range"/>
+                      </text>
+                    </observationRange>
+                  </referenceRange>
+                </observation>
+              </component>
+            </organizer>
+          </entry>
+        </section>
+      </component>
+      <component>
+        <section>
+          <templateId root="2.16.840.1.113883.10.20.22.2.4.1" extension="2015-08-01"/>
+          <code code="8716-3" displayName="Vital signs" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+          <title>Vital Signs</title>
+          <text>
+            <paragraph>Body weight 68.2 kg, August 1, 2025.</paragraph>
+          </text>
+          <entry typeCode="DRIV">
+            <organizer classCode="CLUSTER" moodCode="EVN">
+              <templateId root="2.16.840.1.113883.10.20.22.4.26" extension="2015-08-01"/>
+              <id root="2.16.840.1.113883.19.5.99999.7" extension="VS-9300"/>
+              <code code="46680005" displayName="Vital signs" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT"/>
+              <statusCode code="completed"/>
+              <effectiveTime value="20250801073000-0500"/>
+              <component>
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.27" extension="2014-06-09"/>
+                  <id root="2.16.840.1.113883.19.5.99999.7" extension="VS-9301"/>
+                  <code code="29463-7" displayName="Body weight" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+                  <statusCode code="completed"/>
+                  <effectiveTime value="20250801073000-0500"/>
+                  <value xsi:type="PQ" value="68.2" unit="kg"/>
+                </observation>
+              </component>
+            </organizer>
+          </entry>
+        </section>
+      </component>
+    </structuredBody>
+  </component>
+</ClinicalDocument>

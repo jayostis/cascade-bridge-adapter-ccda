@@ -36,6 +36,8 @@ WHERE {
     ("Condition"          health:ConditionRecord    health:sourceRecordId)
     ("Immunization"       health:ImmunizationRecord health:sourceRecordId)
     ("Procedure"          clinical:Procedure        clinical:sourceRecordId)
+    ("MedicationRequest"  clinical:Medication       clinical:sourceRecordId)
+    ("Observation"        health:LabResultRecord    health:sourceRecordId)
   }
   OPTIONAL { ?row ccda:identifier ?identifier }
   OPTIONAL { ?row ccda:keyFingerprint ?key }

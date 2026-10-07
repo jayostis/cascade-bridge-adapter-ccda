@@ -1,0 +1,123 @@
+@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov:     <http://www.w3.org/ns/prov#> .
+@prefix pav:      <http://purl.org/pav/> .
+@prefix bridge:   <https://ns.cascadeprotocol.org/bridge/v1-draft#> .
+@prefix rec:      <https://ns.cascadeprotocol.org/records/v1-draft#> .
+@prefix health:   <https://ns.cascadeprotocol.org/health/v1#> .
+@prefix clinical: <https://ns.cascadeprotocol.org/clinical/v1#> .
+@prefix cascade:  <https://ns.cascadeprotocol.org/core/v1#> .
+@prefix foaf:     <http://xmlns.com/foaf/0.1/> .
+
+<urn:uuid:d723e00a-a8ea-8c39-87f7-366b397cf120>
+  a cascade:PatientProfile ;
+  cascade:sourceRecordId "2.16.840.1.113883.19.5.99999.2:MRN-448120" ;
+  rec:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.99999.2:MRN-448120> .
+
+<ni:///sha-256;dBJvnDV7C3kJsp3LPuYuIzQxwi7iWcBh4gA1gwo4ZMY>
+  prov:specializationOf <urn:uuid:d723e00a-a8ea-8c39-87f7-366b397cf120> ;
+  foaf:givenName "Robin" ;
+  foaf:familyName "Ahmadi" ;
+  cascade:dateOfBirth "1978-02-14"^^<http://www.w3.org/2001/XMLSchema#date> .
+
+[] bridge:arrivedAs <ni:///sha-256;dBJvnDV7C3kJsp3LPuYuIzQxwi7iWcBh4gA1gwo4ZMY> ;
+  bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][1]" ;
+  prov:wasDerivedFrom <ni:///sha-256;xATCSl4iOFUpJ_5-RLYk9aeMPxXJl6GN8g1kjIMxwTY> ;
+  prov:wasGeneratedBy _:import .
+
+<urn:uuid:9b0d0c63-8977-8914-875e-0bbbe8cc46d7>
+  a clinical:Medication ;
+  clinical:sourceRecordId "2.16.840.1.113883.19.5.99999.5:MED-3401" ;
+  rec:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.99999.5:MED-3401> .
+
+<ni:///sha-256;xxAaEXaPkpf8feIBrLCseYSfibA3BmyKq8zhh2Esv6Y>
+  prov:specializationOf <urn:uuid:9b0d0c63-8977-8914-875e-0bbbe8cc46d7> ;
+  rec:patient <urn:uuid:d723e00a-a8ea-8c39-87f7-366b397cf120> ;
+  clinical:clinicalIntent "reportedUse" ;
+  clinical:drugName "lisinopril 10 MG Oral Tablet" ;
+  clinical:rxNormCode <http://www.nlm.nih.gov/research/umls/rxnorm/314076> ;
+  clinical:startDate "2024-03-01"^^<http://www.w3.org/2001/XMLSchema#date> ;
+  clinical:status "active" .
+
+[] bridge:arrivedAs <ni:///sha-256;xxAaEXaPkpf8feIBrLCseYSfibA3BmyKq8zhh2Esv6Y> ;
+  bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='substanceAdministration' and namespace-uri()='urn:hl7-org:v3'][1]" ;
+  prov:wasDerivedFrom <ni:///sha-256;xATCSl4iOFUpJ_5-RLYk9aeMPxXJl6GN8g1kjIMxwTY> ;
+  prov:wasGeneratedBy _:import .
+
+<urn:uuid:fc46c7c0-e6b7-85df-9ab2-94f6a7e26dba>
+  a health:LabResultRecord ;
+  health:sourceRecordId "2.16.840.1.113883.19.5.99999.6:LAB-9501" ;
+  rec:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.99999.6:LAB-9501> .
+
+<ni:///sha-256;iuDZ7ZPBwpY96Fq_HUry2ZMN2IB5r1jI1cckiVwHNi0>
+  prov:specializationOf <urn:uuid:fc46c7c0-e6b7-85df-9ab2-94f6a7e26dba> ;
+  rec:patient <urn:uuid:d723e00a-a8ea-8c39-87f7-366b397cf120> ;
+  health:testName "Glucose [Mass/volume] in Serum or Plasma" ;
+  health:testCode <http://loinc.org/rdf/2345-7> ;
+  health:resultValue "182" ;
+  health:resultUnit "mg/dL" ;
+  health:interpretation "H" ;
+  health:referenceRange "<=99 mg/dL" ;
+  health:performedDate "2025-09-01T08:30:00-05:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+  clinical:status "final" .
+
+[] bridge:arrivedAs <ni:///sha-256;iuDZ7ZPBwpY96Fq_HUry2ZMN2IB5r1jI1cckiVwHNi0> ;
+  bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][2]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='organizer' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]" ;
+  prov:wasDerivedFrom <ni:///sha-256;xATCSl4iOFUpJ_5-RLYk9aeMPxXJl6GN8g1kjIMxwTY> ;
+  prov:wasGeneratedBy _:import .
+
+<urn:uuid:d6a2c100-7677-8d37-ab84-548e44619726>
+  a health:LabResultRecord ;
+  health:sourceRecordId "2.16.840.1.113883.19.5.99999.6:LAB-9502" ;
+  rec:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.99999.6:LAB-9502> .
+
+<ni:///sha-256;awSA8G5e0IHtVym18349LEdomwABv9N6yS6WpbXY_RQ>
+  prov:specializationOf <urn:uuid:d6a2c100-7677-8d37-ab84-548e44619726> ;
+  rec:patient <urn:uuid:d723e00a-a8ea-8c39-87f7-366b397cf120> ;
+  health:testName "Protein [Presence] in Urine by Test strip" ;
+  health:testCode <http://loinc.org/rdf/20454-5> ;
+  health:performedDate "2025-09-01"^^<http://www.w3.org/2001/XMLSchema#date> ;
+  clinical:status "final" .
+
+[] bridge:arrivedAs <ni:///sha-256;awSA8G5e0IHtVym18349LEdomwABv9N6yS6WpbXY_RQ> ;
+  bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][2]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='organizer' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][2]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]" ;
+  prov:wasDerivedFrom <ni:///sha-256;xATCSl4iOFUpJ_5-RLYk9aeMPxXJl6GN8g1kjIMxwTY> ;
+  prov:wasGeneratedBy _:import .
+
+<urn:uuid:ba3437cd-4e91-8a3c-8663-1413c0d45e83>
+  a health:LabResultRecord ;
+  health:sourceRecordId "2.16.840.1.113883.19.5.99999.6:LAB-9503" ;
+  rec:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.99999.6:LAB-9503> .
+
+<ni:///sha-256;h-3B0KDyKCGIBrnkBAQauY62x9_9qTZRfPsRc8aAzMs>
+  prov:specializationOf <urn:uuid:ba3437cd-4e91-8a3c-8663-1413c0d45e83> ;
+  rec:patient <urn:uuid:d723e00a-a8ea-8c39-87f7-366b397cf120> ;
+  health:testName "Creatinine [Mass/volume] in Serum or Plasma" ;
+  health:testCode <http://loinc.org/rdf/2160-0> ;
+  health:resultValue "0.9" ;
+  health:resultUnit "mg/dL" ;
+  health:referenceRange ">=0.6 mg/dL" ;
+  health:performedDate "2025-09-01T08:30:00-05:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+  clinical:status "final" .
+
+[] bridge:arrivedAs <ni:///sha-256;h-3B0KDyKCGIBrnkBAQauY62x9_9qTZRfPsRc8aAzMs> ;
+  bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][2]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='organizer' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][3]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]" ;
+  prov:wasDerivedFrom <ni:///sha-256;xATCSl4iOFUpJ_5-RLYk9aeMPxXJl6GN8g1kjIMxwTY> ;
+  prov:wasGeneratedBy _:import .
+
+<ni:///sha-256;xATCSl4iOFUpJ_5-RLYk9aeMPxXJl6GN8g1kjIMxwTY>
+  a prov:Entity ;
+  pav:retrievedOn "2025-07-02T09:00:00Z"^^xsd:dateTime ;
+  prov:qualifiedAttribution
+    [ prov:agent [ rdfs:label "Riverside patient portal" ] ; prov:hadRole rec:transmitter ] ,
+    [ prov:agent [ rdfs:label "Riverside Community Hospital" ] ; prov:hadRole rec:author ] .
+
+_:import
+  a prov:Activity ;
+  prov:used <ni:///sha-256;xATCSl4iOFUpJ_5-RLYk9aeMPxXJl6GN8g1kjIMxwTY> ;
+  rdfs:label "C-CDA download" ;
+  prov:startedAtTime "2025-07-02T09:00:04Z"^^xsd:dateTime ;
+  prov:qualifiedAssociation [
+    prov:hadPlan [ a prov:Plan ; rdfs:label "ccda" ; pav:version "0.1.0" ] ;
+    prov:agent [ ]
+  ] .
