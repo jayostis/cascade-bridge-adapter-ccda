@@ -10,10 +10,11 @@ PREFIX v3:     <urn:hl7-org:v3>
 PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
-# What a medication states that medication.rq does not carry: a status outside
-# its concept map, at the medication, and each element of a structured dosage,
-# at the element, valued by its name. A periodic effectiveTime is a dosage's
-# timing; an interval one is the medication's start and end.
+# Each element of a structured dosage a medication states, at the element,
+# valued by its name. A periodic effectiveTime is a dosage's timing; an
+# interval one is the medication's start and end. A route and a site are the
+# accounting's ccda:codedRouteAndSite, and a status and codes
+# entry-statement-findings.rq's.
 
 CONSTRUCT {
   [] a oa:Annotation ;
@@ -39,18 +40,8 @@ WHERE {
           STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
           STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?statementSlot), "#_")))
   {
-    ?medication ?sS ?statusCode . ?statusCode a v3:statusCode ; xyz:code ?value .
-    FILTER NOT EXISTS {
-      ?concept skos:inScheme ccda:medicationStatuses ; skos:notation ?key .
-      FILTER (?key = LCASE(REPLACE(?value, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
-    }
-    BIND (ccda:medicationStatusNotMapped AS ?gap)
-  }
-  UNION
-  {
     ?medication ?dosingSlot ?dosing . ?dosing a ?dosingType .
-    FILTER (?dosingType IN (v3:doseQuantity, v3:rateQuantity, v3:maxDoseQuantity, v3:routeCode,
-                            v3:approachSiteCode, v3:administrationUnitCode)
+    FILTER (?dosingType IN (v3:doseQuantity, v3:rateQuantity, v3:maxDoseQuantity, v3:administrationUnitCode)
             || (?dosingType = v3:effectiveTime && EXISTS {
                   ?dosing xsi:type ?written .
                   FILTER (REPLACE(?written, "^.*:", "") IN ("PIVL_TS", "EIVL_TS", "SXPR_TS"))
@@ -58,8 +49,7 @@ WHERE {
     {
       SELECT ?dosing (COUNT(?earlierDosing) + 1 AS ?dosingAt) WHERE {
         ?dosingParent ?dosingS ?dosing . ?dosingParent a v3:substanceAdministration . ?dosing a ?type .
-        FILTER (?type IN (v3:doseQuantity, v3:rateQuantity, v3:maxDoseQuantity, v3:routeCode,
-                          v3:approachSiteCode, v3:administrationUnitCode, v3:effectiveTime))
+        FILTER (?type IN (v3:doseQuantity, v3:rateQuantity, v3:maxDoseQuantity, v3:administrationUnitCode, v3:effectiveTime))
         OPTIONAL {
           ?dosingParent ?dosingE ?earlierDosing . ?earlierDosing a ?type .
           FILTER (xsd:integer(STRAFTER(STR(?dosingE), "#_")) < xsd:integer(STRAFTER(STR(?dosingS), "#_")))

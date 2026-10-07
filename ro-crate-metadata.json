@@ -121,6 +121,12 @@
           "@id": "in/sparql/procedure.rq"
         },
         {
+          "@id": "in/sparql/medication.rq"
+        },
+        {
+          "@id": "in/sparql/result.rq"
+        },
+        {
           "@id": "in/sparql/document-author.rq"
         }
       ],
@@ -139,6 +145,12 @@
         },
         {
           "@id": "in/sparql/entry-statement-findings.rq"
+        },
+        {
+          "@id": "in/sparql/medication-findings.rq"
+        },
+        {
+          "@id": "in/sparql/result-findings.rq"
         },
         {
           "@id": "in/sparql/name-findings.rq"
@@ -174,6 +186,12 @@
         },
         {
           "@id": "vocab/ccda-severities.ttl"
+        },
+        {
+          "@id": "vocab/ccda-medication-statuses.ttl"
+        },
+        {
+          "@id": "vocab/ccda-result-statuses.ttl"
         },
         {
           "@id": "vocab/ccda-code-systems.ttl"
@@ -256,6 +274,18 @@
           "@id": "in/sparql/entry-statement-findings.rq"
         },
         {
+          "@id": "in/sparql/medication.rq"
+        },
+        {
+          "@id": "in/sparql/result.rq"
+        },
+        {
+          "@id": "in/sparql/medication-findings.rq"
+        },
+        {
+          "@id": "in/sparql/result-findings.rq"
+        },
+        {
           "@id": "in/sparql/name-findings.rq"
         },
         {
@@ -296,6 +326,12 @@
         },
         {
           "@id": "vocab/ccda-severities.ttl"
+        },
+        {
+          "@id": "vocab/ccda-medication-statuses.ttl"
+        },
+        {
+          "@id": "vocab/ccda-result-statuses.ttl"
         },
         {
           "@id": "fixtures/facts/portal-download.ttl"
@@ -353,6 +389,12 @@
         },
         {
           "@id": "fixtures/in/download-d.xml"
+        },
+        {
+          "@id": "fixtures/in/medications-and-results-a.xml"
+        },
+        {
+          "@id": "fixtures/in/medications-and-results-b.xml"
         },
         {
           "@id": "fixtures/expected/allergies-section.ttl"
@@ -463,6 +505,18 @@
           "@id": "fixtures/findings/download-d.ttl"
         },
         {
+          "@id": "fixtures/expected/medications-and-results-a.ttl"
+        },
+        {
+          "@id": "fixtures/findings/medications-and-results-a.ttl"
+        },
+        {
+          "@id": "fixtures/expected/medications-and-results-b.ttl"
+        },
+        {
+          "@id": "fixtures/findings/medications-and-results-b.ttl"
+        },
+        {
           "@id": "fixtures/CLAUDE.md"
         },
         {
@@ -491,6 +545,12 @@
         },
         {
           "@id": "views/patients.rq"
+        },
+        {
+          "@id": "views/medications.rq"
+        },
+        {
+          "@id": "views/lab-results.rq"
         },
         {
           "@id": "https://github.com/jayostis/cascade-vocabulary"
@@ -700,8 +760,8 @@
       "@type": "File",
       "name": "Document table: the clinical statements",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "23261",
-      "sha256": "396c131d11a2c722ee9ad8c643bd83f55b7010faa8ddb81a4c4263ca21a2a7d3",
+      "contentSize": "32425",
+      "sha256": "d8c6dca5e39ce3a1eaa9d2f25bb7e536f9d533922bf8768ec0f8d774e4e6632d",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -712,8 +772,8 @@
       "@type": "File",
       "name": "Mapping: records, versions and arrivals",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "5327",
-      "sha256": "443c75301f09d1d03a0e5dbcbeadd6307cac81445d50c1c328ca465e0fe8d931",
+      "contentSize": "5479",
+      "sha256": "718c0c6d40bd2b3694436091365fb49f2dbfbc9814efa87f0571e4efaca501d5",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -760,8 +820,8 @@
       "@type": "File",
       "name": "Findings: sections not mapped",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "3305",
-      "sha256": "913ded186af8e254c790e9af364564cf13fbc2b28aa8c120d993287e10dc8316",
+      "contentSize": "3453",
+      "sha256": "4ca42be173a26bab6b40ac8032a274f0de2261f380cb78d3b88068f13b81fbee",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -772,8 +832,8 @@
       "@type": "File",
       "name": "Findings: entries not mapped",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "3911",
-      "sha256": "dcf79de129b3319b8d16c549e9412c897a8f427451a986df2fed0dc9b8b56b3f",
+      "contentSize": "4059",
+      "sha256": "6ca657b102b2adf49deed2113a640aa658ccc3b81dccd18921d9e59e030971c9",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -844,12 +904,60 @@
       "@type": "File",
       "name": "Findings: immunization and procedure codes not mapped",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "3030",
-      "sha256": "5d014208d2383d708f28fb9c95169b0e8333212ca94eca5303c250a96866495b",
+      "contentSize": "3203",
+      "sha256": "3883d95d27e59562cdcfda69b05b4b00696feb882a8dbda8ca66c5da67a43b32",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "description": "Each immunization or procedure status outside the map its mapping reads it through, and each code in a code system no predicate of its kind carries."
+    },
+    {
+      "@id": "in/sparql/medication.rq",
+      "@type": "File",
+      "name": "Mapping: medication",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "8787",
+      "sha256": "d330845d5ff53f15b6459e35d36605f9030011b7279436ffb30be4b1ae697448",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A Medication Activity's intent from its mood, drug name, RxNorm code, start and end, free text sig and status."
+    },
+    {
+      "@id": "in/sparql/result.rq",
+      "@type": "File",
+      "name": "Mapping: result",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "10780",
+      "sha256": "7ed7d6f5c5407ff38e087141d3fbd0db4ceac644c491ec66762ba2a87e821f65",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A Result Observation's test name, LOINC codes, value and unit, reference range, interpretation, performed time and status."
+    },
+    {
+      "@id": "in/sparql/medication-findings.rq",
+      "@type": "File",
+      "name": "Findings: medications",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "3166",
+      "sha256": "51ebf3bf7d657ab8fa9ec33903c06f2af20a1700eeb30cd101544b260dead0d7",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Each medication status outside the map medication.rq reads it through, and each element of a structured dosage."
+    },
+    {
+      "@id": "in/sparql/result-findings.rq",
+      "@type": "File",
+      "name": "Findings: results",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "4900",
+      "sha256": "649e3b78032f9b72a35791b61daf885b1f5f7ae5c4e3349235a0768330a24b7e",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Each result status outside the map result.rq reads it through, each result value of a type no predicate carries, and each component of a result organizer that is no result observation."
     },
     {
       "@id": "in/sparql/name-findings.rq",
@@ -868,8 +976,8 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML gaps",
       "encodingFormat": "text/turtle",
-      "contentSize": "5944",
-      "sha256": "f923d99eba71e4006c6bd19cab1e881e878170e97c41d91a1b9eed274c05d268",
+      "contentSize": "7165",
+      "sha256": "e3b1937b5af654f5ee30c8ce51665aae3586387ec04ddd6486765f4ace2e32f3",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -880,8 +988,8 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML source accounting",
       "encodingFormat": "text/turtle",
-      "contentSize": "252744",
-      "sha256": "0633eac12f6f3bbd6a6f6ac84bc751c058cf8f71f288ecbc0841b3a182962ef9",
+      "contentSize": "355071",
+      "sha256": "5f144698b74b32aa50a40c663bccdcbd68daa76d02c229e9940cb4bd6a6320c3",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1051,6 +1159,36 @@
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-Severity.xml"
       },
       "description": "SNOMED CT severities to FHIR reaction severity codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+    },
+    {
+      "@id": "vocab/ccda-medication-statuses.ttl",
+      "@type": "File",
+      "name": "Concept map: medication statuses",
+      "encodingFormat": "text/turtle",
+      "contentSize": "1300",
+      "sha256": "db577e7e55f0c5021532213e02d3e9d8da6eabb5f4b7ff908a3d9ad1cd228bea",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-MedicationStatus.xml"
+      },
+      "description": "HL7 act statuses to FHIR MedicationRequest status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+    },
+    {
+      "@id": "vocab/ccda-result-statuses.ttl",
+      "@type": "File",
+      "name": "Concept map: result statuses",
+      "encodingFormat": "text/turtle",
+      "contentSize": "618",
+      "sha256": "a98b185e6ddee07474c23e20c64b68041f7b0e1949d024fbeae5718ec7f344e3",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ResultStatus.xml"
+      },
+      "description": "HL7 act statuses to FHIR Observation status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equal, as a skos:exactMatch; the rows it marks wider or inexact are left out."
     },
     {
       "@id": "fixtures/facts/portal-download.ttl",
@@ -1314,6 +1452,32 @@
       "description": "The second download of download-c's summary, a day later: a new document id and time, the narrative's IDs and the references to them moved, and the same clinical content. Authored here on 2026-10-07, for a case the conformance corpus does not hold; it validates against the CDA schema."
     },
     {
+      "@id": "fixtures/in/medications-and-results-a.xml",
+      "@type": "File",
+      "name": "C-CDA: medications-and-results-a",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "19163",
+      "sha256": "2a038fd43c3363f7d59be6876381fbdfb818c1cb81a7c1a5ff9406c576e613d8",
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The first of two downloads of one summary. Three medications: a prescribed one coded in a local formulary with an RxNorm translation, named through the narrative its originalText references, with a start to the minute and an offset, an end, a free text sig and a structured dose, route and timing; a reported one whose only id is a nullFlavor, coded in RxNorm with an RxNorm translation and named by its originalText's text; and a prescribed one whose status is outside the concept map. Two result organizers: a metabolic panel holding a potassium coded locally with a LOINC translation, a PQ value, an interpretation and a range as an IVL_PQ, a sodium whose status is outside the concept map, and a heart rate, which is a vital sign; and a urinalysis with no id holding an id-less ST result, a CD result named through the narrative with a range as text, an IVL_PQ result, and a nullFlavor result whose range is read through a reference. And a Vital Signs section. Authored here on 2026-10-07, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/medications-and-results-b.xml",
+      "@type": "File",
+      "name": "C-CDA: medications-and-results-b",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "19133",
+      "sha256": "68579c70d7fcfa3a5ba2969e0a88c9a653eeb88fdfa7247630a6ab8803b06682",
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The second download of medications-and-results-a's summary, a day later: a new document id and time, the narrative's IDs and the references to them moved, and the same clinical content. Authored here on 2026-10-07, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
       "@id": "fixtures/expected/allergies-section.ttl",
       "@type": "File",
       "name": "Expected graph for allergies-section",
@@ -1382,8 +1546,8 @@
       "@type": "File",
       "name": "Expected graph for epic-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "6402",
-      "sha256": "67349459bd40bd36866a78cbcac643de30fc51fde6f088d5f0a24df63ed0016a",
+      "contentSize": "9421",
+      "sha256": "51c0ad7104742b461c7442417d7e9d3fd4f522f9a8a98bca404ed034fb7d5f4a",
       "about": {
         "@id": "fixtures/in/epic-summarization.xml"
       },
@@ -1398,8 +1562,8 @@
       "@type": "File",
       "name": "Expected findings for epic-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "87284",
-      "sha256": "c8e976f483ff22896958a1470b55b4de2dff9bd26bacd0dd4c26e43e2e213631",
+      "contentSize": "12680",
+      "sha256": "6c3164522ac0ad6fab58c2804b321d024e485a92add65e4ef8f40bcf457c5d69",
       "about": {
         "@id": "fixtures/in/epic-summarization.xml"
       },
@@ -1414,8 +1578,8 @@
       "@type": "File",
       "name": "Expected graph for full-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "6381",
-      "sha256": "ccdd802621d587c8fc40d7dd8fe88aaf1d712f6a37c47d8d9f70379df449f5ee",
+      "contentSize": "9366",
+      "sha256": "15223ece78b4614738ebc0eb7ac06d8b890d7807f9037d21a126452315b4b177",
       "about": {
         "@id": "fixtures/in/full-summarization.xml"
       },
@@ -1430,8 +1594,8 @@
       "@type": "File",
       "name": "Expected findings for full-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "88954",
-      "sha256": "3a782c221f198074c5ec47459c8de668a3bbe91b7fb249208250c7ba50e3e263",
+      "contentSize": "14364",
+      "sha256": "008e566c98bbdc7c21cc93c5e043786c06c8ae21901ddb29ff4eb5da736a2d19",
       "about": {
         "@id": "fixtures/in/full-summarization.xml"
       },
@@ -1478,8 +1642,8 @@
       "@type": "File",
       "name": "Expected graph for labs-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "2082",
-      "sha256": "dbb786bd82ff21a4f78469a810dbf7d611e62977e7386355e6a6f3b6f541e5f3",
+      "contentSize": "3662",
+      "sha256": "9042cbb291d6b8ea5c6262de1a0affc8f42ef3093fae4b1d75a8d0b5968deb98",
       "about": {
         "@id": "fixtures/in/labs-section.xml"
       },
@@ -1494,8 +1658,8 @@
       "@type": "File",
       "name": "Expected findings for labs-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "82136",
-      "sha256": "4ff083de9aa5ff4a1c87e0b8145fb0648cd73b6f1a83b65d9b2cba66da9f30d5",
+      "contentSize": "7639",
+      "sha256": "bfdf011bfe2997178b4ed93b59ccbcca7b7a277ffeaa487f7e51783bc5aa49e1",
       "about": {
         "@id": "fixtures/in/labs-section.xml"
       },
@@ -1890,6 +2054,70 @@
       "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
     },
     {
+      "@id": "fixtures/expected/medications-and-results-a.ttl",
+      "@type": "File",
+      "name": "Expected graph for medications-and-results-a",
+      "encodingFormat": "text/turtle",
+      "contentSize": "15452",
+      "sha256": "5cccda3e314a69b143381ce26dadc8ecc1ba9234cadd579ac0aa22bbd80d703b",
+      "about": {
+        "@id": "fixtures/in/medications-and-results-a.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/medications-and-results-a.ttl",
+      "@type": "File",
+      "name": "Expected findings for medications-and-results-a",
+      "encodingFormat": "text/turtle",
+      "contentSize": "20462",
+      "sha256": "26c0ad0abf6cfba17f2a12f9c0cdcc43498c7a6d0c3c700c842b0968942a0c6f",
+      "about": {
+        "@id": "fixtures/in/medications-and-results-a.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/medications-and-results-b.ttl",
+      "@type": "File",
+      "name": "Expected graph for medications-and-results-b",
+      "encodingFormat": "text/turtle",
+      "contentSize": "15452",
+      "sha256": "5dc9249c09028f00ebbef04636bcbab43b22af0aec68fdff388dc48b8060642f",
+      "about": {
+        "@id": "fixtures/in/medications-and-results-b.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/medications-and-results-b.ttl",
+      "@type": "File",
+      "name": "Expected findings for medications-and-results-b",
+      "encodingFormat": "text/turtle",
+      "contentSize": "20464",
+      "sha256": "d51d27c05456c9ca4a8a25eedc75a13ba687afa0a7ca6d3fd8600405bc1527da",
+      "about": {
+        "@id": "fixtures/in/medications-and-results-b.xml"
+      },
+      "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
       "@id": "fixtures/CLAUDE.md",
       "@type": "File",
       "name": "Agent context for the fixtures directory",
@@ -2014,6 +2242,36 @@
       "description": "A SELECT over a Bridge's graph: one row per PatientProfile record at its current version, else at each version, with its source id and date of birth, given, family and full name, each a plain string. Copied unchanged on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
     },
     {
+      "@id": "views/medications.rq",
+      "@type": "File",
+      "name": "View: medications",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "1378",
+      "sha256": "a5d5dd5adc1858999e92eb81ed0193073d7407605e4d6bc6666c9304b66c979a",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "isBasedOn": {
+        "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/c14b56e332a98bb226ee6ccee2e9f587a07c6379/views/medications.rq"
+      },
+      "description": "A SELECT over a Bridge's graph: one row per clinical:Medication record at its current version, else at each version, with its source id and drug name, RxNorm code, intent, status, start date, end date and dosage, each a plain string. Copied unchanged on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
+    },
+    {
+      "@id": "views/lab-results.rq",
+      "@type": "File",
+      "name": "View: lab-results",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "1475",
+      "sha256": "20fed6ecc711c580df5a5d49e16dc14f8189a3722a0d6ad6e566be8dcf67badd",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "isBasedOn": {
+        "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/c14b56e332a98bb226ee6ccee2e9f587a07c6379/views/lab-results.rq"
+      },
+      "description": "A SELECT over a Bridge's graph: one row per LabResultRecord record at its current version, else at each version, with its source id and test name, LOINC code, value, unit, reference range, interpretation, status and performed date, each a plain string. Copied unchanged on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
+    },
+    {
       "@id": "#view-comparison-with-cascade-cli",
       "@type": "CreativeWork",
       "name": "View comparison with cascade-cli",
@@ -2035,6 +2293,12 @@
         },
         {
           "@id": "views/patients.rq"
+        },
+        {
+          "@id": "views/medications.rq"
+        },
+        {
+          "@id": "views/lab-results.rq"
         }
       ],
       "hasPart": [
@@ -2064,10 +2328,28 @@
         },
         {
           "@id": "#correction-codes-as-iris"
+        },
+        {
+          "@id": "#correction-dose-as-dosage"
+        },
+        {
+          "@id": "#correction-codes-in-a-translation"
+        },
+        {
+          "@id": "#correction-loinc-iri-space"
+        },
+        {
+          "@id": "#correction-times-narrowed"
+        },
+        {
+          "@id": "#correction-range-and-coded-value-unread"
+        },
+        {
+          "@id": "#correction-vital-signs-as-records"
         }
       ],
       "dateCreated": "2026-10-07",
-      "description": "The views over the Bridge's graph for every input agree on every field they select with the same fields of cascade-cli's convert --from c-cda --to turtle for that input, read through the corrections in hasPart; an allergy's severity and a procedure's CPT code, which no view selects, were compared directly, through the same corrections; record names and provenance are not compared. Medications and results are step 8's. Run once on 2026-10-07, outside CI, with cascade-bridge-rs at the merge of its step 3 and cascade-cli at the commit isBasedOn names."
+      "description": "The views over the Bridge's graph for every input agree on every field they select with the same fields of cascade-cli's convert --from c-cda --to turtle for that input, read through the corrections in hasPart; an allergy's severity and a procedure's CPT code, which no view selects, were compared directly, through the same corrections; record names and provenance are not compared. Run once on 2026-10-07, outside CI, and for the medication and lab result views on 2026-10-07 over the inputs holding a medication or a result (epic-summarization, full-summarization, labs-section, medications-and-results-a and -b), with cascade-bridge-rs at the merge of its step 3 and cascade-cli at the commit isBasedOn names."
     },
     {
       "@id": "#correction-never-written",
@@ -2076,7 +2358,7 @@
       "isBasedOn": {
         "@id": "https://github.com/the-cascade-protocol/cascade-cli/tree/627de5f63c51d59e2078cc653bd7841a03497acb"
       },
-      "description": "cascade-cli writes no patient source id, no allergen code, no allergy status, verification, criticality or onset, and no immunization or procedure status, so those fields are not compared."
+      "description": "cascade-cli writes no patient source id, no allergen code, no allergy status, verification, criticality or onset, and no immunization or procedure status, no medication intent, status or end date, and no result status or interpretation, so those fields are not compared."
     },
     {
       "@id": "#correction-concern-act-id",
@@ -2094,7 +2376,7 @@
       "isBasedOn": {
         "@id": "https://github.com/the-cascade-protocol/cascade-cli/tree/627de5f63c51d59e2078cc653bd7841a03497acb"
       },
-      "description": "cascade-cli names an allergen, a problem, a vaccine and a procedure by the playing entity's name or the code's displayName, and never through the narrative an originalText references; the adapter reads that narrative first. The names differ only where an input states such a reference (custodian-and-author, download-c, download-d, procedures), and are compared nowhere."
+      "description": "cascade-cli names an allergen, a problem, a vaccine, a procedure, a drug and a test by the playing entity's name or the code's displayName, and never through the narrative an originalText references or the originalText's own text; the adapter reads those first. The names differ only where an input states such a reference or text (custodian-and-author, download-c, download-d, procedures, medications-and-results-a and -b), and are compared nowhere."
     },
     {
       "@id": "#correction-negation-ignored",
@@ -2121,7 +2403,7 @@
       "isBasedOn": {
         "@id": "https://github.com/the-cascade-protocol/cascade-cli/tree/627de5f63c51d59e2078cc653bd7841a03497acb"
       },
-      "description": "cascade-cli writes cascade:givenName, cascade:familyName, cascade:sourceRecordId and, for a procedure, health:performedDate, where the adapter writes foaf:givenName, foaf:familyName, the kind's sourceRecordId and clinical:procedureDate."
+      "description": "cascade-cli writes cascade:givenName, cascade:familyName, cascade:sourceRecordId, for a procedure health:performedDate, for a medication health:startDate and health:endDate, and for a result health:referenceRangeText, where the adapter writes foaf:givenName, foaf:familyName, the kind's sourceRecordId, clinical:procedureDate, clinical:startDate, clinical:endDate and health:referenceRange."
     },
     {
       "@id": "#correction-severity-on-a-reaction",
@@ -2149,6 +2431,60 @@
         "@id": "https://github.com/the-cascade-protocol/cascade-cli/tree/627de5f63c51d59e2078cc653bd7841a03497acb"
       },
       "description": "cascade-cli writes a CVX code as an IRI in http://hl7.org/fhir/sid/cvx/ (health:cvxCode) and a procedure's SNOMED CT code as an IRI (health:snomedCode), each read as the code alone; a SNOMED CT IRI in http://snomed.info/id/ is read as in http://snomed.info/sct/."
+    },
+    {
+      "@id": "#correction-dose-as-dosage",
+      "@type": "CreativeWork",
+      "name": "Dose as dosage",
+      "isBasedOn": {
+        "@id": "https://github.com/the-cascade-protocol/cascade-cli/tree/627de5f63c51d59e2078cc653bd7841a03497acb"
+      },
+      "description": "cascade-cli writes a medication's doseQuantity value as clinical:dosage; the adapter writes a Medication Free Text Sig's text and reports a structured dose as ccda:structuredDosage, so a dosage is not compared."
+    },
+    {
+      "@id": "#correction-codes-in-a-translation",
+      "@type": "CreativeWork",
+      "name": "Codes in a translation",
+      "isBasedOn": {
+        "@id": "https://github.com/the-cascade-protocol/cascade-cli/tree/627de5f63c51d59e2078cc653bd7841a03497acb"
+      },
+      "description": "cascade-cli reads an RxNorm or a LOINC code only from a drug's or a test's own code, never from a translation; the adapter reads both (medications-and-results-a and -b). The code is compared where cascade-cli states one."
+    },
+    {
+      "@id": "#correction-loinc-iri-space",
+      "@type": "CreativeWork",
+      "name": "LOINC IRI space",
+      "isBasedOn": {
+        "@id": "https://github.com/the-cascade-protocol/cascade-cli/tree/627de5f63c51d59e2078cc653bd7841a03497acb"
+      },
+      "description": "cascade-cli writes a test code as http://loinc.org/ and the code, where the adapter writes http://loinc.org/rdf/ and the code; each is read as the code alone."
+    },
+    {
+      "@id": "#correction-times-narrowed",
+      "@type": "CreativeWork",
+      "name": "Times narrowed",
+      "isBasedOn": {
+        "@id": "https://github.com/the-cascade-protocol/cascade-cli/tree/627de5f63c51d59e2078cc653bd7841a03497acb"
+      },
+      "description": "cascade-cli writes a medication's start as a date, its time of day left off; the adapter's date-time is read as its day."
+    },
+    {
+      "@id": "#correction-range-and-coded-value-unread",
+      "@type": "CreativeWork",
+      "name": "Range and coded value unread",
+      "isBasedOn": {
+        "@id": "https://github.com/the-cascade-protocol/cascade-cli/tree/627de5f63c51d59e2078cc653bd7841a03497acb"
+      },
+      "description": "cascade-cli writes a reference range only from its own text, as [object Object] where the text is a narrative reference, and never from an IVL_PQ, and writes no value of a coded result; each is compared where cascade-cli states it, the placeholder read as absent (medications-and-results-a and -b)."
+    },
+    {
+      "@id": "#correction-vital-signs-as-records",
+      "@type": "CreativeWork",
+      "name": "Vital signs as records",
+      "isBasedOn": {
+        "@id": "https://github.com/the-cascade-protocol/cascade-cli/tree/627de5f63c51d59e2078cc653bd7841a03497acb"
+      },
+      "description": "cascade-cli makes a record of a Vital Sign Observation inside a Result Organizer; the adapter makes none, and reports it as ccda:resultComponentNotMapped. That record (medications-and-results-a and -b, VS-9103) is not compared."
     },
     {
       "@id": "https://github.com/the-cascade-protocol/cascade-cli/tree/627de5f63c51d59e2078cc653bd7841a03497acb",

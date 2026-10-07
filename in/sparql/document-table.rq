@@ -192,9 +192,11 @@ WHERE {
           }
         }
         # A Medication Activity is a medication only in a Medications section,
-        # and only in either mood a medication can be listed in.
+        # only in either mood a medication can be listed in, and never negated:
+        # a medication not taken is no entry on a list of what the person takes.
         FILTER (?class != "MedicationRequest" || (
           EXISTS { ?statement xyz:moodCode ?mood . FILTER (?mood IN ("INT", "EVN")) }
+          && NOT EXISTS { ?statement xyz:negationInd "true" }
           && EXISTS {
             ?section ?sectionTemplateSlot ?sectionTemplate .
             ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot .

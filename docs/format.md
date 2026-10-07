@@ -55,7 +55,8 @@ immunization whose `negationInd` is true was not done, whatever its
 
 A Medication Activity's mood says what it is: `INT`, a medication intended, is
 a prescription, and `EVN`, one taken, an entry on a list of what the person
-takes. Both are one kind of record, told apart by their intent. A Result
+takes. Both are one kind of record, told apart by their intent. One whose
+`negationInd` is true says the medication is not taken, and is no record. A Result
 Organizer is a panel, and no record; each Result Observation in it is one, and
 any other statement in it, a Vital Sign Observation (`4.27`) among them, is a
 finding.

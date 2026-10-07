@@ -8,9 +8,9 @@ PREFIX v3:     <urn:hl7-org:v3>
 PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
-# A status an immunization or a procedure states that the concept map its
-# mapping reads it through does not hold, and a code in a code system no
-# predicate of its kind carries. A statement whose negationInd is true is
+# A status an immunization, a procedure or a medication states that the
+# concept map its mapping reads it through does not hold, and a code in a code
+# system no predicate of its kind carries. A statement whose negationInd is true is
 # not-done whatever its statusCode says.
 
 CONSTRUCT {
@@ -40,6 +40,7 @@ WHERE {
     VALUES (?class ?scheme ?gap) {
       ("Immunization" ccda:immunizationStatuses ccda:immunizationStatusNotMapped)
       ("Procedure"    ccda:procedureStatuses    ccda:procedureStatusNotMapped)
+      ("MedicationRequest" ccda:medicationStatuses ccda:medicationStatusNotMapped)
     }
     FILTER NOT EXISTS { ?statement xyz:negationInd "true" }
     FILTER NOT EXISTS {
@@ -52,7 +53,7 @@ WHERE {
     {
       ?statement ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
       ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial ; ?cS ?code .
-      BIND ("Immunization" AS ?class)
+      VALUES ?class { "Immunization" "MedicationRequest" }
     }
     UNION
     {
@@ -68,6 +69,7 @@ WHERE {
         ("Immunization" "2.16.840.1.113883.12.292")
         ("Procedure"    "2.16.840.1.113883.6.96")
         ("Procedure"    "2.16.840.1.113883.6.12")
+        ("MedicationRequest" "2.16.840.1.113883.6.88")
       }
       FILTER (REPLACE(?value, "^urn:oid:", "") = ?anyCarried)
     }
