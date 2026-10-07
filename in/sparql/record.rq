@@ -3,6 +3,7 @@ PREFIX bridge:   <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX rec:      <https://ns.cascadeprotocol.org/records/v1-draft#>
 PREFIX cascade:  <https://ns.cascadeprotocol.org/core/v1#>
 PREFIX health:   <https://ns.cascadeprotocol.org/health/v1#>
+PREFIX clinical: <https://ns.cascadeprotocol.org/clinical/v1#>
 PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # Names are the rows of
@@ -32,6 +33,9 @@ WHERE {
   VALUES (?class ?type ?sourceIdPredicate) {
     ("Patient"            cascade:PatientProfile cascade:sourceRecordId)
     ("AllergyIntolerance" health:AllergyRecord   health:sourceRecordId)
+    ("Condition"          health:ConditionRecord    health:sourceRecordId)
+    ("Immunization"       health:ImmunizationRecord health:sourceRecordId)
+    ("Procedure"          clinical:Procedure        clinical:sourceRecordId)
   }
   OPTIONAL { ?row ccda:identifier ?identifier }
   OPTIONAL { ?row ccda:keyFingerprint ?key }

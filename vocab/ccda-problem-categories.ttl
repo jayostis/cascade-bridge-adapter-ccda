@@ -1,0 +1,15 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
+
+ccda:problemCategories a skos:ConceptScheme ;
+  skos:prefLabel "C-CDA section code to FHIR Condition category"@en .
+
+ccda:categoryEncounterDiagnosis a skos:Concept ;
+  skos:inScheme ccda:problemCategories ;
+  skos:notation "46240-8" ;
+  skos:exactMatch <http://terminology.hl7.org/CodeSystem/condition-category/encounter-diagnosis> .
+
+ccda:categoryProblemListItem a skos:Concept ;
+  skos:inScheme ccda:problemCategories ;
+  skos:notation "11450-4" ;
+  skos:exactMatch <http://terminology.hl7.org/CodeSystem/condition-category/problem-list-item> .

@@ -44,6 +44,43 @@
   prov:wasDerivedFrom <ni:///sha-256;5uSY7kyMHmGYxmj5V3Bvk5WA-qJsjLbhsmdws-PqR6I> ;
   prov:wasGeneratedBy _:import .
 
+<urn:uuid:013ceb98-9cbd-83ed-b65e-7305d17068ea>
+  a health:ConditionRecord ;
+  health:sourceRecordId "2.16.840.1.113883.3.88.11.32.1:EPIC-COND-OBS-001" ;
+  rec:sourceUrl <urn:hl7ii:2.16.840.1.113883.3.88.11.32.1:EPIC-COND-OBS-001> .
+
+<ni:///sha-256;9JVVVclQT-Md4FGzJcNb0ZLCq1Q4ujCxN5z3fVbO8bI>
+  prov:specializationOf <urn:uuid:013ceb98-9cbd-83ed-b65e-7305d17068ea> ;
+  rec:patient <urn:uuid:98ebabcf-1e12-889e-8d31-4b1c618f61b9> ;
+  health:conditionName "Type 2 diabetes mellitus" ;
+  health:icd10Code <http://hl7.org/fhir/sid/icd-10-cm/E11> ;
+  clinical:category "problem-list-item" ;
+  health:status "active" ;
+  health:onsetDate "2022-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+
+[] bridge:arrivedAs <ni:///sha-256;9JVVVclQT-Md4FGzJcNb0ZLCq1Q4ujCxN5z3fVbO8bI> ;
+  bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][4]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='act' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entryRelationship' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]" ;
+  prov:wasDerivedFrom <ni:///sha-256;5uSY7kyMHmGYxmj5V3Bvk5WA-qJsjLbhsmdws-PqR6I> ;
+  prov:wasGeneratedBy _:import .
+
+<urn:uuid:22503cd0-0785-82f4-addb-9b9cdee3e36a>
+  a health:ImmunizationRecord ;
+  health:sourceRecordId "2.16.840.1.113883.3.88.11.32.1:EPIC-IMMUN-001" ;
+  rec:sourceUrl <urn:hl7ii:2.16.840.1.113883.3.88.11.32.1:EPIC-IMMUN-001> .
+
+<ni:///sha-256;2Gej2I8Q7RVfvmhQdd7xziSwNVOqHSAHbiEhywOhd74>
+  prov:specializationOf <urn:uuid:22503cd0-0785-82f4-addb-9b9cdee3e36a> ;
+  rec:patient <urn:uuid:98ebabcf-1e12-889e-8d31-4b1c618f61b9> ;
+  health:vaccineName "Influenza, seasonal, injectable, preservative free" ;
+  health:vaccineCode "140" ;
+  health:administrationDate "2024-10-15"^^<http://www.w3.org/2001/XMLSchema#date> ;
+  health:status "completed" .
+
+[] bridge:arrivedAs <ni:///sha-256;2Gej2I8Q7RVfvmhQdd7xziSwNVOqHSAHbiEhywOhd74> ;
+  bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][2]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='substanceAdministration' and namespace-uri()='urn:hl7-org:v3'][1]" ;
+  prov:wasDerivedFrom <ni:///sha-256;5uSY7kyMHmGYxmj5V3Bvk5WA-qJsjLbhsmdws-PqR6I> ;
+  prov:wasGeneratedBy _:import .
+
 <ni:///sha-256;5uSY7kyMHmGYxmj5V3Bvk5WA-qJsjLbhsmdws-PqR6I>
   a prov:Entity ;
   pav:retrievedOn "2025-07-02T09:00:00Z"^^xsd:dateTime ;

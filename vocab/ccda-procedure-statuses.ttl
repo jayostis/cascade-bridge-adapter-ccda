@@ -1,0 +1,25 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
+
+ccda:procedureStatuses a skos:ConceptScheme ;
+  skos:prefLabel "C-CDA act status to FHIR Procedure status"@en .
+
+ccda:procedureStatusAborted a skos:Concept ;
+  skos:inScheme ccda:procedureStatuses ;
+  skos:notation "aborted" ;
+  skos:exactMatch <http://hl7.org/fhir/event-status/stopped> .
+
+ccda:procedureStatusActive a skos:Concept ;
+  skos:inScheme ccda:procedureStatuses ;
+  skos:notation "active" ;
+  skos:exactMatch <http://hl7.org/fhir/event-status/in-progress> .
+
+ccda:procedureStatusCancelled a skos:Concept ;
+  skos:inScheme ccda:procedureStatuses ;
+  skos:notation "cancelled" ;
+  skos:exactMatch <http://hl7.org/fhir/event-status/not-done> .
+
+ccda:procedureStatusCompleted a skos:Concept ;
+  skos:inScheme ccda:procedureStatuses ;
+  skos:notation "completed" ;
+  skos:exactMatch <http://hl7.org/fhir/event-status/completed> .

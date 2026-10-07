@@ -32,13 +32,18 @@ WHERE {
   FILTER EXISTS {
     ?section ?templateSlot ?template .
     ?template a v3:templateId ; xyz:root ?mapped .
-    VALUES ?mapped { "2.16.840.1.113883.10.20.22.2.6" "2.16.840.1.113883.10.20.22.2.6.1" }
+    VALUES ?mapped {
+      "2.16.840.1.113883.10.20.22.2.6" "2.16.840.1.113883.10.20.22.2.6.1"
+      "2.16.840.1.113883.10.20.22.2.5" "2.16.840.1.113883.10.20.22.2.5.1"
+      "2.16.840.1.113883.10.20.22.2.2" "2.16.840.1.113883.10.20.22.2.2.1"
+      "2.16.840.1.113883.10.20.22.2.7" "2.16.840.1.113883.10.20.22.2.7.1"
+    }
   }
   BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
                STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
                STRAFTER(STR(?entrySlot), "#_"), ".") AS ?entrySlots)
   FILTER NOT EXISTS {
-    ?row ccda:recordClass "AllergyIntolerance" ; ccda:statementAt ?slots .
+    ?row ccda:statementAt ?slots .
     FILTER (STRSTARTS(?slots, ?entrySlots))
   }
   OPTIONAL {

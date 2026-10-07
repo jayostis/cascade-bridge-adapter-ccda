@@ -1,0 +1,153 @@
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos:     <http://www.w3.org/2004/02/skos/core#>
+PREFIX fx:       <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:      <http://sparql.xyz/facade-x/data/>
+PREFIX v3:       <urn:hl7-org:v3>
+PREFIX health:   <https://ns.cascadeprotocol.org/health/v1#>
+PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# An Immunization Activity. Where the vocabulary holds one value and the source
+# states several, the first in document order is carried:
+#   - the vaccine's name, read in this order: the narrative its code's
+#     originalText references, the originalText's own text, the code's
+#     displayName;
+#   - the CVX code, the vaccine's code or a translation of it;
+#   - the status: not-done where negationInd is true, as HL7's map says, and
+#     otherwise the statusCode, where it maps to an immunization status;
+#   - the route and the site, by their displayName.
+# The dose is its value and unit. A time is written as allergy.rq writes it.
+
+CONSTRUCT {
+  ?version ?p ?o .
+}
+WHERE {
+  ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
+  ?outer a v3:component ; ?bodySlot ?body .
+  ?body a v3:structuredBody ; ?componentSlot ?component .
+  ?component a v3:component ; ?sectionSlot ?section .
+  ?section a v3:section ; ?entrySlot ?entry .
+  ?entry a v3:entry ; ?statementSlot ?immunization .
+  ?immunization a v3:substanceAdministration .
+  FILTER EXISTS {
+    ?immunization ?templateSlot ?template .
+    ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.52" .
+  }
+  BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(CONCAT(
+          STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
+          STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
+          STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?statementSlot), "#_"))))) AS ?version)
+
+  {
+    SELECT ?immunization ?p (MIN(?ranked) AS ?first) WHERE {
+      ?immunization a v3:substanceAdministration ; ?tS ?t .
+      ?t a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.52" .
+      {
+        ?immunization ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
+        ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial .
+        BIND (STRAFTER(STR(?cnS), "#_") AS ?at)
+        {
+          ?material ?cS ?code . ?code a v3:code .
+          BIND (health:vaccineName AS ?p)
+          {
+            ?code ?otS ?originalText . ?originalText a v3:originalText ; ?rfS ?reference .
+            ?reference a v3:reference ; xyz:value ?pointer .
+            ?narrative xyz:ID ?anchor ; ?nS ?value .
+            FILTER (?anchor = STRAFTER(?pointer, "#") && isLiteral(?value) && STRSTARTS(STR(?nS), STR(rdf:_)))
+            BIND ("1" AS ?tier)
+            BIND (STRAFTER(STR(?nS), "#_") AS ?within)
+          }
+          UNION
+          {
+            ?code ?otS ?originalText . ?originalText a v3:originalText ; ?vS ?value .
+            FILTER (isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
+            BIND ("2" AS ?tier)
+            BIND (STRAFTER(STR(?vS), "#_") AS ?within)
+          }
+          UNION
+          {
+            ?code xyz:displayName ?value .
+            BIND ("3" AS ?tier)
+          }
+        }
+        UNION
+        {
+          { ?material ?cS ?coding . ?coding a v3:code . BIND ("1" AS ?tier) }
+          UNION
+          { ?material ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation . BIND ("2" AS ?tier) BIND (STRAFTER(STR(?trS), "#_") AS ?within) }
+          ?coding xyz:code ?value ; xyz:codeSystem ?codeSystem .
+          FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.12.292")
+          BIND (health:vaccineCode AS ?p)
+        }
+        UNION
+        {
+          ?material ?lS ?lot . ?lot a v3:lotNumberText ; ?vS ?value .
+          FILTER (isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
+          BIND (health:lotNumber AS ?p)
+          BIND ("1" AS ?tier)
+          BIND (STRAFTER(STR(?vS), "#_") AS ?within)
+        }
+      }
+      UNION
+      {
+        ?immunization xyz:negationInd "true" .
+        BIND (health:status AS ?p)
+        BIND ("not-done" AS ?value)
+        BIND ("1" AS ?tier)
+        BIND ("" AS ?at)
+      }
+      UNION
+      {
+        ?immunization ?sS ?status . ?status a v3:statusCode ; xyz:code ?code .
+        ?concept skos:inScheme ccda:immunizationStatuses ; skos:notation ?key ; skos:exactMatch ?match .
+        FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+        BIND (health:status AS ?p)
+        BIND (STRAFTER(STR(?sS), "#_") AS ?at)
+        BIND (REPLACE(STR(?match), "^.*/", "") AS ?value)
+        BIND ("2" AS ?tier)
+      }
+      UNION
+      {
+        ?immunization ?eS ?time . ?time a v3:effectiveTime .
+        { ?time xyz:value ?value . BIND ("1" AS ?tier) }
+        UNION
+        { ?time ?lS ?low . ?low a v3:low ; xyz:value ?value . BIND ("2" AS ?tier) }
+        FILTER (REGEX(?value, "^[0-9]{8}"))
+        BIND (health:administrationDate AS ?p)
+        BIND (STRAFTER(STR(?eS), "#_") AS ?at)
+      }
+      UNION
+      {
+        ?immunization ?dS ?dose . ?dose a v3:doseQuantity ; xyz:value ?amount .
+        OPTIONAL { ?dose xyz:unit ?unit }
+        BIND (health:doseQuantity AS ?p)
+        BIND (IF(BOUND(?unit), CONCAT(?amount, " ", ?unit), ?amount) AS ?value)
+        BIND (STRAFTER(STR(?dS), "#_") AS ?at)
+        BIND ("1" AS ?tier)
+      }
+      UNION
+      {
+        ?immunization ?rS ?coded . ?coded a ?codedType ; xyz:displayName ?value .
+        VALUES (?codedType ?p) { (v3:routeCode health:route) (v3:approachSiteCode health:site) }
+        BIND (STRAFTER(STR(?rS), "#_") AS ?at)
+        BIND ("1" AS ?tier)
+      }
+      BIND (COALESCE(?within, "") AS ?inner)
+      BIND (CONCAT(?tier, SUBSTR("0000000000", STRLEN(?at) + 1), ?at,
+                   SUBSTR("00000000000000000000", STRLEN(?inner) + 1), ?inner, "|", ?value) AS ?ranked)
+    } GROUP BY ?immunization ?p
+  }
+  BIND (STRAFTER(?first, "|") AS ?value)
+  BIND (IF(?p != health:administrationDate, ?value,
+        IF(REGEX(?value, "^[0-9]{12}([0-9]{2}(\\.[0-9]+)?)?([+-][0-9]{4})?$"),
+           STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),
+                        "T", SUBSTR(?value, 9, 2), ":", SUBSTR(?value, 11, 2), ":",
+                        IF(REGEX(?value, "^[0-9]{14}"), REPLACE(?value, "^[0-9]{12}([0-9]{2}(\\.[0-9]+)?).*$", "$1"), "00"),
+                        IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")),
+                 xsd:dateTime),
+        IF(REGEX(?value, "^[0-9]{8}([0-9]{2})?([+-][0-9]{4})?$"),
+           STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),
+                        IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")),
+                 xsd:date),
+           1/0))) AS ?o)
+}

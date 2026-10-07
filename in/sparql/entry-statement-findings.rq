@@ -1,0 +1,77 @@
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sh:     <http://www.w3.org/ns/shacl#>
+PREFIX oa:     <http://www.w3.org/ns/oa#>
+PREFIX skos:   <http://www.w3.org/2004/02/skos/core#>
+PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:    <http://sparql.xyz/facade-x/data/>
+PREFIX v3:     <urn:hl7-org:v3>
+PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
+PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# A status an immunization or a procedure states that the concept map its
+# mapping reads it through does not hold, and a code in a code system no
+# predicate of its kind carries. An immunization whose negationInd is true is
+# not-done whatever its statusCode says.
+
+
+CONSTRUCT {
+  [] a oa:Annotation ;
+    oa:hasTarget [
+      oa:hasSource bridge:thisRecord ;
+      oa:hasSelector [ a oa:XPathSelector ; rdf:value ?refinement ]
+    ] ;
+    oa:hasBody ?gap ;
+    oa:motivatedBy oa:classifying ;
+    sh:value ?value .
+}
+WHERE {
+  ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
+  ?outer a v3:component ; ?bodySlot ?body .
+  ?body a v3:structuredBody ; ?componentSlot ?component .
+  ?component a v3:component ; ?sectionSlot ?section .
+  ?section a v3:section ; ?entrySlot ?entry .
+  ?entry a v3:entry ; ?statementSlot ?statement .
+  ?row ccda:statementAt ?slots ; ccda:recordClass ?class ; ccda:refinement ?refinement .
+  FILTER (?slots = CONCAT(
+          STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
+          STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
+          STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?statementSlot), "#_")))
+  {
+    ?statement ?sS ?status . ?status a v3:statusCode ; xyz:code ?value .
+    VALUES (?class ?scheme ?gap) {
+      ("Immunization" ccda:immunizationStatuses ccda:immunizationStatusNotMapped)
+      ("Procedure"    ccda:procedureStatuses    ccda:procedureStatusNotMapped)
+    }
+    FILTER NOT EXISTS { ?statement xyz:negationInd "true" }
+    FILTER NOT EXISTS {
+      ?concept skos:inScheme ?scheme ; skos:notation ?key .
+      FILTER (?key = LCASE(REPLACE(?value, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+    }
+  }
+  UNION
+  {
+    {
+      ?statement ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
+      ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial ; ?cS ?code .
+      BIND ("Immunization" AS ?class)
+    }
+    UNION
+    {
+      ?statement ?cS ?code .
+      BIND ("Procedure" AS ?class)
+    }
+    ?code a v3:code .
+    { ?code xyz:codeSystem ?value . }
+    UNION
+    { ?code ?trS ?translation . ?translation a v3:translation ; xyz:codeSystem ?value . }
+    FILTER NOT EXISTS {
+      VALUES (?class ?anyCarried) {
+        ("Immunization" "2.16.840.1.113883.12.292")
+        ("Procedure"    "2.16.840.1.113883.6.96")
+        ("Procedure"    "2.16.840.1.113883.6.12")
+      }
+      FILTER (REPLACE(?value, "^urn:oid:", "") = ?anyCarried)
+    }
+    BIND (ccda:codeNotCarried AS ?gap)
+  }
+}
