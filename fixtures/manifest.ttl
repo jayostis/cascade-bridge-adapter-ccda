@@ -25,6 +25,7 @@
     <#download-c>
     <#download-d>
     <#medications-and-results-a>
+    <#medications-and-results-edges>
     <#medications-and-results-b>
     <#download-twice-names-one-allergy>
     <#download-twice-nullflavor-id-names-one-allergy>
@@ -266,6 +267,18 @@
   mf:result [
     bridge:expectedGraph <expected/medications-and-results-a.ttl> ;
     bridge:expectedFindings <findings/medications-and-results-a.ttl>
+  ] .
+
+<#medications-and-results-edges> a bridge:IsomorphicConversionTest ;
+  mf:name "medications-and-results-edges" ;
+  mf:action [
+    bridge:input <in/medications-and-results-edges.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/medications-and-results-edges.ttl> ;
+    bridge:expectedFindings <findings/medications-and-results-edges.ttl>
   ] .
 
 <#medications-and-results-b> a bridge:IsomorphicConversionTest ;

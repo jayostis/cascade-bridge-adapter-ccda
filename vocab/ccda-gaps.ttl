@@ -115,7 +115,7 @@ ccda:concernTime a skos:Concept ;
   skos:broader bridge:noPredicate .
 
 ccda:codedRouteAndSite a skos:Concept ;
-  skos:prefLabel "An immunization's route or site is coded, and no Cascade predicate carries the code; its display name is carried."@en ;
+  skos:prefLabel "A route or site is coded, and no Cascade predicate carries the code; an immunization's display name is carried, and a medication's is not."@en ;
   skos:inScheme ccda:gaps ;
   skos:broader bridge:noPredicate .
 
@@ -140,7 +140,7 @@ ccda:resultStatusNotMapped a skos:Concept ;
   skos:broader bridge:valueNotMapped .
 
 ccda:resultValueNotCarried a skos:Concept ;
-  skos:prefLabel "A result states its value as a data type no Cascade predicate carries, and the value is not carried."@en ;
+  skos:prefLabel "A result states its value as a data type no Cascade predicate carries, or as a code with no name to carry, and the value is not carried."@en ;
   skos:inScheme ccda:gaps ;
   skos:broader bridge:noPredicate .
 
@@ -149,3 +149,13 @@ ccda:resultComponentNotMapped a skos:Concept ;
   skos:inScheme ccda:gaps ;
   skos:broader bridge:valueNotMapped ;
   sh:resultSeverity sh:Warning .
+
+ccda:onlyFirstCarried a skos:Concept ;
+  skos:prefLabel "A record states a second value where the vocabulary holds one, and only the first is carried."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:carriedWithLoss .
+
+ccda:medicationRouteAndSite a skos:Concept ;
+  skos:prefLabel "A medication's route or site is named, and no Cascade predicate of a medication carries it; an immunization's is carried."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:carriedWithLoss .

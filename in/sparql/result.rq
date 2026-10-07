@@ -22,7 +22,10 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 #     references, the originalText's own text, its displayName. Any other type
 #     is a finding of result-findings.rq;
 #   - a reference range: its text, through its reference first, else its
-#     IVL_PQ written as the FHIR R4 adapter writes a range with no text.
+#     IVL_PQ written as the FHIR R4 adapter writes a range with no text, a
+#     range with one bound as >=low or <=high.
+# A narrative element is read only where its text is one run; one holding
+# markup falls through to the next of these.
 # A LOINC code is written in the IRI space the vocabulary names, one for the
 # code and each translation in LOINC. A time is read as allergy.rq reads an
 # onset.
@@ -60,6 +63,7 @@ WHERE {
             ?code ?otS ?originalText . ?originalText a v3:originalText ; ?rfS ?reference .
             ?reference a v3:reference ; xyz:value ?pointer .
             ?narrative xyz:ID ?anchor ; ?nS ?value .
+            FILTER NOT EXISTS { ?narrative ?oS ?other . FILTER (STRSTARTS(STR(?oS), STR(rdf:_)) && ?oS != ?nS) }
             FILTER (?anchor = STRAFTER(?pointer, "#") && isLiteral(?value) && STRSTARTS(STR(?nS), STR(rdf:_)))
             BIND ("1" AS ?tier)
             BIND (STRAFTER(STR(?nS), "#_") AS ?within)
@@ -112,6 +116,7 @@ WHERE {
             ?resultValue ?otS ?originalText . ?originalText a v3:originalText ; ?rfS ?reference .
             ?reference a v3:reference ; xyz:value ?pointer .
             ?narrative xyz:ID ?anchor ; ?nS ?value .
+            FILTER NOT EXISTS { ?narrative ?oS ?other . FILTER (STRSTARTS(STR(?oS), STR(rdf:_)) && ?oS != ?nS) }
             FILTER (?anchor = STRAFTER(?pointer, "#") && isLiteral(?value) && STRSTARTS(STR(?nS), STR(rdf:_)))
             BIND (health:resultValue AS ?p)
             BIND ("coded" AS ?form)
@@ -154,6 +159,7 @@ WHERE {
             ?observationRange ?txS ?text . ?text a v3:text ; ?rfS ?reference .
             ?reference a v3:reference ; xyz:value ?pointer .
             ?narrative xyz:ID ?anchor ; ?nS ?value .
+            FILTER NOT EXISTS { ?narrative ?oS ?other . FILTER (STRSTARTS(STR(?oS), STR(rdf:_)) && ?oS != ?nS) }
             FILTER (?anchor = STRAFTER(?pointer, "#") && isLiteral(?value) && STRSTARTS(STR(?nS), STR(rdf:_)))
             BIND ("1" AS ?tier)
             BIND (STRAFTER(STR(?nS), "#_") AS ?within)
@@ -167,13 +173,14 @@ WHERE {
           }
           UNION
           {
-            ?observationRange ?bdS ?bounds . ?bounds a v3:value ; ?lS ?low ; ?hS ?high .
-            ?low a v3:low ; xyz:value ?lowValue .
-            ?high a v3:high ; xyz:value ?highValue .
-            OPTIONAL { ?low xyz:unit ?lowUnit }
-            OPTIONAL { ?high xyz:unit ?highUnit }
+            ?observationRange ?bdS ?bounds . ?bounds a v3:value .
+            OPTIONAL { ?bounds ?lS ?low . ?low a v3:low ; xyz:value ?lowValue . OPTIONAL { ?low xyz:unit ?lowUnit } }
+            OPTIONAL { ?bounds ?hS ?high . ?high a v3:high ; xyz:value ?highValue . OPTIONAL { ?high xyz:unit ?highUnit } }
+            FILTER (BOUND(?lowValue) || BOUND(?highValue))
+            BIND (IF(BOUND(?lowValue) && BOUND(?highValue), CONCAT(?lowValue, "-", ?highValue),
+                     IF(BOUND(?lowValue), CONCAT(">=", ?lowValue), CONCAT("<=", ?highValue))) AS ?rangeBounds)
             BIND (COALESCE(?lowUnit, ?highUnit) AS ?rangeUnit)
-            BIND (CONCAT(?lowValue, "-", ?highValue, IF(BOUND(?rangeUnit), CONCAT(" ", ?rangeUnit), "")) AS ?value)
+            BIND (CONCAT(?rangeBounds, IF(BOUND(?rangeUnit), CONCAT(" ", ?rangeUnit), "")) AS ?value)
             BIND ("3" AS ?tier)
           }
         }

@@ -11,8 +11,9 @@ PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # What a result organizer holds that result.rq does not carry: a status outside
-# its concept map, a value of a type no predicate takes, and a code in a code
-# system other than LOINC, at the result; and
+# its concept map, a value of a type no predicate takes or a coded one with no
+# name, a second value, range or interpretation, and a code in a code system
+# other than LOINC, at the result; and
 # a component of an organizer some result of which is a record, that is no
 # record itself, a vital sign among them, at the component, valued by the least
 # templateId root its statement claims. An organizer no result of which is a
@@ -60,6 +61,27 @@ WHERE {
       BIND (REPLACE(?written, "^.*:", "") AS ?value)
       FILTER (?value NOT IN ("PQ", "INT", "REAL", "ST", "CD", "CE", "CV", "CO"))
       BIND (ccda:resultValueNotCarried AS ?gap)
+    }
+    UNION
+    {
+      ?result ?vS ?resultValue . ?resultValue a v3:value ; xsi:type ?written .
+      FILTER (REPLACE(?written, "^.*:", "") IN ("CD", "CE", "CV", "CO"))
+      FILTER NOT EXISTS { ?resultValue xyz:nullFlavor ?absent }
+      FILTER NOT EXISTS { ?resultValue xyz:displayName ?displayName }
+      FILTER NOT EXISTS { ?resultValue ?otS ?originalText . ?originalText a v3:originalText }
+      BIND (REPLACE(?written, "^.*:", "") AS ?value)
+      BIND (ccda:resultValueNotCarried AS ?gap)
+    }
+    UNION
+    {
+      ?result ?elementS ?element . ?element a ?elementType .
+      VALUES ?elementType { v3:value v3:referenceRange v3:interpretationCode }
+      FILTER EXISTS {
+        ?result ?earlierS ?earlier . ?earlier a ?elementType .
+        FILTER (xsd:integer(STRAFTER(STR(?earlierS), "#_")) < xsd:integer(STRAFTER(STR(?elementS), "#_")))
+      }
+      BIND (STRAFTER(STR(?elementType), "urn:hl7-org:v3") AS ?value)
+      BIND (ccda:onlyFirstCarried AS ?gap)
     }
     UNION
     {

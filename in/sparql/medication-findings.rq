@@ -11,7 +11,8 @@ PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # Each element of a structured dosage a medication states, at the element,
-# valued by its name. A periodic effectiveTime is a dosage's timing; an
+# valued by its name; and each RxNorm code after the first, which a medication
+# states one of, at the medication. A periodic effectiveTime is a dosage's timing; an
 # interval one is the medication's start and end. A route and a site are the
 # accounting's ccda:codedRouteAndSite, and a status and codes
 # entry-statement-findings.rq's.
@@ -59,6 +60,25 @@ WHERE {
     BIND (STRAFTER(STR(?dosingType), "urn:hl7-org:v3") AS ?value)
     BIND (ccda:structuredDosage AS ?gap)
     BIND (CONCAT("/*[local-name()='", ?value, "' and namespace-uri()='urn:hl7-org:v3'][", STR(?dosingAt), "]") AS ?dosingStep)
+  }
+  UNION
+  {
+    ?medication ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
+    ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial ; ?cS ?code .
+    ?code a v3:code ; ?trS ?translation .
+    ?translation a v3:translation ; xyz:code ?value ; xyz:codeSystem ?translationSystem .
+    FILTER (REPLACE(?translationSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.88")
+    FILTER (EXISTS {
+              ?code xyz:codeSystem ?codeSystem .
+              FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.88")
+            }
+            || EXISTS {
+              ?code ?earlierS ?earlier . ?earlier a v3:translation ; xyz:codeSystem ?earlierSystem .
+              FILTER (REPLACE(?earlierSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.88"
+                      && xsd:integer(STRAFTER(STR(?earlierS), "#_")) < xsd:integer(STRAFTER(STR(?trS), "#_")))
+            })
+    BIND (ccda:onlyFirstCarried AS ?gap)
+    BIND ("" AS ?dosingStep)
   }
   BIND (CONCAT(?medicationAt, ?dosingStep) AS ?refinement)
 }
