@@ -1,0 +1,15 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
+
+ccda:immunizationStatuses a skos:ConceptScheme ;
+  skos:prefLabel "C-CDA act status to FHIR Immunization status"@en .
+
+ccda:immunizationStatusCompleted a skos:Concept ;
+  skos:inScheme ccda:immunizationStatuses ;
+  skos:notation "completed" ;
+  skos:exactMatch <http://hl7.org/fhir/event-status/completed> .
+
+ccda:immunizationStatusNullified a skos:Concept ;
+  skos:inScheme ccda:immunizationStatuses ;
+  skos:notation "nullified" ;
+  skos:exactMatch <http://hl7.org/fhir/event-status/entered-in-error> .

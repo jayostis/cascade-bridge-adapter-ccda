@@ -53,3 +53,28 @@ ccda:patientGender a skos:Concept ;
   skos:prefLabel "A patient carries an administrative gender, and no Cascade predicate carries it."@en ;
   skos:inScheme ccda:gaps ;
   skos:broader bridge:noPredicate .
+
+ccda:problemStatusNotMapped a skos:Concept ;
+  skos:prefLabel "A problem states a status outside the concept map of problem statuses, and it is not carried."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:valueNotMapped .
+
+ccda:immunizationStatusNotMapped a skos:Concept ;
+  skos:prefLabel "An immunization states a status outside the concept map of immunization statuses, and it is not carried."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:valueNotMapped .
+
+ccda:procedureStatusNotMapped a skos:Concept ;
+  skos:prefLabel "A procedure states a status outside the concept map of procedure statuses, and it is not carried."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:valueNotMapped .
+
+ccda:codeNotCarried a skos:Concept ;
+  skos:prefLabel "A code is stated in a code system no Cascade predicate of its record's kind carries, and it is not carried."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:carriedWithLoss .
+
+ccda:concernStatusNotMapped a skos:Concept ;
+  skos:prefLabel "A problem states no status of its own, and its concern act a status outside the concept map of concern statuses, so no status is carried."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:valueNotMapped .

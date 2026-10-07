@@ -9,8 +9,9 @@ PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # A section is mapped by its templateId: the source accounting's paths carry no
-# section, so this, and not the accounting, says a section is not carried. Its
-# value is the section's code, where it states one.
+# section, so this, and not the accounting, says a section is not carried. A
+# section a record is made from is carried, whatever its templateId. Its value
+# is the section's code, where it states one.
 
 CONSTRUCT {
   [] a oa:Annotation ;
@@ -31,7 +32,17 @@ WHERE {
   FILTER NOT EXISTS {
     ?section ?templateSlot ?template .
     ?template a v3:templateId ; xyz:root ?mapped .
-    VALUES ?mapped { "2.16.840.1.113883.10.20.22.2.6" "2.16.840.1.113883.10.20.22.2.6.1" }
+    VALUES ?mapped {
+      "2.16.840.1.113883.10.20.22.2.6" "2.16.840.1.113883.10.20.22.2.6.1"
+      "2.16.840.1.113883.10.20.22.2.5" "2.16.840.1.113883.10.20.22.2.5.1"
+      "2.16.840.1.113883.10.20.22.2.2" "2.16.840.1.113883.10.20.22.2.2.1"
+      "2.16.840.1.113883.10.20.22.2.7" "2.16.840.1.113883.10.20.22.2.7.1"
+    }
+  }
+  FILTER NOT EXISTS {
+    ?row ccda:statementAt ?rowSlots .
+    FILTER (STRSTARTS(?rowSlots, CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
+                                         STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".")))
   }
   OPTIONAL { ?section ?codeSlot ?code . ?code a v3:code ; xyz:code ?value }
   {

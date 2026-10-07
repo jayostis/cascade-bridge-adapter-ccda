@@ -1,0 +1,91 @@
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sh:     <http://www.w3.org/ns/shacl#>
+PREFIX oa:     <http://www.w3.org/ns/oa#>
+PREFIX skos:   <http://www.w3.org/2004/02/skos/core#>
+PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:    <http://sparql.xyz/facade-x/data/>
+PREFIX v3:     <urn:hl7-org:v3>
+PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
+PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# A status a problem states that the concept map condition.rq reads it through
+# does not hold: its Problem Status Observation's, or, where it has none, its
+# concern act's. And a code in a code system no predicate of a condition
+# carries.
+
+CONSTRUCT {
+  [] a oa:Annotation ;
+    oa:hasTarget [
+      oa:hasSource bridge:thisRecord ;
+      oa:hasSelector [ a oa:XPathSelector ; rdf:value ?refinement ]
+    ] ;
+    oa:hasBody ?gap ;
+    oa:motivatedBy oa:classifying ;
+    sh:value ?value .
+}
+WHERE {
+  ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
+  ?outer a v3:component ; ?bodySlot ?body .
+  ?body a v3:structuredBody ; ?componentSlot ?component .
+  ?component a v3:component ; ?sectionSlot ?section .
+  ?section a v3:section ; ?entrySlot ?entry .
+  ?entry a v3:entry ; ?actSlot ?act .
+  ?act a v3:act .
+  {
+    ?act ?relationshipSlot ?relationship . ?relationship a v3:entryRelationship ; ?statementSlot ?condition .
+    BIND (CONCAT(STRAFTER(STR(?relationshipSlot), "#_"), ".", STRAFTER(STR(?statementSlot), "#_")) AS ?innerSlots)
+  }
+  UNION
+  {
+    ?act ?statementSlot ?condition .
+    BIND (STRAFTER(STR(?statementSlot), "#_") AS ?innerSlots)
+  }
+  ?condition a v3:observation .
+  FILTER EXISTS {
+    ?condition ?templateSlot ?template .
+    ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.4" .
+  }
+  FILTER EXISTS {
+    ?act ?concernSlot ?concern .
+    ?concern a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.3" .
+  }
+  ?row ccda:statementAt ?slots ; ccda:refinement ?refinement .
+  FILTER (?slots = CONCAT(
+          STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
+          STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
+          STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?actSlot), "#_"), ".", ?innerSlots))
+  {
+    ?condition ?rS ?statusRelationship . ?statusRelationship a v3:entryRelationship ; ?oS ?observation .
+    ?observation a v3:observation ; ?otS ?ot ; ?ovS ?coded .
+    ?ot a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.6" .
+    ?coded a v3:value ; xyz:code ?value .
+    FILTER NOT EXISTS {
+      ?concept skos:inScheme ccda:problemStatuses ; skos:notation ?key .
+      FILTER (?key = LCASE(REPLACE(?value, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+    }
+    BIND (ccda:problemStatusNotMapped AS ?gap)
+  }
+  UNION
+  {
+    ?act ?sS ?status . ?status a v3:statusCode ; xyz:code ?value .
+    FILTER NOT EXISTS {
+      ?condition ?anyS ?anyRelationship . ?anyRelationship a v3:entryRelationship ; ?anyO ?anyStatus .
+      ?anyStatus a v3:observation ; ?anyT ?anyTemplate .
+      ?anyTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.6" .
+    }
+    FILTER NOT EXISTS {
+      ?concept skos:inScheme ccda:concernStatuses ; skos:notation ?key .
+      FILTER (?key = LCASE(REPLACE(?value, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+    }
+    BIND (ccda:concernStatusNotMapped AS ?gap)
+  }
+  UNION
+  {
+    ?condition ?vS ?coded . ?coded a v3:value .
+    { ?coded xyz:codeSystem ?value . }
+    UNION
+    { ?coded ?trS ?translation . ?translation a v3:translation ; xyz:codeSystem ?value . }
+    FILTER (REPLACE(?value, "^urn:oid:", "") NOT IN ("2.16.840.1.113883.6.96", "2.16.840.1.113883.6.90"))
+    BIND (ccda:codeNotCarried AS ?gap)
+  }
+}

@@ -32,14 +32,24 @@ wraps it:
 |---|---|---|
 | the patient | `recordTarget/patientRole` | `Patient` |
 | an allergy | an Allergy Intolerance Observation (`2.16.840.1.113883.10.20.22.4.7`) in an entry's Allergy Concern Act | `AllergyIntolerance` |
+| a problem | a Problem Observation (`4.4`) in an entry's Problem Concern Act | `Condition` |
+| an immunization | an Immunization Activity (`4.52`), the entry's own statement | `Immunization` |
+| a procedure | a Procedure Activity Procedure (`4.14`), the entry's own statement | `Procedure` |
 
 The custodian's organisation is the document's author.
 
-A section is mapped by its `templateId`, the Allergies section being
-`2.16.840.1.113883.10.20.22.2.6.1`, or `2.6` where its entries are optional.
-Every other section is a finding: medications, results, problems,
-immunizations, procedures and narrative-only sections alike, until a release
-maps it.
+A section is mapped by its `templateId`: Allergies (`2.16.840.1.113883.10.20.22.2.6.1`),
+Problems (`2.5.1`), Immunizations (`2.2.1`) and Procedures (`2.7.1`), each also
+by the root without `.1`, where its entries are optional. Every other section is
+a finding: medications, results and narrative-only sections alike, until a
+release maps it. An entry of a mapped section holding a statement this release
+does not read, a Procedure Activity Act or Observation among them, is a finding
+too.
+
+A problem's status is its Problem Status Observation's, else its concern act's
+where that is `active`; its category is its section's, by the section's code. An
+immunization whose `negationInd` is true was not done, whatever its
+`statusCode` says.
 
 The class is the FHIR resource type a record of its kind is mapped from, and
 one input of its name ([Naming a C-CDA record](https://github.com/jayostis/cascade-bridge-spec/blob/main/engine/sparql.md#naming-a-c-cda-record)).
@@ -113,4 +123,4 @@ for it, not downloaded from a portal. None names a custodian or an author, so
 each fails the schema at its first `component`. In each of the five that hold
 an allergy, the allergy's observation sits directly in its concern act rather
 than in an `entryRelationship`, which CDA does not allow; the mappings read it
-there too. None holds a procedure.
+there too. None holds a procedure; the procedures are authored.
