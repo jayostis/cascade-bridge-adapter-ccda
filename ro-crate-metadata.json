@@ -361,6 +361,9 @@
           "@id": "fixtures/in/custodian-and-author.xml"
         },
         {
+          "@id": "fixtures/in/allergy-unii-allergen.xml"
+        },
+        {
           "@id": "fixtures/in/several-ids.xml"
         },
         {
@@ -446,6 +449,12 @@
         },
         {
           "@id": "fixtures/findings/custodian-and-author.ttl"
+        },
+        {
+          "@id": "fixtures/expected/allergy-unii-allergen.ttl"
+        },
+        {
+          "@id": "fixtures/findings/allergy-unii-allergen.ttl"
         },
         {
           "@id": "fixtures/expected/several-ids.ttl"
@@ -806,7 +815,7 @@
       "name": "Mapping: allergy",
       "encodingFormat": "application/sparql-query",
       "contentSize": "10286",
-      "sha256": "740aefc774909811db9dd460ede46ddd23e1549e57cd563fb3ef4fbde21645a9",
+      "sha256": "5f1ad9955f5c535e8ded735183c41b4d8b2d700868904a14e83cf0e5bc35314b",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -865,8 +874,8 @@
       "@type": "File",
       "name": "Mapping: condition",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "8494",
-      "sha256": "00516ac51483374d2784921f5da7832774cb165be1251ad80ea5835f028d252b",
+      "contentSize": "8545",
+      "sha256": "ce6215dcc6be214d52ef34a8188425c143b3ad0bde060c8d279d05c52515c71c",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -925,8 +934,8 @@
       "@type": "File",
       "name": "Mapping: medication",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "9076",
-      "sha256": "6f2429a790ab9418f8e7c461118a31637e4862339e1c359ddb2f38594423a038",
+      "contentSize": "9139",
+      "sha256": "e1c54eb15fef5d7a67e2541b4ac97e4486f52e597445e3ca36d320bb72bd5d12",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -937,8 +946,8 @@
       "@type": "File",
       "name": "Mapping: result",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "11618",
-      "sha256": "92456e5f2b3fc146d65dbadc45375282e973e8eaa6d2abf6094e3ad0320cabf4",
+      "contentSize": "11691",
+      "sha256": "8ddbf04802da24f8d364d215a3c021d56a880d8477280c5739b651b189b40307",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1009,15 +1018,32 @@
       "@type": "File",
       "name": "Concept map: code systems",
       "encodingFormat": "text/turtle",
-      "contentSize": "1754",
-      "sha256": "5c7ef0e0b092ebb4da8b1a5d9f754272245bbe1c8d44b9b751add76fb50e5c31",
+      "contentSize": "3493",
+      "sha256": "368755fa9063b7da1af100824be204f8a4e7f9c8a8761957262e94b17a942217",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "isBasedOn": {
-        "@id": "https://terminology.hl7.org/"
-      },
-      "description": "HL7 code system OIDs to the URI FHIR names each code system by, from HL7 Terminology's naming systems, read on 2026-10-07; the OIDs are those cascade-cli's src/lib/ccda-converter/code-systems.ts lists. A code's IRI is that URI, / and the code, as the FHIR R4 adapter writes it."
+      "isBasedOn": [
+        {
+          "@id": "https://terminology.hl7.org/"
+        },
+        {
+          "@id": "https://terminology.hl7.org/SNOMEDCT.html"
+        },
+        {
+          "@id": "https://github.com/HL7/UTG/blob/18bfa0662fbf6c9f6f51922e46c534b00d987848/input/sourceOfTruth/external/v3/namingSystems/v3-loinc.xml"
+        },
+        {
+          "@id": "https://hl7.org/fhir/R4/terminologies-systems.html"
+        },
+        {
+          "@id": "https://github.com/jayostis/cascade-vocabulary/issues/111"
+        },
+        {
+          "@id": "https://github.com/jayostis/cascade-vocabulary/issues/104"
+        }
+      ],
+      "description": "HL7 code system OIDs to the URI FHIR names each code system by, from HL7 Terminology's naming systems, read on 2026-10-07; the OIDs are those cascade-cli's src/lib/ccda-converter/code-systems.ts lists. Each concept also carries void:uriSpace, the stem of its codes' IRIs, which is never that URI: a code's IRI is the stem and the code percent-encoded. The stems are cascade-vocabulary's registry (https://github.com/jayostis/cascade-vocabulary/issues/111), transcribed on 2026-10-10 and HL7 Terminology's where it states one (SNOMED CT's from SNOMEDCT.html, LOINC's iri-stem from v3-loinc.xml); NDC's is not the registry's: it keeps FHIR's system (terminologies-systems.html) and /, as C-CDA's NDC codes are not normalised to 11 digits (https://github.com/jayostis/cascade-vocabulary/issues/104). LOINC's source is pinned to HL7/UTG at 18bfa06."
     },
     {
       "@id": "vocab/ccda-problem-statuses.ttl",
@@ -1728,8 +1754,8 @@
       "@type": "File",
       "name": "Expected graph for custodian-and-author",
       "encodingFormat": "text/turtle",
-      "contentSize": "3971",
-      "sha256": "7fc45e71c09b5f5c152a76b331cf409bbc72932c555b59cd906b6fa87b0315fa",
+      "contentSize": "3969",
+      "sha256": "9a9c6ca6a6d1147837b146a3fb4183fec414144094921756d9212dddb146fc7e",
       "about": {
         "@id": "fixtures/in/custodian-and-author.xml"
       },
@@ -1750,6 +1776,51 @@
         "@id": "fixtures/in/custodian-and-author.xml"
       },
       "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/in/allergy-unii-allergen.xml",
+      "@type": "File",
+      "name": "C-CDA: allergy-unii-allergen",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "4217",
+      "sha256": "7d52fcc5c040409cfb2d938d69716e16cd94fe2304458aca1e2f8a48ed989937",
+      "dateCreated": "2026-10-10",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A document naming its custodian and its author, with one amoxicillin allergy whose allergen is coded in UNII (2.16.840.1.113883.4.9) and nothing else: it shows a code system outside RxNorm, SNOMED CT and LOINC still written as an IRI, under the stem vocab/ccda-code-systems.ttl gives it. Authored here on 2026-10-10, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/expected/allergy-unii-allergen.ttl",
+      "@type": "File",
+      "name": "Expected graph for allergy-unii-allergen",
+      "encodingFormat": "text/turtle",
+      "contentSize": "3622",
+      "sha256": "791b428a13c10b062418a3ad1d880cc83fc236958fb97e2a7270ce22b4c4ee4f",
+      "about": {
+        "@id": "fixtures/in/allergy-unii-allergen.xml"
+      },
+      "dateCreated": "2026-10-10",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/allergy-unii-allergen.ttl",
+      "@type": "File",
+      "name": "Expected findings for allergy-unii-allergen",
+      "encodingFormat": "text/turtle",
+      "contentSize": "10759",
+      "sha256": "176d1bf4749c63a717cb112adac0e0573d8522bfe0032b6ebb1ea242153b960c",
+      "about": {
+        "@id": "fixtures/in/allergy-unii-allergen.xml"
+      },
+      "dateCreated": "2026-10-10",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1952,8 +2023,8 @@
       "@type": "File",
       "name": "Expected graph for shared-id",
       "encodingFormat": "text/turtle",
-      "contentSize": "5146",
-      "sha256": "6a41c17ad3f762720e374bad68ac38ab0b43c88fc3ff2255337a8ad8ca7f4850",
+      "contentSize": "5145",
+      "sha256": "9b34e9befc488c3d37daa69d2a1072bbda67bcee82eaa82392e04905ecd243cf",
       "about": {
         "@id": "fixtures/in/shared-id.xml"
       },
@@ -1984,8 +2055,8 @@
       "@type": "File",
       "name": "Expected graph for negations",
       "encodingFormat": "text/turtle",
-      "contentSize": "5014",
-      "sha256": "01d0c3042cc1985ad27f01a2d96f2a7def23abd104ec71b8890e0b7c3578cb79",
+      "contentSize": "5013",
+      "sha256": "1c7199e668024a1d78aff0d2fc48ab89d60f9cec29effc01f2a62ec65007e912",
       "about": {
         "@id": "fixtures/in/negations.xml"
       },
@@ -2240,8 +2311,8 @@
       "@type": "File",
       "name": "View: conditions",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "1460",
-      "sha256": "0675b1a65f478b6ec595c7394c57f8293fe2d9e8bcc3694e9d388d09989effaf",
+      "contentSize": "1459",
+      "sha256": "814b2bfa5a1a192320383d1f72961248c6771e263b1d00ed11af6c00a13ec76a",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -2270,8 +2341,8 @@
       "@type": "File",
       "name": "View: procedures",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "1119",
-      "sha256": "f948332c4e6cb36be1ac78c971f3048f68640c37669942a0593876b8722612d6",
+      "contentSize": "1118",
+      "sha256": "20dccb35632c591a6c12a50bba1f77798ee1e0b7ed08d3ea47852abfcf3a85b3",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },

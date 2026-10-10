@@ -92,9 +92,15 @@ time. Where it stands alone, nothing is carried.
 
 ## Codes
 
-A code is its `code` and its `codeSystem`, an OID. A code's IRI is the URI FHIR
-names its code system by, `/` and the code, as the FHIR R4 adapter writes one;
-`../vocab/ccda-code-systems.ttl` holds the OIDs this release knows. A
+A code is its `code` and its `codeSystem`, an OID. A code's IRI is the stem
+`../vocab/ccda-code-systems.ttl` gives its OID, then the code percent-encoded.
+The stem is cascade-vocabulary's `void:uriSpace`, HL7 Terminology's where it
+registers one, except NDC's, which keeps FHIR's system and `/` because a
+C-CDA's NDC codes are not normalised to 11 digits. It is never the FHIR URI the
+same concept names:
+FHIR R5 says "there is no simple formula for determining the correct IRI stem
+from a Coding.system" ([RDF](https://hl7.org/fhir/R5/rdf.html#iri-stem), read on
+2026-10-10). The table holds the OIDs this release knows. A
 `translation` is the same concept in another code system. A status, a severity,
 a criticality and an allergy's type are SNOMED CT or HL7 codes, and reach the
 vocabulary's FHIR codes through the concept maps in `../vocab/`.
@@ -102,11 +108,9 @@ vocabulary's FHIR codes through the concept maps in `../vocab/`.
 Epic writes a code system as `urn:oid:` and the OID, which CDA's schema refuses;
 the mappings read the OID after the prefix.
 
-An RxNorm code and a LOINC code are written in the IRI space the vocabulary
-names for each, `http://www.nlm.nih.gov/research/umls/rxnorm/` and
-`http://loinc.org/rdf/`, wherever they stand: a portal often codes a drug or a
-test in its own code system and gives the RxNorm or LOINC code as a
-`translation`.
+An RxNorm code and a LOINC code are written under their stems wherever they
+stand: a portal often codes a drug or a test in its own code system and gives
+the RxNorm or LOINC code as a `translation`.
 
 ## Values
 

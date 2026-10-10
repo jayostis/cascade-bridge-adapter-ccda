@@ -2,6 +2,7 @@ PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
 PREFIX xsi:      <http://www.w3.org/2001/XMLSchema-instance>
 PREFIX skos:     <http://www.w3.org/2004/02/skos/core#>
+PREFIX void:     <http://rdfs.org/ns/void#>
 PREFIX fx:       <http://sparql.xyz/facade-x/ns/>
 PREFIX xyz:      <http://sparql.xyz/facade-x/data/>
 PREFIX v3:       <urn:hl7-org:v3>
@@ -237,7 +238,8 @@ WHERE {
     { ?result ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
     ?coding xyz:code ?loinc ; xyz:codeSystem ?codeSystem .
     FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.1")
+    ccda:codeSystemLoinc void:uriSpace ?stem .
     BIND (health:testCode AS ?p)
-    BIND (IRI(CONCAT("http://loinc.org/rdf/", ENCODE_FOR_URI(?loinc))) AS ?o)
+    BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?loinc))) AS ?o)
   }
 }
