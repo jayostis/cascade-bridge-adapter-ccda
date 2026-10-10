@@ -14,6 +14,7 @@
     <#labs-section>
     <#narrative-only-section>
     <#custodian-and-author>
+    <#allergy-unii-allergen>
     <#several-ids>
     <#repeated-ids>
     <#download-a>
@@ -135,6 +136,18 @@
   mf:result [
     bridge:expectedGraph <expected/custodian-and-author.ttl> ;
     bridge:expectedFindings <findings/custodian-and-author.ttl>
+  ] .
+
+<#allergy-unii-allergen> a bridge:IsomorphicConversionTest ;
+  mf:name "allergy-unii-allergen" ;
+  mf:action [
+    bridge:input <in/allergy-unii-allergen.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/allergy-unii-allergen.ttl> ;
+    bridge:expectedFindings <findings/allergy-unii-allergen.ttl>
   ] .
 
 <#several-ids> a bridge:IsomorphicConversionTest ;

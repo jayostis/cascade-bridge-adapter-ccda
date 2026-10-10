@@ -18,7 +18,7 @@ WHERE {
   OPTIONAL { ?version clinical:procedureDate ?d }
   BIND (STR(?id) AS ?sourceRecordId)
   BIND (STR(?n) AS ?procedureName)
-  BIND (REPLACE(STR(?c), "^http://snomed.info/sct/", "") AS ?snomedCode)
+  BIND (REPLACE(STR(?c), "^http://snomed.info/id/", "") AS ?snomedCode)
   BIND (STR(?s) AS ?status)
   BIND (STR(?d) AS ?procedureDate)
 }
