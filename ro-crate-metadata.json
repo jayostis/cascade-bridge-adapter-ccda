@@ -364,6 +364,9 @@
           "@id": "fixtures/in/allergy-unii-allergen.xml"
         },
         {
+          "@id": "fixtures/in/medications-ndc-translations.xml"
+        },
+        {
           "@id": "fixtures/in/several-ids.xml"
         },
         {
@@ -455,6 +458,12 @@
         },
         {
           "@id": "fixtures/findings/allergy-unii-allergen.ttl"
+        },
+        {
+          "@id": "fixtures/expected/medications-ndc-translations.ttl"
+        },
+        {
+          "@id": "fixtures/findings/medications-ndc-translations.ttl"
         },
         {
           "@id": "fixtures/expected/several-ids.ttl"
@@ -814,12 +823,12 @@
       "@type": "File",
       "name": "Mapping: allergy",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "10286",
-      "sha256": "5f1ad9955f5c535e8ded735183c41b4d8b2d700868904a14e83cf0e5bc35314b",
+      "contentSize": "10508",
+      "sha256": "130e0e5c4578531dffe0e1ec73eb8d5eb57668d5d0a324469210e12e570f768a",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "An Allergy Intolerance Observation's allergen, allergen codes, type, category, status, criticality, severity, reaction, manifestation codes and onset."
+      "description": "An Allergy Intolerance Observation's allergen, allergen codes, type, category, status, criticality, severity, reaction, manifestation codes and onset; an NDC is no allergen code and no manifestation code."
     },
     {
       "@id": "in/sparql/document-author.rq",
@@ -862,8 +871,8 @@
       "@type": "File",
       "name": "Findings: allergy codes not mapped",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "4494",
-      "sha256": "e440040280b7dcb9a67e842c67b16872152eaef4f3e06a61a25828ead77aa4f1",
+      "contentSize": "4615",
+      "sha256": "571f935bd8db7559de0780b0b3a4a38cd377651dc8184e186f7d60a4187be35e",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -922,24 +931,24 @@
       "@type": "File",
       "name": "Findings: immunization and procedure codes not mapped",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "3203",
-      "sha256": "3883d95d27e59562cdcfda69b05b4b00696feb882a8dbda8ca66c5da67a43b32",
+      "contentSize": "3258",
+      "sha256": "a27951cdd01501b2caae09479a7407ca5b72e74907db655d91d92b99328cff5e",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "Each immunization or procedure status outside the map its mapping reads it through, and each code in a code system no predicate of its kind carries."
+      "description": "Each immunization or procedure status outside the map its mapping reads it through, and each code in a code system no predicate of its kind carries; an NDC is a code a medication carries."
     },
     {
       "@id": "in/sparql/medication.rq",
       "@type": "File",
       "name": "Mapping: medication",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "9139",
-      "sha256": "e1c54eb15fef5d7a67e2541b4ac97e4486f52e597445e3ca36d320bb72bd5d12",
+      "contentSize": "10271",
+      "sha256": "574aeb005dcc235b648e4d9f88a5b18ca8b7ad4d47ff17cd1330e6d52128d3ce",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "A Medication Activity's intent from its mood, drug name, RxNorm code, start and end, free text sig and status."
+      "description": "A Medication Activity's intent from its mood, drug name, every RxNorm code and every NDC of its drug's code and translations, the NDC as an 11-digit code, start and end, free text sig and status."
     },
     {
       "@id": "in/sparql/result.rq",
@@ -958,12 +967,12 @@
       "@type": "File",
       "name": "Findings: medications",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "4249",
-      "sha256": "3144fe900148cc5f5a69534a92cec7af82e28b2e6d1ab3b3b71ee543e1242d2b",
+      "contentSize": "3937",
+      "sha256": "f49c64744baa55b8f19a799009f902260512407d6f2cb2659667e8a1ca2d9435",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "Each medication status outside the map medication.rq reads it through, and each element of a structured dosage."
+      "description": "Each medication status outside the map medication.rq reads it through, each element of a structured dosage, and each NDC medication.rq makes no 11-digit code of."
     },
     {
       "@id": "in/sparql/result-findings.rq",
@@ -994,8 +1003,8 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML gaps",
       "encodingFormat": "text/turtle",
-      "contentSize": "7712",
-      "sha256": "3f4733bbc5038f28070f3264d826d7ead335498b042fe00d3cfce573fb097ab2",
+      "contentSize": "7961",
+      "sha256": "60d88f68f57bf82f16700d00506e459990ae7e77de7005628fab1808f1ebe7a3",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1018,8 +1027,8 @@
       "@type": "File",
       "name": "Concept map: code systems",
       "encodingFormat": "text/turtle",
-      "contentSize": "3493",
-      "sha256": "368755fa9063b7da1af100824be204f8a4e7f9c8a8761957262e94b17a942217",
+      "contentSize": "3245",
+      "sha256": "fc7a2655942a51c773f5e5737bc480612e87692ab949d36d561639607abcd2d1",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1037,13 +1046,16 @@
           "@id": "https://hl7.org/fhir/R4/terminologies-systems.html"
         },
         {
+          "@id": "https://hl7.org/fhir/R4/ndc.html"
+        },
+        {
           "@id": "https://github.com/jayostis/cascade-vocabulary/issues/111"
         },
         {
           "@id": "https://github.com/jayostis/cascade-vocabulary/issues/104"
         }
       ],
-      "description": "HL7 code system OIDs to the URI FHIR names each code system by, from HL7 Terminology's naming systems, read on 2026-10-07; the OIDs are those cascade-cli's src/lib/ccda-converter/code-systems.ts lists. Each concept also carries void:uriSpace, the stem of its codes' IRIs, which is never that URI: a code's IRI is the stem and the code percent-encoded. The stems are cascade-vocabulary's registry (https://github.com/jayostis/cascade-vocabulary/issues/111), transcribed on 2026-10-10 and HL7 Terminology's where it states one (SNOMED CT's from SNOMEDCT.html, LOINC's iri-stem from v3-loinc.xml); NDC's is not the registry's: it keeps FHIR's system (terminologies-systems.html) and /, as C-CDA's NDC codes are not normalised to 11 digits (https://github.com/jayostis/cascade-vocabulary/issues/104). LOINC's source is pinned to HL7/UTG at 18bfa06."
+      "description": "HL7 code system OIDs to the URI FHIR names each code system by, from HL7 Terminology's naming systems, read on 2026-10-07; the OIDs are those cascade-cli's src/lib/ccda-converter/code-systems.ts lists. Each concept also carries void:uriSpace, the stem of its codes' IRIs, which is never that URI: a code's IRI is the stem and the code percent-encoded. The stems are cascade-vocabulary's registry (https://github.com/jayostis/cascade-vocabulary/issues/111), transcribed on 2026-10-10 and HL7 Terminology's where it states one (SNOMED CT's from SNOMEDCT.html, LOINC's iri-stem from v3-loinc.xml); NDC's is the 11-digit space cascade-vocabulary registers, the code normalised into it, since a C-CDA writes the 10-digit label code (https://hl7.org/fhir/R4/ndc.html, https://github.com/jayostis/cascade-vocabulary/issues/104). LOINC's source is pinned to HL7/UTG at 18bfa06."
     },
     {
       "@id": "vocab/ccda-problem-statuses.ttl",
@@ -1795,6 +1807,19 @@
       "description": "A document naming its custodian and its author, with one amoxicillin allergy whose allergen is coded in UNII (2.16.840.1.113883.4.9) and nothing else: it shows a code system outside RxNorm, SNOMED CT and LOINC still written as an IRI, under the stem vocab/ccda-code-systems.ttl gives it. Authored here on 2026-10-10, for a case the conformance corpus does not hold; it validates against the CDA schema."
     },
     {
+      "@id": "fixtures/in/medications-ndc-translations.xml",
+      "@type": "File",
+      "name": "C-CDA: medications-ndc-translations",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "4183",
+      "sha256": "9bc831d67440193b593561935d88ecd49627e57616ac8bd0ff39d302d663962e",
+      "dateCreated": "2026-10-10",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A document with one Medication Activity whose material is coded in a portal's own code system (Riverside Formulary) and carries five translations: RxNorm 197361 and 212549, and the NDCs 0069-1530-41 (4-4-2), 12745-202-01 (5-3-2) and 0069153041 (10 digits with no hyphens). Authored here on 2026-10-10, for a case the conformance corpus does not hold: every RxNorm code and every NDC a medication states, the NDC normalised to 11 digits, and the NDC that cannot be; it validates against the CDA schema."
+    },
+    {
       "@id": "fixtures/expected/allergy-unii-allergen.ttl",
       "@type": "File",
       "name": "Expected graph for allergy-unii-allergen",
@@ -1819,6 +1844,38 @@
       "sha256": "176d1bf4749c63a717cb112adac0e0573d8522bfe0032b6ebb1ea242153b960c",
       "about": {
         "@id": "fixtures/in/allergy-unii-allergen.xml"
+      },
+      "dateCreated": "2026-10-10",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/medications-ndc-translations.ttl",
+      "@type": "File",
+      "name": "Expected graph for medications-ndc-translations",
+      "encodingFormat": "text/turtle",
+      "contentSize": "3800",
+      "sha256": "47ff7d48deb625dcdb8a241e7209995cfc9efaae1153f23c09b0a95cfd462e45",
+      "about": {
+        "@id": "fixtures/in/medications-ndc-translations.xml"
+      },
+      "dateCreated": "2026-10-10",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/medications-ndc-translations.ttl",
+      "@type": "File",
+      "name": "Expected findings for medications-ndc-translations",
+      "encodingFormat": "text/turtle",
+      "contentSize": "8739",
+      "sha256": "55ac493161eae2a315ab6bb26fa122658a72e22ca143d468ed5fc49421c210a1",
+      "about": {
+        "@id": "fixtures/in/medications-ndc-translations.xml"
       },
       "dateCreated": "2026-10-10",
       "license": {
@@ -2151,8 +2208,8 @@
       "@type": "File",
       "name": "Expected graph for medications-and-results-a",
       "encodingFormat": "text/turtle",
-      "contentSize": "15452",
-      "sha256": "5cccda3e314a69b143381ce26dadc8ecc1ba9234cadd579ac0aa22bbd80d703b",
+      "contentSize": "15515",
+      "sha256": "2113e40902aca27ecc946c92f008e5d5c15ec122d07db805ae387649f96f985e",
       "about": {
         "@id": "fixtures/in/medications-and-results-a.xml"
       },
@@ -2167,8 +2224,8 @@
       "@type": "File",
       "name": "Expected findings for medications-and-results-a",
       "encodingFormat": "text/turtle",
-      "contentSize": "21615",
-      "sha256": "547a7b47f6c5db2c5f22c0d2023cf8771c6f7580681951df083d5bc136ea4f06",
+      "contentSize": "20465",
+      "sha256": "60459c838a6f9b7bb4ae4ccd98acd55b6266bfd9c8f07549a426c062b16f80dd",
       "about": {
         "@id": "fixtures/in/medications-and-results-a.xml"
       },
@@ -2215,8 +2272,8 @@
       "@type": "File",
       "name": "Expected graph for medications-and-results-b",
       "encodingFormat": "text/turtle",
-      "contentSize": "15452",
-      "sha256": "5dc9249c09028f00ebbef04636bcbab43b22af0aec68fdff388dc48b8060642f",
+      "contentSize": "15515",
+      "sha256": "ae17d9289d687904048a2f10bd5393aabba21b666eac6dd6c8c4da270411cf01",
       "about": {
         "@id": "fixtures/in/medications-and-results-b.xml"
       },
@@ -2231,8 +2288,8 @@
       "@type": "File",
       "name": "Expected findings for medications-and-results-b",
       "encodingFormat": "text/turtle",
-      "contentSize": "21612",
-      "sha256": "67c8d354736b1943f6647b6d499eb559e7d7644165b383d22ce62fbe21a4fff2",
+      "contentSize": "20463",
+      "sha256": "fd0ccc8d6c3b87861fb5fd047c3c55f98e3f02728f530e4ef62ee6f150c2611a",
       "about": {
         "@id": "fixtures/in/medications-and-results-b.xml"
       },

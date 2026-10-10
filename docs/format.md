@@ -56,7 +56,9 @@ immunization whose `negationInd` is true was not done, whatever its
 A Medication Activity's mood says what it is: `INT`, a medication intended, is
 a prescription, and `EVN`, one taken, an entry on a list of what the person
 takes. Both are one kind of record, told apart by their intent. One whose
-`negationInd` is true says the medication is not taken, and is no record. A Result
+`negationInd` is true says the medication is not taken, and is no record. Every
+RxNorm and NDC code of its drug, the `code` and each `translation`, is carried;
+a C-CDA marks none as the one a user chose, so none is the selected code. A Result
 Organizer is a panel, and no record; each Result Observation in it is one, and
 any other statement in it, a Vital Sign Observation (`4.27`) among them, is a
 finding.
@@ -95,15 +97,24 @@ time. Where it stands alone, nothing is carried.
 A code is its `code` and its `codeSystem`, an OID. A code's IRI is the stem
 `../vocab/ccda-code-systems.ttl` gives its OID, then the code percent-encoded.
 The stem is cascade-vocabulary's `void:uriSpace`, HL7 Terminology's where it
-registers one, except NDC's, which keeps FHIR's system and `/` because a
-C-CDA's NDC codes are not normalised to 11 digits. It is never the FHIR URI the
-same concept names:
+registers one. It is never the FHIR URI the same concept names:
 FHIR R5 says "there is no simple formula for determining the correct IRI stem
 from a Coding.system" ([RDF](https://hl7.org/fhir/R5/rdf.html#iri-stem), read on
 2026-10-10). The table holds the OIDs this release knows. A
 `translation` is the same concept in another code system. A status, a severity,
 a criticality and an allergy's type are SNOMED CT or HL7 codes, and reach the
 vocabulary's FHIR codes through the concept maps in `../vocab/`.
+
+An NDC is the exception to "then the code": a C-CDA writes it as a labeler
+gives it, the 10-digit label code with its hyphens ([NDC](https://hl7.org/fhir/R4/ndc.html)),
+and Cascade's is 11 digits, so a code is normalised into the stem
+`https://ns.cascadeprotocol.org/codes/ndc11/`. Five forms are carried: 11
+digits as written; 5-4-2 with its hyphens removed; 4-4-2, 5-3-2 and 5-4-1 with
+a `0` added to the segment short of a digit (the labeler, the product, the
+package). Ten digits with no hyphens cannot be told apart, and neither can any
+other value: it is no code, and a finding. An NDC is a medication's code only:
+an allergen or a reaction coded by NDC is a finding, never a code, since an
+NDC names a packaged product and not the substance a person reacts to.
 
 Epic writes a code system as `urn:oid:` and the OID, which CDA's schema refuses;
 the mappings read the OID after the prefix.
