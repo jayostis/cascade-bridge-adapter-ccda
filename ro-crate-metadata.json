@@ -1018,15 +1018,32 @@
       "@type": "File",
       "name": "Concept map: code systems",
       "encodingFormat": "text/turtle",
-      "contentSize": "3466",
-      "sha256": "5b97736354e9ea53cb41f03b971fa641fa928254d078530c5f53284cbf7a8343",
+      "contentSize": "3493",
+      "sha256": "368755fa9063b7da1af100824be204f8a4e7f9c8a8761957262e94b17a942217",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "isBasedOn": {
-        "@id": "https://terminology.hl7.org/"
-      },
-      "description": "HL7 code system OIDs to the URI FHIR names each code system by, from HL7 Terminology's naming systems, read on 2026-10-07; the OIDs are those cascade-cli's src/lib/ccda-converter/code-systems.ts lists. Each concept also carries void:uriSpace, the stem of its codes' IRIs, which is never that URI: a code's IRI is the stem and the code percent-encoded. The stems are cascade-vocabulary's registry (https://github.com/jayostis/cascade-vocabulary/issues/111), transcribed on 2026-10-10 and HL7 Terminology's where it states one (SNOMED CT's from SNOMEDCT.html, LOINC's iri-stem from v3-loinc.xml); NDC keeps FHIR's system and /, as C-CDA's NDC codes are not normalised to 11 digits."
+      "isBasedOn": [
+        {
+          "@id": "https://terminology.hl7.org/"
+        },
+        {
+          "@id": "https://terminology.hl7.org/SNOMEDCT.html"
+        },
+        {
+          "@id": "https://github.com/HL7/UTG/blob/18bfa0662fbf6c9f6f51922e46c534b00d987848/input/sourceOfTruth/external/v3/namingSystems/v3-loinc.xml"
+        },
+        {
+          "@id": "https://hl7.org/fhir/R4/terminologies-systems.html"
+        },
+        {
+          "@id": "https://github.com/jayostis/cascade-vocabulary/issues/111"
+        },
+        {
+          "@id": "https://github.com/jayostis/cascade-vocabulary/issues/104"
+        }
+      ],
+      "description": "HL7 code system OIDs to the URI FHIR names each code system by, from HL7 Terminology's naming systems, read on 2026-10-07; the OIDs are those cascade-cli's src/lib/ccda-converter/code-systems.ts lists. Each concept also carries void:uriSpace, the stem of its codes' IRIs, which is never that URI: a code's IRI is the stem and the code percent-encoded. The stems are cascade-vocabulary's registry (https://github.com/jayostis/cascade-vocabulary/issues/111), transcribed on 2026-10-10 and HL7 Terminology's where it states one (SNOMED CT's from SNOMEDCT.html, LOINC's iri-stem from v3-loinc.xml); NDC's is not the registry's: it keeps FHIR's system (terminologies-systems.html) and /, as C-CDA's NDC codes are not normalised to 11 digits (https://github.com/jayostis/cascade-vocabulary/issues/104). LOINC's source is pinned to HL7/UTG at 18bfa06."
     },
     {
       "@id": "vocab/ccda-problem-statuses.ttl",
@@ -1769,8 +1786,8 @@
       "@type": "File",
       "name": "C-CDA: allergy-unii-allergen",
       "encodingFormat": "application/cda+xml",
-      "contentSize": "4216",
-      "sha256": "5860fd86cb1f1f9dcc1a9089081d1dce4dfb3cf23ad82a7a317a7089d881395c",
+      "contentSize": "4217",
+      "sha256": "7d52fcc5c040409cfb2d938d69716e16cd94fe2304458aca1e2f8a48ed989937",
       "dateCreated": "2026-10-10",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
@@ -1783,7 +1800,7 @@
       "name": "Expected graph for allergy-unii-allergen",
       "encodingFormat": "text/turtle",
       "contentSize": "3622",
-      "sha256": "b525ad065a92a98782342cecda1457064b5292bc56b977d18a79824c49accc9d",
+      "sha256": "791b428a13c10b062418a3ad1d880cc83fc236958fb97e2a7270ce22b4c4ee4f",
       "about": {
         "@id": "fixtures/in/allergy-unii-allergen.xml"
       },

@@ -95,7 +95,9 @@ time. Where it stands alone, nothing is carried.
 A code is its `code` and its `codeSystem`, an OID. A code's IRI is the stem
 `../vocab/ccda-code-systems.ttl` gives its OID, then the code percent-encoded.
 The stem is cascade-vocabulary's `void:uriSpace`, HL7 Terminology's where it
-registers one, and is never the FHIR URI the same concept names:
+registers one, except NDC's, which keeps FHIR's system and `/` because a
+C-CDA's NDC codes are not normalised to 11 digits. It is never the FHIR URI the
+same concept names:
 FHIR R5 says "there is no simple formula for determining the correct IRI stem
 from a Coding.system" ([RDF](https://hl7.org/fhir/R5/rdf.html#iri-stem), read on
 2026-10-10). The table holds the OIDs this release knows. A
