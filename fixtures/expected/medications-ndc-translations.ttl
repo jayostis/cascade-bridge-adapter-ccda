@@ -1,0 +1,67 @@
+@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov:     <http://www.w3.org/ns/prov#> .
+@prefix pav:      <http://purl.org/pav/> .
+@prefix bridge:   <https://ns.cascadeprotocol.org/bridge/v1-draft#> .
+@prefix rec:      <https://ns.cascadeprotocol.org/records/v1-draft#> .
+@prefix health:   <https://ns.cascadeprotocol.org/health/v1#> .
+@prefix clinical: <https://ns.cascadeprotocol.org/clinical/v1#> .
+@prefix cascade:  <https://ns.cascadeprotocol.org/core/v1#> .
+@prefix foaf:     <http://xmlns.com/foaf/0.1/> .
+
+<urn:uuid:d723e00a-a8ea-8c39-87f7-366b397cf120>
+  a cascade:PatientProfile ;
+  cascade:sourceRecordId "2.16.840.1.113883.19.5.99999.2:MRN-448120" ;
+  rec:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.99999.2:MRN-448120> .
+
+<ni:///sha-256;dBJvnDV7C3kJsp3LPuYuIzQxwi7iWcBh4gA1gwo4ZMY>
+  prov:specializationOf <urn:uuid:d723e00a-a8ea-8c39-87f7-366b397cf120> ;
+  foaf:givenName "Robin" ;
+  foaf:familyName "Ahmadi" ;
+  cascade:dateOfBirth "1978-02-14"^^<http://www.w3.org/2001/XMLSchema#date> .
+
+[] bridge:arrivedAs <ni:///sha-256;dBJvnDV7C3kJsp3LPuYuIzQxwi7iWcBh4gA1gwo4ZMY> ;
+  bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][1]" ;
+  prov:wasDerivedFrom <ni:///sha-256;m8gx1nRAGTtZNWGTXYjs1JYn5XYWrIvQ_znTAtZjli4> ;
+  prov:wasGeneratedBy _:import .
+
+<urn:uuid:e898b6aa-3a84-8afb-9a3c-88e9ebece0cf>
+  a clinical:Medication ;
+  clinical:sourceRecordId "2.16.840.1.113883.19.5.99999.5:MED-4410" ;
+  rec:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.99999.5:MED-4410> .
+
+<ni:///sha-256;oCY2zHgPYLAMsj_2QbkjCxz_Z6jkxTwlL3-u0DHqIJA>
+  prov:specializationOf <urn:uuid:e898b6aa-3a84-8afb-9a3c-88e9ebece0cf> ;
+  rec:patient <urn:uuid:d723e00a-a8ea-8c39-87f7-366b397cf120> ;
+  clinical:clinicalIntent "reportedUse" ;
+  clinical:drugName "amlodipine 5 mg tablet" ;
+  clinical:rxNormCode
+    <http://www.nlm.nih.gov/research/umls/rxnorm/197361> ,
+    <http://www.nlm.nih.gov/research/umls/rxnorm/212549> ;
+  rec:ndcCode
+    <https://ns.cascadeprotocol.org/codes/ndc11/00069153041> ,
+    <https://ns.cascadeprotocol.org/codes/ndc11/12745020201> ;
+  clinical:startDate "2025-03-01"^^<http://www.w3.org/2001/XMLSchema#date> ;
+  clinical:status "active" .
+
+[] bridge:arrivedAs <ni:///sha-256;oCY2zHgPYLAMsj_2QbkjCxz_Z6jkxTwlL3-u0DHqIJA> ;
+  bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='substanceAdministration' and namespace-uri()='urn:hl7-org:v3'][1]" ;
+  prov:wasDerivedFrom <ni:///sha-256;m8gx1nRAGTtZNWGTXYjs1JYn5XYWrIvQ_znTAtZjli4> ;
+  prov:wasGeneratedBy _:import .
+
+<ni:///sha-256;m8gx1nRAGTtZNWGTXYjs1JYn5XYWrIvQ_znTAtZjli4>
+  a prov:Entity ;
+  pav:retrievedOn "2025-07-02T09:00:00Z"^^xsd:dateTime ;
+  prov:qualifiedAttribution
+    [ prov:agent [ rdfs:label "Riverside patient portal" ] ; prov:hadRole rec:transmitter ] ,
+    [ prov:agent [ rdfs:label "Riverside Community Hospital" ] ; prov:hadRole rec:author ] .
+
+_:import
+  a prov:Activity ;
+  prov:used <ni:///sha-256;m8gx1nRAGTtZNWGTXYjs1JYn5XYWrIvQ_znTAtZjli4> ;
+  rdfs:label "C-CDA download" ;
+  prov:startedAtTime "2025-07-02T09:00:04Z"^^xsd:dateTime ;
+  prov:qualifiedAssociation [
+    prov:hadPlan [ a prov:Plan ; rdfs:label "ccda" ; pav:version "0.1.0" ] ;
+    prov:agent [ ]
+  ] .

@@ -15,6 +15,7 @@
     <#narrative-only-section>
     <#custodian-and-author>
     <#allergy-unii-allergen>
+    <#medications-ndc-translations>
     <#several-ids>
     <#repeated-ids>
     <#download-a>
@@ -148,6 +149,19 @@
   mf:result [
     bridge:expectedGraph <expected/allergy-unii-allergen.ttl> ;
     bridge:expectedFindings <findings/allergy-unii-allergen.ttl>
+  ] .
+
+<#medications-ndc-translations> a bridge:IsomorphicConversionTest ;
+  mf:name "medications-ndc-translations" ;
+  rdfs:comment "A Medication Activity whose material is coded in a portal's own code system, with two RxNorm translations and three NDC translations: both RxNorm codes and the two NDCs of a hyphenated form, as 11-digit codes, are carried, the portal's own code is a finding, and so is the NDC of ten digits with no hyphens, whose segments cannot be told." ;
+  mf:action [
+    bridge:input <in/medications-ndc-translations.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/medications-ndc-translations.ttl> ;
+    bridge:expectedFindings <findings/medications-ndc-translations.ttl>
   ] .
 
 <#several-ids> a bridge:IsomorphicConversionTest ;

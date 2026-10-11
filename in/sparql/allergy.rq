@@ -17,7 +17,9 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 #   - the severity, from a Severity Observation on the allergy itself, else on
 #     its first reaction, where C-CDA R2.1 puts it.
 # A coded value is carried only through the concept map its rows were
-# transcribed into, and only in the code system that map reads; a code outside it is a finding of allergy-findings.rq. A
+# transcribed into, and only in the code system that map reads; a code outside it is a finding of allergy-findings.rq. An
+# NDC names a packaged product, not the substance a person is allergic to, so it
+# is never written as an allergen or a manifestation. A
 # time stating the minute is a date-time, one stating a day or an hour a date,
 # and one stating less fits no Cascade date and is not carried.
 
@@ -174,7 +176,7 @@ WHERE {
     { ?entity ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
     ?coding xyz:code ?codeValue ; xyz:codeSystem ?codeSystem .
     ?system skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; void:uriSpace ?stem .
-    FILTER (?systemKey = LCASE(REPLACE(?codeSystem, "^urn:oid:", "")))
+    FILTER (?systemKey = LCASE(REPLACE(?codeSystem, "^urn:oid:", "")) && ?systemKey != "2.16.840.1.113883.6.69")
     BIND (health:allergenCode AS ?p)
     BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?codeValue))) AS ?o)
   }
@@ -192,7 +194,7 @@ WHERE {
     {
       ?coded xyz:code ?codeValue ; xyz:codeSystem ?codeSystem .
       ?system skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; void:uriSpace ?stem .
-      FILTER (?systemKey = LCASE(REPLACE(?codeSystem, "^urn:oid:", "")))
+      FILTER (?systemKey = LCASE(REPLACE(?codeSystem, "^urn:oid:", "")) && ?systemKey != "2.16.840.1.113883.6.69")
       BIND (health:manifestationCode AS ?p)
       BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?codeValue))) AS ?o)
     }

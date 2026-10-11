@@ -6,7 +6,8 @@ PREFIX fx:       <http://sparql.xyz/facade-x/ns/>
 PREFIX xyz:      <http://sparql.xyz/facade-x/data/>
 PREFIX v3:       <urn:hl7-org:v3>
 PREFIX clinical: <https://ns.cascadeprotocol.org/clinical/v1#>
-PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+PREFIX rec:      <https://ns.cascadeprotocol.org/records/v1-draft#>
+PREFIX ccda:    <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # A Medication Activity the document table makes a record of. A prescription
 # and an entry on a list of what the person takes are one kind, told apart by
@@ -17,12 +18,16 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 #   - the drug's name, read in this order: the narrative its code's
 #     originalText references, the originalText's own text, the material's
 #     name, the code's displayName, a translation's displayName;
-#   - the RxNorm code, the drug's code before its translations, since a
-#     medication states one; a code in another system is not carried;
 #   - the dosage, a Medication Free Text Sig's text, through its reference
 #     first. A structured dosage is a finding of medication-findings.rq.
-# An RxNorm code is written in the IRI space the vocabulary names, not through
-# the code system map. A time is read as allergy.rq reads an onset.
+# Every RxNorm code, and every NDC, of the drug's code and its translations is
+# carried, whichever comes first, so codes are a branch of their own. An NDC is
+# Cascade's 11-digit code: a C-CDA writes the 10-digit label code with its
+# hyphens, in one of three segmentings the missing digit tells apart, or 11
+# digits. Ten digits with no hyphens, or any other value, are no code, and
+# medication-findings.rq reports them. A code in another system is not
+# carried; a C-CDA never marks one of the codes as the one a user chose. A time
+# is read as allergy.rq reads an onset.
 
 CONSTRUCT {
   ?version ?p ?o .
@@ -97,22 +102,6 @@ WHERE {
               BIND (STRAFTER(STR(?trS), "#_") AS ?within)
             }
           }
-          UNION
-          {
-            BIND (clinical:rxNormCode AS ?p)
-            {
-              ?material ?cS ?coding . ?coding a v3:code .
-              BIND ("1" AS ?tier)
-            }
-            UNION
-            {
-              ?material ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation .
-              BIND ("2" AS ?tier)
-              BIND (STRAFTER(STR(?trS), "#_") AS ?within)
-            }
-            ?coding xyz:code ?value ; xyz:codeSystem ?codeSystem .
-            FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.88")
-          }
         }
         UNION
         {
@@ -176,11 +165,8 @@ WHERE {
                      SUBSTR("00000000000000000000", STRLEN(?inner) + 1), ?inner, "|", ?value) AS ?ranked)
       } GROUP BY ?medication ?p
     }
-    ccda:codeSystemRxNorm void:uriSpace ?rxNormStem .
     BIND (STRAFTER(?first, "|") AS ?value)
-    BIND (IF(?p = clinical:rxNormCode,
-             IRI(CONCAT(?rxNormStem, ENCODE_FOR_URI(?value))),
-          IF(?p NOT IN (clinical:startDate, clinical:endDate), ?value,
+    BIND (IF(?p NOT IN (clinical:startDate, clinical:endDate), ?value,
           IF(REGEX(?value, "^[0-9]{12}([0-9]{2}(\\.[0-9]+)?)?([+-][0-9]{4})?$"),
              STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),
                           "T", SUBSTR(?value, 9, 2), ":", SUBSTR(?value, 11, 2), ":",
@@ -191,6 +177,32 @@ WHERE {
              STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),
                           IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")),
                    xsd:date),
-             1/0)))) AS ?o)
+             1/0))) AS ?o)
+  }
+  UNION
+  {
+    ?medication ?tS ?t . ?t a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.16" .
+    ?medication ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
+    ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial .
+    { ?material ?cS ?coding . ?coding a v3:code }
+    UNION
+    { ?material ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
+    ?coding xyz:code ?codeValue ; xyz:codeSystem ?codeSystem .
+    VALUES (?systemKey ?p) {
+      ("2.16.840.1.113883.6.88" clinical:rxNormCode)
+      ("2.16.840.1.113883.6.69" rec:ndcCode)
+    }
+    ?system skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; void:uriSpace ?stem .
+    FILTER (?systemKey = REPLACE(?codeSystem, "^urn:oid:", ""))
+    BIND (IF(?p = clinical:rxNormCode, ?codeValue,
+          IF(REGEX(?codeValue, "^[0-9]{11}$"), ?codeValue,
+          IF(REGEX(?codeValue, "^[0-9]{5}-[0-9]{4}-[0-9]{2}$"), REPLACE(?codeValue, "-", ""),
+          IF(REGEX(?codeValue, "^[0-9]{4}-[0-9]{4}-[0-9]{2}$"), CONCAT("0", REPLACE(?codeValue, "-", "")),
+          IF(REGEX(?codeValue, "^[0-9]{5}-[0-9]{3}-[0-9]{2}$"),
+             CONCAT(SUBSTR(?codeValue, 1, 5), "0", SUBSTR(?codeValue, 7, 3), SUBSTR(?codeValue, 11, 2)),
+          IF(REGEX(?codeValue, "^[0-9]{5}-[0-9]{4}-[0-9]$"),
+             CONCAT(SUBSTR(?codeValue, 1, 5), SUBSTR(?codeValue, 7, 4), "0", SUBSTR(?codeValue, 12, 1)),
+             1/0)))))) AS ?digits)
+    BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?digits))) AS ?o)
   }
 }

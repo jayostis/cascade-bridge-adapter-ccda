@@ -9,7 +9,8 @@ PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # A code an allergy states that the concept map allergy.rq reads it through
-# does not hold, or holds in another code system. A path holds the values of every observation an allergy nests,
+# does not hold, or holds in another code system, and an NDC, which the map
+# holds for medications and allergy.rq never writes. A path holds the values of every observation an allergy nests,
 # so the accounting cannot name the map; this does, by template.
 
 CONSTRUCT {
@@ -95,7 +96,7 @@ WHERE {
     ?coding xyz:code ?codeValue ; xyz:codeSystem ?value .
     FILTER NOT EXISTS {
       ?system skos:inScheme ccda:codeSystems ; skos:notation ?systemKey .
-      FILTER (?systemKey = LCASE(REPLACE(?value, "^urn:oid:", "")))
+      FILTER (?systemKey = LCASE(REPLACE(?value, "^urn:oid:", "")) && ?systemKey != "2.16.840.1.113883.6.69")
     }
     BIND (ccda:codeSystemNotMapped AS ?gap)
   }
