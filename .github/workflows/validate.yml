@@ -6,7 +6,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    types: [opened, synchronize, reopened, edited]
+    types: [opened, synchronize, reopened]
   schedule:
     - cron: "17 3 * * *"
   workflow_dispatch:
@@ -21,10 +21,3 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: jayostis/cascade-bridge-spec/.github/actions/start@main
-  ready-to-merge:
-    name: ready-to-merge
-    runs-on: ubuntu-latest
-    steps:
-      - uses: jayostis/cascade-bridge-spec/.github/actions/start@main
-        with:
-          check: ready-to-merge
