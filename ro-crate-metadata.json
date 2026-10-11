@@ -406,6 +406,15 @@
           "@id": "fixtures/in/medications-and-results-b.xml"
         },
         {
+          "@id": "bench/manifest.json"
+        },
+        {
+          "@id": "bench/medications-and-results-a-x10.xml.gz"
+        },
+        {
+          "@id": "bench/medications-and-results-a-x50.xml.gz"
+        },
+        {
           "@id": "fixtures/expected/allergies-section.ttl"
         },
         {
@@ -1536,6 +1545,69 @@
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "description": "The second download of medications-and-results-a's summary, a day later: a new document id and time, the narrative's IDs and the references to them moved, and the same clinical content. Authored here on 2026-10-07, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "bench/manifest.json",
+      "@type": "File",
+      "name": "Benchmark inputs and what to measure on each",
+      "encodingFormat": "application/json",
+      "dateCreated": "2026-10-11",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The inputs a benchmark harness runs on this adapter, in the shape of bench/manifest.schema.json in cascade-bridge-spec. Each input's sha256 and bytes are of its gunzipped document; the crate's are of the committed file."
+    },
+    {
+      "@id": "bench/medications-and-results-a-x10.xml.gz",
+      "@type": "File",
+      "name": "C-CDA benchmark input: medications-and-results-a, entries repeated 10 times",
+      "encodingFormat": "application/gzip",
+      "contentSize": "4624",
+      "sha256": "c59ea02dfec6bd7919e2e60cbae377590725627cb6df073320ca4241e45c94a3",
+      "isBasedOn": [
+        {
+          "@id": "https://github.com/jayostis/cascade-bridge-spec/blob/9d871d8be1389ba86c092c07bf5b444b6993b6bc/bench/generate/repeat_entries.py"
+        },
+        {
+          "@id": "fixtures/in/medications-and-results-a.xml"
+        }
+      ],
+      "dateCreated": "2026-10-11",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Every entry of medications-and-results-a repeated 10 times, each id given an extension of its copy and a counter, by the generator isBasedOn names: 138,124 bytes gunzipped, 139 KB."
+    },
+    {
+      "@id": "bench/medications-and-results-a-x50.xml.gz",
+      "@type": "File",
+      "name": "C-CDA benchmark input: medications-and-results-a, entries repeated 50 times",
+      "encodingFormat": "application/gzip",
+      "contentSize": "10302",
+      "sha256": "c0bc5e1e78686bd352133fbe5bc8310fc7c67631a2caf44a2b4ba7595f78f185",
+      "isBasedOn": [
+        {
+          "@id": "https://github.com/jayostis/cascade-bridge-spec/blob/9d871d8be1389ba86c092c07bf5b444b6993b6bc/bench/generate/repeat_entries.py"
+        },
+        {
+          "@id": "fixtures/in/medications-and-results-a.xml"
+        }
+      ],
+      "dateCreated": "2026-10-11",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Every entry of medications-and-results-a repeated 50 times, each id given an extension of its copy and a counter, by the generator isBasedOn names: 667,684 bytes gunzipped, the size of a real Epic document."
+    },
+    {
+      "@id": "https://github.com/jayostis/cascade-bridge-spec/blob/9d871d8be1389ba86c092c07bf5b444b6993b6bc/bench/generate/repeat_entries.py",
+      "@type": "CreativeWork",
+      "name": "repeat_entries.py in cascade-bridge-spec at 9d871d8",
+      "version": "9d871d8be1389ba86c092c07bf5b444b6993b6bc",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The generator of the benchmark inputs. A contextual entity: referenced and not committed here, as an adapter holds no code."
     },
     {
       "@id": "fixtures/expected/allergies-section.ttl",
