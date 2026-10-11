@@ -1,14 +1,15 @@
 # workflows — Agent Context
 
-`validate.yml` and `ready.yml` have no logic on purpose and must not grow any. The checks live in
-the Cascade Bridge Specification and are published from it as the `start`
-action, which picks the version of each repository when the run starts and runs
-the specification's checks at it. A check that needs writing is a change to the
-specification, made there; no file here names a version of it.
+`validate.yml` and `ready.yml` have no logic on purpose and must not grow any.
+The checks live in the Cascade Bridge Specification and are published from it as
+the `start` action, which picks the version of each repository when the run
+starts and runs the specification's checks at it. A check that needs writing is
+a change to the specification, made there; no file here names a version of it.
 
-The job names are required status checks on `main`, matched by name: renaming
-one silently drops it from the merge gate, and `ready-to-merge` is the job of
-`ready.yml`, not of `validate.yml`. No job `needs:` another; a job skipped
+`adapter` and `ready-to-merge` are required status checks on `main`, matched by
+name: renaming either silently drops it from the merge gate, and `ready-to-merge`
+is the job of `ready.yml`, not of `validate.yml`. `rerun-when-edited` is not
+required, and must not be. No job `needs:` another; a job skipped
 because its dependency failed counts as passing.
 
 `validate.yml` does not run on `edited`: `ready.yml` does, and its
