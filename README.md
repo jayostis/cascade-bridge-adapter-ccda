@@ -24,6 +24,7 @@ in/sparql/               the detect rule, the mappings and the findings queries
 vocab/                   this adapter's own namespace: its gap scheme, source accounting and concept maps
 views/                   the records-layer views the comparison with cascade-cli ran
 fixtures/                the test manifest, its inputs, and the expected graphs and findings
+bench/                   the inputs a benchmark harness runs on, and what it measures on each
 .github/workflows/       runs the specification's checks; no logic of its own
 ```
 
