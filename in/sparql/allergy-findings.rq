@@ -45,11 +45,11 @@ WHERE {
     ?allergy ?templateSlot ?template .
     ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.7" .
   }
-  ?row ccda:statementAt ?slots ; ccda:refinement ?refinement .
-  FILTER (?slots = CONCAT(
+  BIND (CONCAT(
           STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
           STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
-          STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?actSlot), "#_"), ".", ?innerSlots))
+          STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?actSlot), "#_"), ".", ?innerSlots) AS ?slots)
+  ?row ccda:statementAt ?slots ; ccda:refinement ?refinement .
   {
     ?allergy ?vS ?coded . ?coded a v3:value ; xyz:code ?value .
     OPTIONAL { ?coded xyz:codeSystem ?codeSystem }
