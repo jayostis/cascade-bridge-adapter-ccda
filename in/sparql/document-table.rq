@@ -34,6 +34,10 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 #                      text; statusCode.
 #   Excluded members, every class: each ID attribute and each reference's
 #   value, which point into the narrative and move when nothing else does.
+#
+# Each template test and each set of fields is a subquery joined to the
+# statements, never a FILTER EXISTS or a pattern beside them: an engine may
+# evaluate those once per statement, scanning the whole document each time.
 
 CONSTRUCT {
   [] ccda:statementAt ?slots ;
@@ -51,21 +55,17 @@ WHERE {
         ?root ?rtSlot ?recordTarget . ?recordTarget a v3:recordTarget .
         ?recordTarget ?prSlot ?statement . ?statement a v3:patientRole .
         {
-          SELECT ?recordTarget (COUNT(?earlierRt) + 1 AS ?rtAt) WHERE {
+          SELECT ?recordTarget (COUNT(?earlierRt) AS ?rtAt) WHERE {
             ?rtParent ?rtS ?recordTarget . ?recordTarget a v3:recordTarget .
-            OPTIONAL {
-              ?rtParent ?rtE ?earlierRt . ?earlierRt a v3:recordTarget .
-              FILTER (xsd:integer(STRAFTER(STR(?rtE), "#_")) < xsd:integer(STRAFTER(STR(?rtS), "#_")))
-            }
+            ?rtParent ?rtE ?earlierRt . ?earlierRt a v3:recordTarget .
+            FILTER (xsd:integer(STRAFTER(STR(?rtE), "#_")) <= xsd:integer(STRAFTER(STR(?rtS), "#_")))
           } GROUP BY ?recordTarget
         }
         {
-          SELECT ?statement (COUNT(?earlierPr) + 1 AS ?prAt) WHERE {
+          SELECT ?statement (COUNT(?earlierPr) AS ?prAt) WHERE {
             ?prParent ?prS ?statement . ?statement a v3:patientRole .
-            OPTIONAL {
-              ?prParent ?prE ?earlierPr . ?earlierPr a v3:patientRole .
-              FILTER (xsd:integer(STRAFTER(STR(?prE), "#_")) < xsd:integer(STRAFTER(STR(?prS), "#_")))
-            }
+            ?prParent ?prE ?earlierPr . ?earlierPr a v3:patientRole .
+            FILTER (xsd:integer(STRAFTER(STR(?prE), "#_")) <= xsd:integer(STRAFTER(STR(?prS), "#_")))
           } GROUP BY ?statement
         }
         BIND ("Patient" AS ?class)
@@ -86,12 +86,10 @@ WHERE {
           ?act ?relationshipSlot ?relationship . ?relationship a v3:entryRelationship .
           ?relationship ?statementSlot ?statement .
           {
-            SELECT ?relationship (COUNT(?earlierEr) + 1 AS ?erAt) WHERE {
+            SELECT ?relationship (COUNT(?earlierEr) AS ?erAt) WHERE {
               ?erParent ?erS ?relationship . ?relationship a v3:entryRelationship .
-              OPTIONAL {
-                ?erParent ?erE ?earlierEr . ?earlierEr a v3:entryRelationship .
-                FILTER (xsd:integer(STRAFTER(STR(?erE), "#_")) < xsd:integer(STRAFTER(STR(?erS), "#_")))
-              }
+              ?erParent ?erE ?earlierEr . ?earlierEr a v3:entryRelationship .
+              FILTER (xsd:integer(STRAFTER(STR(?erE), "#_")) <= xsd:integer(STRAFTER(STR(?erS), "#_")))
             } GROUP BY ?relationship
           }
           BIND (CONCAT(STRAFTER(STR(?relationshipSlot), "#_"), ".", STRAFTER(STR(?statementSlot), "#_")) AS ?innerSlots)
@@ -115,46 +113,41 @@ WHERE {
             }
           }
         }
-        FILTER (?class != "Condition" || EXISTS {
-          ?act ?concernSlot ?concern .
-          ?concern a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.3" .
-        })
+        OPTIONAL {
+          SELECT DISTINCT ?act (true AS ?inConcern) WHERE {
+            ?act ?concernSlot ?concern .
+            ?concern a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.3" .
+          }
+        }
+        FILTER (?class != "Condition" || BOUND(?inConcern))
         {
-          SELECT ?outer (COUNT(?earlierOuter) + 1 AS ?outerAt) WHERE {
+          SELECT ?outer (COUNT(?earlierOuter) AS ?outerAt) WHERE {
             ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
-            OPTIONAL {
-              ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
-              FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) < xsd:integer(STRAFTER(STR(?outerS), "#_")))
-            }
+            ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
+            FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) <= xsd:integer(STRAFTER(STR(?outerS), "#_")))
           } GROUP BY ?outer
         }
         {
-          SELECT ?component (COUNT(?earlierComponent) + 1 AS ?componentAt) WHERE {
+          SELECT ?component (COUNT(?earlierComponent) AS ?componentAt) WHERE {
             ?componentParent ?componentS ?component . ?componentParent a v3:structuredBody . ?component a v3:component .
-            OPTIONAL {
-              ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
-              FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) < xsd:integer(STRAFTER(STR(?componentS), "#_")))
-            }
+            ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
+            FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) <= xsd:integer(STRAFTER(STR(?componentS), "#_")))
           } GROUP BY ?component
         }
         {
-          SELECT ?entry (COUNT(?earlierEntry) + 1 AS ?entryAt) WHERE {
+          SELECT ?entry (COUNT(?earlierEntry) AS ?entryAt) WHERE {
             ?entryParent ?entryS ?entry . ?entry a v3:entry .
-            OPTIONAL {
-              ?entryParent ?entryE ?earlierEntry . ?earlierEntry a v3:entry .
-              FILTER (xsd:integer(STRAFTER(STR(?entryE), "#_")) < xsd:integer(STRAFTER(STR(?entryS), "#_")))
-            }
+            ?entryParent ?entryE ?earlierEntry . ?earlierEntry a v3:entry .
+            FILTER (xsd:integer(STRAFTER(STR(?entryE), "#_")) <= xsd:integer(STRAFTER(STR(?entryS), "#_")))
           } GROUP BY ?entry
         }
         {
-          SELECT ?statement (COUNT(DISTINCT ?earlierObservation) + 1 AS ?observationAt) WHERE {
+          SELECT ?statement (COUNT(DISTINCT ?earlierObservation) AS ?observationAt) WHERE {
             ?observationParent ?observationS ?statement . ?statement a v3:observation ; ?oT ?oTemplate .
             ?oTemplate a v3:templateId ; xyz:root ?oRoot .
             VALUES ?oRoot { "2.16.840.1.113883.10.20.22.4.7" "2.16.840.1.113883.10.20.22.4.4" }
-            OPTIONAL {
-              ?observationParent ?observationE ?earlierObservation . ?earlierObservation a v3:observation .
-              FILTER (xsd:integer(STRAFTER(STR(?observationE), "#_")) < xsd:integer(STRAFTER(STR(?observationS), "#_")))
-            }
+            ?observationParent ?observationE ?earlierObservation . ?earlierObservation a v3:observation .
+            FILTER (xsd:integer(STRAFTER(STR(?observationE), "#_")) <= xsd:integer(STRAFTER(STR(?observationS), "#_")))
           } GROUP BY ?statement
         }
         BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
@@ -194,39 +187,36 @@ WHERE {
         # A Medication Activity is a medication only in a Medications section,
         # only in either mood a medication can be listed in, and never negated:
         # a medication not taken is no entry on a list of what the person takes.
-        FILTER (?class != "MedicationRequest" || (
-          EXISTS { ?statement xyz:moodCode ?mood . FILTER (?mood IN ("INT", "EVN")) }
-          && NOT EXISTS { ?statement xyz:negationInd "true" }
-          && EXISTS {
+        OPTIONAL {
+          SELECT DISTINCT ?section (true AS ?medicationsSection) WHERE {
             ?section ?sectionTemplateSlot ?sectionTemplate .
             ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot .
             VALUES ?sectionRoot { "2.16.840.1.113883.10.20.22.2.1" "2.16.840.1.113883.10.20.22.2.1.1" }
-          }))
+          }
+        }
+        FILTER (?class != "MedicationRequest" || (
+          EXISTS { ?statement xyz:moodCode ?mood . FILTER (?mood IN ("INT", "EVN")) }
+          && NOT EXISTS { ?statement xyz:negationInd "true" }
+          && BOUND(?medicationsSection)))
         {
-          SELECT ?outer (COUNT(?earlierOuter) + 1 AS ?outerAt) WHERE {
+          SELECT ?outer (COUNT(?earlierOuter) AS ?outerAt) WHERE {
             ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
-            OPTIONAL {
-              ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
-              FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) < xsd:integer(STRAFTER(STR(?outerS), "#_")))
-            }
+            ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
+            FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) <= xsd:integer(STRAFTER(STR(?outerS), "#_")))
           } GROUP BY ?outer
         }
         {
-          SELECT ?component (COUNT(?earlierComponent) + 1 AS ?componentAt) WHERE {
+          SELECT ?component (COUNT(?earlierComponent) AS ?componentAt) WHERE {
             ?componentParent ?componentS ?component . ?componentParent a v3:structuredBody . ?component a v3:component .
-            OPTIONAL {
-              ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
-              FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) < xsd:integer(STRAFTER(STR(?componentS), "#_")))
-            }
+            ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
+            FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) <= xsd:integer(STRAFTER(STR(?componentS), "#_")))
           } GROUP BY ?component
         }
         {
-          SELECT ?entry (COUNT(?earlierEntry) + 1 AS ?entryAt) WHERE {
+          SELECT ?entry (COUNT(?earlierEntry) AS ?entryAt) WHERE {
             ?entryParent ?entryS ?entry . ?entry a v3:entry .
-            OPTIONAL {
-              ?entryParent ?entryE ?earlierEntry . ?earlierEntry a v3:entry .
-              FILTER (xsd:integer(STRAFTER(STR(?entryE), "#_")) < xsd:integer(STRAFTER(STR(?entryS), "#_")))
-            }
+            ?entryParent ?entryE ?earlierEntry . ?earlierEntry a v3:entry .
+            FILTER (xsd:integer(STRAFTER(STR(?entryE), "#_")) <= xsd:integer(STRAFTER(STR(?entryS), "#_")))
           } GROUP BY ?entry
         }
         BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
@@ -252,53 +242,51 @@ WHERE {
         ?entry ?organizerSlot ?organizer . ?organizer a v3:organizer .
         ?organizer ?memberSlot ?member . ?member a v3:component .
         ?member ?statementSlot ?statement . ?statement a v3:observation .
-        FILTER EXISTS {
-          ?organizer ?organizerTemplateSlot ?organizerTemplate .
-          ?organizerTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.1" .
-        }
-        FILTER EXISTS {
-          ?statement ?templateSlot ?template .
-          ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.2" .
-        }
-        FILTER EXISTS {
-          ?section ?sectionTemplateSlot ?sectionTemplate .
-          ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot .
-          VALUES ?sectionRoot { "2.16.840.1.113883.10.20.22.2.3" "2.16.840.1.113883.10.20.22.2.3.1" }
+        {
+          SELECT DISTINCT ?organizer WHERE {
+            ?organizer ?organizerTemplateSlot ?organizerTemplate .
+            ?organizerTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.1" .
+          }
         }
         {
-          SELECT ?outer (COUNT(?earlierOuter) + 1 AS ?outerAt) WHERE {
+          SELECT DISTINCT ?statement WHERE {
+            ?statement ?templateSlot ?template .
+            ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.2" .
+          }
+        }
+        {
+          SELECT DISTINCT ?section WHERE {
+            ?section ?sectionTemplateSlot ?sectionTemplate .
+            ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot .
+            VALUES ?sectionRoot { "2.16.840.1.113883.10.20.22.2.3" "2.16.840.1.113883.10.20.22.2.3.1" }
+          }
+        }
+        {
+          SELECT ?outer (COUNT(?earlierOuter) AS ?outerAt) WHERE {
             ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
-            OPTIONAL {
-              ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
-              FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) < xsd:integer(STRAFTER(STR(?outerS), "#_")))
-            }
+            ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
+            FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) <= xsd:integer(STRAFTER(STR(?outerS), "#_")))
           } GROUP BY ?outer
         }
         {
-          SELECT ?component (COUNT(?earlierComponent) + 1 AS ?componentAt) WHERE {
+          SELECT ?component (COUNT(?earlierComponent) AS ?componentAt) WHERE {
             ?componentParent ?componentS ?component . ?componentParent a v3:structuredBody . ?component a v3:component .
-            OPTIONAL {
-              ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
-              FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) < xsd:integer(STRAFTER(STR(?componentS), "#_")))
-            }
+            ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
+            FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) <= xsd:integer(STRAFTER(STR(?componentS), "#_")))
           } GROUP BY ?component
         }
         {
-          SELECT ?entry (COUNT(?earlierEntry) + 1 AS ?entryAt) WHERE {
+          SELECT ?entry (COUNT(?earlierEntry) AS ?entryAt) WHERE {
             ?entryParent ?entryS ?entry . ?entry a v3:entry .
-            OPTIONAL {
-              ?entryParent ?entryE ?earlierEntry . ?earlierEntry a v3:entry .
-              FILTER (xsd:integer(STRAFTER(STR(?entryE), "#_")) < xsd:integer(STRAFTER(STR(?entryS), "#_")))
-            }
+            ?entryParent ?entryE ?earlierEntry . ?earlierEntry a v3:entry .
+            FILTER (xsd:integer(STRAFTER(STR(?entryE), "#_")) <= xsd:integer(STRAFTER(STR(?entryS), "#_")))
           } GROUP BY ?entry
         }
         {
-          SELECT ?member (COUNT(?earlierMember) + 1 AS ?memberAt) WHERE {
+          SELECT ?member (COUNT(?earlierMember) AS ?memberAt) WHERE {
             ?memberParent ?memberS ?member . ?memberParent a v3:organizer . ?member a v3:component .
-            OPTIONAL {
-              ?memberParent ?memberE ?earlierMember . ?earlierMember a v3:component .
-              FILTER (xsd:integer(STRAFTER(STR(?memberE), "#_")) < xsd:integer(STRAFTER(STR(?memberS), "#_")))
-            }
+            ?memberParent ?memberE ?earlierMember . ?earlierMember a v3:component .
+            FILTER (xsd:integer(STRAFTER(STR(?memberE), "#_")) <= xsd:integer(STRAFTER(STR(?memberS), "#_")))
           } GROUP BY ?member
         }
         BIND ("Observation" AS ?class)
@@ -342,89 +330,97 @@ WHERE {
             {
               ?statement a v3:patientRole ; ?pS ?patient . ?patient a v3:patient .
               {
-                ?patient ?nS ?name . ?name a v3:name ; ?gS ?part . ?part a ?partType ; ?tS ?text .
-                FILTER (?partType IN (v3:given, v3:family) && isLiteral(?text) && STRSTARTS(STR(?tS), STR(rdf:_)))
-                BIND (CONCAT(STRAFTER(STR(?partType), "urn:hl7-org:v3"), "=", ?text) AS ?field)
+                SELECT ?patient ?field WHERE {
+                  {
+                    ?patient ?nS ?name . ?name a v3:name ; ?gS ?part . ?part a ?partType ; ?tS ?text .
+                    FILTER (?partType IN (v3:given, v3:family) && isLiteral(?text) && STRSTARTS(STR(?tS), STR(rdf:_)))
+                    BIND (CONCAT(STRAFTER(STR(?partType), "urn:hl7-org:v3"), "=", ?text) AS ?field)
+                  }
+                  UNION
+                  { ?patient ?bS ?birth . ?birth a v3:birthTime ; xyz:value ?v . BIND (CONCAT("birthTime=", ?v) AS ?field) }
+                  UNION
+                  { ?patient ?gcS ?gender . ?gender a v3:administrativeGenderCode ; xyz:code ?v . BIND (CONCAT("gender=", ?v) AS ?field) }
+                }
               }
-              UNION
-              { ?patient ?bS ?birth . ?birth a v3:birthTime ; xyz:value ?v . BIND (CONCAT("birthTime=", ?v) AS ?field) }
-              UNION
-              { ?patient ?gcS ?gender . ?gender a v3:administrativeGenderCode ; xyz:code ?v . BIND (CONCAT("gender=", ?v) AS ?field) }
             }
             UNION
             {
               ?statement a v3:observation ; ?tplS ?tpl . ?tpl a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.7" .
               {
-                ?statement ?paS ?participant . ?participant a v3:participant ; ?prS ?role . ?role a v3:participantRole ;
-                  ?peS ?entity . ?entity a v3:playingEntity .
-                {
-                  ?entity ?cS ?code . ?code a v3:code .
-                  { ?code xyz:code ?v . BIND (CONCAT("allergenCode=", ?v) AS ?field) }
+                SELECT ?statement ?field WHERE {
+                  {
+                    ?statement ?paS ?participant . ?participant a v3:participant ; ?prS ?role . ?role a v3:participantRole ;
+                      ?peS ?entity . ?entity a v3:playingEntity ; ?cS ?code . ?code a v3:code ; ?attribute ?v .
+                    VALUES (?attribute ?name) { (xyz:code "allergenCode") (xyz:codeSystem "allergenCodeSystem") }
+                    BIND (CONCAT(?name, "=", ?v) AS ?field)
+                  }
                   UNION
-                  { ?code xyz:codeSystem ?v . BIND (CONCAT("allergenCodeSystem=", ?v) AS ?field) }
+                  {
+                    ?statement ?paS ?participant . ?participant a v3:participant ; ?prS ?role . ?role a v3:participantRole ;
+                      ?peS ?entity . ?entity a v3:playingEntity ; ?nmS ?entityName . ?entityName a v3:name ; ?tS ?text .
+                    FILTER (isLiteral(?text) && STRSTARTS(STR(?tS), STR(rdf:_)))
+                    BIND (CONCAT("allergenName=", ?text) AS ?field)
+                  }
+                  UNION
+                  { ?statement ?vS ?value . ?value a v3:value ; xyz:code ?v . BIND (CONCAT("type=", ?v) AS ?field) }
+                  UNION
+                  { ?statement ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?v . BIND (CONCAT("effectiveTime=", ?v) AS ?field) }
+                  UNION
+                  {
+                    ?statement ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a ?boundType ; xyz:value ?v .
+                    FILTER (?boundType IN (v3:low, v3:high))
+                    BIND (CONCAT("effectiveTime", STRAFTER(STR(?boundType), "urn:hl7-org:v3"), "=", ?v) AS ?field)
+                  }
+                  UNION
+                  { ?statement ?sS ?status . ?status a v3:statusCode ; xyz:code ?v . BIND (CONCAT("statusCode=", ?v) AS ?field) }
+                  UNION
+                  {
+                    ?statement ?rS ?relationship . ?relationship a v3:entryRelationship ; ?oS ?observation .
+                    ?observation a v3:observation ; ?otS ?ot ; ?ovS ?ov .
+                    ?ot a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.28" .
+                    ?ov a v3:value ; xyz:code ?v .
+                    BIND (CONCAT("status=", ?v) AS ?field)
+                  }
                 }
-                UNION
-                {
-                  ?entity ?nmS ?name . ?name a v3:name ; ?tS ?text .
-                  FILTER (isLiteral(?text) && STRSTARTS(STR(?tS), STR(rdf:_)))
-                  BIND (CONCAT("allergenName=", ?text) AS ?field)
-                }
-              }
-              UNION
-              { ?statement ?vS ?value . ?value a v3:value ; xyz:code ?v . BIND (CONCAT("type=", ?v) AS ?field) }
-              UNION
-              { ?statement ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?v . BIND (CONCAT("effectiveTime=", ?v) AS ?field) }
-              UNION
-              {
-                ?statement ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a ?boundType ; xyz:value ?v .
-                FILTER (?boundType IN (v3:low, v3:high))
-                BIND (CONCAT("effectiveTime", STRAFTER(STR(?boundType), "urn:hl7-org:v3"), "=", ?v) AS ?field)
-              }
-              UNION
-              { ?statement ?sS ?status . ?status a v3:statusCode ; xyz:code ?v . BIND (CONCAT("statusCode=", ?v) AS ?field) }
-              UNION
-              {
-                ?statement ?rS ?relationship . ?relationship a v3:entryRelationship ; ?oS ?observation .
-                ?observation a v3:observation ; ?otS ?ot ; ?ovS ?ov .
-                ?ot a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.28" .
-                ?ov a v3:value ; xyz:code ?v .
-                BIND (CONCAT("status=", ?v) AS ?field)
               }
             }
             UNION
             {
               ?statement a v3:observation ; ?tplS ?tpl . ?tpl a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.4" .
               {
-                ?statement ?vS ?value . ?value a v3:value .
-                { ?value xyz:code ?v . BIND (CONCAT("code=", ?v) AS ?field) }
-                UNION
-                { ?value xyz:codeSystem ?v . BIND (CONCAT("codeSystem=", ?v) AS ?field) }
-                UNION
-                {
-                  ?value ?otS ?originalText . ?originalText a v3:originalText ; ?tS ?text .
-                  FILTER (isLiteral(?text) && STRSTARTS(STR(?tS), STR(rdf:_)))
-                  BIND (CONCAT("originalText=", ?text) AS ?field)
+                SELECT ?statement ?field WHERE {
+                  {
+                    ?statement ?vS ?value . ?value a v3:value ; ?attribute ?v .
+                    VALUES (?attribute ?name) { (xyz:code "code") (xyz:codeSystem "codeSystem") }
+                    BIND (CONCAT(?name, "=", ?v) AS ?field)
+                  }
+                  UNION
+                  {
+                    ?statement ?vS ?value . ?value a v3:value ; ?otS ?originalText . ?originalText a v3:originalText ; ?tS ?text .
+                    FILTER (isLiteral(?text) && STRSTARTS(STR(?tS), STR(rdf:_)))
+                    BIND (CONCAT("originalText=", ?text) AS ?field)
+                  }
+                  UNION
+                  { ?statement ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?v . BIND (CONCAT("effectiveTime=", ?v) AS ?field) }
+                  UNION
+                  {
+                    ?statement ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a ?boundType ; xyz:value ?v .
+                    FILTER (?boundType IN (v3:low, v3:high))
+                    BIND (CONCAT("effectiveTime", STRAFTER(STR(?boundType), "urn:hl7-org:v3"), "=", ?v) AS ?field)
+                  }
+                  UNION
+                  { ?statement ?sS ?status . ?status a v3:statusCode ; xyz:code ?v . BIND (CONCAT("statusCode=", ?v) AS ?field) }
+                  UNION
+                  { ?statement xyz:negationInd ?v . BIND (CONCAT("negationInd=", ?v) AS ?field) }
+                  UNION
+                  {
+                    ?statement ?rS ?relationship . ?relationship a v3:entryRelationship ; ?oS ?observation .
+                    ?observation a v3:observation ; ?otS ?ot ; ?ovS ?ov .
+                    ?ot a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.6" .
+                    ?ov a v3:value ; xyz:code ?v .
+                    BIND (CONCAT("status=", ?v) AS ?field)
+                  }
                 }
-              }
-              UNION
-              { ?statement ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?v . BIND (CONCAT("effectiveTime=", ?v) AS ?field) }
-              UNION
-              {
-                ?statement ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a ?boundType ; xyz:value ?v .
-                FILTER (?boundType IN (v3:low, v3:high))
-                BIND (CONCAT("effectiveTime", STRAFTER(STR(?boundType), "urn:hl7-org:v3"), "=", ?v) AS ?field)
-              }
-              UNION
-              { ?statement ?sS ?status . ?status a v3:statusCode ; xyz:code ?v . BIND (CONCAT("statusCode=", ?v) AS ?field) }
-              UNION
-              { ?statement xyz:negationInd ?v . BIND (CONCAT("negationInd=", ?v) AS ?field) }
-              UNION
-              {
-                ?statement ?rS ?relationship . ?relationship a v3:entryRelationship ; ?oS ?observation .
-                ?observation a v3:observation ; ?otS ?ot ; ?ovS ?ov .
-                ?ot a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.6" .
-                ?ov a v3:value ; xyz:code ?v .
-                BIND (CONCAT("status=", ?v) AS ?field)
               }
             }
             UNION
@@ -435,42 +431,56 @@ WHERE {
                 ("2.16.840.1.113883.10.20.22.4.14" v3:procedure)
               }
               {
-                {
-                  ?statement ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
-                  ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial ; ?cS ?code .
+                SELECT ?statement ?field WHERE {
+                  {
+                    ?statement ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
+                    ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial ; ?cS ?code .
+                    ?code a v3:code ; ?attribute ?v .
+                    VALUES (?attribute ?name) { (xyz:code "code") (xyz:codeSystem "codeSystem") }
+                    BIND (CONCAT(?name, "=", ?v) AS ?field)
+                  }
+                  UNION
+                  {
+                    ?statement a v3:procedure ; ?cS ?code . ?code a v3:code ; ?attribute ?v .
+                    VALUES (?attribute ?name) { (xyz:code "code") (xyz:codeSystem "codeSystem") }
+                    BIND (CONCAT(?name, "=", ?v) AS ?field)
+                  }
+                  UNION
+                  {
+                    ?statement ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
+                    ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial ; ?cS ?code .
+                    ?code a v3:code ; ?otS ?originalText . ?originalText a v3:originalText ; ?tS ?text .
+                    FILTER (isLiteral(?text) && STRSTARTS(STR(?tS), STR(rdf:_)))
+                    BIND (CONCAT("originalText=", ?text) AS ?field)
+                  }
+                  UNION
+                  {
+                    ?statement a v3:procedure ; ?cS ?code . ?code a v3:code ; ?otS ?originalText .
+                    ?originalText a v3:originalText ; ?tS ?text .
+                    FILTER (isLiteral(?text) && STRSTARTS(STR(?tS), STR(rdf:_)))
+                    BIND (CONCAT("originalText=", ?text) AS ?field)
+                  }
+                  UNION
+                  { ?statement ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?v . BIND (CONCAT("effectiveTime=", ?v) AS ?field) }
+                  UNION
+                  {
+                    ?statement ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a ?boundType ; xyz:value ?v .
+                    FILTER (?boundType IN (v3:low, v3:high))
+                    BIND (CONCAT("effectiveTime", STRAFTER(STR(?boundType), "urn:hl7-org:v3"), "=", ?v) AS ?field)
+                  }
+                  UNION
+                  { ?statement ?sS ?status . ?status a v3:statusCode ; xyz:code ?v . BIND (CONCAT("statusCode=", ?v) AS ?field) }
+                  UNION
+                  { ?statement xyz:negationInd ?v . BIND (CONCAT("negationInd=", ?v) AS ?field) }
+                  UNION
+                  {
+                    ?statement ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
+                    ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial ; ?lS ?lot .
+                    ?lot a v3:lotNumberText ; ?tS ?text .
+                    FILTER (isLiteral(?text) && STRSTARTS(STR(?tS), STR(rdf:_)))
+                    BIND (CONCAT("lotNumberText=", ?text) AS ?field)
+                  }
                 }
-                UNION
-                { ?statement a v3:procedure ; ?cS ?code . }
-                ?code a v3:code .
-                { ?code xyz:code ?v . BIND (CONCAT("code=", ?v) AS ?field) }
-                UNION
-                { ?code xyz:codeSystem ?v . BIND (CONCAT("codeSystem=", ?v) AS ?field) }
-                UNION
-                {
-                  ?code ?otS ?originalText . ?originalText a v3:originalText ; ?tS ?text .
-                  FILTER (isLiteral(?text) && STRSTARTS(STR(?tS), STR(rdf:_)))
-                  BIND (CONCAT("originalText=", ?text) AS ?field)
-                }
-              }
-              UNION
-              { ?statement ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?v . BIND (CONCAT("effectiveTime=", ?v) AS ?field) }
-              UNION
-              {
-                ?statement ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a ?boundType ; xyz:value ?v .
-                FILTER (?boundType IN (v3:low, v3:high))
-                BIND (CONCAT("effectiveTime", STRAFTER(STR(?boundType), "urn:hl7-org:v3"), "=", ?v) AS ?field)
-              }
-              UNION
-              { ?statement ?sS ?status . ?status a v3:statusCode ; xyz:code ?v . BIND (CONCAT("statusCode=", ?v) AS ?field) }
-              UNION
-              { ?statement xyz:negationInd ?v . BIND (CONCAT("negationInd=", ?v) AS ?field) }
-              UNION
-              {
-                ?statement ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
-                ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial ; ?lS ?lot .
-                ?lot a v3:lotNumberText ; ?tS ?text .
-                FILTER (isLiteral(?text) && STRSTARTS(STR(?tS), STR(rdf:_)))
-                BIND (CONCAT("lotNumberText=", ?text) AS ?field)
               }
             }
             UNION
@@ -478,72 +488,75 @@ WHERE {
               ?statement a v3:substanceAdministration ; ?tplS ?tpl .
               ?tpl a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.16" .
               {
-                ?statement xyz:moodCode ?v .
-                BIND (CONCAT("mood=", ?v) AS ?field)
-              }
-              UNION
-              {
-                ?statement ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
-                ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial .
-                {
-                  ?material ?cS ?code . ?code a v3:code .
-                  { ?code xyz:code ?v . BIND (CONCAT("drugCode=", ?v) AS ?field) }
+                SELECT ?statement ?field WHERE {
+                  {
+                    ?statement xyz:moodCode ?v .
+                    BIND (CONCAT("mood=", ?v) AS ?field)
+                  }
                   UNION
-                  { ?code xyz:codeSystem ?v . BIND (CONCAT("drugCodeSystem=", ?v) AS ?field) }
-                }
-                UNION
-                {
-                  ?material ?nmS ?name . ?name a v3:name ; ?tS ?text .
-                  FILTER (isLiteral(?text) && STRSTARTS(STR(?tS), STR(rdf:_)))
-                  BIND (CONCAT("drugName=", ?text) AS ?field)
+                  {
+                    ?statement ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
+                    ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial ; ?cS ?code .
+                    ?code a v3:code ; ?attribute ?v .
+                    VALUES (?attribute ?name) { (xyz:code "drugCode") (xyz:codeSystem "drugCodeSystem") }
+                    BIND (CONCAT(?name, "=", ?v) AS ?field)
+                  }
+                  UNION
+                  {
+                    ?statement ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
+                    ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial ;
+                      ?nmS ?materialName . ?materialName a v3:name ; ?tS ?text .
+                    FILTER (isLiteral(?text) && STRSTARTS(STR(?tS), STR(rdf:_)))
+                    BIND (CONCAT("drugName=", ?text) AS ?field)
+                  }
+                  UNION
+                  { ?statement ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?v . BIND (CONCAT("effectiveTime=", ?v) AS ?field) }
+                  UNION
+                  {
+                    ?statement ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a ?boundType ; xyz:value ?v .
+                    FILTER (?boundType IN (v3:low, v3:high))
+                    BIND (CONCAT("effectiveTime", STRAFTER(STR(?boundType), "urn:hl7-org:v3"), "=", ?v) AS ?field)
+                  }
+                  UNION
+                  { ?statement ?sS ?status . ?status a v3:statusCode ; xyz:code ?v . BIND (CONCAT("statusCode=", ?v) AS ?field) }
                 }
               }
-              UNION
-              { ?statement ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?v . BIND (CONCAT("effectiveTime=", ?v) AS ?field) }
-              UNION
-              {
-                ?statement ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a ?boundType ; xyz:value ?v .
-                FILTER (?boundType IN (v3:low, v3:high))
-                BIND (CONCAT("effectiveTime", STRAFTER(STR(?boundType), "urn:hl7-org:v3"), "=", ?v) AS ?field)
-              }
-              UNION
-              { ?statement ?sS ?status . ?status a v3:statusCode ; xyz:code ?v . BIND (CONCAT("statusCode=", ?v) AS ?field) }
             }
             UNION
             {
               ?statement a v3:observation ; ?tplS ?tpl .
               ?tpl a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.2" .
               {
-                ?statement ?cS ?code . ?code a v3:code .
-                { ?code xyz:code ?v . BIND (CONCAT("code=", ?v) AS ?field) }
-                UNION
-                { ?code xyz:codeSystem ?v . BIND (CONCAT("codeSystem=", ?v) AS ?field) }
-              }
-              UNION
-              { ?statement ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?v . BIND (CONCAT("effectiveTime=", ?v) AS ?field) }
-              UNION
-              {
-                ?statement ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a ?boundType ; xyz:value ?v .
-                FILTER (?boundType IN (v3:low, v3:high))
-                BIND (CONCAT("effectiveTime", STRAFTER(STR(?boundType), "urn:hl7-org:v3"), "=", ?v) AS ?field)
-              }
-              UNION
-              {
-                ?statement ?vS ?value . ?value a v3:value .
-                { ?value xyz:value ?v . BIND (CONCAT("value=", ?v) AS ?field) }
-                UNION
-                { ?value xyz:unit ?v . BIND (CONCAT("unit=", ?v) AS ?field) }
-                UNION
-                { ?value xyz:code ?v . BIND (CONCAT("valueCode=", ?v) AS ?field) }
-                UNION
-                {
-                  ?value ?tS ?v .
-                  FILTER (isLiteral(?v) && STRSTARTS(STR(?tS), STR(rdf:_)))
-                  BIND (CONCAT("valueText=", ?v) AS ?field)
+                SELECT ?statement ?field WHERE {
+                  {
+                    ?statement ?cS ?code . ?code a v3:code ; ?attribute ?v .
+                    VALUES (?attribute ?name) { (xyz:code "code") (xyz:codeSystem "codeSystem") }
+                    BIND (CONCAT(?name, "=", ?v) AS ?field)
+                  }
+                  UNION
+                  { ?statement ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?v . BIND (CONCAT("effectiveTime=", ?v) AS ?field) }
+                  UNION
+                  {
+                    ?statement ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a ?boundType ; xyz:value ?v .
+                    FILTER (?boundType IN (v3:low, v3:high))
+                    BIND (CONCAT("effectiveTime", STRAFTER(STR(?boundType), "urn:hl7-org:v3"), "=", ?v) AS ?field)
+                  }
+                  UNION
+                  {
+                    ?statement ?vS ?value . ?value a v3:value ; ?attribute ?v .
+                    VALUES (?attribute ?name) { (xyz:value "value") (xyz:unit "unit") (xyz:code "valueCode") }
+                    BIND (CONCAT(?name, "=", ?v) AS ?field)
+                  }
+                  UNION
+                  {
+                    ?statement ?vS ?value . ?value a v3:value ; ?tS ?v .
+                    FILTER (isLiteral(?v) && STRSTARTS(STR(?tS), STR(rdf:_)))
+                    BIND (CONCAT("valueText=", ?v) AS ?field)
+                  }
+                  UNION
+                  { ?statement ?sS ?status . ?status a v3:statusCode ; xyz:code ?v . BIND (CONCAT("statusCode=", ?v) AS ?field) }
                 }
               }
-              UNION
-              { ?statement ?sS ?status . ?status a v3:statusCode ; xyz:code ?v . BIND (CONCAT("statusCode=", ?v) AS ?field) }
             }
           }
         }
@@ -571,19 +584,23 @@ WHERE {
         {
           SELECT DISTINCT ?statement ?member WHERE {
             {
-              ?statement a v3:patientRole .
-            }
-            UNION
-            {
-              ?statement a v3:observation ; ?mT ?mTemplate .
-              ?mTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.7" .
-            }
-            UNION
-            {
-              ?statement ?mT ?mTemplate .
-              ?mTemplate a v3:templateId ; xyz:root ?mRoot .
-              VALUES ?mRoot { "2.16.840.1.113883.10.20.22.4.4" "2.16.840.1.113883.10.20.22.4.52" "2.16.840.1.113883.10.20.22.4.14"
-                     "2.16.840.1.113883.10.20.22.4.16" "2.16.840.1.113883.10.20.22.4.2" }
+              SELECT DISTINCT ?statement WHERE {
+                {
+                  ?statement a v3:patientRole .
+                }
+                UNION
+                {
+                  ?statement a v3:observation ; ?mT ?mTemplate .
+                  ?mTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.7" .
+                }
+                UNION
+                {
+                  ?statement ?mT ?mTemplate .
+                  ?mTemplate a v3:templateId ; xyz:root ?mRoot .
+                  VALUES ?mRoot { "2.16.840.1.113883.10.20.22.4.4" "2.16.840.1.113883.10.20.22.4.52" "2.16.840.1.113883.10.20.22.4.14"
+                         "2.16.840.1.113883.10.20.22.4.16" "2.16.840.1.113883.10.20.22.4.2" }
+                }
+              }
             }
             ?statement (!rdf:type)* ?node .
             ?node a ?nodeType ; ?predicate ?held .
