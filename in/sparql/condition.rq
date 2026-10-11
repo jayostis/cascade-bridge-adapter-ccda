@@ -21,6 +21,11 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # them: effectiveTime's value, else its low, is the onset, its high the
 # abatement. A problem whose negationInd is true is refuted: the source states
 # it is absent.
+#
+# Each template test, each narrative and each set of fields is a subquery
+# joined to the rows, never a FILTER EXISTS, a comparison of strings or a
+# UNION beside them: an engine may evaluate those once per row, scanning the
+# whole document each time.
 
 CONSTRUCT {
   ?version ?p ?o .
@@ -34,22 +39,30 @@ WHERE {
   ?entry a v3:entry ; ?actSlot ?act .
   ?act a v3:act .
   {
-    ?act ?relationshipSlot ?relationship . ?relationship a v3:entryRelationship ; ?statementSlot ?condition .
-    BIND (CONCAT(STRAFTER(STR(?relationshipSlot), "#_"), ".", STRAFTER(STR(?statementSlot), "#_")) AS ?innerSlots)
-  }
-  UNION
-  {
-    ?act ?statementSlot ?condition .
-    BIND (STRAFTER(STR(?statementSlot), "#_") AS ?innerSlots)
+    SELECT ?act ?condition ?innerSlots WHERE {
+      {
+        ?act a v3:act ; ?relationshipSlot ?relationship . ?relationship a v3:entryRelationship ; ?statementSlot ?condition .
+        BIND (CONCAT(STRAFTER(STR(?relationshipSlot), "#_"), ".", STRAFTER(STR(?statementSlot), "#_")) AS ?innerSlots)
+      }
+      UNION
+      {
+        ?act a v3:act ; ?statementSlot ?condition .
+        BIND (STRAFTER(STR(?statementSlot), "#_") AS ?innerSlots)
+      }
+    }
   }
   ?condition a v3:observation .
-  FILTER EXISTS {
-    ?condition ?templateSlot ?template .
-    ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.4" .
+  {
+    SELECT DISTINCT ?condition WHERE {
+      ?condition ?templateSlot ?template .
+      ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.4" .
+    }
   }
-  FILTER EXISTS {
-    ?act ?concernSlot ?concern .
-    ?concern a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.3" .
+  {
+    SELECT DISTINCT ?act WHERE {
+      ?act ?concernSlot ?concern .
+      ?concern a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.3" .
+    }
   }
   BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(CONCAT(
           STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
@@ -59,84 +72,117 @@ WHERE {
   {
     {
       SELECT ?act ?condition ?p (MIN(?ranked) AS ?first) WHERE {
-        ?act a v3:act .
-        { ?act ?ers ?er . ?er a v3:entryRelationship ; ?os ?condition . }
-        UNION
-        { ?act ?os ?condition . }
-        ?condition a v3:observation ; ?tS ?t . ?t a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.4" .
         {
-          ?condition ?vS ?coded . ?coded a v3:value .
-          BIND (STRAFTER(STR(?vS), "#_") AS ?at)
-          BIND (health:conditionName AS ?p)
-          {
-            ?coded ?otS ?originalText . ?originalText a v3:originalText ; ?rfS ?reference .
-            ?reference a v3:reference ; xyz:value ?pointer .
-            ?narrative xyz:ID ?anchor ; ?nS ?value .
-            FILTER NOT EXISTS { ?narrative ?oS ?other . FILTER (STRSTARTS(STR(?oS), STR(rdf:_)) && ?oS != ?nS) }
-            FILTER (?anchor = STRAFTER(?pointer, "#") && isLiteral(?value) && STRSTARTS(STR(?nS), STR(rdf:_)))
-            BIND ("1" AS ?tier)
-            BIND (STRAFTER(STR(?nS), "#_") AS ?within)
-          }
-          UNION
-          {
-            ?coded ?otS ?originalText . ?originalText a v3:originalText ; ?tS2 ?value .
-            FILTER (isLiteral(?value) && STRSTARTS(STR(?tS2), STR(rdf:_)))
-            BIND ("2" AS ?tier)
-            BIND (STRAFTER(STR(?tS2), "#_") AS ?within)
-          }
-          UNION
-          {
-            ?coded xyz:displayName ?value .
-            BIND ("3" AS ?tier)
+          SELECT ?act ?condition ?p ?tier ?at ?within ?value WHERE {
+            {
+              ?condition ?vS ?coded . ?coded a v3:value ; ?otS ?originalText . ?originalText a v3:originalText .
+              {
+                SELECT ?originalText ?within ?value WHERE {
+                  ?originalText a v3:originalText ; ?rfS ?reference . ?reference a v3:reference ; xyz:value ?pointer .
+                  BIND (STRAFTER(?pointer, "#") AS ?anchor)
+                  {
+                    SELECT ?anchor ?within ?value WHERE {
+                      {
+                        SELECT ?anchor (SAMPLE(?nS) AS ?narrativeSlot) (SAMPLE(?text) AS ?value) WHERE {
+                          ?narrative xyz:ID ?anchor ; ?nS ?text .
+                          FILTER (STRSTARTS(STR(?nS), STR(rdf:_)))
+                        } GROUP BY ?narrative ?anchor HAVING (COUNT(DISTINCT ?nS) = 1)
+                      }
+                      FILTER (isLiteral(?value))
+                      BIND (STRAFTER(STR(?narrativeSlot), "#_") AS ?within)
+                    }
+                  }
+                }
+              }
+              BIND (STRAFTER(STR(?vS), "#_") AS ?at)
+              BIND (health:conditionName AS ?p)
+              BIND ("1" AS ?tier)
+            }
+            UNION
+            {
+              ?condition ?vS ?coded . ?coded a v3:value ; ?otS ?originalText . ?originalText a v3:originalText ; ?tS2 ?value .
+              FILTER (isLiteral(?value) && STRSTARTS(STR(?tS2), STR(rdf:_)))
+              BIND (STRAFTER(STR(?vS), "#_") AS ?at)
+              BIND (health:conditionName AS ?p)
+              BIND ("2" AS ?tier)
+              BIND (STRAFTER(STR(?tS2), "#_") AS ?within)
+            }
+            UNION
+            {
+              ?condition ?vS ?coded . ?coded a v3:value ; xyz:displayName ?value .
+              BIND (STRAFTER(STR(?vS), "#_") AS ?at)
+              BIND (health:conditionName AS ?p)
+              BIND ("3" AS ?tier)
+            }
+            UNION
+            {
+              ?condition ?rS ?relationship . ?relationship a v3:entryRelationship ; ?oS ?observation .
+              ?observation a v3:observation ; ?otS ?ot ; ?ovS ?coded .
+              ?ot a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.6" .
+              ?coded a v3:value ; xyz:code ?code ; xyz:codeSystem ?codeSystem .
+              FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.96")
+              ?concept skos:inScheme ccda:problemStatuses ; skos:notation ?key ; skos:exactMatch ?match .
+              FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+              BIND (health:status AS ?p)
+              BIND (STRAFTER(STR(?rS), "#_") AS ?at)
+              BIND (REPLACE(STR(?match), "^.*/", "") AS ?value)
+              BIND ("1" AS ?tier)
+            }
+            UNION
+            {
+              ?act ?sS ?status . ?status a v3:statusCode ; xyz:code ?code .
+              ?concept skos:inScheme ccda:concernStatuses ; skos:notation ?key ; skos:exactMatch ?match .
+              FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+              BIND (health:status AS ?p)
+              BIND (STRAFTER(STR(?sS), "#_") AS ?at)
+              BIND (REPLACE(STR(?match), "^.*/", "") AS ?value)
+              BIND ("2" AS ?tier)
+            }
+            UNION
+            {
+              ?condition ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a v3:low ; xyz:value ?value .
+              FILTER (REGEX(?value, "^[0-9]{8}"))
+              BIND (health:onsetDate AS ?p)
+              BIND ("2" AS ?tier)
+              BIND (STRAFTER(STR(?eS), "#_") AS ?at)
+            }
+            UNION
+            {
+              ?condition ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a v3:high ; xyz:value ?value .
+              FILTER (REGEX(?value, "^[0-9]{8}"))
+              BIND (clinical:abatementDate AS ?p)
+              BIND ("1" AS ?tier)
+              BIND (STRAFTER(STR(?eS), "#_") AS ?at)
+            }
+            UNION
+            {
+              ?condition ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?value .
+              FILTER (REGEX(?value, "^[0-9]{8}"))
+              BIND (health:onsetDate AS ?p)
+              BIND ("1" AS ?tier)
+              BIND (STRAFTER(STR(?eS), "#_") AS ?at)
+            }
+            UNION
+            {
+              ?condition xyz:negationInd "true" .
+              BIND (clinical:verificationStatus AS ?p)
+              BIND ("refuted" AS ?value)
+              BIND ("" AS ?at)
+              BIND ("1" AS ?tier)
+            }
           }
         }
-        UNION
         {
-          ?condition ?rS ?relationship . ?relationship a v3:entryRelationship ; ?oS ?observation .
-          ?observation a v3:observation ; ?otS ?ot ; ?ovS ?coded .
-          ?ot a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.6" .
-          ?coded a v3:value ; xyz:code ?code ; xyz:codeSystem ?codeSystem .
-          FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.96")
-          ?concept skos:inScheme ccda:problemStatuses ; skos:notation ?key ; skos:exactMatch ?match .
-          FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
-          BIND (health:status AS ?p)
-          BIND (STRAFTER(STR(?rS), "#_") AS ?at)
-          BIND (REPLACE(STR(?match), "^.*/", "") AS ?value)
-          BIND ("1" AS ?tier)
-        }
-        UNION
-        {
-          ?act ?sS ?status . ?status a v3:statusCode ; xyz:code ?code .
-          ?concept skos:inScheme ccda:concernStatuses ; skos:notation ?key ; skos:exactMatch ?match .
-          FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
-          BIND (health:status AS ?p)
-          BIND (STRAFTER(STR(?sS), "#_") AS ?at)
-          BIND (REPLACE(STR(?match), "^.*/", "") AS ?value)
-          BIND ("2" AS ?tier)
-        }
-        UNION
-        {
-          ?condition ?eS ?time . ?time a v3:effectiveTime .
-          {
-            ?time ?bS ?bound . ?bound a ?boundType ; xyz:value ?value .
-            VALUES (?boundType ?p ?tier) { (v3:low health:onsetDate "2") (v3:high clinical:abatementDate "1") }
+          SELECT DISTINCT ?act ?condition WHERE {
+            {
+              ?act a v3:act ; ?ers ?er . ?er a v3:entryRelationship ; ?os ?condition .
+            }
+            UNION
+            {
+              ?act a v3:act ; ?os ?condition .
+            }
+            ?condition a v3:observation ; ?tS ?t . ?t a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.4" .
           }
-          UNION
-          {
-            ?time xyz:value ?value .
-            BIND (health:onsetDate AS ?p)
-            BIND ("1" AS ?tier)
-          }
-          FILTER (REGEX(?value, "^[0-9]{8}"))
-          BIND (STRAFTER(STR(?eS), "#_") AS ?at)
-        }
-        UNION
-        {
-          ?condition xyz:negationInd "true" .
-          BIND (clinical:verificationStatus AS ?p)
-          BIND ("refuted" AS ?value)
-          BIND ("" AS ?at)
-          BIND ("1" AS ?tier)
         }
         BIND (COALESCE(?within, "") AS ?inner)
         BIND (CONCAT(?tier, SUBSTR("0000000000", STRLEN(?at) + 1), ?at,
@@ -167,10 +213,13 @@ WHERE {
   }
   UNION
   {
-    ?condition ?vS ?coded . ?coded a v3:value .
-    { ?coded xyz:code ?codeValue ; xyz:codeSystem ?codeSystem . }
-    UNION
-    { ?coded ?trS ?translation . ?translation a v3:translation ; xyz:code ?codeValue ; xyz:codeSystem ?codeSystem . }
+    {
+      SELECT ?condition ?codeValue ?codeSystem WHERE {
+        { ?condition ?vS ?coded . ?coded a v3:value ; xyz:code ?codeValue ; xyz:codeSystem ?codeSystem . }
+        UNION
+        { ?condition ?vS ?coded . ?coded a v3:value ; ?trS ?translation . ?translation a v3:translation ; xyz:code ?codeValue ; xyz:codeSystem ?codeSystem . }
+      }
+    }
     ?system skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; skos:exactMatch ?systemIri ; void:uriSpace ?stem .
     FILTER (?systemKey = LCASE(REPLACE(?codeSystem, "^urn:oid:", "")))
     VALUES (?systemIri ?p) {

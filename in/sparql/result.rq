@@ -30,6 +30,11 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # A LOINC code is written in the IRI space the vocabulary names, one for the
 # code and each translation in LOINC. A time is read as allergy.rq reads an
 # onset.
+#
+# Each template test, each narrative, each first value and range, and each set
+# of fields is a subquery joined to the rows, never a FILTER [NOT] EXISTS, a
+# comparison of strings or a UNION beside them: an engine may evaluate those
+# once per row, scanning the whole document each time.
 
 CONSTRUCT {
   ?version ?p ?o .
@@ -54,163 +59,242 @@ WHERE {
   {
     {
       SELECT ?result ?p (MIN(?ranked) AS ?first) WHERE {
-        ?result a v3:observation ; ?tS ?t .
-        ?t a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.2" .
         {
-          ?result ?cS ?code . ?code a v3:code .
-          BIND (health:testName AS ?p)
-          BIND (STRAFTER(STR(?cS), "#_") AS ?at)
-          {
-            ?code ?otS ?originalText . ?originalText a v3:originalText ; ?rfS ?reference .
-            ?reference a v3:reference ; xyz:value ?pointer .
-            ?narrative xyz:ID ?anchor ; ?nS ?value .
-            FILTER NOT EXISTS { ?narrative ?oS ?other . FILTER (STRSTARTS(STR(?oS), STR(rdf:_)) && ?oS != ?nS) }
-            FILTER (?anchor = STRAFTER(?pointer, "#") && isLiteral(?value) && STRSTARTS(STR(?nS), STR(rdf:_)))
-            BIND ("1" AS ?tier)
-            BIND (STRAFTER(STR(?nS), "#_") AS ?within)
-          }
-          UNION
-          {
-            ?code ?otS ?originalText . ?originalText a v3:originalText ; ?vS ?value .
-            FILTER (isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
-            BIND ("2" AS ?tier)
-            BIND (STRAFTER(STR(?vS), "#_") AS ?within)
-          }
-          UNION
-          {
-            ?code xyz:displayName ?value .
-            BIND ("3" AS ?tier)
+          SELECT ?result ?p ?tier ?at ?within ?value WHERE {
+            {
+              ?result ?cS ?code . ?code a v3:code ; ?otS ?originalText . ?originalText a v3:originalText .
+              {
+                SELECT ?originalText ?within ?value WHERE {
+                  ?originalText a v3:originalText ; ?rfS ?reference . ?reference a v3:reference ; xyz:value ?pointer .
+                  BIND (STRAFTER(?pointer, "#") AS ?anchor)
+                  {
+                    SELECT ?anchor ?within ?value WHERE {
+                      {
+                        SELECT ?anchor (SAMPLE(?nS) AS ?narrativeSlot) (SAMPLE(?run) AS ?value) WHERE {
+                          ?narrative xyz:ID ?anchor ; ?nS ?run .
+                          FILTER (STRSTARTS(STR(?nS), STR(rdf:_)))
+                        } GROUP BY ?narrative ?anchor HAVING (COUNT(DISTINCT ?nS) = 1)
+                      }
+                      FILTER (isLiteral(?value))
+                      BIND (STRAFTER(STR(?narrativeSlot), "#_") AS ?within)
+                    }
+                  }
+                }
+              }
+              BIND (health:testName AS ?p)
+              BIND (STRAFTER(STR(?cS), "#_") AS ?at)
+              BIND ("1" AS ?tier)
+            }
+            UNION
+            {
+              ?result ?cS ?code . ?code a v3:code ; ?otS ?originalText . ?originalText a v3:originalText ; ?vS ?value .
+              FILTER (isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
+              BIND (health:testName AS ?p)
+              BIND (STRAFTER(STR(?cS), "#_") AS ?at)
+              BIND ("2" AS ?tier)
+              BIND (STRAFTER(STR(?vS), "#_") AS ?within)
+            }
+            UNION
+            {
+              ?result ?cS ?code . ?code a v3:code ; xyz:displayName ?value .
+              BIND (health:testName AS ?p)
+              BIND (STRAFTER(STR(?cS), "#_") AS ?at)
+              BIND ("3" AS ?tier)
+            }
+            UNION
+            {
+              {
+                SELECT ?result ?vlS ?resultValue WHERE {
+                  ?result ?vlS ?resultValue . ?resultValue a v3:value .
+                  {
+                    SELECT ?result (MIN(xsd:integer(STRAFTER(STR(?anyS), "#_"))) AS ?firstAt) WHERE {
+                      ?result ?anyS ?any . ?any a v3:value .
+                    } GROUP BY ?result
+                  }
+                  FILTER (xsd:integer(STRAFTER(STR(?vlS), "#_")) = ?firstAt)
+                }
+              }
+              {
+                SELECT ?resultValue ?p ?tier ?value ?within WHERE {
+                  {
+                    ?resultValue a v3:value ; xsi:type ?written ; xyz:value ?value .
+                    FILTER (REPLACE(?written, "^.*:", "") IN ("PQ", "INT", "REAL"))
+                    BIND (health:resultValue AS ?p)
+                    BIND ("1" AS ?tier)
+                  }
+                  UNION
+                  {
+                    ?resultValue a v3:value ; xsi:type ?written ; xyz:unit ?value .
+                    FILTER (REPLACE(?written, "^.*:", "") = "PQ")
+                    BIND (health:resultUnit AS ?p)
+                    BIND ("1" AS ?tier)
+                  }
+                  UNION
+                  {
+                    ?resultValue a v3:value ; xsi:type ?written ; ?vS ?value .
+                    FILTER (REPLACE(?written, "^.*:", "") = "ST" && isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
+                    BIND (health:resultValue AS ?p)
+                    BIND ("1" AS ?tier)
+                    BIND (STRAFTER(STR(?vS), "#_") AS ?within)
+                  }
+                  UNION
+                  {
+                    ?resultValue a v3:value ; xsi:type ?written ; ?otS ?originalText . ?originalText a v3:originalText .
+                    FILTER (REPLACE(?written, "^.*:", "") IN ("CD", "CE", "CV", "CO"))
+                    {
+                      SELECT ?originalText ?within ?value WHERE {
+                        ?originalText a v3:originalText ; ?rfS ?reference . ?reference a v3:reference ; xyz:value ?pointer .
+                        BIND (STRAFTER(?pointer, "#") AS ?anchor)
+                        {
+                          SELECT ?anchor ?within ?value WHERE {
+                            {
+                              SELECT ?anchor (SAMPLE(?nS) AS ?narrativeSlot) (SAMPLE(?run) AS ?value) WHERE {
+                                ?narrative xyz:ID ?anchor ; ?nS ?run .
+                                FILTER (STRSTARTS(STR(?nS), STR(rdf:_)))
+                              } GROUP BY ?narrative ?anchor HAVING (COUNT(DISTINCT ?nS) = 1)
+                            }
+                            FILTER (isLiteral(?value))
+                            BIND (STRAFTER(STR(?narrativeSlot), "#_") AS ?within)
+                          }
+                        }
+                      }
+                    }
+                    BIND (health:resultValue AS ?p)
+                    BIND ("1" AS ?tier)
+                  }
+                  UNION
+                  {
+                    ?resultValue a v3:value ; xsi:type ?written ; ?otS ?originalText . ?originalText a v3:originalText ; ?vS ?value .
+                    FILTER (REPLACE(?written, "^.*:", "") IN ("CD", "CE", "CV", "CO")
+                            && isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
+                    BIND (health:resultValue AS ?p)
+                    BIND ("2" AS ?tier)
+                    BIND (STRAFTER(STR(?vS), "#_") AS ?within)
+                  }
+                  UNION
+                  {
+                    ?resultValue a v3:value ; xsi:type ?written ; xyz:displayName ?value .
+                    FILTER (REPLACE(?written, "^.*:", "") IN ("CD", "CE", "CV", "CO"))
+                    BIND (health:resultValue AS ?p)
+                    BIND ("3" AS ?tier)
+                  }
+                }
+              }
+              BIND (STRAFTER(STR(?vlS), "#_") AS ?at)
+            }
+            UNION
+            {
+              {
+                SELECT ?result ?rrS ?range WHERE {
+                  ?result ?rrS ?range . ?range a v3:referenceRange .
+                  {
+                    SELECT ?result (MIN(xsd:integer(STRAFTER(STR(?anyS), "#_"))) AS ?firstAt) WHERE {
+                      ?result ?anyS ?any . ?any a v3:referenceRange .
+                    } GROUP BY ?result
+                  }
+                  FILTER (xsd:integer(STRAFTER(STR(?rrS), "#_")) = ?firstAt)
+                }
+              }
+              {
+                SELECT ?range ?tier ?value ?within WHERE {
+                  {
+                    ?range a v3:referenceRange ; ?orS ?observationRange . ?observationRange a v3:observationRange ; ?txS ?text . ?text a v3:text .
+                    {
+                      SELECT ?text ?within ?value WHERE {
+                        ?text a v3:text ; ?rfS ?reference . ?reference a v3:reference ; xyz:value ?pointer .
+                        BIND (STRAFTER(?pointer, "#") AS ?anchor)
+                        {
+                          SELECT ?anchor ?within ?value WHERE {
+                            {
+                              SELECT ?anchor (SAMPLE(?nS) AS ?narrativeSlot) (SAMPLE(?run) AS ?value) WHERE {
+                                ?narrative xyz:ID ?anchor ; ?nS ?run .
+                                FILTER (STRSTARTS(STR(?nS), STR(rdf:_)))
+                              } GROUP BY ?narrative ?anchor HAVING (COUNT(DISTINCT ?nS) = 1)
+                            }
+                            FILTER (isLiteral(?value))
+                            BIND (STRAFTER(STR(?narrativeSlot), "#_") AS ?within)
+                          }
+                        }
+                      }
+                    }
+                    BIND ("1" AS ?tier)
+                  }
+                  UNION
+                  {
+                    ?range a v3:referenceRange ; ?orS ?observationRange . ?observationRange a v3:observationRange ; ?txS ?text .
+                    ?text a v3:text ; ?vS ?value .
+                    FILTER (isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
+                    BIND ("2" AS ?tier)
+                    BIND (STRAFTER(STR(?vS), "#_") AS ?within)
+                  }
+                  UNION
+                  {
+                    ?range a v3:referenceRange ; ?orS ?observationRange . ?observationRange a v3:observationRange ; ?bdS ?bounds .
+                    ?bounds a v3:value .
+                    OPTIONAL {
+                      SELECT ?bounds ?lowValue ?lowUnit WHERE {
+                        ?bounds ?lS ?low . ?low a v3:low ; xyz:value ?lowValue .
+                        OPTIONAL { ?low xyz:unit ?lowUnit }
+                      }
+                    }
+                    OPTIONAL {
+                      SELECT ?bounds ?highValue ?highUnit WHERE {
+                        ?bounds ?hS ?high . ?high a v3:high ; xyz:value ?highValue .
+                        OPTIONAL { ?high xyz:unit ?highUnit }
+                      }
+                    }
+                    FILTER (BOUND(?lowValue) || BOUND(?highValue))
+                    BIND (IF(BOUND(?lowValue) && BOUND(?highValue), CONCAT(?lowValue, "-", ?highValue),
+                             IF(BOUND(?lowValue), CONCAT(">=", ?lowValue), CONCAT("<=", ?highValue))) AS ?rangeBounds)
+                    BIND (COALESCE(?lowUnit, ?highUnit) AS ?rangeUnit)
+                    BIND (CONCAT(?rangeBounds, IF(BOUND(?rangeUnit), CONCAT(" ", ?rangeUnit), "")) AS ?value)
+                    BIND ("3" AS ?tier)
+                  }
+                }
+              }
+              BIND (health:referenceRange AS ?p)
+              BIND (STRAFTER(STR(?rrS), "#_") AS ?at)
+            }
+            UNION
+            {
+              ?result ?iS ?interpretationCode . ?interpretationCode a v3:interpretationCode ; xyz:code ?value .
+              BIND (health:interpretation AS ?p)
+              BIND (STRAFTER(STR(?iS), "#_") AS ?at)
+              BIND ("1" AS ?tier)
+            }
+            UNION
+            {
+              ?result ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?value .
+              FILTER (REGEX(?value, "^[0-9]{8}([0-9]{2}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?)?([+-][0-9]{4})?$"))
+              BIND (health:performedDate AS ?p)
+              BIND (STRAFTER(STR(?eS), "#_") AS ?at)
+              BIND ("1" AS ?tier)
+            }
+            UNION
+            {
+              ?result ?eS ?time . ?time a v3:effectiveTime ; ?lS ?low . ?low a v3:low ; xyz:value ?value .
+              FILTER (REGEX(?value, "^[0-9]{8}([0-9]{2}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?)?([+-][0-9]{4})?$"))
+              BIND (health:performedDate AS ?p)
+              BIND (STRAFTER(STR(?eS), "#_") AS ?at)
+              BIND ("2" AS ?tier)
+            }
+            UNION
+            {
+              ?result ?sS ?statusCode . ?statusCode a v3:statusCode ; xyz:code ?code .
+              ?concept skos:inScheme ccda:resultStatuses ; skos:notation ?key ; skos:exactMatch ?match .
+              FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+              BIND (clinical:status AS ?p)
+              BIND (STRAFTER(STR(?sS), "#_") AS ?at)
+              BIND (REPLACE(STR(?match), "^.*/", "") AS ?value)
+              BIND ("1" AS ?tier)
+            }
           }
         }
-        UNION
         {
-          ?result ?vlS ?resultValue . ?resultValue a v3:value ; xsi:type ?written .
-          FILTER NOT EXISTS {
-            ?result ?earlierS ?earlier . ?earlier a v3:value .
-            FILTER (xsd:integer(STRAFTER(STR(?earlierS), "#_")) < xsd:integer(STRAFTER(STR(?vlS), "#_")))
+          SELECT DISTINCT ?result WHERE {
+            ?result a v3:observation ; ?tS ?t .
+            ?t a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.2" .
           }
-          BIND (STRAFTER(STR(?vlS), "#_") AS ?at)
-          {
-            ?resultValue xyz:value ?value .
-            BIND (health:resultValue AS ?p)
-            BIND ("number" AS ?form)
-            BIND ("1" AS ?tier)
-          }
-          UNION
-          {
-            ?resultValue xyz:unit ?value .
-            BIND (health:resultUnit AS ?p)
-            BIND ("unit" AS ?form)
-            BIND ("1" AS ?tier)
-          }
-          UNION
-          {
-            ?resultValue ?vS ?value .
-            FILTER (isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
-            BIND (health:resultValue AS ?p)
-            BIND ("text" AS ?form)
-            BIND ("1" AS ?tier)
-            BIND (STRAFTER(STR(?vS), "#_") AS ?within)
-          }
-          UNION
-          {
-            ?resultValue ?otS ?originalText . ?originalText a v3:originalText ; ?rfS ?reference .
-            ?reference a v3:reference ; xyz:value ?pointer .
-            ?narrative xyz:ID ?anchor ; ?nS ?value .
-            FILTER NOT EXISTS { ?narrative ?oS ?other . FILTER (STRSTARTS(STR(?oS), STR(rdf:_)) && ?oS != ?nS) }
-            FILTER (?anchor = STRAFTER(?pointer, "#") && isLiteral(?value) && STRSTARTS(STR(?nS), STR(rdf:_)))
-            BIND (health:resultValue AS ?p)
-            BIND ("coded" AS ?form)
-            BIND ("1" AS ?tier)
-            BIND (STRAFTER(STR(?nS), "#_") AS ?within)
-          }
-          UNION
-          {
-            ?resultValue ?otS ?originalText . ?originalText a v3:originalText ; ?vS ?value .
-            FILTER (isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
-            BIND (health:resultValue AS ?p)
-            BIND ("coded" AS ?form)
-            BIND ("2" AS ?tier)
-            BIND (STRAFTER(STR(?vS), "#_") AS ?within)
-          }
-          UNION
-          {
-            ?resultValue xyz:displayName ?value .
-            BIND (health:resultValue AS ?p)
-            BIND ("coded" AS ?form)
-            BIND ("3" AS ?tier)
-          }
-          BIND (REPLACE(?written, "^.*:", "") AS ?type)
-          FILTER ((?form = "number" && ?type IN ("PQ", "INT", "REAL"))
-                  || (?form = "unit" && ?type = "PQ")
-                  || (?form = "text" && ?type = "ST")
-                  || (?form = "coded" && ?type IN ("CD", "CE", "CV", "CO")))
-        }
-        UNION
-        {
-          ?result ?rrS ?range . ?range a v3:referenceRange ; ?orS ?observationRange .
-          ?observationRange a v3:observationRange .
-          FILTER NOT EXISTS {
-            ?result ?earlierS ?earlier . ?earlier a v3:referenceRange .
-            FILTER (xsd:integer(STRAFTER(STR(?earlierS), "#_")) < xsd:integer(STRAFTER(STR(?rrS), "#_")))
-          }
-          BIND (health:referenceRange AS ?p)
-          BIND (STRAFTER(STR(?rrS), "#_") AS ?at)
-          {
-            ?observationRange ?txS ?text . ?text a v3:text ; ?rfS ?reference .
-            ?reference a v3:reference ; xyz:value ?pointer .
-            ?narrative xyz:ID ?anchor ; ?nS ?value .
-            FILTER NOT EXISTS { ?narrative ?oS ?other . FILTER (STRSTARTS(STR(?oS), STR(rdf:_)) && ?oS != ?nS) }
-            FILTER (?anchor = STRAFTER(?pointer, "#") && isLiteral(?value) && STRSTARTS(STR(?nS), STR(rdf:_)))
-            BIND ("1" AS ?tier)
-            BIND (STRAFTER(STR(?nS), "#_") AS ?within)
-          }
-          UNION
-          {
-            ?observationRange ?txS ?text . ?text a v3:text ; ?vS ?value .
-            FILTER (isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
-            BIND ("2" AS ?tier)
-            BIND (STRAFTER(STR(?vS), "#_") AS ?within)
-          }
-          UNION
-          {
-            ?observationRange ?bdS ?bounds . ?bounds a v3:value .
-            OPTIONAL { ?bounds ?lS ?low . ?low a v3:low ; xyz:value ?lowValue . OPTIONAL { ?low xyz:unit ?lowUnit } }
-            OPTIONAL { ?bounds ?hS ?high . ?high a v3:high ; xyz:value ?highValue . OPTIONAL { ?high xyz:unit ?highUnit } }
-            FILTER (BOUND(?lowValue) || BOUND(?highValue))
-            BIND (IF(BOUND(?lowValue) && BOUND(?highValue), CONCAT(?lowValue, "-", ?highValue),
-                     IF(BOUND(?lowValue), CONCAT(">=", ?lowValue), CONCAT("<=", ?highValue))) AS ?rangeBounds)
-            BIND (COALESCE(?lowUnit, ?highUnit) AS ?rangeUnit)
-            BIND (CONCAT(?rangeBounds, IF(BOUND(?rangeUnit), CONCAT(" ", ?rangeUnit), "")) AS ?value)
-            BIND ("3" AS ?tier)
-          }
-        }
-        UNION
-        {
-          ?result ?iS ?interpretationCode . ?interpretationCode a v3:interpretationCode ; xyz:code ?value .
-          BIND (health:interpretation AS ?p)
-          BIND (STRAFTER(STR(?iS), "#_") AS ?at)
-          BIND ("1" AS ?tier)
-        }
-        UNION
-        {
-          ?result ?eS ?time . ?time a v3:effectiveTime .
-          { ?time xyz:value ?value . BIND ("1" AS ?tier) }
-          UNION
-          { ?time ?lS ?low . ?low a v3:low ; xyz:value ?value . BIND ("2" AS ?tier) }
-          FILTER (REGEX(?value, "^[0-9]{8}([0-9]{2}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?)?([+-][0-9]{4})?$"))
-          BIND (health:performedDate AS ?p)
-          BIND (STRAFTER(STR(?eS), "#_") AS ?at)
-        }
-        UNION
-        {
-          ?result ?sS ?statusCode . ?statusCode a v3:statusCode ; xyz:code ?code .
-          ?concept skos:inScheme ccda:resultStatuses ; skos:notation ?key ; skos:exactMatch ?match .
-          FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
-          BIND (clinical:status AS ?p)
-          BIND (STRAFTER(STR(?sS), "#_") AS ?at)
-          BIND (REPLACE(STR(?match), "^.*/", "") AS ?value)
-          BIND ("1" AS ?tier)
         }
         BIND (COALESCE(?within, "") AS ?inner)
         BIND (CONCAT(?tier, SUBSTR("0000000000", STRLEN(?at) + 1), ?at,
@@ -233,13 +317,22 @@ WHERE {
   }
   UNION
   {
-    { ?result ?cS ?coding . ?coding a v3:code }
-    UNION
-    { ?result ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
-    ?coding xyz:code ?loinc ; xyz:codeSystem ?codeSystem .
-    FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.1")
-    ccda:codeSystemLoinc void:uriSpace ?stem .
-    BIND (health:testCode AS ?p)
-    BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?loinc))) AS ?o)
+    SELECT ?result ?p ?o WHERE {
+      {
+        ?result ?cS ?coding . ?coding a v3:code ; xyz:code ?loinc ; xyz:codeSystem ?codeSystem .
+        FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.1")
+        ccda:codeSystemLoinc void:uriSpace ?stem .
+        BIND (health:testCode AS ?p)
+        BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?loinc))) AS ?o)
+      }
+      UNION
+      {
+        ?result ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation ; xyz:code ?loinc ; xyz:codeSystem ?codeSystem .
+        FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.1")
+        ccda:codeSystemLoinc void:uriSpace ?stem .
+        BIND (health:testCode AS ?p)
+        BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?loinc))) AS ?o)
+      }
+    }
   }
 }
