@@ -427,6 +427,12 @@
           "@id": "fixtures/in/medications-and-results-b.xml"
         },
         {
+          "@id": "fixtures/in/narrative-reference-without-hash.xml"
+        },
+        {
+          "@id": "fixtures/in/narrative-id-twice.xml"
+        },
+        {
           "@id": "bench/manifest.json"
         },
         {
@@ -575,6 +581,18 @@
         },
         {
           "@id": "fixtures/findings/medications-and-results-b.ttl"
+        },
+        {
+          "@id": "fixtures/expected/narrative-reference-without-hash.ttl"
+        },
+        {
+          "@id": "fixtures/findings/narrative-reference-without-hash.ttl"
+        },
+        {
+          "@id": "fixtures/expected/narrative-id-twice.ttl"
+        },
+        {
+          "@id": "fixtures/findings/narrative-id-twice.ttl"
         },
         {
           "@id": "fixtures/CLAUDE.md"
@@ -856,8 +874,8 @@
       "@type": "File",
       "name": "Mapping: allergy",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "10508",
-      "sha256": "130e0e5c4578531dffe0e1ec73eb8d5eb57668d5d0a324469210e12e570f768a",
+      "contentSize": "10852",
+      "sha256": "f3592b9d503cf00b234c249ae8edbb84eaa500841d89a53b0e5e10e6a849fd93",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -916,8 +934,8 @@
       "@type": "File",
       "name": "Mapping: condition",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "10699",
-      "sha256": "822f23dc794c0a3cb57aa831969819cb4e246f1abd1ea7fd03e187996b133ccc",
+      "contentSize": "10914",
+      "sha256": "2c5cf1dd93f9aeea9b1254d38e4f384cb3216dad418fe1c74d4ef13a8638cf01",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -928,8 +946,8 @@
       "@type": "File",
       "name": "Mapping: immunization",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "7160",
-      "sha256": "cdbec2b102ff8578c84be66c38075126e5603336518d5225d965a9d2cc6ac450",
+      "contentSize": "7504",
+      "sha256": "aa3ebd539c8d96fbfd61e9987c0eca78825910374735e3dfe673f2b149522229",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -940,8 +958,8 @@
       "@type": "File",
       "name": "Mapping: procedure",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "6164",
-      "sha256": "d3caf85f3ad5d3921b935fe763d6fad756b6e8027aa187a7bade2f8ce4e788c3",
+      "contentSize": "6508",
+      "sha256": "17bbe3222249a2e531f1eeacb85c5c3b9b4eaa1c0dc4ecffd891ef454966cbc9",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -976,8 +994,8 @@
       "@type": "File",
       "name": "Mapping: medication",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "10271",
-      "sha256": "574aeb005dcc235b648e4d9f88a5b18ca8b7ad4d47ff17cd1330e6d52128d3ce",
+      "contentSize": "10973",
+      "sha256": "b7f4c1ac89a9288378acd3e115e73b05d8cd73ecd33ec611fcbe4f34aaf36329",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -988,8 +1006,8 @@
       "@type": "File",
       "name": "Mapping: result",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "16652",
-      "sha256": "ae792897e442c09b3c5ba4d5c9bbfe55d58461ef3b5d1db626f8071b24ed4fa8",
+      "contentSize": "17440",
+      "sha256": "5052639d0bfe37f11ab24af25d274e04484d2393d2527a9f8905504854febfc1",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1569,6 +1587,32 @@
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "description": "The second download of medications-and-results-a's summary, a day later: a new document id and time, the narrative's IDs and the references to them moved, and the same clinical content. Authored here on 2026-10-07, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/narrative-reference-without-hash.xml",
+      "@type": "File",
+      "name": "C-CDA: narrative-reference-without-hash",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "6081",
+      "sha256": "40c8374854b0fd5f04576b8caa4c738757be2cf4d9d78a4e99f082ea9efc7f25",
+      "dateCreated": "2026-10-11",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A result, a problem and a procedure, each pointing into the narrative with a reference of a different form that names no element: 'n1' (no '#', and an element with that ID), '#' alone, and 'other.xml#n3' (a '#' inside, and an element with the ID after it). One narrative element has an empty ID, which '#' alone and a reference with no '#' both reach on a reader that strips to the text after the '#'. Authored here on 2026-10-11, for a case the conformance corpus does not hold; it validates against the CDA schema except for the one empty ID, which is what it is about."
+    },
+    {
+      "@id": "fixtures/in/narrative-id-twice.xml",
+      "@type": "File",
+      "name": "C-CDA: narrative-id-twice",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "6193",
+      "sha256": "7887243a0afeed8c083a1131eb3de571ac74b2ad575b2bfaba860ce30997dabf",
+      "dateCreated": "2026-10-11",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A result, a problem and a procedure, each pointing into its section's narrative at an ID that two narrative elements hold; in the procedure's section one of the two is empty. Authored here on 2026-10-11, for a case the conformance corpus does not hold; it validates against the CDA schema except for the three repeated IDs, which are what it is about."
     },
     {
       "@id": "bench/manifest.json",
@@ -2416,6 +2460,70 @@
         "@id": "fixtures/in/medications-and-results-b.xml"
       },
       "dateCreated": "2026-10-07",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/narrative-reference-without-hash.ttl",
+      "@type": "File",
+      "name": "Expected graph for narrative-reference-without-hash",
+      "encodingFormat": "text/turtle",
+      "contentSize": "6559",
+      "sha256": "83fe5ae21c4d507248ef9b041199a3ec784fd88f86f3a1956f719441a07b1d15",
+      "about": {
+        "@id": "fixtures/in/narrative-reference-without-hash.xml"
+      },
+      "dateCreated": "2026-10-11",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. Each name is the entry's own, since a reference with no '#' names no narrative element. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/narrative-reference-without-hash.ttl",
+      "@type": "File",
+      "name": "Expected findings for narrative-reference-without-hash",
+      "encodingFormat": "text/turtle",
+      "contentSize": "12916",
+      "sha256": "c26d9708254697c7d38e391c5d0a7a9317dfc6747397978c12d15f29ca48ae68",
+      "about": {
+        "@id": "fixtures/in/narrative-reference-without-hash.xml"
+      },
+      "dateCreated": "2026-10-11",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/narrative-id-twice.ttl",
+      "@type": "File",
+      "name": "Expected graph for narrative-id-twice",
+      "encodingFormat": "text/turtle",
+      "contentSize": "6553",
+      "sha256": "79f51334258d9a2da2983175008df63d20d5c3908a54e6238bf5a0e20442b202",
+      "about": {
+        "@id": "fixtures/in/narrative-id-twice.xml"
+      },
+      "dateCreated": "2026-10-11",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. Each name is the entry's own, since an ID held by two narrative elements names neither. A Bridge's output was then found equal to it."
+    },
+    {
+      "@id": "fixtures/findings/narrative-id-twice.ttl",
+      "@type": "File",
+      "name": "Expected findings for narrative-id-twice",
+      "encodingFormat": "text/turtle",
+      "contentSize": "14964",
+      "sha256": "8a203e350df3f306cf7d991f30ca005352dad5082b3ea9707ef064f3f0adae9d",
+      "about": {
+        "@id": "fixtures/in/narrative-id-twice.xml"
+      },
+      "dateCreated": "2026-10-11",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },

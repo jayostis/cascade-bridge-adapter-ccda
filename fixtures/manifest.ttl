@@ -24,6 +24,8 @@
     <#procedures>
     <#shared-id>
     <#negations>
+    <#narrative-reference-without-hash>
+    <#narrative-id-twice>
     <#download-c>
     <#download-d>
     <#medications-and-results-a>
@@ -258,6 +260,30 @@
   mf:result [
     bridge:expectedGraph <expected/negations.ttl> ;
     bridge:expectedFindings <findings/negations.ttl>
+  ] .
+
+<#narrative-reference-without-hash> a bridge:IsomorphicConversionTest ;
+  mf:name "narrative-reference-without-hash" ;
+  mf:action [
+    bridge:input <in/narrative-reference-without-hash.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/narrative-reference-without-hash.ttl> ;
+    bridge:expectedFindings <findings/narrative-reference-without-hash.ttl>
+  ] .
+
+<#narrative-id-twice> a bridge:IsomorphicConversionTest ;
+  mf:name "narrative-id-twice" ;
+  mf:action [
+    bridge:input <in/narrative-id-twice.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/narrative-id-twice.ttl> ;
+    bridge:expectedFindings <findings/narrative-id-twice.ttl>
   ] .
 
 <#download-c> a bridge:IsomorphicConversionTest ;

@@ -17,7 +17,7 @@ An input is one of two kinds, and the crate says which:
   `sameAs` to its blob. None names a custodian or an author, so each fails the
   CDA schema, and its findings say where.
 - **Authored here**: written for a case the conformance corpus does not hold,
-  with the date it was written. Each validates against the CDA schema. An
+  with the date it was written. Each validates against the CDA schema, bar a malformed value a case is about. An
   authored input is edited only by replacing it, as a new file under a new name.
 
 An input is committed once. A case that needs the same bytes twice names one
@@ -40,4 +40,5 @@ statement's XPath from the document element.
   ```
   git -C ../../conformance show <commit>:fixtures/ccda/X.xml | cmp - in/X.xml
   ```
-- Each authored input validates against `../schema/infrastructure/cda/CDA_SDTC.xsd`.
+- Each authored input validates against `../schema/infrastructure/cda/CDA_SDTC.xsd`, bar the
+  value a case is about: an input for a malformed `ID` says in the crate which it breaks.

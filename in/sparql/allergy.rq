@@ -65,11 +65,18 @@ WHERE {
           {
             ?entity ?cS ?code . ?code a v3:code ; ?otS ?originalText . ?originalText a v3:originalText ; ?rfS ?reference .
             ?reference a v3:reference ; xyz:value ?pointer .
-            ?narrative xyz:ID ?anchor ; ?nS ?value .
-            FILTER NOT EXISTS { ?narrative ?oS ?other . FILTER (STRSTARTS(STR(?oS), STR(rdf:_)) && ?oS != ?nS) }
-            FILTER (?anchor = STRAFTER(?pointer, "#") && isLiteral(?value) && STRSTARTS(STR(?nS), STR(rdf:_)))
+            BIND (REPLACE(?pointer, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?reference_)
+            FILTER (STRSTARTS(?reference_, "#") && STRLEN(?reference_) > 1)
+            BIND (STRAFTER(?reference_, "#") AS ?anchor)
+            {
+              SELECT ?anchor (SAMPLE(?nS) AS ?narrativeSlot) (SAMPLE(?run) AS ?value) WHERE {
+                ?narrative xyz:ID ?anchor .
+                OPTIONAL { ?narrative ?nS ?run . FILTER (STRSTARTS(STR(?nS), STR(rdf:_))) }
+              } GROUP BY ?anchor HAVING (COUNT(DISTINCT ?narrative) = 1 && COUNT(?nS) = 1)
+            }
+            FILTER (isLiteral(?value))
             BIND ("1" AS ?tier)
-            BIND (STRAFTER(STR(?nS), "#_") AS ?within)
+            BIND (STRAFTER(STR(?narrativeSlot), "#_") AS ?within)
           }
           UNION
           {
