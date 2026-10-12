@@ -44,7 +44,7 @@
           <code code="30954-2" displayName="Relevant Diagnostic Tests and/or Laboratory Data" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
           <title>Results</title>
           <text>
-            <content ID="">text of an element with an empty ID, test</content>
+            <content ID="">text of the element with an empty ID</content>
             <content ID="n1">text of the element n1, test</content>
           </text>
           <entry typeCode="DRIV">
@@ -77,7 +77,6 @@
           <code code="11450-4" displayName="Problem List" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
           <title>Problems</title>
           <text>
-            <content ID="">text of an element with an empty ID, problem</content>
             <content ID="n2">text of the element n2, problem</content>
           </text>
           <entry typeCode="DRIV">
@@ -95,7 +94,7 @@
                   <effectiveTime value="20240501"/>
                   <value xsi:type="CD" code="73211009" displayName="Diabetes mellitus" codeSystem="2.16.840.1.113883.6.96">
                     <originalText>
-                      <reference value="n2"/>
+                      <reference value="#"/>
                     </originalText>
                   </value>
                 </observation>
@@ -110,7 +109,6 @@
           <code code="47519-4" displayName="History of Procedures Document" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
           <title>Procedures</title>
           <text>
-            <content ID="">text of an element with an empty ID, procedure</content>
             <content ID="n3">text of the element n3, procedure</content>
           </text>
           <entry typeCode="DRIV">
@@ -119,7 +117,7 @@
               <id root="2.16.840.1.113883.3.88.11.32.1" extension="NOHASH-PROC-001"/>
               <code code="73761001" displayName="Colonoscopy" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
                 <originalText>
-                  <reference value="n3"/>
+                  <reference value="other.xml#n3"/>
                 </originalText>
               </code>
               <statusCode code="completed"/>

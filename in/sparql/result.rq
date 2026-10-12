@@ -67,8 +67,9 @@ WHERE {
               {
                 SELECT ?originalText ?within ?value WHERE {
                   ?originalText a v3:originalText ; ?rfS ?reference . ?reference a v3:reference ; xyz:value ?pointer .
-                  FILTER (STRSTARTS(?pointer, "#") && STRLEN(?pointer) > 1)
-                  BIND (STRAFTER(?pointer, "#") AS ?anchor)
+                  BIND (REPLACE(?pointer, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?reference_)
+                  FILTER (STRSTARTS(?reference_, "#") && STRLEN(?reference_) > 1)
+                  BIND (STRAFTER(?reference_, "#") AS ?anchor)
                   {
                     SELECT ?anchor ?within ?value WHERE {
                       {
@@ -146,8 +147,9 @@ WHERE {
                     {
                       SELECT ?originalText ?within ?value WHERE {
                         ?originalText a v3:originalText ; ?rfS ?reference . ?reference a v3:reference ; xyz:value ?pointer .
-                        FILTER (STRSTARTS(?pointer, "#") && STRLEN(?pointer) > 1)
-                        BIND (STRAFTER(?pointer, "#") AS ?anchor)
+                        BIND (REPLACE(?pointer, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?reference_)
+                        FILTER (STRSTARTS(?reference_, "#") && STRLEN(?reference_) > 1)
+                        BIND (STRAFTER(?reference_, "#") AS ?anchor)
                         {
                           SELECT ?anchor ?within ?value WHERE {
                             {
@@ -205,8 +207,9 @@ WHERE {
                     {
                       SELECT ?text ?within ?value WHERE {
                         ?text a v3:text ; ?rfS ?reference . ?reference a v3:reference ; xyz:value ?pointer .
-                        FILTER (STRSTARTS(?pointer, "#") && STRLEN(?pointer) > 1)
-                        BIND (STRAFTER(?pointer, "#") AS ?anchor)
+                        BIND (REPLACE(?pointer, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?reference_)
+                        FILTER (STRSTARTS(?reference_, "#") && STRLEN(?reference_) > 1)
+                        BIND (STRAFTER(?reference_, "#") AS ?anchor)
                         {
                           SELECT ?anchor ?within ?value WHERE {
                             {
