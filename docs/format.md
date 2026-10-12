@@ -147,7 +147,11 @@ whose `value` is `#` and that `ID`, from a statement's `text` or a code's
 reference range's text are each read through such a reference first, where
 the element it points to holds one run of text. One holding markup, a
 `content` inside a `td` among them, is passed over for the next place the name
-is stated, so a name is never cut short. A
+is stated, so a name is never cut short. A reference names an element only as
+`#` and that element's `ID`: one with no `#`, or with nothing after it, names
+none. An `ID` that two elements hold names neither: the CDA schema makes an
+`ID` unique within a document, so a document that repeats one gives no ground
+for choosing, and the name is read from the next place it is stated. A
 portal's next download of one document may number the `ID`s afresh, so neither
 an `ID` nor a reference is part of a key or a member.
 

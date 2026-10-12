@@ -79,14 +79,15 @@ WHERE {
               {
                 SELECT ?originalText ?within ?value WHERE {
                   ?originalText a v3:originalText ; ?rfS ?reference . ?reference a v3:reference ; xyz:value ?pointer .
+                  FILTER (STRSTARTS(?pointer, "#") && STRLEN(?pointer) > 1)
                   BIND (STRAFTER(?pointer, "#") AS ?anchor)
                   {
                     SELECT ?anchor ?within ?value WHERE {
                       {
                         SELECT ?anchor (SAMPLE(?nS) AS ?narrativeSlot) (SAMPLE(?text) AS ?value) WHERE {
-                          ?narrative xyz:ID ?anchor ; ?nS ?text .
-                          FILTER (STRSTARTS(STR(?nS), STR(rdf:_)))
-                        } GROUP BY ?narrative ?anchor HAVING (COUNT(DISTINCT ?nS) = 1)
+                          ?narrative xyz:ID ?anchor .
+                          OPTIONAL { ?narrative ?nS ?text . FILTER (STRSTARTS(STR(?nS), STR(rdf:_))) }
+                        } GROUP BY ?anchor HAVING (COUNT(DISTINCT ?narrative) = 1 && COUNT(?nS) = 1)
                       }
                       FILTER (isLiteral(?value))
                       BIND (STRAFTER(STR(?narrativeSlot), "#_") AS ?within)

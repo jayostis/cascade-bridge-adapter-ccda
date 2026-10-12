@@ -26,7 +26,8 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 #     IVL_PQ written as the FHIR R4 adapter writes a range with no text, a
 #     range with one bound as >=low or <=high.
 # A narrative element is read only where its text is one run; one holding
-# markup falls through to the next of these.
+# markup falls through to the next of these, as does a reference to an ID two
+# elements hold or one with no '#' (docs/format.md, "Narrative references").
 # A LOINC code is written in the IRI space the vocabulary names, one for the
 # code and each translation in LOINC. A time is read as allergy.rq reads an
 # onset.
@@ -66,14 +67,15 @@ WHERE {
               {
                 SELECT ?originalText ?within ?value WHERE {
                   ?originalText a v3:originalText ; ?rfS ?reference . ?reference a v3:reference ; xyz:value ?pointer .
+                  FILTER (STRSTARTS(?pointer, "#") && STRLEN(?pointer) > 1)
                   BIND (STRAFTER(?pointer, "#") AS ?anchor)
                   {
                     SELECT ?anchor ?within ?value WHERE {
                       {
                         SELECT ?anchor (SAMPLE(?nS) AS ?narrativeSlot) (SAMPLE(?run) AS ?value) WHERE {
-                          ?narrative xyz:ID ?anchor ; ?nS ?run .
-                          FILTER (STRSTARTS(STR(?nS), STR(rdf:_)))
-                        } GROUP BY ?narrative ?anchor HAVING (COUNT(DISTINCT ?nS) = 1)
+                          ?narrative xyz:ID ?anchor .
+                          OPTIONAL { ?narrative ?nS ?run . FILTER (STRSTARTS(STR(?nS), STR(rdf:_))) }
+                        } GROUP BY ?anchor HAVING (COUNT(DISTINCT ?narrative) = 1 && COUNT(?nS) = 1)
                       }
                       FILTER (isLiteral(?value))
                       BIND (STRAFTER(STR(?narrativeSlot), "#_") AS ?within)
@@ -144,14 +146,15 @@ WHERE {
                     {
                       SELECT ?originalText ?within ?value WHERE {
                         ?originalText a v3:originalText ; ?rfS ?reference . ?reference a v3:reference ; xyz:value ?pointer .
+                        FILTER (STRSTARTS(?pointer, "#") && STRLEN(?pointer) > 1)
                         BIND (STRAFTER(?pointer, "#") AS ?anchor)
                         {
                           SELECT ?anchor ?within ?value WHERE {
                             {
                               SELECT ?anchor (SAMPLE(?nS) AS ?narrativeSlot) (SAMPLE(?run) AS ?value) WHERE {
-                                ?narrative xyz:ID ?anchor ; ?nS ?run .
-                                FILTER (STRSTARTS(STR(?nS), STR(rdf:_)))
-                              } GROUP BY ?narrative ?anchor HAVING (COUNT(DISTINCT ?nS) = 1)
+                                ?narrative xyz:ID ?anchor .
+                                OPTIONAL { ?narrative ?nS ?run . FILTER (STRSTARTS(STR(?nS), STR(rdf:_))) }
+                              } GROUP BY ?anchor HAVING (COUNT(DISTINCT ?narrative) = 1 && COUNT(?nS) = 1)
                             }
                             FILTER (isLiteral(?value))
                             BIND (STRAFTER(STR(?narrativeSlot), "#_") AS ?within)
@@ -202,14 +205,15 @@ WHERE {
                     {
                       SELECT ?text ?within ?value WHERE {
                         ?text a v3:text ; ?rfS ?reference . ?reference a v3:reference ; xyz:value ?pointer .
+                        FILTER (STRSTARTS(?pointer, "#") && STRLEN(?pointer) > 1)
                         BIND (STRAFTER(?pointer, "#") AS ?anchor)
                         {
                           SELECT ?anchor ?within ?value WHERE {
                             {
                               SELECT ?anchor (SAMPLE(?nS) AS ?narrativeSlot) (SAMPLE(?run) AS ?value) WHERE {
-                                ?narrative xyz:ID ?anchor ; ?nS ?run .
-                                FILTER (STRSTARTS(STR(?nS), STR(rdf:_)))
-                              } GROUP BY ?narrative ?anchor HAVING (COUNT(DISTINCT ?nS) = 1)
+                                ?narrative xyz:ID ?anchor .
+                                OPTIONAL { ?narrative ?nS ?run . FILTER (STRSTARTS(STR(?nS), STR(rdf:_))) }
+                              } GROUP BY ?anchor HAVING (COUNT(DISTINCT ?narrative) = 1 && COUNT(?nS) = 1)
                             }
                             FILTER (isLiteral(?value))
                             BIND (STRAFTER(STR(?narrativeSlot), "#_") AS ?within)
