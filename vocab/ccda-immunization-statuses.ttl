@@ -1,5 +1,4 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
 
 ccda:immunizationStatuses a skos:ConceptScheme ;
@@ -8,9 +7,9 @@ ccda:immunizationStatuses a skos:ConceptScheme ;
 ccda:immunizationStatusCompleted a skos:Concept ;
   skos:inScheme ccda:immunizationStatuses ;
   skos:notation "completed" ;
-  skos:exactMatch [ skos:notation "completed" ; ccda:fhirCodingSystem "http://hl7.org/fhir/event-status"^^xsd:anyURI ] .
+  skos:exactMatch [ skos:notation "completed" ; skos:inScheme <http://hl7.org/fhir/event-status> ] .
 
 ccda:immunizationStatusNullified a skos:Concept ;
   skos:inScheme ccda:immunizationStatuses ;
   skos:notation "nullified" ;
-  skos:exactMatch [ skos:notation "entered-in-error" ; ccda:fhirCodingSystem "http://hl7.org/fhir/event-status"^^xsd:anyURI ] .
+  skos:exactMatch [ skos:notation "entered-in-error" ; skos:inScheme <http://hl7.org/fhir/event-status> ] .

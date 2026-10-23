@@ -7,11 +7,13 @@ PREFIX v3:     <urn:hl7-org:v3>
 PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
-# A reference in an entry a record is made from that names no narrative
-# element: no '#', nothing after it, or an ID no element or two elements hold,
-# trimmed as the mappings trim it. What the mappings read through a reference
-# is then read from the next place it is stated, and the reference itself is
-# lost; this says so, on the entry, with the reference as written as its value.
+# A reference in an entry a record is made from through which the mappings
+# read nothing: one naming no narrative element (no '#', nothing after it, or
+# an ID no element or two elements hold, trimmed as the mappings trim it), or
+# naming one that does not hold exactly one run of text and nothing else, as
+# the mappings' HAVING and isLiteral ask. What they read through a reference is
+# then read from the next place it is stated, and the reference itself is lost;
+# this says so, on the entry, with the reference as written as its value.
 
 CONSTRUCT {
   [] a oa:Annotation ;
@@ -19,7 +21,7 @@ CONSTRUCT {
       oa:hasSource bridge:thisRecord ;
       oa:hasSelector [ a oa:XPathSelector ; rdf:value ?entryRefinement ]
     ] ;
-    oa:hasBody ccda:referenceNamesNothing ;
+    oa:hasBody ccda:referenceReadsNothing ;
     oa:motivatedBy oa:classifying ;
     sh:value ?pointer .
 }
@@ -41,11 +43,15 @@ WHERE {
   BIND (REPLACE(?pointer, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?trimmed)
   OPTIONAL {
     {
-      SELECT ?anchor (COUNT(DISTINCT ?holder) AS ?holders) WHERE { ?holder xyz:ID ?anchor } GROUP BY ?anchor
+      SELECT ?anchor (COUNT(DISTINCT ?holder) AS ?holders) (COUNT(?runSlot) AS ?runs) (SAMPLE(?run) AS ?only) WHERE {
+        ?holder xyz:ID ?anchor .
+        OPTIONAL { ?holder ?runSlot ?run . FILTER (STRSTARTS(STR(?runSlot), STR(rdf:_))) }
+      } GROUP BY ?anchor
     }
     FILTER (?anchor = STRAFTER(?trimmed, "#"))
   }
-  FILTER (!STRSTARTS(?trimmed, "#") || STRLEN(?trimmed) = 1 || COALESCE(?holders, 0) != 1)
+  FILTER (!(STRSTARTS(?trimmed, "#") && STRLEN(?trimmed) > 1 && COALESCE(?holders, 0) = 1 && COALESCE(?runs, 0) = 1
+            && COALESCE(isLiteral(?only), false)))
   {
     SELECT ?prefix (SAMPLE(?refinement) AS ?anyRefinement) WHERE {
       ?row ccda:statementAt ?slots ; ccda:refinement ?refinement .

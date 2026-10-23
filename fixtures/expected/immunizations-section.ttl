@@ -10,26 +10,24 @@
 	cascade:workflowStatus "completed" ;
 	cascade:vaccineCode <https://ns.cascadeprotocol.org/codes/cvx/140> ;
 	cascade:vaccinationOccurrenceTime "2023-10-01"^^xsd:date .
-<ni:///sha-256;De6LPPQ0zREaw3tBIyy1BV47eMXW_EQUWY2rGJDPF0Q> foaf:givenName "Jane" ;
-	foaf:familyName "Doe" ;
+<ni:///sha-256;De6LPPQ0zREaw3tBIyy1BV47eMXW_EQUWY2rGJDPF0Q> foaf:familyName "Doe" ;
+	foaf:givenName "Jane" ;
 	cascade:dateOfBirth "1965-01-01"^^xsd:date .
 <urn:uuid:3a09906a-72b1-8f45-97b7-596d26fee697> a cascade:Vaccination ;
-	cascade:sourceUrl <urn:hl7ii:2.16.840.1.113883.3.88.11.32.1:IMMUN-001> ;
 	cascade:sourceRecordId "2.16.840.1.113883.3.88.11.32.1:IMMUN-001" .
 <ni:///sha-256;P0Crw_YPR2nY2ANe1CKuAaNqgKQkaI8BKE13QWfPtXo> prov:specializationOf <urn:uuid:3a09906a-72b1-8f45-97b7-596d26fee697> ;
 	cascade:patient <urn:uuid:05adf464-1552-80c7-9b6c-6d8f43ce7fb0> .
-_:ba10fea4edeeed64d1ef04eb0dce47cc a oa:XPathSelector ;
+_:ce0795cd29c17c6548634590d6c56bbe a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='substanceAdministration' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:98a6dd82ff441e465d33d6898d840383 bridge:arrivedAs <ni:///sha-256;P0Crw_YPR2nY2ANe1CKuAaNqgKQkaI8BKE13QWfPtXo> ;
-	oa:hasSelector _:ba10fea4edeeed64d1ef04eb0dce47cc .
+	oa:hasSelector _:ce0795cd29c17c6548634590d6c56bbe .
 <urn:uuid:05adf464-1552-80c7-9b6c-6d8f43ce7fb0> a cascade:PatientProfile ;
-	cascade:sourceUrl <urn:hl7ii:2.16.840.1.113883.4.1:000-00-0000> ;
 	cascade:sourceRecordId "2.16.840.1.113883.4.1:000-00-0000" .
 <ni:///sha-256;De6LPPQ0zREaw3tBIyy1BV47eMXW_EQUWY2rGJDPF0Q> prov:specializationOf <urn:uuid:05adf464-1552-80c7-9b6c-6d8f43ce7fb0> .
-_:f73fc1d1e712a52523b77bbc919f139d a oa:XPathSelector ;
+_:cdf5278cfde2f4ba5452737564a18250 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:5f12ae48884ee6aeb6d717d2e38f6208 bridge:arrivedAs <ni:///sha-256;De6LPPQ0zREaw3tBIyy1BV47eMXW_EQUWY2rGJDPF0Q> ;
-	oa:hasSelector _:f73fc1d1e712a52523b77bbc919f139d ;
+	oa:hasSelector _:cdf5278cfde2f4ba5452737564a18250 ;
 	oa:hasSource <ni:///sha-256;vGwtm2A_Dcu6NKFoSUy9nwdaExP-jXy97oEWKgHxDQo> ;
 	prov:wasDerivedFrom <ni:///sha-256;vGwtm2A_Dcu6NKFoSUy9nwdaExP-jXy97oEWKgHxDQo> ;
 	prov:wasGeneratedBy _:3f93f30f85943fcbb39b0179327ad3d0 .

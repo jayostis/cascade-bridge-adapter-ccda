@@ -1,5 +1,4 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
 
 ccda:criticalities a skos:ConceptScheme ;
@@ -8,14 +7,14 @@ ccda:criticalities a skos:ConceptScheme ;
 ccda:criticalityHigh a skos:Concept ;
   skos:inScheme ccda:criticalities ;
   skos:notation "crith" ;
-  skos:exactMatch [ skos:notation "high" ; ccda:fhirCodingSystem "http://hl7.org/fhir/allergy-intolerance-criticality"^^xsd:anyURI ] .
+  skos:exactMatch [ skos:notation "high" ; skos:inScheme <http://hl7.org/fhir/allergy-intolerance-criticality> ] .
 
 ccda:criticalityLow a skos:Concept ;
   skos:inScheme ccda:criticalities ;
   skos:notation "critl" ;
-  skos:exactMatch [ skos:notation "low" ; ccda:fhirCodingSystem "http://hl7.org/fhir/allergy-intolerance-criticality"^^xsd:anyURI ] .
+  skos:exactMatch [ skos:notation "low" ; skos:inScheme <http://hl7.org/fhir/allergy-intolerance-criticality> ] .
 
 ccda:criticalityUnableToAssess a skos:Concept ;
   skos:inScheme ccda:criticalities ;
   skos:notation "critu" ;
-  skos:exactMatch [ skos:notation "unable-to-assess" ; ccda:fhirCodingSystem "http://hl7.org/fhir/allergy-intolerance-criticality"^^xsd:anyURI ] .
+  skos:exactMatch [ skos:notation "unable-to-assess" ; skos:inScheme <http://hl7.org/fhir/allergy-intolerance-criticality> ] .

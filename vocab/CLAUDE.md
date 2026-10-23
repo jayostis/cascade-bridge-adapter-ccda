@@ -9,9 +9,11 @@ The form a `skos:notation` key is written in is
 [`shapes/concept-map.shapes.ttl`](https://github.com/jayostis/cascade-bridge-spec/blob/main/shapes/concept-map.shapes.ttl)'s
 to say, and a failing run prints it.
 
-- A row leads to the FHIR code as two literals on a node, the code as its
-  `skos:notation` and its system as `ccda:fhirCodingSystem`: no registry defines
-  an IRI for these systems' codes, so none is made up. A row is
+- A row leads to the FHIR code as a node holding the code as its
+  `skos:notation` and its FHIR code system as `skos:inScheme`, the system's
+  canonical URL as an IRI: SKOS's own idiom for a code in a scheme, so no term
+  of this namespace stands where the standard has one. No registry defines an
+  IRI for these systems' codes, so none is made up for the node. A row is
   `skos:exactMatch` its target where it alone leads there, and `skos:broadMatch`
   where several rows of its map do, since each then means less than the target.
   The mapping writes the code alone, as the vocabulary's shapes take it.

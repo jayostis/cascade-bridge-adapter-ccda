@@ -1,5 +1,4 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
 
 ccda:resultStatuses a skos:ConceptScheme ;
@@ -8,9 +7,9 @@ ccda:resultStatuses a skos:ConceptScheme ;
 ccda:resultStatusCancelled a skos:Concept ;
   skos:inScheme ccda:resultStatuses ;
   skos:notation "cancelled" ;
-  skos:exactMatch [ skos:notation "cancelled" ; ccda:fhirCodingSystem "http://hl7.org/fhir/observation-status"^^xsd:anyURI ] .
+  skos:exactMatch [ skos:notation "cancelled" ; skos:inScheme <http://hl7.org/fhir/observation-status> ] .
 
 ccda:resultStatusCompleted a skos:Concept ;
   skos:inScheme ccda:resultStatuses ;
   skos:notation "completed" ;
-  skos:exactMatch [ skos:notation "final" ; ccda:fhirCodingSystem "http://hl7.org/fhir/observation-status"^^xsd:anyURI ] .
+  skos:exactMatch [ skos:notation "final" ; skos:inScheme <http://hl7.org/fhir/observation-status> ] .

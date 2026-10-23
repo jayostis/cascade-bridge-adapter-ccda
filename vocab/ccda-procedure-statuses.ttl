@@ -1,5 +1,4 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
 
 ccda:procedureStatuses a skos:ConceptScheme ;
@@ -8,19 +7,19 @@ ccda:procedureStatuses a skos:ConceptScheme ;
 ccda:procedureStatusAborted a skos:Concept ;
   skos:inScheme ccda:procedureStatuses ;
   skos:notation "aborted" ;
-  skos:exactMatch [ skos:notation "stopped" ; ccda:fhirCodingSystem "http://hl7.org/fhir/event-status"^^xsd:anyURI ] .
+  skos:exactMatch [ skos:notation "stopped" ; skos:inScheme <http://hl7.org/fhir/event-status> ] .
 
 ccda:procedureStatusActive a skos:Concept ;
   skos:inScheme ccda:procedureStatuses ;
   skos:notation "active" ;
-  skos:exactMatch [ skos:notation "in-progress" ; ccda:fhirCodingSystem "http://hl7.org/fhir/event-status"^^xsd:anyURI ] .
+  skos:exactMatch [ skos:notation "in-progress" ; skos:inScheme <http://hl7.org/fhir/event-status> ] .
 
 ccda:procedureStatusCancelled a skos:Concept ;
   skos:inScheme ccda:procedureStatuses ;
   skos:notation "cancelled" ;
-  skos:exactMatch [ skos:notation "not-done" ; ccda:fhirCodingSystem "http://hl7.org/fhir/event-status"^^xsd:anyURI ] .
+  skos:exactMatch [ skos:notation "not-done" ; skos:inScheme <http://hl7.org/fhir/event-status> ] .
 
 ccda:procedureStatusCompleted a skos:Concept ;
   skos:inScheme ccda:procedureStatuses ;
   skos:notation "completed" ;
-  skos:exactMatch [ skos:notation "completed" ; ccda:fhirCodingSystem "http://hl7.org/fhir/event-status"^^xsd:anyURI ] .
+  skos:exactMatch [ skos:notation "completed" ; skos:inScheme <http://hl7.org/fhir/event-status> ] .

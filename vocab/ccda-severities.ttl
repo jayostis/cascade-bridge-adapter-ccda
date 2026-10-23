@@ -1,5 +1,4 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
 
 ccda:severities a skos:ConceptScheme ;
@@ -8,14 +7,14 @@ ccda:severities a skos:ConceptScheme ;
 ccda:severityMild a skos:Concept ;
   skos:inScheme ccda:severities ;
   skos:notation "255604002" ;
-  skos:exactMatch [ skos:notation "mild" ; ccda:fhirCodingSystem "http://hl7.org/fhir/reaction-event-severity"^^xsd:anyURI ] .
+  skos:exactMatch [ skos:notation "mild" ; skos:inScheme <http://hl7.org/fhir/reaction-event-severity> ] .
 
 ccda:severityModerate a skos:Concept ;
   skos:inScheme ccda:severities ;
   skos:notation "6736007" ;
-  skos:exactMatch [ skos:notation "moderate" ; ccda:fhirCodingSystem "http://hl7.org/fhir/reaction-event-severity"^^xsd:anyURI ] .
+  skos:exactMatch [ skos:notation "moderate" ; skos:inScheme <http://hl7.org/fhir/reaction-event-severity> ] .
 
 ccda:severitySevere a skos:Concept ;
   skos:inScheme ccda:severities ;
   skos:notation "24484000" ;
-  skos:exactMatch [ skos:notation "severe" ; ccda:fhirCodingSystem "http://hl7.org/fhir/reaction-event-severity"^^xsd:anyURI ] .
+  skos:exactMatch [ skos:notation "severe" ; skos:inScheme <http://hl7.org/fhir/reaction-event-severity> ] .

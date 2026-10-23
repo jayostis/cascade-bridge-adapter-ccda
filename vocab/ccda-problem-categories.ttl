@@ -1,5 +1,4 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
 
 ccda:problemCategories a skos:ConceptScheme ;
@@ -8,9 +7,9 @@ ccda:problemCategories a skos:ConceptScheme ;
 ccda:categoryEncounterDiagnosis a skos:Concept ;
   skos:inScheme ccda:problemCategories ;
   skos:notation "46240-8" ;
-  skos:exactMatch [ skos:notation "encounter-diagnosis" ; ccda:fhirCodingSystem "http://terminology.hl7.org/CodeSystem/condition-category"^^xsd:anyURI ] .
+  skos:exactMatch [ skos:notation "encounter-diagnosis" ; skos:inScheme <http://terminology.hl7.org/CodeSystem/condition-category> ] .
 
 ccda:categoryProblemListItem a skos:Concept ;
   skos:inScheme ccda:problemCategories ;
   skos:notation "11450-4" ;
-  skos:exactMatch [ skos:notation "problem-list-item" ; ccda:fhirCodingSystem "http://terminology.hl7.org/CodeSystem/condition-category"^^xsd:anyURI ] .
+  skos:exactMatch [ skos:notation "problem-list-item" ; skos:inScheme <http://terminology.hl7.org/CodeSystem/condition-category> ] .

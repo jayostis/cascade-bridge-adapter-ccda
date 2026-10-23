@@ -12,10 +12,10 @@ PREFIX ccda:    <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # ../../docs/format.md#names says from what document-table.rq holds of its
 # statement: RecordFromCcdaNamingRule for one with an id and
 # RecordFromCcdaWithoutIdNamingRule for one without, each in the custodian's and
-# the patient's scope; RecordFromDocumentNamingRule where the document states
-# no scope, or where the statement's id is another's of the document with
-# another key. Each rule's text is its tests/vectors/naming/<rule>.rq body,
-# copied, and the one picked is hashed once.
+# the patient's scope; RecordFromDocumentNamingRule, with no source URL, where
+# the document states no scope, or where the statement's id is another's of the
+# document with other content. Each rule's text is its
+# tests/vectors/naming/<rule>.rq body, copied, and the one picked is hashed once.
 #
 # The patient's name is computed again, by the same lines, for the link a
 # version makes to it: a subquery cannot read another's result. A version names
@@ -33,7 +33,7 @@ CONSTRUCT {
 }
 WHERE {
   {
-    SELECT ?row ?type ?identifier ?selector ?name WHERE {
+    SELECT ?row ?type ?identifier ?identifierRoot ?identifierExtension ?scoped ?selector ?name WHERE {
       bridge:thisDocument bridge:sha256 ?document .
       bridge:thisRecord bridge:selector ?recordSelector .
       ?row ccda:statementAt ?slots ;
@@ -63,11 +63,13 @@ WHERE {
             FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
             OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }
             BIND (STRAFTER(STR(?idSlot), "#_") AS ?idAt)
-            BIND (CONCAT(SUBSTR("0000000000", STRLEN(?idAt) + 1), ?idAt, "|", ?idRoot, "|", COALESCE(?idExtension, "")) AS ?ranked)
+            BIND (CONCAT(SUBSTR("0000000000", STRLEN(?idAt) + 1), ?idAt,
+                         "|", REPLACE(REPLACE(?idRoot, "%", "%25"), "\\|", "%7C"),
+                         "|", REPLACE(REPLACE(COALESCE(?idExtension, ""), "%", "%25"), "\\|", "%7C")) AS ?ranked)
           }
         }
-        BIND (STRBEFORE(STRAFTER(?firstCustodianId, "|"), "|") AS ?custodianRoot)
-        BIND (STRAFTER(STRAFTER(?firstCustodianId, "|"), "|") AS ?custodianExtension)
+        BIND (REPLACE(REPLACE(STRBEFORE(STRAFTER(?firstCustodianId, "|"), "|"), "%7C", "|"), "%25", "%") AS ?custodianRoot)
+        BIND (REPLACE(REPLACE(STRAFTER(STRAFTER(?firstCustodianId, "|"), "|"), "%7C", "|"), "%25", "%") AS ?custodianExtension)
       }
       OPTIONAL {
         {
@@ -80,12 +82,15 @@ WHERE {
         FILTER (?patients = 1 && BOUND(?patientRoot))
       }
       BIND (BOUND(?identifier) && EXISTS {
-              ?other ccda:identifier ?identifier .
+              ?other ccda:identifierRoot ?identifierRoot ; ccda:identifierExtension ?identifierExtension ;
+                ccda:recordClass ?otherClass .
               OPTIONAL { ?other ccda:keyFingerprint ?otherKey }
-              FILTER (COALESCE(?otherKey, "") != COALESCE(?key, ""))
+              OPTIONAL { ?other ccda:membersFingerprint ?otherMembers }
+              FILTER (?otherClass != ?class || COALESCE(?otherKey, "") != COALESCE(?key, "")
+                      || (!BOUND(?otherKey) && !BOUND(?key) && COALESCE(?otherMembers, "") != COALESCE(?members, "")))
             } AS ?repeated)
-      BIND (IF(?class = "Patient", ?identifierRoot, ?patientRoot) AS ?input3)
-      BIND (IF(?class = "Patient", ?identifierExtension, ?patientExtension) AS ?input4)
+      BIND (?patientRoot AS ?input3)
+      BIND (?patientExtension AS ?input4)
       BIND (BOUND(?custodianRoot) && BOUND(?input3) && !?repeated AS ?scoped)
       BIND (CONCAT(?recordSelector, "/", ?refinement) AS ?selector)
       BIND (IF(?scoped, ?custodianRoot, ?document) AS ?input1)
@@ -123,10 +128,12 @@ WHERE {
   ?row ccda:statementAt ?slots ;
     ccda:recordClass ?class .
   BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(?slots))) AS ?version)
-  BIND (IF(CONTAINS(COALESCE(?identifier, ""), ":"), IRI(CONCAT("urn:hl7ii:", STRBEFORE(?identifier, ":"), ":", ENCODE_FOR_URI(STRAFTER(?identifier, ":")))),
-        IF(REGEX(?identifier, "^[0-2](\\.(0|[1-9][0-9]*))+$"), IRI(CONCAT("urn:oid:", ?identifier)),
-        IF(REGEX(?identifier, "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"),
-           IRI(CONCAT("urn:uuid:", LCASE(?identifier))), 1/0))) AS ?sourceUrl)
+  BIND (IF(!?scoped || !BOUND(?identifier), 1/0,
+        IF(?identifierExtension != "",
+           IRI(CONCAT("urn:hl7ii:", ENCODE_FOR_URI(?identifierRoot), ":", ENCODE_FOR_URI(?identifierExtension))),
+        IF(REGEX(?identifierRoot, "^[0-2](\\.(0|[1-9][0-9]*))+$"), IRI(CONCAT("urn:oid:", ?identifierRoot)),
+        IF(REGEX(?identifierRoot, "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"),
+           IRI(CONCAT("urn:uuid:", LCASE(?identifierRoot))), 1/0)))) AS ?sourceUrl)
 
   OPTIONAL {
     FILTER (?class != "Patient")
@@ -155,16 +162,21 @@ WHERE {
               FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
               OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }
               BIND (STRAFTER(STR(?idSlot), "#_") AS ?idAt)
-              BIND (CONCAT(SUBSTR("0000000000", STRLEN(?idAt) + 1), ?idAt, "|", ?idRoot, "|", COALESCE(?idExtension, "")) AS ?ranked)
+              BIND (CONCAT(SUBSTR("0000000000", STRLEN(?idAt) + 1), ?idAt,
+                         "|", REPLACE(REPLACE(?idRoot, "%", "%25"), "\\|", "%7C"),
+                         "|", REPLACE(REPLACE(COALESCE(?idExtension, ""), "%", "%25"), "\\|", "%7C")) AS ?ranked)
             }
           }
-          BIND (STRBEFORE(STRAFTER(?firstCustodianId, "|"), "|") AS ?custodianRoot)
-          BIND (STRAFTER(STRAFTER(?firstCustodianId, "|"), "|") AS ?custodianExtension)
+          BIND (REPLACE(REPLACE(STRBEFORE(STRAFTER(?firstCustodianId, "|"), "|"), "%7C", "|"), "%25", "%") AS ?custodianRoot)
+          BIND (REPLACE(REPLACE(STRAFTER(STRAFTER(?firstCustodianId, "|"), "|"), "%7C", "|"), "%25", "%") AS ?custodianExtension)
         }
         BIND (BOUND(?identifier) && EXISTS {
-                ?other ccda:identifier ?identifier .
+                ?other ccda:identifierRoot ?identifierRoot ; ccda:identifierExtension ?identifierExtension ;
+                  ccda:recordClass ?otherClass .
                 OPTIONAL { ?other ccda:keyFingerprint ?otherKey }
-                FILTER (COALESCE(?otherKey, "") != COALESCE(?key, ""))
+                OPTIONAL { ?other ccda:membersFingerprint ?otherMembers }
+                FILTER (?otherClass != ?class || COALESCE(?otherKey, "") != COALESCE(?key, "")
+                        || (!BOUND(?otherKey) && !BOUND(?key) && COALESCE(?otherMembers, "") != COALESCE(?members, "")))
               } AS ?repeated)
         BIND (?identifierRoot AS ?input3)
         BIND (?identifierExtension AS ?input4)

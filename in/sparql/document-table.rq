@@ -317,11 +317,13 @@ WHERE {
         FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
         OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }
         BIND (STRAFTER(STR(?idSlot), "#_") AS ?idAt)
-        BIND (CONCAT(SUBSTR("0000000000", STRLEN(?idAt) + 1), ?idAt, "|", ?idRoot, "|", COALESCE(?idExtension, "")) AS ?ranked)
+        BIND (CONCAT(SUBSTR("0000000000", STRLEN(?idAt) + 1), ?idAt,
+                     "|", REPLACE(REPLACE(?idRoot, "%", "%25"), "\\|", "%7C"),
+                     "|", REPLACE(REPLACE(COALESCE(?idExtension, ""), "%", "%25"), "\\|", "%7C")) AS ?ranked)
       } GROUP BY ?statement
     }
-    BIND (STRBEFORE(STRAFTER(?firstIdentifier, "|"), "|") AS ?identifierRoot)
-    BIND (STRAFTER(STRAFTER(?firstIdentifier, "|"), "|") AS ?identifierExtension)
+    BIND (REPLACE(REPLACE(STRBEFORE(STRAFTER(?firstIdentifier, "|"), "|"), "%7C", "|"), "%25", "%") AS ?identifierRoot)
+    BIND (REPLACE(REPLACE(STRAFTER(STRAFTER(?firstIdentifier, "|"), "|"), "%7C", "|"), "%25", "%") AS ?identifierExtension)
     BIND (IF(?identifierExtension != "", CONCAT(?identifierRoot, ":", ?identifierExtension), ?identifierRoot) AS ?identifier)
   }
 

@@ -84,8 +84,8 @@ and the first usable one in document order names it: one with a non-empty
 
 **An id is not kept unique.** A portal's download repeats an id across
 statements, restates one act in two places, and leaves a statement with no id,
-so a record is named from its id only where no other statement of the document,
-of any class, carries that id with another key ([Names](#names)).
+so a record is named from its id only where no other statement of the document
+carries that id with other content ([Names](#names)).
 
 A `nullFlavor` stands where a value would: on an `id`, a `code`, a `value` or a
 time. Where it stands alone, nothing is carried.
@@ -98,45 +98,75 @@ and hashed once for the rule picked. Two scopes say whose an id is: the
 **custodian**, the first usable `id` of
 `custodian/assignedCustodian/representedCustodianOrganization`, and the
 **patient**, the first usable `id` of the `patientRole` of the document's one
-`recordTarget`, each usable as the section above says.
+`recordTarget`, each usable as the section above says. A document with more
+than one `recordTarget` states no patient scope.
 
 | a statement | its rule | its inputs, after the rule |
 |---|---|---|
 | with an id, in both scopes | `RecordFromCcdaNamingRule` | the custodian's root and extension, the patient's root and extension, the statement's root and extension, an absent extension `""` |
-| the patient, with an id, and a custodian id | `RecordFromCcdaNamingRule` | as above, its own id as the patient's and the statement's |
+| the patient, in both scopes | `RecordFromCcdaNamingRule` | as above, its own id as the patient's and the statement's |
 | with no id, in both scopes | `RecordFromCcdaWithoutIdNamingRule` | the custodian's and the patient's root and extension, the IRI of its Cascade class, its key fingerprint or `""`, and its members fingerprint where it has no key fingerprint, else `""` |
-| any other | `RecordFromDocumentNamingRule` | the document's `ni:` name and the statement's selector |
+| any other, the patient included | `RecordFromDocumentNamingRule` | the document's `ni:` name and the statement's selector |
 
 A statement is named by the document where:
 
-- the document states no custodian id, or no one patient with an id. An
-  empty scope would fuse every scope-less document's statements of one id, or
-  of one class and key, two patients' among them, which the scopes exist to
+- the document states no custodian id, or not exactly one patient with an id.
+  An empty scope would fuse every scope-less document's statements of one id,
+  or of one class and key, two patients' among them, which the scopes exist to
   stop; a name by the document errs the other way, two records a judgment can
   join. Each such record is a finding, `ccda:namingScopeNotStated`.
-- its id is another statement's of the document, of any class, with another
-  key fingerprint: the source broke its own id, and one name for both would
-  fuse two facts no judgment could split. Each of them is a finding,
+- its id is another statement's of the document with other content: another
+  record class, another key fingerprint, or, where neither states a key field,
+  other members. The source broke its own id, and one name for both would fuse
+  two facts no judgment could split. Each of them is a finding,
   `ccda:entryIdRepeated`.
+
+A record named by the document carries no `cascade:sourceUrl`: its name is not
+its id's. A version links its patient only where the document has one
+`recordTarget`; with more, none says which patient a statement is about, and
+each record but a patient is a finding, `ccda:patientOfStatementNotStated`.
 
 ### Fingerprints
 
-A fingerprint is a set of strings summed: each string's SHA-256, its first
-twelve hexadecimal digits read as a 48-bit integer, and the integers added, in
-decimal. A string counts once, and order is no part of it.
+A fingerprint is a set of strings summed: each string's UTF-8 bytes hashed
+with SHA-256, the hash's first twelve hexadecimal digits read as a 48-bit
+integer, and the integers added, in decimal. A string counts once, and order is
+no part of it. The sum is exact integer arithmetic: it passes 2^53 after a few
+dozen strings, past which a double-precision float rounds.
 
 - A **key fingerprint** sums the statement's key fields, each written
   `name=value` (`code=91936005`, `effectiveTime=20241015`), the fields of its
   class `../in/sparql/document-table.rq` declares. A statement stating none has
-  no key fingerprint.
+  no key fingerprint, never `0`.
 - A **members fingerprint** sums every literal held at or under the statement:
   `<element type IRI>=<text>` for an element's text and
   `<element type IRI>@<attribute IRI>=<value>` for an attribute, leaving out
   each `ID` and each `reference`'s `value`.
+  - An element's type IRI is `urn:hl7-org:v3` and its local name, with no
+    separator: `urn:hl7-org:v3originalText`.
+  - An attribute in no namespace is `http://sparql.xyz/facade-x/data/` and its
+    name: `http://sparql.xyz/facade-x/data/nullFlavor`. One in a namespace is
+    that namespace's IRI and its local name, again with no separator:
+    `xsi:type` is `http://www.w3.org/2001/XMLSchema-instancetype`. Its value is
+    as the XML specification normalises an attribute's.
+  - A text is each run of text between two tags, as written, entities
+    replaced and line endings made line feeds, never trimmed; a run that is
+    only whitespace is none. An element of mixed content holds several runs,
+    each its own string.
 
-The case `fingerprint-keys` holds one statement for each key of the
-fingerprint vectors cascade-bridge-spec retired, so the names it pins are named
-from those sums.
+The vectors cascade-bridge-spec retired with its `FingerprintTest`, each with
+the statements that pin it in these fixtures:
+
+| vector | strings | sum | pinned by |
+|---|---|---|---|
+| `fingerprint-one` | `code=91936005` | 259087979045763 | `fingerprint-keys`, the procedure |
+| `fingerprint-key-active` | `code=91936005`, `effectiveTime=20250327120000+0000`, `status=active` | 506034893686827 | `fingerprint-keys`, the first problem |
+| `fingerprint-key-active-reordered` | key-active's, in another order | 506034893686827 | `values-in-another-order-name-one-record`: a statement's values in two orders |
+| `fingerprint-key-active-repeated` | key-active's, `code=91936005` twice | 506034893686827 | `a-value-stated-twice-names-the-record-of-it-stated-once` |
+| `fingerprint-key-resolved` | key-active's, `status=resolved` for `status=active` | 485897515424792 | `fingerprint-keys`, the second problem |
+| `fingerprint-key-immunization` | `code=141`, `effectiveTime=20241015` | 116633954584022 | `fingerprint-keys`, the immunization |
+| `fingerprint-members` | `urn:hl7-org:v3code@http://sparql.xyz/facade-x/data/nullFlavor=UNK`, `urn:hl7-org:v3originalText=left knee pain` | 334992598836920 | none: a statement's members include its `templateId` |
+| `fingerprint-empty` | none | 0 | none: a statement with no key field has no key fingerprint |
 
 ## Codes
 
@@ -199,7 +229,10 @@ is stated, so a name is never cut short. A reference names an element only as
 `ID` unique within a document, so a document that repeats one gives no ground
 for choosing, and the name is read from the next place it is stated. A
 portal's next download of one document may number the `ID`s afresh, so neither
-an `ID` nor a reference is part of a key or a member.
+an `ID` nor a reference is part of a key or a member. A reference through which
+nothing can be read, one naming no element or naming one that does not hold
+exactly one run of text and nothing else, is a finding on its entry,
+`ccda:referenceReadsNothing`.
 
 ## The schema
 
