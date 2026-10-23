@@ -5,8 +5,7 @@ PREFIX void:     <http://rdfs.org/ns/void#>
 PREFIX fx:       <http://sparql.xyz/facade-x/ns/>
 PREFIX xyz:      <http://sparql.xyz/facade-x/data/>
 PREFIX v3:       <urn:hl7-org:v3>
-PREFIX health:   <https://ns.cascadeprotocol.org/health/v1#>
-PREFIX clinical: <https://ns.cascadeprotocol.org/clinical/v1#>
+PREFIX cascade:  <https://ns.cascadeprotocol.org/cascade#>
 PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # A Problem Observation. Where the vocabulary holds one value and the source
@@ -97,7 +96,7 @@ WHERE {
                 }
               }
               BIND (STRAFTER(STR(?vS), "#_") AS ?at)
-              BIND (health:conditionName AS ?p)
+              BIND (cascade:conditionName AS ?p)
               BIND ("1" AS ?tier)
             }
             UNION
@@ -105,7 +104,7 @@ WHERE {
               ?condition ?vS ?coded . ?coded a v3:value ; ?otS ?originalText . ?originalText a v3:originalText ; ?tS2 ?value .
               FILTER (isLiteral(?value) && STRSTARTS(STR(?tS2), STR(rdf:_)))
               BIND (STRAFTER(STR(?vS), "#_") AS ?at)
-              BIND (health:conditionName AS ?p)
+              BIND (cascade:conditionName AS ?p)
               BIND ("2" AS ?tier)
               BIND (STRAFTER(STR(?tS2), "#_") AS ?within)
             }
@@ -113,7 +112,7 @@ WHERE {
             {
               ?condition ?vS ?coded . ?coded a v3:value ; xyz:displayName ?value .
               BIND (STRAFTER(STR(?vS), "#_") AS ?at)
-              BIND (health:conditionName AS ?p)
+              BIND (cascade:conditionName AS ?p)
               BIND ("3" AS ?tier)
             }
             UNION
@@ -123,28 +122,28 @@ WHERE {
               ?ot a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.6" .
               ?coded a v3:value ; xyz:code ?code ; xyz:codeSystem ?codeSystem .
               FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.96")
-              ?concept skos:inScheme ccda:problemStatuses ; skos:notation ?key ; skos:exactMatch ?match .
+              ?concept skos:inScheme ccda:problemStatuses ; skos:notation ?key ; skos:exactMatch|skos:broadMatch ?match .
+              ?match skos:notation ?value .
               FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
-              BIND (health:status AS ?p)
+              BIND (cascade:clinicalStatus AS ?p)
               BIND (STRAFTER(STR(?rS), "#_") AS ?at)
-              BIND (REPLACE(STR(?match), "^.*/", "") AS ?value)
               BIND ("1" AS ?tier)
             }
             UNION
             {
               ?act ?sS ?status . ?status a v3:statusCode ; xyz:code ?code .
-              ?concept skos:inScheme ccda:concernStatuses ; skos:notation ?key ; skos:exactMatch ?match .
+              ?concept skos:inScheme ccda:concernStatuses ; skos:notation ?key ; skos:exactMatch|skos:broadMatch ?match .
+              ?match skos:notation ?value .
               FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
-              BIND (health:status AS ?p)
+              BIND (cascade:clinicalStatus AS ?p)
               BIND (STRAFTER(STR(?sS), "#_") AS ?at)
-              BIND (REPLACE(STR(?match), "^.*/", "") AS ?value)
               BIND ("2" AS ?tier)
             }
             UNION
             {
               ?condition ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a v3:low ; xyz:value ?value .
               FILTER (REGEX(?value, "^[0-9]{8}"))
-              BIND (health:onsetDate AS ?p)
+              BIND (cascade:onsetDate AS ?p)
               BIND ("2" AS ?tier)
               BIND (STRAFTER(STR(?eS), "#_") AS ?at)
             }
@@ -152,7 +151,7 @@ WHERE {
             {
               ?condition ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a v3:high ; xyz:value ?value .
               FILTER (REGEX(?value, "^[0-9]{8}"))
-              BIND (clinical:abatementDate AS ?p)
+              BIND (cascade:abatementDate AS ?p)
               BIND ("1" AS ?tier)
               BIND (STRAFTER(STR(?eS), "#_") AS ?at)
             }
@@ -160,14 +159,14 @@ WHERE {
             {
               ?condition ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?value .
               FILTER (REGEX(?value, "^[0-9]{8}"))
-              BIND (health:onsetDate AS ?p)
+              BIND (cascade:onsetDate AS ?p)
               BIND ("1" AS ?tier)
               BIND (STRAFTER(STR(?eS), "#_") AS ?at)
             }
             UNION
             {
               ?condition xyz:negationInd "true" .
-              BIND (clinical:verificationStatus AS ?p)
+              BIND (cascade:verificationStatus AS ?p)
               BIND ("refuted" AS ?value)
               BIND ("" AS ?at)
               BIND ("1" AS ?tier)
@@ -192,7 +191,7 @@ WHERE {
       } GROUP BY ?act ?condition ?p
     }
     BIND (STRAFTER(?first, "|") AS ?value)
-    BIND (IF(?p NOT IN (health:onsetDate, clinical:abatementDate), ?value,
+    BIND (IF(?p NOT IN (cascade:onsetDate, cascade:abatementDate), ?value,
           IF(REGEX(?value, "^[0-9]{12}([0-9]{2}(\\.[0-9]+)?)?([+-][0-9]{4})?$"),
              STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),
                           "T", SUBSTR(?value, 9, 2), ":", SUBSTR(?value, 11, 2), ":",
@@ -208,10 +207,10 @@ WHERE {
   UNION
   {
     ?section ?scS ?sectionCode . ?sectionCode a v3:code ; xyz:code ?code .
-    ?concept skos:inScheme ccda:problemCategories ; skos:notation ?key ; skos:exactMatch ?match .
+    ?concept skos:inScheme ccda:problemCategories ; skos:notation ?key ; skos:exactMatch|skos:broadMatch ?match .
+    ?match skos:notation ?o .
     FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
-    BIND (clinical:category AS ?p)
-    BIND (REPLACE(STR(?match), "^.*/", "") AS ?o)
+    BIND (cascade:conditionCategory AS ?p)
   }
   UNION
   {
@@ -222,11 +221,11 @@ WHERE {
         { ?condition ?vS ?coded . ?coded a v3:value ; ?trS ?translation . ?translation a v3:translation ; xyz:code ?codeValue ; xyz:codeSystem ?codeSystem . }
       }
     }
-    ?system skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; skos:exactMatch ?systemIri ; void:uriSpace ?stem .
+    ?system skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; cascade:codingSystemUri ?systemUri ; void:uriSpace ?stem .
     FILTER (?systemKey = LCASE(REPLACE(?codeSystem, "^urn:oid:", "")))
-    VALUES (?systemIri ?p) {
-      (<http://snomed.info/sct>            health:snomedCode)
-      (<http://hl7.org/fhir/sid/icd-10-cm> health:icd10Code)
+    VALUES (?systemUri ?p) {
+      ("http://snomed.info/sct"^^xsd:anyURI            cascade:snomedCode)
+      ("http://hl7.org/fhir/sid/icd-10-cm"^^xsd:anyURI cascade:icd10Code)
     }
     BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?codeValue))) AS ?o)
   }

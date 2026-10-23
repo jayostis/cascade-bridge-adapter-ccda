@@ -11,8 +11,8 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # the document element down to it, which a mapping can compute without
 # counting siblings; a refinement counts them, as a selector must.
 #
-# The key fields and member exclusions are declared here, once per class:
-# https://github.com/jayostis/cascade-bridge-spec/blob/main/engine/sparql.md#naming-a-c-cda-record
+# The key fields and member exclusions are declared here, once per class, and
+# the fingerprints they are summed into are ../../docs/format.md#fingerprints:
 #
 #   Patient            given, family, birthTime and gender, as patient/name and
 #                      the patient's elements state them.
@@ -44,6 +44,8 @@ CONSTRUCT {
     ccda:recordClass ?class ;
     ccda:refinement ?refinement ;
     ccda:identifier ?identifier ;
+    ccda:identifierRoot ?identifierRoot ;
+    ccda:identifierExtension ?identifierExtension ;
     ccda:keyFingerprint ?keyFingerprint ;
     ccda:membersFingerprint ?membersFingerprint .
 }
@@ -315,11 +317,14 @@ WHERE {
         FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
         OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }
         BIND (STRAFTER(STR(?idSlot), "#_") AS ?idAt)
-        BIND (CONCAT(SUBSTR("0000000000", STRLEN(?idAt) + 1), ?idAt, "|",
-                     IF(BOUND(?idExtension), CONCAT(?idRoot, ":", ?idExtension), ?idRoot)) AS ?ranked)
+        BIND (CONCAT(SUBSTR("0000000000", STRLEN(?idAt) + 1), ?idAt,
+                     "|", REPLACE(REPLACE(?idRoot, "%", "%25"), "\\|", "%7C"),
+                     "|", REPLACE(REPLACE(COALESCE(?idExtension, ""), "%", "%25"), "\\|", "%7C")) AS ?ranked)
       } GROUP BY ?statement
     }
-    BIND (STRAFTER(?firstIdentifier, "|") AS ?identifier)
+    BIND (REPLACE(REPLACE(STRBEFORE(STRAFTER(?firstIdentifier, "|"), "|"), "%7C", "|"), "%25", "%") AS ?identifierRoot)
+    BIND (REPLACE(REPLACE(STRAFTER(STRAFTER(?firstIdentifier, "|"), "|"), "%7C", "|"), "%25", "%") AS ?identifierExtension)
+    BIND (IF(?identifierExtension != "", CONCAT(?identifierRoot, ":", ?identifierExtension), ?identifierRoot) AS ?identifier)
   }
 
   OPTIONAL {

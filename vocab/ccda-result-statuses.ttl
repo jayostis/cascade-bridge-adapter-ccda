@@ -7,9 +7,9 @@ ccda:resultStatuses a skos:ConceptScheme ;
 ccda:resultStatusCancelled a skos:Concept ;
   skos:inScheme ccda:resultStatuses ;
   skos:notation "cancelled" ;
-  skos:exactMatch <http://hl7.org/fhir/observation-status/cancelled> .
+  skos:exactMatch [ skos:notation "cancelled" ; skos:inScheme <http://hl7.org/fhir/observation-status> ] .
 
 ccda:resultStatusCompleted a skos:Concept ;
   skos:inScheme ccda:resultStatuses ;
   skos:notation "completed" ;
-  skos:exactMatch <http://hl7.org/fhir/observation-status/final> .
+  skos:exactMatch [ skos:notation "final" ; skos:inScheme <http://hl7.org/fhir/observation-status> ] .
