@@ -123,8 +123,9 @@ A statement is named by the document where:
 
 A record named by the document carries no `cascade:sourceUrl`: its name is not
 its id's. A version links its patient only where the document has one
-`recordTarget`; with more, none says which patient a statement is about, and
-each record but a patient is a finding, `ccda:patientOfStatementNotStated`.
+`recordTarget`; with none or with more, nothing says which patient a statement
+is about, and each record but a patient is a finding,
+`ccda:patientOfStatementNotStated`.
 
 ### Fingerprints
 
@@ -150,8 +151,10 @@ dozen strings, past which a double-precision float rounds.
     `xsi:type` is `http://www.w3.org/2001/XMLSchema-instancetype`. Its value is
     as the XML specification normalises an attribute's.
   - A text is each run of text between two tags, as written, entities
-    replaced and line endings made line feeds, never trimmed; a run that is
-    only whitespace is none. An element of mixed content holds several runs,
+    replaced and line endings made line feeds, never trimmed; CDATA content
+    counts as text; a comment or a processing instruction neither splits a run
+    nor appears in it, so `Reti<!-- x -->red` is one run, `Retired`. A run that
+    is only whitespace is none. An element of mixed content holds several runs,
     each its own string.
 
 The vectors cascade-bridge-spec retired with its `FingerprintTest`, each with
@@ -161,7 +164,7 @@ the statements that pin it in these fixtures:
 |---|---|---|---|
 | `fingerprint-one` | `code=91936005` | 259087979045763 | `fingerprint-keys`, the procedure |
 | `fingerprint-key-active` | `code=91936005`, `effectiveTime=20250327120000+0000`, `status=active` | 506034893686827 | `fingerprint-keys`, the first problem |
-| `fingerprint-key-active-reordered` | key-active's, in another order | 506034893686827 | `values-in-another-order-name-one-record`: a statement's values in two orders |
+| `fingerprint-key-active-reordered` | key-active's, in another order | 506034893686827 | `values-in-another-order-name-one-record`: two statements whose values come in another order name one record; the sum itself is pinned by `fingerprint-keys`, the first problem |
 | `fingerprint-key-active-repeated` | key-active's, `code=91936005` twice | 506034893686827 | `a-value-stated-twice-names-the-record-of-it-stated-once` |
 | `fingerprint-key-resolved` | key-active's, `status=resolved` for `status=active` | 485897515424792 | `fingerprint-keys`, the second problem |
 | `fingerprint-key-immunization` | `code=141`, `effectiveTime=20241015` | 116633954584022 | `fingerprint-keys`, the immunization |

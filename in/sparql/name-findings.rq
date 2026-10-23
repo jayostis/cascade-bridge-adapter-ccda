@@ -14,7 +14,7 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 #     value is the id;
 #   - the document states no custodian id, or not exactly one patient with an
 #     id, so the record is named by the document; its value is its class;
-# and what record.rq's patient link says: in a document with more than one
+# and what record.rq's patient link says: in a document without exactly one
 # recordTarget, a record that is no patient links none; its value is how many
 # there are.
 
@@ -75,7 +75,7 @@ WHERE {
     ?row ccda:recordClass ?class ;
       ccda:refinement ?refinement .
     { SELECT (COUNT(?patientRow) AS ?patientRows) WHERE { ?patientRow ccda:recordClass "Patient" } }
-    FILTER (?class != "Patient" && ?patientRows > 1)
+    FILTER (?class != "Patient" && ?patientRows != 1)
     BIND (ccda:patientOfStatementNotStated AS ?gap)
     BIND (?patientRows AS ?value)
   }
