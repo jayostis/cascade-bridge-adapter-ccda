@@ -403,6 +403,9 @@
           "@id": "fixtures/in/two-patients.xml"
         },
         {
+          "@id": "fixtures/in/no-record-target.xml"
+        },
+        {
           "@id": "fixtures/in/one-id-equal-keys.xml"
         },
         {
@@ -556,6 +559,9 @@
           "@id": "fixtures/expected/two-patients.ttl"
         },
         {
+          "@id": "fixtures/expected/no-record-target.ttl"
+        },
+        {
           "@id": "fixtures/expected/one-id-equal-keys.ttl"
         },
         {
@@ -578,6 +584,9 @@
         },
         {
           "@id": "fixtures/findings/two-patients.ttl"
+        },
+        {
+          "@id": "fixtures/findings/no-record-target.ttl"
         },
         {
           "@id": "fixtures/findings/one-id-equal-keys.ttl"
@@ -1572,6 +1581,19 @@
       "description": "Two recordTargets, each patient with an id, a custodian id, and one problem with an id: no patient scope is stated, so every record, both patients included, is named by the document, and the problem's version links no patient. Authored here on 2026-10-23, for a case the conformance corpus does not hold; it validates against the CDA schema."
     },
     {
+      "@id": "fixtures/in/no-record-target.xml",
+      "@type": "File",
+      "name": "C-CDA: no-record-target",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "3221",
+      "sha256": "0f6a00fbf6d5cf5840c9c59cbee97bd35a36b9c04f9106ca4c1138e20b1a290c",
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A custodian id and one allergy with an id, and no recordTarget: no patient is stated, so the allergy is named by the document, its version links no patient, and the document says so. Authored here on 2026-10-23, for a case the conformance corpus does not hold; it validates against the CDA schema bar the missing recordTarget."
+    },
+    {
       "@id": "fixtures/in/one-id-equal-keys.xml",
       "@type": "File",
       "name": "C-CDA: one-id-equal-keys",
@@ -2397,6 +2419,22 @@
       "description": "The records layer the Bridge produced from the input it is about and the facts its test entry supplies, cascade-bridge-rs's convert at the alpha/naming build, committed unedited. Each record named by its id or by the document was recomputed outside SPARQL with cascade-vocabulary's tests/naming.py and found equal."
     },
     {
+      "@id": "fixtures/expected/no-record-target.ttl",
+      "@type": "File",
+      "name": "Expected graph for no-record-target",
+      "encodingFormat": "text/turtle",
+      "contentSize": "3581",
+      "sha256": "f404349c592954f9cb2be1576d1aee29608715ca2e99218b5f849a93cfda660a",
+      "about": {
+        "@id": "fixtures/in/no-record-target.xml"
+      },
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer the Bridge produced from the input it is about and the facts its test entry supplies, cascade-bridge-rs's convert at the alpha/naming build, committed unedited. Each record named by its id or by the document was recomputed outside SPARQL with cascade-vocabulary's tests/naming.py and found equal."
+    },
+    {
       "@id": "fixtures/expected/one-id-equal-keys.ttl",
       "@type": "File",
       "name": "Expected graph for one-id-equal-keys",
@@ -2517,6 +2555,22 @@
       "sha256": "7eb3522ba2758911251d204115408e046642c954090e461c45142299d334256e",
       "about": {
         "@id": "fixtures/in/two-patients.xml"
+      },
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/findings/no-record-target.ttl",
+      "@type": "File",
+      "name": "Expected findings for no-record-target",
+      "encodingFormat": "text/turtle",
+      "contentSize": "14862",
+      "sha256": "3eace6c423edec447371e13359e2693b15dc0f39251248f314853545f925d64c",
+      "about": {
+        "@id": "fixtures/in/no-record-target.xml"
       },
       "dateCreated": "2026-10-23",
       "license": {

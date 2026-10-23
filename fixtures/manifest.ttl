@@ -45,6 +45,7 @@
     <#download-twice-id-less-medication-names-one-record>
     <#download-twice-id-less-result-names-one-record>
     <#two-patients>
+    <#no-record-target>
     <#one-id-equal-keys>
     <#narrative-reference-to-markup>
     <#fingerprint-repeated-and-reordered>
@@ -584,6 +585,18 @@
   mf:result [
     bridge:expectedGraph <expected/two-patients.ttl> ;
     bridge:expectedFindings <findings/two-patients.ttl>
+  ] .
+
+<#no-record-target> a bridge:IsomorphicConversionTest ;
+  mf:name "no-record-target" ;
+  mf:action [
+    bridge:input <in/no-record-target.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/no-record-target.ttl> ;
+    bridge:expectedFindings <findings/no-record-target.ttl>
   ] .
 
 <#one-id-equal-keys> a bridge:IsomorphicConversionTest ;
