@@ -160,6 +160,9 @@
         },
         {
           "@id": "in/sparql/name-findings.rq"
+        },
+        {
+          "@id": "in/sparql/reference-findings.rq"
         }
       ],
       "bridge:table": [
@@ -293,6 +296,9 @@
         },
         {
           "@id": "in/sparql/name-findings.rq"
+        },
+        {
+          "@id": "in/sparql/reference-findings.rq"
         },
         {
           "@id": "vocab/ccda-gaps.ttl"
@@ -1016,22 +1022,34 @@
     {
       "@id": "in/sparql/name-findings.rq",
       "@type": "File",
-      "name": "Findings: records named by their class alone",
+      "name": "Findings: how a record is named",
       "encodingFormat": "application/sparql-query",
       "contentSize": "3031",
       "sha256": "d27d9e60ab8c0f488abeeacc115a90db57e7da852e7b7bf26cef24c344ee0eff",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "Each record that states no identifier, no key field and no member."
+      "description": "Each record whose id another statement of the document carries with another key, each record named by the document for want of a custodian id or of one patient with an id, and each record in its scopes that states no identifier, no key field and no member."
+    },
+    {
+      "@id": "in/sparql/reference-findings.rq",
+      "@type": "File",
+      "name": "Findings: references that name nothing",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "2641",
+      "sha256": "0de807141e3626a8be262cfd92bcc968fdfb1f2487f38f378430b3dfd352a04e",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Each reference in an entry a record is made from that names no narrative element, on its entry."
     },
     {
       "@id": "vocab/ccda-gaps.ttl",
       "@type": "File",
       "name": "C-CDA R2.1 XML gaps",
       "encodingFormat": "text/turtle",
-      "contentSize": "8613",
-      "sha256": "b070b58fcc8c0e05c2a29328ed78c417a6a887601124e1e0bd5dedaf6fe7b842",
+      "contentSize": "8848",
+      "sha256": "acf8e8481a43fd36cd02e942494caeab29b3a2f7415fefc2f76973e6727cef21",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -2507,8 +2525,8 @@
       "@type": "File",
       "name": "Expected findings for narrative-reference-without-hash",
       "encodingFormat": "text/turtle",
-      "contentSize": "13047",
-      "sha256": "cfd3ea5883225d1f11d5a223191ae2ce51e52d0b9169edaf57862aa2f32c167f",
+      "contentSize": "16396",
+      "sha256": "ffb5a11ebbf5078cd80ecc8c7304caa8d3f9bfb434eb96d861490a12d4d70879",
       "about": {
         "@id": "fixtures/in/narrative-reference-without-hash.xml"
       },
@@ -2539,8 +2557,8 @@
       "@type": "File",
       "name": "Expected findings for narrative-id-twice",
       "encodingFormat": "text/turtle",
-      "contentSize": "15098",
-      "sha256": "c2de491811ddebdb19237324cc1d59ddf18c736cdb5ba1346a2b3efd480e8cc2",
+      "contentSize": "18386",
+      "sha256": "b104c7fb502cfe58459f96651538c12942af7e77c698f4dd5f728700f3dd86e3",
       "about": {
         "@id": "fixtures/in/narrative-id-twice.xml"
       },
