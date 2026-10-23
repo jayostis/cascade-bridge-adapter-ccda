@@ -1,6 +1,8 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix void: <http://rdfs.org/ns/void#> .
 @prefix dct:  <http://purl.org/dc/terms/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix cascade: <https://ns.cascadeprotocol.org/cascade#> .
 @prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
 
 ccda:codeSystems a skos:ConceptScheme ;
@@ -9,62 +11,62 @@ ccda:codeSystems a skos:ConceptScheme ;
 ccda:codeSystemRxNorm a skos:Concept ;
   skos:inScheme ccda:codeSystems ;
   skos:notation "2.16.840.1.113883.6.88" ;
-  skos:exactMatch <http://www.nlm.nih.gov/research/umls/rxnorm> ;
-  void:uriSpace "http://www.nlm.nih.gov/research/umls/rxnorm/" ;
-  dct:source <https://github.com/jayostis/cascade-vocabulary/issues/111> .
+  cascade:codingSystemUri "http://www.nlm.nih.gov/research/umls/rxnorm"^^xsd:anyURI ;
+  void:uriSpace "https://ns.cascadeprotocol.org/codes/rxnorm/" ;
+  dct:source <https://github.com/jayostis/cascade-vocabulary/issues/111> , <https://github.com/jayostis/cascade-vocabulary/blob/main/decisions/code-iris.md> .
 
 ccda:codeSystemSnomedCt a skos:Concept ;
   skos:inScheme ccda:codeSystems ;
   skos:notation "2.16.840.1.113883.6.96" ;
-  skos:exactMatch <http://snomed.info/sct> ;
+  cascade:codingSystemUri "http://snomed.info/sct"^^xsd:anyURI ;
   void:uriSpace "http://snomed.info/id/" ;
   dct:source <https://terminology.hl7.org/SNOMEDCT.html> , <https://github.com/jayostis/cascade-vocabulary/issues/111> .
 
 ccda:codeSystemLoinc a skos:Concept ;
   skos:inScheme ccda:codeSystems ;
   skos:notation "2.16.840.1.113883.6.1" ;
-  skos:exactMatch <http://loinc.org> ;
+  cascade:codingSystemUri "http://loinc.org"^^xsd:anyURI ;
   void:uriSpace "http://loinc.org/rdf/" ;
   dct:source <https://github.com/HL7/UTG/blob/18bfa0662fbf6c9f6f51922e46c534b00d987848/input/sourceOfTruth/external/v3/namingSystems/v3-loinc.xml> , <https://github.com/jayostis/cascade-vocabulary/issues/111> .
 
 ccda:codeSystemIcd10Cm a skos:Concept ;
   skos:inScheme ccda:codeSystems ;
   skos:notation "2.16.840.1.113883.6.90" ;
-  skos:exactMatch <http://hl7.org/fhir/sid/icd-10-cm> ;
-  void:uriSpace "http://hl7.org/fhir/sid/icd-10-cm/" ;
-  dct:source <https://github.com/jayostis/cascade-vocabulary/issues/111> .
+  cascade:codingSystemUri "http://hl7.org/fhir/sid/icd-10-cm"^^xsd:anyURI ;
+  void:uriSpace "https://ns.cascadeprotocol.org/codes/icd10cm/" ;
+  dct:source <https://github.com/jayostis/cascade-vocabulary/issues/111> , <https://github.com/jayostis/cascade-vocabulary/blob/main/decisions/code-iris.md> .
 
 ccda:codeSystemIcd9Cm a skos:Concept ;
   skos:inScheme ccda:codeSystems ;
   skos:notation "2.16.840.1.113883.6.103" ;
-  skos:exactMatch <http://hl7.org/fhir/sid/icd-9-cm> ;
-  void:uriSpace "http://hl7.org/fhir/sid/icd-9-cm/" ;
-  dct:source <https://github.com/jayostis/cascade-vocabulary/issues/111> .
+  cascade:codingSystemUri "http://hl7.org/fhir/sid/icd-9-cm"^^xsd:anyURI ;
+  void:uriSpace "https://ns.cascadeprotocol.org/codes/icd9cm/" ;
+  dct:source <https://github.com/jayostis/cascade-vocabulary/issues/111> , <https://github.com/jayostis/cascade-vocabulary/blob/main/decisions/code-iris.md> .
 
 ccda:codeSystemCpt a skos:Concept ;
   skos:inScheme ccda:codeSystems ;
   skos:notation "2.16.840.1.113883.6.12" ;
-  skos:exactMatch <http://www.ama-assn.org/go/cpt> ;
-  void:uriSpace "http://www.ama-assn.org/go/cpt/" ;
-  dct:source <https://github.com/jayostis/cascade-vocabulary/issues/111> .
+  cascade:codingSystemUri "http://www.ama-assn.org/go/cpt"^^xsd:anyURI ;
+  void:uriSpace "https://ns.cascadeprotocol.org/codes/cpt/" ;
+  dct:source <https://github.com/jayostis/cascade-vocabulary/issues/111> , <https://github.com/jayostis/cascade-vocabulary/blob/main/decisions/code-iris.md> .
 
 ccda:codeSystemCvx a skos:Concept ;
   skos:inScheme ccda:codeSystems ;
   skos:notation "2.16.840.1.113883.12.292" ;
-  skos:exactMatch <http://hl7.org/fhir/sid/cvx> ;
-  void:uriSpace "http://hl7.org/fhir/sid/cvx/" ;
-  dct:source <https://github.com/jayostis/cascade-vocabulary/issues/111> .
+  cascade:codingSystemUri "http://hl7.org/fhir/sid/cvx"^^xsd:anyURI ;
+  void:uriSpace "https://ns.cascadeprotocol.org/codes/cvx/" ;
+  dct:source <https://github.com/jayostis/cascade-vocabulary/issues/111> , <https://github.com/jayostis/cascade-vocabulary/blob/main/decisions/code-iris.md> .
 
 ccda:codeSystemNdc a skos:Concept ;
   skos:inScheme ccda:codeSystems ;
   skos:notation "2.16.840.1.113883.6.69" ;
-  skos:exactMatch <http://hl7.org/fhir/sid/ndc> ;
+  cascade:codingSystemUri "http://hl7.org/fhir/sid/ndc"^^xsd:anyURI ;
   void:uriSpace "https://ns.cascadeprotocol.org/codes/ndc11/" ;
   dct:source <https://hl7.org/fhir/R4/ndc.html> , <https://github.com/jayostis/cascade-vocabulary/issues/104> .
 
 ccda:codeSystemUnii a skos:Concept ;
   skos:inScheme ccda:codeSystems ;
   skos:notation "2.16.840.1.113883.4.9" ;
-  skos:exactMatch <http://fdasis.nlm.nih.gov> ;
-  void:uriSpace "http://fdasis.nlm.nih.gov/" ;
-  dct:source <https://github.com/jayostis/cascade-vocabulary/issues/111> .
+  cascade:codingSystemUri "http://fdasis.nlm.nih.gov"^^xsd:anyURI ;
+  void:uriSpace "https://identifiers.org/unii:" ;
+  dct:source <https://github.com/jayostis/cascade-vocabulary/issues/111> , <https://github.com/jayostis/cascade-vocabulary/blob/main/decisions/code-iris.md> .

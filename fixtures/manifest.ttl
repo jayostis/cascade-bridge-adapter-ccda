@@ -31,6 +31,7 @@
     <#medications-and-results-a>
     <#medications-and-results-edges>
     <#medications-and-results-b>
+    <#fingerprint-keys>
     <#download-twice-names-one-allergy>
     <#download-twice-nullflavor-id-names-one-allergy>
     <#id-bearing-differs-from-nullflavor-id>
@@ -344,6 +345,18 @@
   mf:result [
     bridge:expectedGraph <expected/medications-and-results-b.ttl> ;
     bridge:expectedFindings <findings/medications-and-results-b.ttl>
+  ] .
+
+<#fingerprint-keys> a bridge:IsomorphicConversionTest ;
+  mf:name "fingerprint-keys" ;
+  mf:action [
+    bridge:input <in/fingerprint-keys.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/fingerprint-keys.ttl> ;
+    bridge:expectedFindings <findings/fingerprint-keys.ttl>
   ] .
 
 <#download-twice-names-one-allergy> a bridge:IdentityRelationTest ;

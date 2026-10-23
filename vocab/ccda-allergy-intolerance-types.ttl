@@ -1,4 +1,5 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
 
 ccda:allergyIntoleranceTypes a skos:ConceptScheme ;
@@ -7,24 +8,24 @@ ccda:allergyIntoleranceTypes a skos:ConceptScheme ;
 ccda:typeIntoleranceToFood a skos:Concept ;
   skos:inScheme ccda:allergyIntoleranceTypes ;
   skos:notation "235719002" ;
-  skos:exactMatch <http://hl7.org/fhir/allergy-intolerance-type/intolerance> .
+  skos:broadMatch [ skos:notation "intolerance" ; ccda:fhirCodingSystem "http://hl7.org/fhir/allergy-intolerance-type"^^xsd:anyURI ] .
 
 ccda:typeAllergyToFood a skos:Concept ;
   skos:inScheme ccda:allergyIntoleranceTypes ;
   skos:notation "414285001" ;
-  skos:exactMatch <http://hl7.org/fhir/allergy-intolerance-type/allergy> .
+  skos:broadMatch [ skos:notation "allergy" ; ccda:fhirCodingSystem "http://hl7.org/fhir/allergy-intolerance-type"^^xsd:anyURI ] .
 
 ccda:typeAllergyToDrug a skos:Concept ;
   skos:inScheme ccda:allergyIntoleranceTypes ;
   skos:notation "416098002" ;
-  skos:exactMatch <http://hl7.org/fhir/allergy-intolerance-type/allergy> .
+  skos:broadMatch [ skos:notation "allergy" ; ccda:fhirCodingSystem "http://hl7.org/fhir/allergy-intolerance-type"^^xsd:anyURI ] .
 
 ccda:typeAllergyToSubstance a skos:Concept ;
   skos:inScheme ccda:allergyIntoleranceTypes ;
   skos:notation "419199007" ;
-  skos:exactMatch <http://hl7.org/fhir/allergy-intolerance-type/allergy> .
+  skos:broadMatch [ skos:notation "allergy" ; ccda:fhirCodingSystem "http://hl7.org/fhir/allergy-intolerance-type"^^xsd:anyURI ] .
 
 ccda:typeIntoleranceToDrug a skos:Concept ;
   skos:inScheme ccda:allergyIntoleranceTypes ;
   skos:notation "59037007" ;
-  skos:exactMatch <http://hl7.org/fhir/allergy-intolerance-type/intolerance> .
+  skos:broadMatch [ skos:notation "intolerance" ; ccda:fhirCodingSystem "http://hl7.org/fhir/allergy-intolerance-type"^^xsd:anyURI ] .

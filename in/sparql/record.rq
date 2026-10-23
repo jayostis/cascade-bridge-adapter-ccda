@@ -1,65 +1,128 @@
-PREFIX prov:     <http://www.w3.org/ns/prov#>
-PREFIX bridge:   <https://ns.cascadeprotocol.org/bridge/v1-draft#>
-PREFIX rec:      <https://ns.cascadeprotocol.org/records/v1-draft#>
-PREFIX cascade:  <https://ns.cascadeprotocol.org/core/v1#>
-PREFIX health:   <https://ns.cascadeprotocol.org/health/v1#>
-PREFIX clinical: <https://ns.cascadeprotocol.org/clinical/v1#>
-PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX prov:    <http://www.w3.org/ns/prov#>
+PREFIX oa:      <http://www.w3.org/ns/oa#>
+PREFIX fx:      <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:     <http://sparql.xyz/facade-x/data/>
+PREFIX v3:      <urn:hl7-org:v3>
+PREFIX bridge:  <https://ns.cascadeprotocol.org/bridge/v1-draft#>
+PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
+PREFIX ccda:    <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
-# Names are the rows of
-# https://github.com/jayostis/cascade-bridge-spec/blob/main/engine/sparql.md#naming-a-c-cda-record,
-# hashed as that repository's fixtures/naming/name.rq hashes them, from what
-# document-table.rq holds of each statement: an identifier is an id's root, and
-# its extension where it states one. A version is written as an IRI of
-# the statement's slots, which each class's mapping computes alike.
+# A record is named by one of cascade-vocabulary's rules, picked as
+# ../../docs/format.md#names says from what document-table.rq holds of its
+# statement: RecordFromCcdaNamingRule for one with an id and
+# RecordFromCcdaWithoutIdNamingRule for one without, each in the custodian's and
+# the patient's scope; RecordFromDocumentNamingRule where the document states
+# no scope, or where the statement's id is another's of the document with
+# another key. Each rule's text is its tests/vectors/naming/<rule>.rq body,
+# copied, and the one picked is hashed once.
 #
-# A version names its patient only where the document has one recordTarget:
-# with more, which one an entry is about is not stated.
+# The patient's name is computed again, by the same lines, for the link a
+# version makes to it: a subquery cannot read another's result. A version names
+# its patient only where the document has one recordTarget: with more, which
+# one an entry is about is not stated.
 
 CONSTRUCT {
-  ?record a ?type ;
-    rec:sourceUrl ?sourceUrl ;
-    ?sourceIdPredicate ?identifier .
-  ?version prov:specializationOf ?record ;
-    rec:patient ?patient .
+  ?name a ?type ;
+    cascade:sourceUrl ?sourceUrl ;
+    cascade:sourceRecordId ?identifier .
+  ?version prov:specializationOf ?name ;
+    cascade:patient ?patient .
   [] bridge:arrivedAs ?version ;
-    bridge:selector ?selector .
+    oa:hasSelector [ a oa:XPathSelector ; rdf:value ?selector ] .
 }
 WHERE {
-  bridge:thisRecord bridge:selector ?recordSelector .
-  ?row ccda:statementAt ?slots ;
-    ccda:recordClass ?class ;
-    ccda:refinement ?refinement .
-  VALUES (?class ?type ?sourceIdPredicate) {
-    ("Patient"            cascade:PatientProfile cascade:sourceRecordId)
-    ("AllergyIntolerance" health:AllergyRecord   health:sourceRecordId)
-    ("Condition"          health:ConditionRecord    health:sourceRecordId)
-    ("Immunization"       health:ImmunizationRecord health:sourceRecordId)
-    ("Procedure"          clinical:Procedure        clinical:sourceRecordId)
-    ("MedicationRequest"  clinical:Medication       clinical:sourceRecordId)
-    ("Observation"        health:LabResultRecord    health:sourceRecordId)
+  {
+    SELECT ?row ?type ?identifier ?selector ?name WHERE {
+      bridge:thisDocument bridge:sha256 ?document .
+      bridge:thisRecord bridge:selector ?recordSelector .
+      ?row ccda:statementAt ?slots ;
+        ccda:recordClass ?class ;
+        ccda:refinement ?refinement .
+      VALUES (?class ?type) {
+        ("Patient"            cascade:PatientProfile)
+        ("AllergyIntolerance" cascade:AllergyOrIntolerance)
+        ("Condition"          cascade:ProblemOrDiagnosis)
+        ("Immunization"       cascade:Vaccination)
+        ("Procedure"          cascade:MedicalProcedure)
+        ("MedicationRequest"  cascade:PrescribedOrReportedMedication)
+        ("Observation"        cascade:LaboratoryTestResult)
+      }
+      OPTIONAL { ?row ccda:identifier ?identifier ; ccda:identifierRoot ?identifierRoot ; ccda:identifierExtension ?identifierExtension }
+      OPTIONAL { ?row ccda:keyFingerprint ?key }
+      OPTIONAL { ?row ccda:membersFingerprint ?members }
+      OPTIONAL {
+        {
+          SELECT (MIN(?ranked) AS ?firstCustodianId) WHERE {
+            ?root a fx:root, v3:ClinicalDocument ; ?custodianSlot ?custodian .
+            ?custodian a v3:custodian ; ?assignedSlot ?assigned .
+            ?assigned a v3:assignedCustodian ; ?organizationSlot ?organization .
+            ?organization a v3:representedCustodianOrganization ; ?idSlot ?id .
+            ?id a v3:id ; xyz:root ?idRoot .
+            FILTER (STRLEN(?idRoot) > 0)
+            FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
+            OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }
+            BIND (STRAFTER(STR(?idSlot), "#_") AS ?idAt)
+            BIND (CONCAT(SUBSTR("0000000000", STRLEN(?idAt) + 1), ?idAt, "|", ?idRoot, "|", COALESCE(?idExtension, "")) AS ?ranked)
+          }
+        }
+        BIND (STRBEFORE(STRAFTER(?firstCustodianId, "|"), "|") AS ?custodianRoot)
+        BIND (STRAFTER(STRAFTER(?firstCustodianId, "|"), "|") AS ?custodianExtension)
+      }
+      OPTIONAL {
+        {
+          SELECT (SAMPLE(?patientIdRoot) AS ?patientRoot) (SAMPLE(?patientIdExtension) AS ?patientExtension)
+                 (COUNT(?patientRow) AS ?patients) WHERE {
+            ?patientRow ccda:recordClass "Patient" .
+            OPTIONAL { ?patientRow ccda:identifierRoot ?patientIdRoot ; ccda:identifierExtension ?patientIdExtension }
+          }
+        }
+        FILTER (?patients = 1 && BOUND(?patientRoot))
+      }
+      BIND (BOUND(?identifier) && EXISTS {
+              ?other ccda:identifier ?identifier .
+              OPTIONAL { ?other ccda:keyFingerprint ?otherKey }
+              FILTER (COALESCE(?otherKey, "") != COALESCE(?key, ""))
+            } AS ?repeated)
+      BIND (IF(?class = "Patient", ?identifierRoot, ?patientRoot) AS ?input3)
+      BIND (IF(?class = "Patient", ?identifierExtension, ?patientExtension) AS ?input4)
+      BIND (BOUND(?custodianRoot) && BOUND(?input3) && !?repeated AS ?scoped)
+      BIND (CONCAT(?recordSelector, "/", ?refinement) AS ?selector)
+      BIND (IF(?scoped, ?custodianRoot, ?document) AS ?input1)
+      BIND (IF(?scoped, ?custodianExtension, ?selector) AS ?input2)
+      BIND (IF(BOUND(?identifier), ?identifierRoot, STR(?type)) AS ?input5)
+      BIND (IF(BOUND(?identifier), ?identifierExtension, COALESCE(?key, "")) AS ?input6)
+      BIND (IF(BOUND(?key), "", COALESCE(?members, "")) AS ?input7)
+      BIND (IF(!?scoped,
+               CONCAT("90c60849-c5ef-4ca6-bfb8-8662bd07d2b5|https://ns.cascadeprotocol.org/cascade#RecordFromDocumentNamingRule",
+                       "|", REPLACE(REPLACE(?input1, "%", "%25"), "\\|", "%7C"),
+                       "|", REPLACE(REPLACE(?input2, "%", "%25"), "\\|", "%7C")),
+            IF(BOUND(?identifier),
+               CONCAT("90c60849-c5ef-4ca6-bfb8-8662bd07d2b5|https://ns.cascadeprotocol.org/cascade#RecordFromCcdaNamingRule",
+                       "|", REPLACE(REPLACE(?input1, "%", "%25"), "\\|", "%7C"),
+                       "|", REPLACE(REPLACE(?input2, "%", "%25"), "\\|", "%7C"),
+                       "|", REPLACE(REPLACE(?input3, "%", "%25"), "\\|", "%7C"),
+                       "|", REPLACE(REPLACE(?input4, "%", "%25"), "\\|", "%7C"),
+                       "|", REPLACE(REPLACE(?input5, "%", "%25"), "\\|", "%7C"),
+                       "|", REPLACE(REPLACE(?input6, "%", "%25"), "\\|", "%7C")),
+               CONCAT("90c60849-c5ef-4ca6-bfb8-8662bd07d2b5|https://ns.cascadeprotocol.org/cascade#RecordFromCcdaWithoutIdNamingRule",
+                       "|", REPLACE(REPLACE(?input1, "%", "%25"), "\\|", "%7C"),
+                       "|", REPLACE(REPLACE(?input2, "%", "%25"), "\\|", "%7C"),
+                       "|", REPLACE(REPLACE(?input3, "%", "%25"), "\\|", "%7C"),
+                       "|", REPLACE(REPLACE(?input4, "%", "%25"), "\\|", "%7C"),
+                       "|", REPLACE(REPLACE(?input5, "%", "%25"), "\\|", "%7C"),
+                       "|", REPLACE(REPLACE(?input6, "%", "%25"), "\\|", "%7C"),
+                       "|", REPLACE(REPLACE(?input7, "%", "%25"), "\\|", "%7C")))) AS ?named)
+      BIND (SHA256(?named) AS ?hash)
+      BIND (REPLACE(REPLACE(REPLACE(REPLACE(SUBSTR(?hash, 17, 1), "[048c]", "8"), "[159d]", "9"), "[26ae]", "a"), "[37bf]", "b")
+            AS ?variant)
+      BIND (IRI(CONCAT("urn:uuid:", SUBSTR(?hash, 1, 8), "-", SUBSTR(?hash, 9, 4), "-8", SUBSTR(?hash, 14, 3), "-", ?variant,
+                       SUBSTR(?hash, 18, 3), "-", SUBSTR(?hash, 21, 12))) AS ?name)
+    }
   }
-  OPTIONAL { ?row ccda:identifier ?identifier }
-  OPTIONAL { ?row ccda:keyFingerprint ?key }
-  OPTIONAL { ?row ccda:membersFingerprint ?members }
-  BIND (BOUND(?identifier) && EXISTS {
-          ?other ccda:recordClass ?class ;
-            ccda:identifier ?identifier .
-          OPTIONAL { ?other ccda:keyFingerprint ?otherKey }
-          FILTER (COALESCE(?otherKey, "") != COALESCE(?key, ""))
-        } AS ?repeated)
-  BIND (IF(BOUND(?identifier),
-           IF(?repeated, CONCAT(?class, "|", ?identifier, "|", COALESCE(?key, "0")), CONCAT(?class, "|", ?identifier)),
-        IF(BOUND(?key), CONCAT(?class, "||", ?key),
-        IF(BOUND(?members), CONCAT(?class, "|||", ?members),
-           ?class))) AS ?input)
-  BIND (SHA256(CONCAT("90c60849-c5ef-4ca6-bfb8-8662bd07d2b5|", ?input)) AS ?hash)
-  BIND (REPLACE(REPLACE(REPLACE(REPLACE(SUBSTR(?hash, 17, 1),
-          "[048c]", "8"), "[159d]", "9"), "[26ae]", "a"), "[37bf]", "b") AS ?variant)
-  BIND (IRI(CONCAT("urn:uuid:", SUBSTR(?hash, 1, 8), "-", SUBSTR(?hash, 9, 4), "-8", SUBSTR(?hash, 14, 3),
-                   "-", ?variant, SUBSTR(?hash, 18, 3), "-", SUBSTR(?hash, 21, 12))) AS ?record)
+  ?row ccda:statementAt ?slots ;
+    ccda:recordClass ?class .
   BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(?slots))) AS ?version)
-  BIND (CONCAT(?recordSelector, "/", ?refinement) AS ?selector)
   BIND (IF(CONTAINS(COALESCE(?identifier, ""), ":"), IRI(CONCAT("urn:hl7ii:", STRBEFORE(?identifier, ":"), ":", ENCODE_FOR_URI(STRAFTER(?identifier, ":")))),
         IF(REGEX(?identifier, "^[0-2](\\.(0|[1-9][0-9]*))+$"), IRI(CONCAT("urn:oid:", ?identifier)),
         IF(REGEX(?identifier, "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"),
@@ -68,31 +131,77 @@ WHERE {
   OPTIONAL {
     FILTER (?class != "Patient")
     {
-      SELECT (SAMPLE(?patientInput) AS ?onlyPatientInput) (COUNT(?patientRow) AS ?patients) WHERE {
-        ?patientRow ccda:recordClass "Patient" .
-        OPTIONAL { ?patientRow ccda:identifier ?patientIdentifier }
-        OPTIONAL { ?patientRow ccda:keyFingerprint ?patientKey }
-        OPTIONAL { ?patientRow ccda:membersFingerprint ?patientMembers }
-        BIND (BOUND(?patientIdentifier) && EXISTS {
-                ?otherPatient ccda:recordClass "Patient" ;
-                  ccda:identifier ?patientIdentifier .
-                OPTIONAL { ?otherPatient ccda:keyFingerprint ?otherPatientKey }
-                FILTER (COALESCE(?otherPatientKey, "") != COALESCE(?patientKey, ""))
-              } AS ?patientRepeated)
-        BIND (IF(BOUND(?patientIdentifier),
-                 IF(?patientRepeated, CONCAT("Patient|", ?patientIdentifier, "|", COALESCE(?patientKey, "0")),
-                    CONCAT("Patient|", ?patientIdentifier)),
-              IF(BOUND(?patientKey), CONCAT("Patient||", ?patientKey),
-              IF(BOUND(?patientMembers), CONCAT("Patient|||", ?patientMembers),
-                 "Patient"))) AS ?patientInput)
+      SELECT (SAMPLE(?name) AS ?patient) (COUNT(?row) AS ?patientRecords) WHERE {
+        bridge:thisDocument bridge:sha256 ?document .
+        bridge:thisRecord bridge:selector ?recordSelector .
+        ?row ccda:statementAt ?slots ;
+          ccda:recordClass ?class ;
+          ccda:refinement ?refinement .
+        VALUES (?class ?type) {
+          ("Patient"            cascade:PatientProfile)
+        }
+        OPTIONAL { ?row ccda:identifier ?identifier ; ccda:identifierRoot ?identifierRoot ; ccda:identifierExtension ?identifierExtension }
+        OPTIONAL { ?row ccda:keyFingerprint ?key }
+        OPTIONAL { ?row ccda:membersFingerprint ?members }
+        OPTIONAL {
+          {
+            SELECT (MIN(?ranked) AS ?firstCustodianId) WHERE {
+              ?root a fx:root, v3:ClinicalDocument ; ?custodianSlot ?custodian .
+              ?custodian a v3:custodian ; ?assignedSlot ?assigned .
+              ?assigned a v3:assignedCustodian ; ?organizationSlot ?organization .
+              ?organization a v3:representedCustodianOrganization ; ?idSlot ?id .
+              ?id a v3:id ; xyz:root ?idRoot .
+              FILTER (STRLEN(?idRoot) > 0)
+              FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
+              OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }
+              BIND (STRAFTER(STR(?idSlot), "#_") AS ?idAt)
+              BIND (CONCAT(SUBSTR("0000000000", STRLEN(?idAt) + 1), ?idAt, "|", ?idRoot, "|", COALESCE(?idExtension, "")) AS ?ranked)
+            }
+          }
+          BIND (STRBEFORE(STRAFTER(?firstCustodianId, "|"), "|") AS ?custodianRoot)
+          BIND (STRAFTER(STRAFTER(?firstCustodianId, "|"), "|") AS ?custodianExtension)
+        }
+        BIND (BOUND(?identifier) && EXISTS {
+                ?other ccda:identifier ?identifier .
+                OPTIONAL { ?other ccda:keyFingerprint ?otherKey }
+                FILTER (COALESCE(?otherKey, "") != COALESCE(?key, ""))
+              } AS ?repeated)
+        BIND (?identifierRoot AS ?input3)
+        BIND (?identifierExtension AS ?input4)
+        BIND (BOUND(?custodianRoot) && BOUND(?input3) && !?repeated AS ?scoped)
+        BIND (CONCAT(?recordSelector, "/", ?refinement) AS ?selector)
+        BIND (IF(?scoped, ?custodianRoot, ?document) AS ?input1)
+        BIND (IF(?scoped, ?custodianExtension, ?selector) AS ?input2)
+        BIND (IF(BOUND(?identifier), ?identifierRoot, STR(?type)) AS ?input5)
+        BIND (IF(BOUND(?identifier), ?identifierExtension, COALESCE(?key, "")) AS ?input6)
+        BIND (IF(BOUND(?key), "", COALESCE(?members, "")) AS ?input7)
+        BIND (IF(!?scoped,
+                 CONCAT("90c60849-c5ef-4ca6-bfb8-8662bd07d2b5|https://ns.cascadeprotocol.org/cascade#RecordFromDocumentNamingRule",
+                         "|", REPLACE(REPLACE(?input1, "%", "%25"), "\\|", "%7C"),
+                         "|", REPLACE(REPLACE(?input2, "%", "%25"), "\\|", "%7C")),
+              IF(BOUND(?identifier),
+                 CONCAT("90c60849-c5ef-4ca6-bfb8-8662bd07d2b5|https://ns.cascadeprotocol.org/cascade#RecordFromCcdaNamingRule",
+                         "|", REPLACE(REPLACE(?input1, "%", "%25"), "\\|", "%7C"),
+                         "|", REPLACE(REPLACE(?input2, "%", "%25"), "\\|", "%7C"),
+                         "|", REPLACE(REPLACE(?input3, "%", "%25"), "\\|", "%7C"),
+                         "|", REPLACE(REPLACE(?input4, "%", "%25"), "\\|", "%7C"),
+                         "|", REPLACE(REPLACE(?input5, "%", "%25"), "\\|", "%7C"),
+                         "|", REPLACE(REPLACE(?input6, "%", "%25"), "\\|", "%7C")),
+                 CONCAT("90c60849-c5ef-4ca6-bfb8-8662bd07d2b5|https://ns.cascadeprotocol.org/cascade#RecordFromCcdaWithoutIdNamingRule",
+                         "|", REPLACE(REPLACE(?input1, "%", "%25"), "\\|", "%7C"),
+                         "|", REPLACE(REPLACE(?input2, "%", "%25"), "\\|", "%7C"),
+                         "|", REPLACE(REPLACE(?input3, "%", "%25"), "\\|", "%7C"),
+                         "|", REPLACE(REPLACE(?input4, "%", "%25"), "\\|", "%7C"),
+                         "|", REPLACE(REPLACE(?input5, "%", "%25"), "\\|", "%7C"),
+                         "|", REPLACE(REPLACE(?input6, "%", "%25"), "\\|", "%7C"),
+                         "|", REPLACE(REPLACE(?input7, "%", "%25"), "\\|", "%7C")))) AS ?named)
+        BIND (SHA256(?named) AS ?hash)
+        BIND (REPLACE(REPLACE(REPLACE(REPLACE(SUBSTR(?hash, 17, 1), "[048c]", "8"), "[159d]", "9"), "[26ae]", "a"), "[37bf]", "b")
+              AS ?variant)
+        BIND (IRI(CONCAT("urn:uuid:", SUBSTR(?hash, 1, 8), "-", SUBSTR(?hash, 9, 4), "-8", SUBSTR(?hash, 14, 3), "-", ?variant,
+                         SUBSTR(?hash, 18, 3), "-", SUBSTR(?hash, 21, 12))) AS ?name)
       }
     }
-    FILTER (?patients = 1)
-    BIND (SHA256(CONCAT("90c60849-c5ef-4ca6-bfb8-8662bd07d2b5|", ?onlyPatientInput)) AS ?patientHash)
-    BIND (REPLACE(REPLACE(REPLACE(REPLACE(SUBSTR(?patientHash, 17, 1),
-            "[048c]", "8"), "[159d]", "9"), "[26ae]", "a"), "[37bf]", "b") AS ?patientVariant)
-    BIND (IRI(CONCAT("urn:uuid:", SUBSTR(?patientHash, 1, 8), "-", SUBSTR(?patientHash, 9, 4), "-8",
-                     SUBSTR(?patientHash, 14, 3), "-", ?patientVariant, SUBSTR(?patientHash, 18, 3), "-",
-                     SUBSTR(?patientHash, 21, 12))) AS ?patient)
+    FILTER (?patientRecords = 1)
   }
 }

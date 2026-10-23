@@ -64,27 +64,12 @@
       },
       "bridge:vocabulary": [
         {
-          "@id": "https://ns.cascadeprotocol.org/core/v1#"
-        },
-        {
-          "@id": "https://ns.cascadeprotocol.org/health/v1#"
-        },
-        {
-          "@id": "https://ns.cascadeprotocol.org/clinical/v1#"
-        },
-        {
-          "@id": "https://ns.cascadeprotocol.org/records/v1-draft#"
+          "@id": "https://ns.cascadeprotocol.org/cascade#"
         }
       ],
       "bridge:vocabularyFile": [
-        "ontologies/core/v1/core.ttl",
-        "ontologies/core/v1/core.shapes.ttl",
-        "ontologies/health/v1/health.ttl",
-        "ontologies/health/v1/health.shapes.ttl",
-        "ontologies/clinical/v1/clinical.ttl",
-        "ontologies/clinical/v1/clinical.shapes.ttl",
-        "ontologies/records/v1-draft/records.ttl",
-        "ontologies/records/v1-draft/records.shapes.ttl"
+        "ontologies/cascade.ttl",
+        "ontologies/cascade.shapes.ttl"
       ],
       "bridge:sourceMediaType": "application/cda+xml",
       "bridge:sourceSchema": {
@@ -670,28 +655,10 @@
       "description": "The repository the adapter's vocabularies are read from, at the version a run picks; the paths in bridge:vocabularyFile are read there. A web-based data entity, referenced and not committed: the RO-Crate 1.2 validator reads every SoftwareSourceCode as a script that must be a File in hasPart."
     },
     {
-      "@id": "https://ns.cascadeprotocol.org/core/v1#",
+      "@id": "https://ns.cascadeprotocol.org/cascade#",
       "@type": "DefinedTermSet",
-      "name": "Cascade core vocabulary",
-      "description": "One of the vocabularies the adapter writes, as cascade-vocabulary declares it."
-    },
-    {
-      "@id": "https://ns.cascadeprotocol.org/health/v1#",
-      "@type": "DefinedTermSet",
-      "name": "Cascade health vocabulary",
-      "description": "One of the vocabularies the adapter writes, as cascade-vocabulary declares it."
-    },
-    {
-      "@id": "https://ns.cascadeprotocol.org/clinical/v1#",
-      "@type": "DefinedTermSet",
-      "name": "Cascade clinical vocabulary",
-      "description": "One of the vocabularies the adapter writes, as cascade-vocabulary declares it."
-    },
-    {
-      "@id": "https://ns.cascadeprotocol.org/records/v1-draft#",
-      "@type": "DefinedTermSet",
-      "name": "Cascade records vocabulary",
-      "description": "One of the vocabularies the adapter writes, as cascade-vocabulary declares it."
+      "name": "Cascade vocabulary",
+      "description": "The vocabulary the adapter writes, as cascade-vocabulary declares it."
     },
     {
       "@id": "schema/infrastructure/cda/CDA_SDTC.xsd",
@@ -843,7 +810,7 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "One row per clinical statement this release maps: its slots, its class, its selector refined from the document element, its identifier, and the fingerprints of its key and of its members, with each class's key fields and member exclusions declared."
+      "description": "One row per clinical statement this release maps: its slots, its class, its selector refined from the document element, its identifier with its root and extension, and the fingerprints of its key and of its members, with each class's key fields and member exclusions declared."
     },
     {
       "@id": "in/sparql/record.rq",
@@ -855,7 +822,7 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "For each row of the document table: the record, named by the Cascade Bridge Specification's rows for a C-CDA record from its class, identifier, key fingerprint or members fingerprint; its class, its source URL where its identifier names it, and its source id; its version, the patient the version is about, and the version's arrival with its selector."
+      "description": "For each row of the document table: the record, named by cascade-vocabulary's rule for it as docs/format.md#names picks it, from the custodian's and the patient's ids and its own id, else its class and fingerprints, else the document and its selector; its class, its source URL where its identifier names it, and its source id; its version, the patient the version is about, and the version's arrival with its selector."
     },
     {
       "@id": "in/sparql/patient.rq",
@@ -891,7 +858,7 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The custodian organisation's name, as the document's prov:qualifiedAttribution in the role rec:author."
+      "description": "The custodian organisation's name, as the document's prov:qualifiedAttribution in the role cascade:AuthorRole."
     },
     {
       "@id": "in/sparql/section-findings.rq",
@@ -1121,7 +1088,7 @@
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ProblemStatus.xml"
       },
-      "description": "SNOMED CT problem statuses to FHIR Condition clinical status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "SNOMED CT problem statuses to FHIR Condition clinical status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-concern-statuses.ttl",
@@ -1136,7 +1103,7 @@
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ConditionClinicalStatus.xml"
       },
-      "description": "A problem concern act's status to a FHIR Condition clinical status code; HL7 marks every other row wider, and none is taken. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "A problem concern act's status to a FHIR Condition clinical status code; HL7 marks every other row wider, and none is taken. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-problem-categories.ttl",
@@ -1151,7 +1118,7 @@
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ProblemCategory.xml"
       },
-      "description": "A section's LOINC code to a FHIR Condition category code; the health-concern row names a US Core code system the vocabulary does not take, and is left out. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "A section's LOINC code to a FHIR Condition category code; the health-concern row names a US Core code system the vocabulary does not take, and is left out. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-immunization-statuses.ttl",
@@ -1166,7 +1133,7 @@
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ImmunizationStatus.xml"
       },
-      "description": "HL7 act statuses to FHIR Immunization status codes; HL7 marks every other row wider, and none is taken. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "HL7 act statuses to FHIR Immunization status codes; HL7 marks every other row wider, and none is taken. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-procedure-statuses.ttl",
@@ -1181,7 +1148,7 @@
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ProcedureStatus.xml"
       },
-      "description": "HL7 act statuses to FHIR Procedure status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "HL7 act statuses to FHIR Procedure status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-allergy-statuses.ttl",
@@ -1196,7 +1163,7 @@
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-AllergyStatus.xml"
       },
-      "description": "SNOMED CT allergy statuses to FHIR AllergyIntolerance clinical status codes, each written as its code system's URI, / and the code. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "SNOMED CT allergy statuses to FHIR AllergyIntolerance clinical status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-allergy-intolerance-types.ttl",
@@ -1211,7 +1178,7 @@
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-AllergyIntoleranceType.xml"
       },
-      "description": "SNOMED CT allergy and intolerance types to FHIR AllergyIntolerance type codes; the rows HL7 marks unmatched are left out. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "SNOMED CT allergy and intolerance types to FHIR AllergyIntolerance type codes; the rows HL7 marks unmatched are left out. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-allergy-intolerance-categories.ttl",
@@ -1226,7 +1193,7 @@
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-AllergyIntoleranceCategory.xml"
       },
-      "description": "SNOMED CT allergy and intolerance types to FHIR AllergyIntolerance category codes; the rows HL7 marks unmatched are left out. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "SNOMED CT allergy and intolerance types to FHIR AllergyIntolerance category codes; the rows HL7 marks unmatched are left out. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-criticalities.ttl",
@@ -1241,7 +1208,7 @@
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-Criticality.xml"
       },
-      "description": "HL7 ObservationValue criticality codes to FHIR AllergyIntolerance criticality codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "HL7 ObservationValue criticality codes to FHIR AllergyIntolerance criticality codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-severities.ttl",
@@ -1256,7 +1223,7 @@
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-Severity.xml"
       },
-      "description": "SNOMED CT severities to FHIR reaction severity codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "SNOMED CT severities to FHIR reaction severity codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-medication-statuses.ttl",
@@ -1271,7 +1238,7 @@
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-MedicationStatus.xml"
       },
-      "description": "HL7 act statuses to FHIR MedicationRequest status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "HL7 act statuses to FHIR MedicationRequest status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-result-statuses.ttl",
@@ -1286,7 +1253,7 @@
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ResultStatus.xml"
       },
-      "description": "HL7 act statuses to FHIR Observation status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equal, as a skos:exactMatch; the rows it marks wider or inexact are left out."
+      "description": "HL7 act statuses to FHIR Observation status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equal, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code; the rows it marks wider or inexact are left out."
     },
     {
       "@id": "fixtures/facts/portal-download.ttl",
@@ -2591,7 +2558,7 @@
       "isBasedOn": {
         "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/c14b56e332a98bb226ee6ccee2e9f587a07c6379/views/allergies.rq"
       },
-      "description": "A SELECT over a Bridge's graph: one row per AllergyRecord record at its current version, else at each version, with its source id and allergen, allergen code, status, verification status, criticality, onset, each a plain string. Copied unchanged on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
+      "description": "A SELECT over a Bridge's graph: one row per AllergyOrIntolerance record at its current version, else at each version, with its source id and allergen, allergen code, status, verification status, criticality, onset, each a plain string. Copied on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer, its terms and code stems since moved as cascade-vocabulary's term map and decisions/code-iris.md say. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
     },
     {
       "@id": "views/conditions.rq",
@@ -2606,7 +2573,7 @@
       "isBasedOn": {
         "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/c14b56e332a98bb226ee6ccee2e9f587a07c6379/views/conditions.rq"
       },
-      "description": "A SELECT over a Bridge's graph: one row per ConditionRecord record at its current version, else at each version, with its source id and name, status, verification status, onset, abatement, SNOMED CT and ICD-10-CM codes, each a plain string. Copied unchanged on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
+      "description": "A SELECT over a Bridge's graph: one row per ProblemOrDiagnosis record at its current version, else at each version, with its source id and name, status, verification status, onset, abatement, SNOMED CT and ICD-10-CM codes, each a plain string. Copied on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer, its terms and code stems since moved as cascade-vocabulary's term map and decisions/code-iris.md say. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
     },
     {
       "@id": "views/immunizations.rq",
@@ -2621,7 +2588,7 @@
       "isBasedOn": {
         "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/c14b56e332a98bb226ee6ccee2e9f587a07c6379/views/immunizations.rq"
       },
-      "description": "A SELECT over a Bridge's graph: one row per ImmunizationRecord record at its current version, else at each version, with its source id and vaccine name, vaccine code, status, administration date, each a plain string. Copied unchanged on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
+      "description": "A SELECT over a Bridge's graph: one row per Vaccination record at its current version, else at each version, with its source id and vaccine name, vaccine code, status, administration date, each a plain string. Copied on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer, its terms and code stems since moved as cascade-vocabulary's term map and decisions/code-iris.md say. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
     },
     {
       "@id": "views/procedures.rq",
@@ -2636,7 +2603,7 @@
       "isBasedOn": {
         "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/c14b56e332a98bb226ee6ccee2e9f587a07c6379/views/procedures.rq"
       },
-      "description": "A SELECT over a Bridge's graph: one row per clinical:Procedure record at its current version, else at each version, with its source id and name, SNOMED CT code, status, date, each a plain string. Copied unchanged on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
+      "description": "A SELECT over a Bridge's graph: one row per cascade:MedicalProcedure record at its current version, else at each version, with its source id and name, SNOMED CT code, status, date, each a plain string. Copied on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer, its terms and code stems since moved as cascade-vocabulary's term map and decisions/code-iris.md say. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
     },
     {
       "@id": "views/patients.rq",
@@ -2651,7 +2618,7 @@
       "isBasedOn": {
         "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/c14b56e332a98bb226ee6ccee2e9f587a07c6379/views/patients.rq"
       },
-      "description": "A SELECT over a Bridge's graph: one row per PatientProfile record at its current version, else at each version, with its source id and date of birth, given, family and full name, each a plain string. Copied unchanged on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
+      "description": "A SELECT over a Bridge's graph: one row per PatientProfile record at its current version, else at each version, with its source id and date of birth, given, family and full name, each a plain string. Copied on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer, its terms and code stems since moved as cascade-vocabulary's term map and decisions/code-iris.md say. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
     },
     {
       "@id": "views/medications.rq",
@@ -2666,7 +2633,7 @@
       "isBasedOn": {
         "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/c14b56e332a98bb226ee6ccee2e9f587a07c6379/views/medications.rq"
       },
-      "description": "A SELECT over a Bridge's graph: one row per clinical:Medication record at its current version, else at each version, with its source id and drug name, RxNorm code, intent, status, start date, end date and dosage, each a plain string. Copied unchanged on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
+      "description": "A SELECT over a Bridge's graph: one row per cascade:PrescribedOrReportedMedication record at its current version, else at each version, with its source id and drug name, RxNorm code, intent, status, start date, end date and dosage, each a plain string. Copied on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer, its terms and code stems since moved as cascade-vocabulary's term map and decisions/code-iris.md say. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
     },
     {
       "@id": "views/lab-results.rq",
@@ -2681,7 +2648,7 @@
       "isBasedOn": {
         "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/c14b56e332a98bb226ee6ccee2e9f587a07c6379/views/lab-results.rq"
       },
-      "description": "A SELECT over a Bridge's graph: one row per LabResultRecord record at its current version, else at each version, with its source id and test name, LOINC code, value, unit, reference range, interpretation, status and performed date, each a plain string. Copied unchanged on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
+      "description": "A SELECT over a Bridge's graph: one row per LaboratoryTestResult record at its current version, else at each version, with its source id and test name, LOINC code, value, unit, reference range, interpretation, status and performed date, each a plain string. Copied on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer, its terms and code stems since moved as cascade-vocabulary's term map and decisions/code-iris.md say. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
     },
     {
       "@id": "#view-comparison-with-cascade-cli",
@@ -2818,7 +2785,7 @@
       "isBasedOn": {
         "@id": "https://github.com/the-cascade-protocol/cascade-cli/tree/627de5f63c51d59e2078cc653bd7841a03497acb"
       },
-      "description": "cascade-cli writes cascade:givenName, cascade:familyName, cascade:sourceRecordId, for a procedure health:performedDate, for a medication health:startDate and health:endDate, and for a result health:referenceRangeText, where the adapter writes foaf:givenName, foaf:familyName, the kind's sourceRecordId, clinical:procedureDate, clinical:startDate, clinical:endDate and health:referenceRange."
+      "description": "cascade-cli writes cascade:givenName, cascade:familyName, cascade:sourceRecordId, for a procedure health:performedDate, for a medication health:startDate and health:endDate, and for a result health:referenceRangeText, where the adapter writes foaf:givenName, foaf:familyName, cascade:sourceRecordId, cascade:procedureDate, cascade:medicationUseStartDate, cascade:medicationUseEndDate and cascade:referenceRange."
     },
     {
       "@id": "#correction-severity-on-a-reaction",
@@ -2836,7 +2803,7 @@
       "isBasedOn": {
         "@id": "https://github.com/the-cascade-protocol/cascade-cli/tree/627de5f63c51d59e2078cc653bd7841a03497acb"
       },
-      "description": "cascade-cli writes no CPT code a procedure states in a translation; the adapter writes clinical:cptCode from it (procedures)."
+      "description": "cascade-cli writes no CPT code a procedure states in a translation; the adapter writes cascade:cptCode from it (procedures)."
     },
     {
       "@id": "#correction-codes-as-iris",

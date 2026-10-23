@@ -19,10 +19,20 @@ ccda:entryNotMapped a skos:Concept ;
   sh:resultSeverity sh:Warning .
 
 ccda:namedByClassAlone a skos:Concept ;
-  skos:prefLabel "A record states no identifier, no key field and no member, so it is named by its class alone, as every such record of its class is."@en ;
+  skos:prefLabel "A record states no identifier, no key field and no member, so it is named by its class alone, as every such record of its class is in its custodian's and patient's scope."@en ;
   skos:inScheme ccda:gaps ;
   skos:broader bridge:carriedWithLoss ;
   sh:resultSeverity sh:Warning .
+
+ccda:entryIdRepeated a skos:Concept ;
+  skos:prefLabel "A statement shares its id with another statement of its document that differs in its key, so neither is named by its id: each is named by the document and its selector."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:idRepeated .
+
+ccda:namingScopeNotStated a skos:Concept ;
+  skos:prefLabel "A document states no custodian id, or no one patient with an id, so a record is named by the document and its selector, and the same statement in another document is another record."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:carriedWithLoss .
 
 ccda:allergyTypeNotMapped a skos:Concept ;
   skos:prefLabel "An allergy states a type outside the concept maps of allergy types and categories, and neither is carried."@en ;

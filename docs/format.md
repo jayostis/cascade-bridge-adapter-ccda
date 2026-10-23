@@ -63,9 +63,9 @@ Organizer is a panel, and no record; each Result Observation in it is one, and
 any other statement in it, a Vital Sign Observation (`4.27`) among them, is a
 finding.
 
-The class is the FHIR resource type a record of its kind is mapped from, and
-one input of its name ([Naming a C-CDA record](https://github.com/jayostis/cascade-bridge-spec/blob/main/engine/sparql.md#naming-a-c-cda-record)).
-A statement's selector refines the document element's by
+The class is the FHIR resource type a record of its kind is mapped from; a
+record is typed by the Cascade class it is written as, and a statement with no
+id names that class in its name ([Names](#names)). A statement's selector refines the document element's by
 `component[1]/structuredBody[1]/component[n]/section[1]/entry[n]/act[1]/entryRelationship[n]/observation[n]`,
 each step written `*[local-name()='…' and namespace-uri()='urn:hl7-org:v3']` and
 counted among its same-name siblings.
@@ -84,20 +84,66 @@ and the first usable one in document order names it: one with a non-empty
 
 **An id is not kept unique.** A portal's download repeats an id across
 statements, restates one act in two places, and leaves a statement with no id,
-so a record is named from its id only where no other record of its class in the
-document carries that id with another key, and otherwise from a key of its
-class's fields, as the specification's rows say. The key fields are declared in
-`../in/sparql/document-table.rq`.
+so a record is named from its id only where no other statement of the document,
+of any class, carries that id with another key ([Names](#names)).
 
 A `nullFlavor` stands where a value would: on an `id`, a `code`, a `value` or a
 time. Where it stands alone, nothing is carried.
+
+## Names
+
+A record's name is one of cascade-vocabulary's naming rules, each the body of
+its `tests/vectors/naming/<rule>.rq` there, copied into `../in/sparql/record.rq`
+and hashed once for the rule picked. Two scopes say whose an id is: the
+**custodian**, the first usable `id` of
+`custodian/assignedCustodian/representedCustodianOrganization`, and the
+**patient**, the first usable `id` of the `patientRole` of the document's one
+`recordTarget`, each usable as the section above says.
+
+| a statement | its rule | its inputs, after the rule |
+|---|---|---|
+| with an id, in both scopes | `RecordFromCcdaNamingRule` | the custodian's root and extension, the patient's root and extension, the statement's root and extension, an absent extension `""` |
+| the patient, with an id, and a custodian id | `RecordFromCcdaNamingRule` | as above, its own id as the patient's and the statement's |
+| with no id, in both scopes | `RecordFromCcdaWithoutIdNamingRule` | the custodian's and the patient's root and extension, the IRI of its Cascade class, its key fingerprint or `""`, and its members fingerprint where it has no key fingerprint, else `""` |
+| any other | `RecordFromDocumentNamingRule` | the document's `ni:` name and the statement's selector |
+
+A statement is named by the document where:
+
+- the document states no custodian id, or no one patient with an id. An
+  empty scope would fuse every scope-less document's statements of one id, or
+  of one class and key, two patients' among them, which the scopes exist to
+  stop; a name by the document errs the other way, two records a judgment can
+  join. Each such record is a finding, `ccda:namingScopeNotStated`.
+- its id is another statement's of the document, of any class, with another
+  key fingerprint: the source broke its own id, and one name for both would
+  fuse two facts no judgment could split. Each of them is a finding,
+  `ccda:entryIdRepeated`.
+
+### Fingerprints
+
+A fingerprint is a set of strings summed: each string's SHA-256, its first
+twelve hexadecimal digits read as a 48-bit integer, and the integers added, in
+decimal. A string counts once, and order is no part of it.
+
+- A **key fingerprint** sums the statement's key fields, each written
+  `name=value` (`code=91936005`, `effectiveTime=20241015`), the fields of its
+  class `../in/sparql/document-table.rq` declares. A statement stating none has
+  no key fingerprint.
+- A **members fingerprint** sums every literal held at or under the statement:
+  `<element type IRI>=<text>` for an element's text and
+  `<element type IRI>@<attribute IRI>=<value>` for an attribute, leaving out
+  each `ID` and each `reference`'s `value`.
+
+The case `fingerprint-keys` holds one statement for each key of the
+fingerprint vectors cascade-bridge-spec retired, so the names it pins are named
+from those sums.
 
 ## Codes
 
 A code is its `code` and its `codeSystem`, an OID. A code's IRI is the stem
 `../vocab/ccda-code-systems.ttl` gives its OID, then the code percent-encoded.
-The stem is cascade-vocabulary's `void:uriSpace`, HL7 Terminology's where it
-registers one. It is never the FHIR URI the same concept names:
+The stem is cascade-vocabulary's `void:uriSpace`, as its `decisions/code-iris.md`
+rules it, and the FHIR URI is the system's `cascade:codingSystemUri`. A stem is never the FHIR URI the same concept names:
 FHIR R5 says "there is no simple formula for determining the correct IRI stem
 from a Coding.system" ([RDF](https://hl7.org/fhir/R5/rdf.html#iri-stem), read on
 2026-10-10). The table holds the OIDs this release knows. A

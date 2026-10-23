@@ -1,4 +1,5 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
 
 ccda:allergyStatuses a skos:ConceptScheme ;
@@ -7,14 +8,14 @@ ccda:allergyStatuses a skos:ConceptScheme ;
 ccda:allergyStatusActive a skos:Concept ;
   skos:inScheme ccda:allergyStatuses ;
   skos:notation "55561003" ;
-  skos:exactMatch <http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical/active> .
+  skos:exactMatch [ skos:notation "active" ; ccda:fhirCodingSystem "http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical"^^xsd:anyURI ] .
 
 ccda:allergyStatusInactive a skos:Concept ;
   skos:inScheme ccda:allergyStatuses ;
   skos:notation "73425007" ;
-  skos:exactMatch <http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical/inactive> .
+  skos:exactMatch [ skos:notation "inactive" ; ccda:fhirCodingSystem "http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical"^^xsd:anyURI ] .
 
 ccda:allergyStatusResolved a skos:Concept ;
   skos:inScheme ccda:allergyStatuses ;
   skos:notation "413322009" ;
-  skos:exactMatch <http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical/resolved> .
+  skos:exactMatch [ skos:notation "resolved" ; ccda:fhirCodingSystem "http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical"^^xsd:anyURI ] .

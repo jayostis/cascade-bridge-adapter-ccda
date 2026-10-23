@@ -1,12 +1,21 @@
 PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX sh:     <http://www.w3.org/ns/shacl#>
 PREFIX oa:     <http://www.w3.org/ns/oa#>
+PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:    <http://sparql.xyz/facade-x/data/>
+PREFIX v3:     <urn:hl7-org:v3>
 PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
-# A record named by its class alone, the specification's last row: it states no
-# identifier, no key field and no member, so every such record of its class in
-# every document is one record.
+# What record.rq's choice of rule says about a record's name, its scopes and
+# its repeat test read as record.rq reads them:
+#   - its id is another statement's of the document, of any class, with
+#     another key: the source broke its own id, and the record is named by the
+#     document; its value is the id;
+#   - the document states no custodian id, or no one patient with an id, so the
+#     record is named by the document; its value is its class;
+#   - in its scopes, it states no identifier, no key field and no member, so it
+#     is named by its class alone, as every such record of its class there is.
 
 CONSTRUCT {
   [] a oa:Annotation ;
@@ -14,14 +23,48 @@ CONSTRUCT {
       oa:hasSource bridge:thisRecord ;
       oa:hasSelector [ a oa:XPathSelector ; rdf:value ?refinement ]
     ] ;
-    oa:hasBody ccda:namedByClassAlone ;
+    oa:hasBody ?gap ;
     oa:motivatedBy oa:classifying ;
-    sh:value ?class .
+    sh:value ?value .
 }
 WHERE {
   ?row ccda:recordClass ?class ;
     ccda:refinement ?refinement .
-  FILTER NOT EXISTS { ?row ccda:identifier ?identifier }
-  FILTER NOT EXISTS { ?row ccda:keyFingerprint ?key }
-  FILTER NOT EXISTS { ?row ccda:membersFingerprint ?members }
+  OPTIONAL { ?row ccda:identifier ?identifier ; ccda:identifierRoot ?identifierRoot }
+  OPTIONAL { ?row ccda:keyFingerprint ?key }
+  OPTIONAL { ?row ccda:membersFingerprint ?members }
+  OPTIONAL {
+    {
+      SELECT (COUNT(?id) AS ?custodianIds) WHERE {
+        ?root a fx:root, v3:ClinicalDocument ; ?custodianSlot ?custodian .
+        ?custodian a v3:custodian ; ?assignedSlot ?assigned .
+        ?assigned a v3:assignedCustodian ; ?organizationSlot ?organization .
+        ?organization a v3:representedCustodianOrganization ; ?idSlot ?id .
+        ?id a v3:id ; xyz:root ?idRoot .
+        FILTER (STRLEN(?idRoot) > 0)
+        FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
+      }
+    }
+  }
+  OPTIONAL {
+    {
+      SELECT (SAMPLE(?patientIdRoot) AS ?patientRoot) (COUNT(?patientRow) AS ?patients) WHERE {
+        ?patientRow ccda:recordClass "Patient" .
+        OPTIONAL { ?patientRow ccda:identifierRoot ?patientIdRoot }
+      }
+    }
+    FILTER (?patients = 1 && BOUND(?patientRoot))
+  }
+  BIND (BOUND(?identifier) && EXISTS {
+          ?other ccda:identifier ?identifier .
+          OPTIONAL { ?other ccda:keyFingerprint ?otherKey }
+          FILTER (COALESCE(?otherKey, "") != COALESCE(?key, ""))
+        } AS ?repeated)
+  BIND (IF(?class = "Patient", ?identifierRoot, ?patientRoot) AS ?patientScope)
+  BIND (COALESCE(?custodianIds, 0) > 0 && BOUND(?patientScope) AS ?inScope)
+  BIND (IF(?repeated, ccda:entryIdRepeated,
+        IF(!?inScope, ccda:namingScopeNotStated,
+        IF(!BOUND(?identifier) && !BOUND(?key) && !BOUND(?members), ccda:namedByClassAlone, 1/0))) AS ?gap)
+  BIND (IF(?repeated, ?identifier, ?class) AS ?value)
+  FILTER (BOUND(?gap))
 }
