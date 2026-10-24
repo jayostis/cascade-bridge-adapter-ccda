@@ -6,8 +6,7 @@ PREFIX void:     <http://rdfs.org/ns/void#>
 PREFIX fx:       <http://sparql.xyz/facade-x/ns/>
 PREFIX xyz:      <http://sparql.xyz/facade-x/data/>
 PREFIX v3:       <urn:hl7-org:v3>
-PREFIX health:   <https://ns.cascadeprotocol.org/health/v1#>
-PREFIX clinical: <https://ns.cascadeprotocol.org/clinical/v1#>
+PREFIX cascade:  <https://ns.cascadeprotocol.org/cascade#>
 PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # A Result Observation the document table makes a record of.
@@ -84,7 +83,7 @@ WHERE {
                   }
                 }
               }
-              BIND (health:testName AS ?p)
+              BIND (cascade:testName AS ?p)
               BIND (STRAFTER(STR(?cS), "#_") AS ?at)
               BIND ("1" AS ?tier)
             }
@@ -92,7 +91,7 @@ WHERE {
             {
               ?result ?cS ?code . ?code a v3:code ; ?otS ?originalText . ?originalText a v3:originalText ; ?vS ?value .
               FILTER (isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
-              BIND (health:testName AS ?p)
+              BIND (cascade:testName AS ?p)
               BIND (STRAFTER(STR(?cS), "#_") AS ?at)
               BIND ("2" AS ?tier)
               BIND (STRAFTER(STR(?vS), "#_") AS ?within)
@@ -100,7 +99,7 @@ WHERE {
             UNION
             {
               ?result ?cS ?code . ?code a v3:code ; xyz:displayName ?value .
-              BIND (health:testName AS ?p)
+              BIND (cascade:testName AS ?p)
               BIND (STRAFTER(STR(?cS), "#_") AS ?at)
               BIND ("3" AS ?tier)
             }
@@ -122,21 +121,21 @@ WHERE {
                   {
                     ?resultValue a v3:value ; xsi:type ?written ; xyz:value ?value .
                     FILTER (REPLACE(?written, "^.*:", "") IN ("PQ", "INT", "REAL"))
-                    BIND (health:resultValue AS ?p)
+                    BIND (cascade:resultValue AS ?p)
                     BIND ("1" AS ?tier)
                   }
                   UNION
                   {
                     ?resultValue a v3:value ; xsi:type ?written ; xyz:unit ?value .
                     FILTER (REPLACE(?written, "^.*:", "") = "PQ")
-                    BIND (health:resultUnit AS ?p)
+                    BIND (cascade:resultUnit AS ?p)
                     BIND ("1" AS ?tier)
                   }
                   UNION
                   {
                     ?resultValue a v3:value ; xsi:type ?written ; ?vS ?value .
                     FILTER (REPLACE(?written, "^.*:", "") = "ST" && isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
-                    BIND (health:resultValue AS ?p)
+                    BIND (cascade:resultValue AS ?p)
                     BIND ("1" AS ?tier)
                     BIND (STRAFTER(STR(?vS), "#_") AS ?within)
                   }
@@ -164,7 +163,7 @@ WHERE {
                         }
                       }
                     }
-                    BIND (health:resultValue AS ?p)
+                    BIND (cascade:resultValue AS ?p)
                     BIND ("1" AS ?tier)
                   }
                   UNION
@@ -172,7 +171,7 @@ WHERE {
                     ?resultValue a v3:value ; xsi:type ?written ; ?otS ?originalText . ?originalText a v3:originalText ; ?vS ?value .
                     FILTER (REPLACE(?written, "^.*:", "") IN ("CD", "CE", "CV", "CO")
                             && isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
-                    BIND (health:resultValue AS ?p)
+                    BIND (cascade:resultValue AS ?p)
                     BIND ("2" AS ?tier)
                     BIND (STRAFTER(STR(?vS), "#_") AS ?within)
                   }
@@ -180,7 +179,7 @@ WHERE {
                   {
                     ?resultValue a v3:value ; xsi:type ?written ; xyz:displayName ?value .
                     FILTER (REPLACE(?written, "^.*:", "") IN ("CD", "CE", "CV", "CO"))
-                    BIND (health:resultValue AS ?p)
+                    BIND (cascade:resultValue AS ?p)
                     BIND ("3" AS ?tier)
                   }
                 }
@@ -259,13 +258,13 @@ WHERE {
                   }
                 }
               }
-              BIND (health:referenceRange AS ?p)
+              BIND (cascade:referenceRange AS ?p)
               BIND (STRAFTER(STR(?rrS), "#_") AS ?at)
             }
             UNION
             {
               ?result ?iS ?interpretationCode . ?interpretationCode a v3:interpretationCode ; xyz:code ?value .
-              BIND (health:interpretation AS ?p)
+              BIND (cascade:resultInterpretation AS ?p)
               BIND (STRAFTER(STR(?iS), "#_") AS ?at)
               BIND ("1" AS ?tier)
             }
@@ -273,7 +272,7 @@ WHERE {
             {
               ?result ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?value .
               FILTER (REGEX(?value, "^[0-9]{8}([0-9]{2}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?)?([+-][0-9]{4})?$"))
-              BIND (health:performedDate AS ?p)
+              BIND (cascade:resultClinicallyRelevantTime AS ?p)
               BIND (STRAFTER(STR(?eS), "#_") AS ?at)
               BIND ("1" AS ?tier)
             }
@@ -281,18 +280,18 @@ WHERE {
             {
               ?result ?eS ?time . ?time a v3:effectiveTime ; ?lS ?low . ?low a v3:low ; xyz:value ?value .
               FILTER (REGEX(?value, "^[0-9]{8}([0-9]{2}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?)?([+-][0-9]{4})?$"))
-              BIND (health:performedDate AS ?p)
+              BIND (cascade:resultClinicallyRelevantTime AS ?p)
               BIND (STRAFTER(STR(?eS), "#_") AS ?at)
               BIND ("2" AS ?tier)
             }
             UNION
             {
               ?result ?sS ?statusCode . ?statusCode a v3:statusCode ; xyz:code ?code .
-              ?concept skos:inScheme ccda:resultStatuses ; skos:notation ?key ; skos:exactMatch ?match .
+              ?concept skos:inScheme ccda:resultStatuses ; skos:notation ?key ; skos:exactMatch|skos:broadMatch ?match .
+              ?match skos:notation ?value .
               FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
-              BIND (clinical:status AS ?p)
+              BIND (cascade:workflowStatus AS ?p)
               BIND (STRAFTER(STR(?sS), "#_") AS ?at)
-              BIND (REPLACE(STR(?match), "^.*/", "") AS ?value)
               BIND ("1" AS ?tier)
             }
           }
@@ -309,7 +308,7 @@ WHERE {
       } GROUP BY ?result ?p
     }
     BIND (STRAFTER(?first, "|") AS ?value)
-    BIND (IF(?p != health:performedDate, ?value,
+    BIND (IF(?p != cascade:resultClinicallyRelevantTime, ?value,
           IF(REGEX(?value, "^[0-9]{12}([0-9]{2}(\\.[0-9]+)?)?([+-][0-9]{4})?$"),
              STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),
                           "T", SUBSTR(?value, 9, 2), ":", SUBSTR(?value, 11, 2), ":",
@@ -329,7 +328,7 @@ WHERE {
         ?result ?cS ?coding . ?coding a v3:code ; xyz:code ?loinc ; xyz:codeSystem ?codeSystem .
         FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.1")
         ccda:codeSystemLoinc void:uriSpace ?stem .
-        BIND (health:testCode AS ?p)
+        BIND (cascade:testCode AS ?p)
         BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?loinc))) AS ?o)
       }
       UNION
@@ -337,7 +336,7 @@ WHERE {
         ?result ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation ; xyz:code ?loinc ; xyz:codeSystem ?codeSystem .
         FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.1")
         ccda:codeSystemLoinc void:uriSpace ?stem .
-        BIND (health:testCode AS ?p)
+        BIND (cascade:testCode AS ?p)
         BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?loinc))) AS ?o)
       }
     }

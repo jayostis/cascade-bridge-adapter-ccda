@@ -1,0 +1,64 @@
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sh:     <http://www.w3.org/ns/shacl#>
+PREFIX oa:     <http://www.w3.org/ns/oa#>
+PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:    <http://sparql.xyz/facade-x/data/>
+PREFIX v3:     <urn:hl7-org:v3>
+PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
+PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# A reference in an entry a record is made from through which the mappings
+# read nothing: one naming no narrative element (no '#', nothing after it, or
+# an ID no element or two elements hold, trimmed as the mappings trim it), or
+# naming one that does not hold exactly one run of text and nothing else, as
+# the mappings' HAVING and isLiteral ask. What they read through a reference is
+# then read from the next place it is stated, and the reference itself is lost;
+# this says so, on the entry, with the reference as written as its value.
+
+CONSTRUCT {
+  [] a oa:Annotation ;
+    oa:hasTarget [
+      oa:hasSource bridge:thisRecord ;
+      oa:hasSelector [ a oa:XPathSelector ; rdf:value ?entryRefinement ]
+    ] ;
+    oa:hasBody ccda:referenceReadsNothing ;
+    oa:motivatedBy oa:classifying ;
+    sh:value ?pointer .
+}
+WHERE {
+  {
+    SELECT DISTINCT ?prefix ?pointer WHERE {
+      ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
+      ?outer a v3:component ; ?bodySlot ?body .
+      ?body a v3:structuredBody ; ?componentSlot ?component .
+      ?component a v3:component ; ?sectionSlot ?section .
+      ?section a v3:section ; ?entrySlot ?entry .
+      ?entry a v3:entry ; (!rdf:type)+ ?reference .
+      ?reference a v3:reference ; xyz:value ?pointer .
+      BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
+                   STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
+                   STRAFTER(STR(?entrySlot), "#_"), ".") AS ?prefix)
+    }
+  }
+  BIND (REPLACE(?pointer, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?trimmed)
+  OPTIONAL {
+    {
+      SELECT ?anchor (COUNT(DISTINCT ?holder) AS ?holders) (COUNT(?runSlot) AS ?runs) (SAMPLE(?run) AS ?only) WHERE {
+        ?holder xyz:ID ?anchor .
+        OPTIONAL { ?holder ?runSlot ?run . FILTER (STRSTARTS(STR(?runSlot), STR(rdf:_))) }
+      } GROUP BY ?anchor
+    }
+    FILTER (?anchor = STRAFTER(?trimmed, "#"))
+  }
+  FILTER (!(STRSTARTS(?trimmed, "#") && STRLEN(?trimmed) > 1 && COALESCE(?holders, 0) = 1 && COALESCE(?runs, 0) = 1
+            && COALESCE(isLiteral(?only), false)))
+  {
+    SELECT ?prefix (SAMPLE(?refinement) AS ?anyRefinement) WHERE {
+      ?row ccda:statementAt ?slots ; ccda:refinement ?refinement .
+      BIND (REPLACE(?slots, "^(([0-9]+\\.){5}).*$", "$1") AS ?prefix)
+    } GROUP BY ?prefix
+  }
+  BIND ("/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][" AS ?entryStep)
+  BIND (CONCAT(STRBEFORE(?anyRefinement, ?entryStep), ?entryStep,
+               STRBEFORE(STRAFTER(?anyRefinement, ?entryStep), "]"), "]") AS ?entryRefinement)
+}

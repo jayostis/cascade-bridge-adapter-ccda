@@ -31,6 +31,7 @@
     <#medications-and-results-a>
     <#medications-and-results-edges>
     <#medications-and-results-b>
+    <#fingerprint-keys>
     <#download-twice-names-one-allergy>
     <#download-twice-nullflavor-id-names-one-allergy>
     <#id-bearing-differs-from-nullflavor-id>
@@ -43,6 +44,18 @@
     <#download-twice-names-one-medication>
     <#download-twice-id-less-medication-names-one-record>
     <#download-twice-id-less-result-names-one-record>
+    <#two-patients>
+    <#no-record-target>
+    <#one-id-equal-keys>
+    <#narrative-reference-to-markup>
+    <#fingerprint-repeated-and-reordered>
+    <#id-root-with-bar>
+    <#fingerprint-values-reordered>
+    <#a-patient-of-two-is-not-named-by-its-id>
+    <#one-id-on-a-problem-and-a-procedure-with-equal-keys-names-two-records>
+    <#one-id-on-two-procedures-without-key-and-other-members-names-two-records>
+    <#a-value-stated-twice-names-the-record-of-it-stated-once>
+    <#values-in-another-order-name-one-record>
   ) .
 
 <#allergies-section> a bridge:IsomorphicConversionTest ;
@@ -346,6 +359,18 @@
     bridge:expectedFindings <findings/medications-and-results-b.ttl>
   ] .
 
+<#fingerprint-keys> a bridge:IsomorphicConversionTest ;
+  mf:name "fingerprint-keys" ;
+  mf:action [
+    bridge:input <in/fingerprint-keys.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/fingerprint-keys.ttl> ;
+    bridge:expectedFindings <findings/fingerprint-keys.ttl>
+  ] .
+
 <#download-twice-names-one-allergy> a bridge:IdentityRelationTest ;
   mf:name "download-twice-names-one-allergy" ;
   mf:action [
@@ -546,6 +571,175 @@
       bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
       bridge:facts <facts/portal-download.ttl> ;
       bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][2]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][2]/*[local-name()='organizer' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ]
+  ] ;
+  mf:result [ bridge:sameRecord true ] .
+
+<#two-patients> a bridge:IsomorphicConversionTest ;
+  mf:name "two-patients" ;
+  mf:action [
+    bridge:input <in/two-patients.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/two-patients.ttl> ;
+    bridge:expectedFindings <findings/two-patients.ttl>
+  ] .
+
+<#no-record-target> a bridge:IsomorphicConversionTest ;
+  mf:name "no-record-target" ;
+  mf:action [
+    bridge:input <in/no-record-target.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/no-record-target.ttl> ;
+    bridge:expectedFindings <findings/no-record-target.ttl>
+  ] .
+
+<#one-id-equal-keys> a bridge:IsomorphicConversionTest ;
+  mf:name "one-id-equal-keys" ;
+  mf:action [
+    bridge:input <in/one-id-equal-keys.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/one-id-equal-keys.ttl> ;
+    bridge:expectedFindings <findings/one-id-equal-keys.ttl>
+  ] .
+
+<#narrative-reference-to-markup> a bridge:IsomorphicConversionTest ;
+  mf:name "narrative-reference-to-markup" ;
+  mf:action [
+    bridge:input <in/narrative-reference-to-markup.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/narrative-reference-to-markup.ttl> ;
+    bridge:expectedFindings <findings/narrative-reference-to-markup.ttl>
+  ] .
+
+<#fingerprint-repeated-and-reordered> a bridge:IsomorphicConversionTest ;
+  mf:name "fingerprint-repeated-and-reordered" ;
+  mf:action [
+    bridge:input <in/fingerprint-repeated-and-reordered.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/fingerprint-repeated-and-reordered.ttl> ;
+    bridge:expectedFindings <findings/fingerprint-repeated-and-reordered.ttl>
+  ] .
+
+<#id-root-with-bar> a bridge:IsomorphicConversionTest ;
+  mf:name "id-root-with-bar" ;
+  mf:action [
+    bridge:input <in/id-root-with-bar.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/id-root-with-bar.ttl> ;
+    bridge:expectedFindings <findings/id-root-with-bar.ttl>
+  ] .
+
+<#fingerprint-values-reordered> a bridge:IsomorphicConversionTest ;
+  mf:name "fingerprint-values-reordered" ;
+  mf:action [
+    bridge:input <in/fingerprint-values-reordered.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/fingerprint-values-reordered.ttl> ;
+    bridge:expectedFindings <findings/fingerprint-values-reordered.ttl>
+  ] .
+
+<#a-patient-of-two-is-not-named-by-its-id> a bridge:IdentityRelationTest ;
+  mf:name "a-patient-of-two-is-not-named-by-its-id" ;
+  mf:action [
+    bridge:conversion [
+      bridge:input <in/fingerprint-keys.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ] , [
+      bridge:input <in/two-patients.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ]
+  ] ;
+  mf:result [ bridge:sameRecord false ] .
+
+<#one-id-on-a-problem-and-a-procedure-with-equal-keys-names-two-records> a bridge:IdentityRelationTest ;
+  mf:name "one-id-on-a-problem-and-a-procedure-with-equal-keys-names-two-records" ;
+  mf:action [
+    bridge:conversion [
+      bridge:input <in/one-id-equal-keys.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='act' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entryRelationship' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ] , [
+      bridge:input <in/one-id-equal-keys.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][2]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='procedure' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ]
+  ] ;
+  mf:result [ bridge:sameRecord false ] .
+
+<#one-id-on-two-procedures-without-key-and-other-members-names-two-records> a bridge:IdentityRelationTest ;
+  mf:name "one-id-on-two-procedures-without-key-and-other-members-names-two-records" ;
+  mf:action [
+    bridge:conversion [
+      bridge:input <in/one-id-equal-keys.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][2]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][2]/*[local-name()='procedure' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ] , [
+      bridge:input <in/one-id-equal-keys.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][2]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][3]/*[local-name()='procedure' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ]
+  ] ;
+  mf:result [ bridge:sameRecord false ] .
+
+<#a-value-stated-twice-names-the-record-of-it-stated-once> a bridge:IdentityRelationTest ;
+  mf:name "a-value-stated-twice-names-the-record-of-it-stated-once" ;
+  mf:action [
+    bridge:conversion [
+      bridge:input <in/fingerprint-keys.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='act' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entryRelationship' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ] , [
+      bridge:input <in/fingerprint-repeated-and-reordered.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='act' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entryRelationship' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ]
+  ] ;
+  mf:result [ bridge:sameRecord true ] .
+
+<#values-in-another-order-name-one-record> a bridge:IdentityRelationTest ;
+  mf:name "values-in-another-order-name-one-record" ;
+  mf:action [
+    bridge:conversion [
+      bridge:input <in/fingerprint-repeated-and-reordered.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][2]/*[local-name()='act' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entryRelationship' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ] , [
+      bridge:input <in/fingerprint-values-reordered.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='act' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entryRelationship' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]"
     ]
   ] ;
   mf:result [ bridge:sameRecord true ] .

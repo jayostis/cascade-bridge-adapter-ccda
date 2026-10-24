@@ -24,9 +24,10 @@ An input is committed once. A case that needs the same bytes twice names one
 file in both of its entries.
 
 A findings file is a Bridge's own `convert --findings` output over the input
-beside it, committed unedited, and compared as a graph, never as bytes. An
-expected graph is checked by hand against the specification's rules and the
-input, a record's name recomputed outside SPARQL from its inputs.
+beside it, committed unedited, and compared as a graph, never as bytes. So is an
+expected graph, its `convert` output, never written by hand; each record's name
+in it is recomputed outside SPARQL from its inputs with cascade-vocabulary's
+`tests/naming.py`.
 
 An identity relation names a record by its arrival's selector, the clinical
 statement's XPath from the document element.

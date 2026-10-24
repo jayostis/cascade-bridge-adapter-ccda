@@ -64,27 +64,12 @@
       },
       "bridge:vocabulary": [
         {
-          "@id": "https://ns.cascadeprotocol.org/core/v1#"
-        },
-        {
-          "@id": "https://ns.cascadeprotocol.org/health/v1#"
-        },
-        {
-          "@id": "https://ns.cascadeprotocol.org/clinical/v1#"
-        },
-        {
-          "@id": "https://ns.cascadeprotocol.org/records/v1-draft#"
+          "@id": "https://ns.cascadeprotocol.org/cascade#"
         }
       ],
       "bridge:vocabularyFile": [
-        "ontologies/core/v1/core.ttl",
-        "ontologies/core/v1/core.shapes.ttl",
-        "ontologies/health/v1/health.ttl",
-        "ontologies/health/v1/health.shapes.ttl",
-        "ontologies/clinical/v1/clinical.ttl",
-        "ontologies/clinical/v1/clinical.shapes.ttl",
-        "ontologies/records/v1-draft/records.ttl",
-        "ontologies/records/v1-draft/records.shapes.ttl"
+        "ontologies/cascade.ttl",
+        "ontologies/cascade.shapes.ttl"
       ],
       "bridge:sourceMediaType": "application/cda+xml",
       "bridge:sourceSchema": {
@@ -175,6 +160,9 @@
         },
         {
           "@id": "in/sparql/name-findings.rq"
+        },
+        {
+          "@id": "in/sparql/reference-findings.rq"
         }
       ],
       "bridge:table": [
@@ -310,6 +298,9 @@
           "@id": "in/sparql/name-findings.rq"
         },
         {
+          "@id": "in/sparql/reference-findings.rq"
+        },
+        {
           "@id": "vocab/ccda-gaps.ttl"
         },
         {
@@ -404,6 +395,30 @@
         },
         {
           "@id": "fixtures/in/procedures.xml"
+        },
+        {
+          "@id": "fixtures/in/fingerprint-keys.xml"
+        },
+        {
+          "@id": "fixtures/in/two-patients.xml"
+        },
+        {
+          "@id": "fixtures/in/no-record-target.xml"
+        },
+        {
+          "@id": "fixtures/in/one-id-equal-keys.xml"
+        },
+        {
+          "@id": "fixtures/in/narrative-reference-to-markup.xml"
+        },
+        {
+          "@id": "fixtures/in/fingerprint-repeated-and-reordered.xml"
+        },
+        {
+          "@id": "fixtures/in/fingerprint-values-reordered.xml"
+        },
+        {
+          "@id": "fixtures/in/id-root-with-bar.xml"
         },
         {
           "@id": "fixtures/in/shared-id.xml"
@@ -538,7 +553,55 @@
           "@id": "fixtures/expected/procedures.ttl"
         },
         {
+          "@id": "fixtures/expected/fingerprint-keys.ttl"
+        },
+        {
+          "@id": "fixtures/expected/two-patients.ttl"
+        },
+        {
+          "@id": "fixtures/expected/no-record-target.ttl"
+        },
+        {
+          "@id": "fixtures/expected/one-id-equal-keys.ttl"
+        },
+        {
+          "@id": "fixtures/expected/narrative-reference-to-markup.ttl"
+        },
+        {
+          "@id": "fixtures/expected/fingerprint-repeated-and-reordered.ttl"
+        },
+        {
+          "@id": "fixtures/expected/fingerprint-values-reordered.ttl"
+        },
+        {
+          "@id": "fixtures/expected/id-root-with-bar.ttl"
+        },
+        {
           "@id": "fixtures/findings/procedures.ttl"
+        },
+        {
+          "@id": "fixtures/findings/fingerprint-keys.ttl"
+        },
+        {
+          "@id": "fixtures/findings/two-patients.ttl"
+        },
+        {
+          "@id": "fixtures/findings/no-record-target.ttl"
+        },
+        {
+          "@id": "fixtures/findings/one-id-equal-keys.ttl"
+        },
+        {
+          "@id": "fixtures/findings/narrative-reference-to-markup.ttl"
+        },
+        {
+          "@id": "fixtures/findings/fingerprint-repeated-and-reordered.ttl"
+        },
+        {
+          "@id": "fixtures/findings/fingerprint-values-reordered.ttl"
+        },
+        {
+          "@id": "fixtures/findings/id-root-with-bar.ttl"
         },
         {
           "@id": "fixtures/expected/shared-id.ttl"
@@ -593,6 +656,9 @@
         },
         {
           "@id": "fixtures/findings/narrative-id-twice.ttl"
+        },
+        {
+          "@id": "in/CLAUDE.md"
         },
         {
           "@id": "fixtures/CLAUDE.md"
@@ -664,34 +730,21 @@
         "File"
       ],
       "name": "cascade-vocabulary",
-      "license": {
-        "@id": "https://spdx.org/licenses/Apache-2.0"
-      },
-      "description": "The repository the adapter's vocabularies are read from, at the version a run picks; the paths in bridge:vocabularyFile are read there. A web-based data entity, referenced and not committed: the RO-Crate 1.2 validator reads every SoftwareSourceCode as a script that must be a File in hasPart."
+      "license": [
+        {
+          "@id": "https://spdx.org/licenses/Apache-2.0"
+        },
+        {
+          "@id": "https://spdx.org/licenses/CC-BY-4.0"
+        }
+      ],
+      "description": "The repository the adapter's vocabularies are read from, at the version a run picks; the paths in bridge:vocabularyFile are read there, and each of those ontology files is licensed Apache-2.0 AND CC-BY-4.0. A web-based data entity, referenced and not committed: the RO-Crate 1.2 validator reads every SoftwareSourceCode as a script that must be a File in hasPart."
     },
     {
-      "@id": "https://ns.cascadeprotocol.org/core/v1#",
+      "@id": "https://ns.cascadeprotocol.org/cascade#",
       "@type": "DefinedTermSet",
-      "name": "Cascade core vocabulary",
-      "description": "One of the vocabularies the adapter writes, as cascade-vocabulary declares it."
-    },
-    {
-      "@id": "https://ns.cascadeprotocol.org/health/v1#",
-      "@type": "DefinedTermSet",
-      "name": "Cascade health vocabulary",
-      "description": "One of the vocabularies the adapter writes, as cascade-vocabulary declares it."
-    },
-    {
-      "@id": "https://ns.cascadeprotocol.org/clinical/v1#",
-      "@type": "DefinedTermSet",
-      "name": "Cascade clinical vocabulary",
-      "description": "One of the vocabularies the adapter writes, as cascade-vocabulary declares it."
-    },
-    {
-      "@id": "https://ns.cascadeprotocol.org/records/v1-draft#",
-      "@type": "DefinedTermSet",
-      "name": "Cascade records vocabulary",
-      "description": "One of the vocabularies the adapter writes, as cascade-vocabulary declares it."
+      "name": "Cascade vocabulary",
+      "description": "The vocabulary the adapter writes, as cascade-vocabulary declares it."
     },
     {
       "@id": "schema/infrastructure/cda/CDA_SDTC.xsd",
@@ -838,24 +891,24 @@
       "@type": "File",
       "name": "Document table: the clinical statements",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "34648",
-      "sha256": "669c4d4f3850c0d26c50e582a6ce80913a9636723358928040b002e939535048",
+      "contentSize": "35119",
+      "sha256": "95441390827847219e264a0276a6ddb10e38ead1cdb267488ef6232fa480f91b",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "One row per clinical statement this release maps: its slots, its class, its selector refined from the document element, its identifier, and the fingerprints of its key and of its members, with each class's key fields and member exclusions declared."
+      "description": "One row per clinical statement this release maps: its slots, its class, its selector refined from the document element, its identifier with its root and extension, and the fingerprints of its key and of its members, with each class's key fields and member exclusions declared."
     },
     {
       "@id": "in/sparql/record.rq",
       "@type": "File",
       "name": "Mapping: records, versions and arrivals",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "5479",
-      "sha256": "718c0c6d40bd2b3694436091365fb49f2dbfbc9814efa87f0571e4efaca501d5",
+      "contentSize": "13620",
+      "sha256": "1f385a3f1e69c363b90e84a85446d49646ee5be2a1221e0441a7771b92bd23c0",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "For each row of the document table: the record, named by the Cascade Bridge Specification's rows for a C-CDA record from its class, identifier, key fingerprint or members fingerprint; its class, its source URL where its identifier names it, and its source id; its version, the patient the version is about, and the version's arrival with its selector."
+      "description": "For each row of the document table: the record, named by cascade-vocabulary's rule for it as docs/format.md#names picks it, from the custodian's and the patient's ids and its own id, else its class and fingerprints, else the document and its selector; its class, its source URL where its identifier names it, and its source id; its version, the patient the version is about, and the version's arrival with its selector."
     },
     {
       "@id": "in/sparql/patient.rq",
@@ -863,7 +916,7 @@
       "name": "Mapping: patient",
       "encodingFormat": "application/sparql-query",
       "contentSize": "2086",
-      "sha256": "ef77b2b2e4218e7f3f5402edd37d9e3bb33bc1d6fc5fdf95102621b6432f6b72",
+      "sha256": "d22872cc237bd35af94f8e66dfc3a383b8571c07e12e98a35cf31b63f2780880",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -874,8 +927,8 @@
       "@type": "File",
       "name": "Mapping: allergy",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "10852",
-      "sha256": "f3592b9d503cf00b234c249ae8edbb84eaa500841d89a53b0e5e10e6a849fd93",
+      "contentSize": "10820",
+      "sha256": "1f390ac8c5112d25addc2021bf3db7f607a6afdc494434a1cd40ae8d7044ee26",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -887,11 +940,11 @@
       "name": "Mapping: the document's author",
       "encodingFormat": "application/sparql-query",
       "contentSize": "1216",
-      "sha256": "eaa430c5fc3325a42e25ad9cb9e1678b2719906e72c555bd682a7e0215dd32c8",
+      "sha256": "73a7d2132cc8c194f176eee58efba146d25cc865a1a1a5b51af51bafd309fbd8",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The custodian organisation's name, as the document's prov:qualifiedAttribution in the role rec:author."
+      "description": "The custodian organisation's name, as the document's prov:qualifiedAttribution in the role cascade:AuthorRole."
     },
     {
       "@id": "in/sparql/section-findings.rq",
@@ -934,8 +987,8 @@
       "@type": "File",
       "name": "Mapping: condition",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "10914",
-      "sha256": "2c5cf1dd93f9aeea9b1254d38e4f384cb3216dad418fe1c74d4ef13a8638cf01",
+      "contentSize": "10900",
+      "sha256": "19ac0629c4153c5dc898213b9d621a54d18486c1768216273662bc3dd57406f8",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -946,8 +999,8 @@
       "@type": "File",
       "name": "Mapping: immunization",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "7504",
-      "sha256": "aa3ebd539c8d96fbfd61e9987c0eca78825910374735e3dfe673f2b149522229",
+      "contentSize": "7804",
+      "sha256": "cfe2c574cb40c185334516a0967b010e1d832ab99aef27c3b4c0d9858ca0eb94",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -958,8 +1011,8 @@
       "@type": "File",
       "name": "Mapping: procedure",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "6508",
-      "sha256": "17bbe3222249a2e531f1eeacb85c5c3b9b4eaa1c0dc4ecffd891ef454966cbc9",
+      "contentSize": "6755",
+      "sha256": "7347f7538a3a5db9f1bd29a1a8fc446a9ceb6f465dbd8892a54872adccdc3e80",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -994,8 +1047,8 @@
       "@type": "File",
       "name": "Mapping: medication",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "10973",
-      "sha256": "b7f4c1ac89a9288378acd3e115e73b05d8cd73ecd33ec611fcbe4f34aaf36329",
+      "contentSize": "10968",
+      "sha256": "b5f79d060b4b21f9c9aff4ddf03d417526302bcdc04840eac9bcb7f2c3609dc2",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1006,8 +1059,8 @@
       "@type": "File",
       "name": "Mapping: result",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "17440",
-      "sha256": "5052639d0bfe37f11ab24af25d274e04484d2393d2527a9f8905504854febfc1",
+      "contentSize": "17445",
+      "sha256": "c1e44c931367455fb0e867b757888a0e62a0b4f85d2335d1e1baffb65a0946ab",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1040,22 +1093,34 @@
     {
       "@id": "in/sparql/name-findings.rq",
       "@type": "File",
-      "name": "Findings: records named by their class alone",
+      "name": "Findings: how a record is named",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "996",
-      "sha256": "fa2d5549ffe35fa22848fd7021efea1ed3b00bd4633e8e97067615cc2b9b2671",
+      "contentSize": "3621",
+      "sha256": "84fbbd941c5b9e9ca620138de188277303ba7e9247e76400bb2e9ffe81b32cd0",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "Each record that states no identifier, no key field and no member."
+      "description": "Each record whose id another statement of the document carries with another key, each record named by the document for want of a custodian id or of one patient with an id, and each record in its scopes that states no identifier, no key field and no member."
+    },
+    {
+      "@id": "in/sparql/reference-findings.rq",
+      "@type": "File",
+      "name": "Findings: references that name nothing",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "3031",
+      "sha256": "38922ff9e271583912b963c4f25b4bc47e2034544ea279a25b99e436803f67d2",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Each reference in an entry a record is made from that names no narrative element, on its entry."
     },
     {
       "@id": "vocab/ccda-gaps.ttl",
       "@type": "File",
       "name": "C-CDA R2.1 XML gaps",
       "encodingFormat": "text/turtle",
-      "contentSize": "7961",
-      "sha256": "60d88f68f57bf82f16700d00506e459990ae7e77de7005628fab1808f1ebe7a3",
+      "contentSize": "9090",
+      "sha256": "7d325bf1f7d7b64fe3fce6d21d9678ca22ecacc127f3c7571680f2083020d589",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1066,8 +1131,8 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML source accounting",
       "encodingFormat": "text/turtle",
-      "contentSize": "356920",
-      "sha256": "58b7d48dee2c6659b0235fac30d902661cf6800a000e585b3ade2b848392f2ee",
+      "contentSize": "357154",
+      "sha256": "cd9f4d41d6d1ee0fb65a835cbcec56cfe61bb2ef0cd53180bd2fc50cdf9f59b4",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1078,8 +1143,8 @@
       "@type": "File",
       "name": "Concept map: code systems",
       "encodingFormat": "text/turtle",
-      "contentSize": "3245",
-      "sha256": "fc7a2655942a51c773f5e5737bc480612e87692ab949d36d561639607abcd2d1",
+      "contentSize": "4090",
+      "sha256": "1ed549ea4819e055ad5067a8961b32e7ad58a8b1957a9295fdbcec94d4103293",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1113,180 +1178,180 @@
       "@type": "File",
       "name": "Concept map: problem statuses",
       "encodingFormat": "text/turtle",
-      "contentSize": "1461",
-      "sha256": "2761e9562d2f87697d12f3d21511f5a1632d032e33177a21ccf206136acc1f5e",
+      "contentSize": "1677",
+      "sha256": "f1b1cd50fce705e24a4c99e6b53e6ae695f88953c21737aaba1454ea0d517d6b",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ProblemStatus.xml"
       },
-      "description": "SNOMED CT problem statuses to FHIR Condition clinical status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "SNOMED CT problem statuses to FHIR Condition clinical status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-concern-statuses.ttl",
       "@type": "File",
       "name": "Concept map: concern statuses",
       "encodingFormat": "text/turtle",
-      "contentSize": "458",
-      "sha256": "068ab718139502a3ceca4c4ee8ef3c498b062e74ea0edf0f19a59b01c2466953",
+      "contentSize": "494",
+      "sha256": "eb6caaab7562388bf5f6ae65f96ceab94f1dfb86d20368dfe3731e5a70dce528",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ConditionClinicalStatus.xml"
       },
-      "description": "A problem concern act's status to a FHIR Condition clinical status code; HL7 marks every other row wider, and none is taken. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "A problem concern act's status to a FHIR Condition clinical status code; HL7 marks every other row wider, and none is taken. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-problem-categories.ttl",
       "@type": "File",
       "name": "Concept map: problem categories",
       "encodingFormat": "text/turtle",
-      "contentSize": "675",
-      "sha256": "29d1df2e741b007d9004e36d6f24180a142e0560f599d202325ab501b9149497",
+      "contentSize": "747",
+      "sha256": "42552ba645934987e770022087a83c70d50234d18cca1e71c07138c8542feb26",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ProblemCategory.xml"
       },
-      "description": "A section's LOINC code to a FHIR Condition category code; the health-concern row names a US Core code system the vocabulary does not take, and is left out. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "A section's LOINC code to a FHIR Condition category code; the health-concern row names a US Core code system the vocabulary does not take, and is left out. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-immunization-statuses.ttl",
       "@type": "File",
       "name": "Concept map: immunization statuses",
       "encodingFormat": "text/turtle",
-      "contentSize": "633",
-      "sha256": "7997aee815ceedc9264404bd066fe1620c8f4e0aad2aa89a0b95f4a858b9b9aa",
+      "contentSize": "705",
+      "sha256": "b2ca593e4e619b003fd1f6522848783e92a0fd6fee21bd03db992fcad9464798",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ImmunizationStatus.xml"
       },
-      "description": "HL7 act statuses to FHIR Immunization status codes; HL7 marks every other row wider, and none is taken. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "HL7 act statuses to FHIR Immunization status codes; HL7 marks every other row wider, and none is taken. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-procedure-statuses.ttl",
       "@type": "File",
       "name": "Concept map: procedure statuses",
       "encodingFormat": "text/turtle",
-      "contentSize": "965",
-      "sha256": "31e2835eab3d1853cd495b67558b0ca6c236a40086200b06209cdaeb01836a46",
+      "contentSize": "1109",
+      "sha256": "1907f3351d709adcb91be548ea35a7416a9c4bddbf0358d3ecdb158b77b497a6",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ProcedureStatus.xml"
       },
-      "description": "HL7 act statuses to FHIR Procedure status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "HL7 act statuses to FHIR Procedure status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-allergy-statuses.ttl",
       "@type": "File",
       "name": "Concept map: allergy statuses",
       "encodingFormat": "text/turtle",
-      "contentSize": "887",
-      "sha256": "02ff9677b12a73fd4e871eead9db68d5bc5dbcb44b841cde3dc4416c7f707050",
+      "contentSize": "995",
+      "sha256": "a11f08ac9bc2344cf6a5f9318f4f9eba902d20a632b7f4b9356fe2405ce39dfe",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-AllergyStatus.xml"
       },
-      "description": "SNOMED CT allergy statuses to FHIR AllergyIntolerance clinical status codes, each written as its code system's URI, / and the code. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "SNOMED CT allergy statuses to FHIR AllergyIntolerance clinical status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-allergy-intolerance-types.ttl",
       "@type": "File",
       "name": "Concept map: allergy types",
       "encodingFormat": "text/turtle",
-      "contentSize": "1256",
-      "sha256": "4a94904645800c3d3ecea2b9d85ba2f7329e873afe3d5921f9cee45dc740923a",
+      "contentSize": "1436",
+      "sha256": "3a1587ce117cd448751d4a51bd2ac7d3dc14bf7a40c6dd5b3f3f9b1b94617f66",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-AllergyIntoleranceType.xml"
       },
-      "description": "SNOMED CT allergy and intolerance types to FHIR AllergyIntolerance type codes; the rows HL7 marks unmatched are left out. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "SNOMED CT allergy and intolerance types to FHIR AllergyIntolerance type codes; the rows HL7 marks unmatched are left out. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-allergy-intolerance-categories.ttl",
       "@type": "File",
       "name": "Concept map: allergy categories",
       "encodingFormat": "text/turtle",
-      "contentSize": "1529",
-      "sha256": "6bc3a524d855501ab786ab40fa62497304330929039c8ad895052546d8b592b4",
+      "contentSize": "1745",
+      "sha256": "2db55341115fa58e2389a4b6f25751ef57fb42b09c829b3e468b0ad16ea1de0c",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-AllergyIntoleranceCategory.xml"
       },
-      "description": "SNOMED CT allergy and intolerance types to FHIR AllergyIntolerance category codes; the rows HL7 marks unmatched are left out. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "SNOMED CT allergy and intolerance types to FHIR AllergyIntolerance category codes; the rows HL7 marks unmatched are left out. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-criticalities.ttl",
       "@type": "File",
       "name": "Concept map: criticalities",
       "encodingFormat": "text/turtle",
-      "contentSize": "814",
-      "sha256": "468b668bdf631569ed5bce1bb6cf127f825c874c727faef7476cc10905833539",
+      "contentSize": "922",
+      "sha256": "1d456bf459ad02e62783eae068b49fe9ab0f869bcde419904d3c4982bc40f874",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-Criticality.xml"
       },
-      "description": "HL7 ObservationValue criticality codes to FHIR AllergyIntolerance criticality codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "HL7 ObservationValue criticality codes to FHIR AllergyIntolerance criticality codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-severities.ttl",
       "@type": "File",
       "name": "Concept map: severities",
       "encodingFormat": "text/turtle",
-      "contentSize": "754",
-      "sha256": "1de1463d024683d9766648fd4ef0af423bfbf4debb4a06ad8abe7f892fef142d",
+      "contentSize": "862",
+      "sha256": "13212d4cbaea145bee91eed868b4c5bfd3b02a89f55a280c1fdbf3a87adf000e",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-Severity.xml"
       },
-      "description": "SNOMED CT severities to FHIR reaction severity codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "SNOMED CT severities to FHIR reaction severity codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-medication-statuses.ttl",
       "@type": "File",
       "name": "Concept map: medication statuses",
       "encodingFormat": "text/turtle",
-      "contentSize": "1300",
-      "sha256": "db577e7e55f0c5021532213e02d3e9d8da6eabb5f4b7ff908a3d9ad1cd228bea",
+      "contentSize": "1480",
+      "sha256": "857797a9adc02089ad26131b63501b28cbae560fd8d5044f9341e3466dd269a1",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-MedicationStatus.xml"
       },
-      "description": "HL7 act statuses to FHIR MedicationRequest status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch."
+      "description": "HL7 act statuses to FHIR MedicationRequest status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
     },
     {
       "@id": "vocab/ccda-result-statuses.ttl",
       "@type": "File",
       "name": "Concept map: result statuses",
       "encodingFormat": "text/turtle",
-      "contentSize": "618",
-      "sha256": "a98b185e6ddee07474c23e20c64b68041f7b0e1949d024fbeae5718ec7f344e3",
+      "contentSize": "690",
+      "sha256": "fd49343c35dc9f5361f0f5b1c7d710c89c54c44b75d25615180c7749b8602066",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ResultStatus.xml"
       },
-      "description": "HL7 act statuses to FHIR Observation status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equal, as a skos:exactMatch; the rows it marks wider or inexact are left out."
+      "description": "HL7 act statuses to FHIR Observation status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equal, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code; the rows it marks wider or inexact are left out."
     },
     {
       "@id": "fixtures/facts/portal-download.ttl",
@@ -1294,7 +1359,7 @@
       "name": "Facts supplied with a portal download",
       "encodingFormat": "text/turtle",
       "contentSize": "648",
-      "sha256": "4650c2756e0e7433e6b7ea1f1e8c707c501af185246e36f2caa6e1f0f709af55",
+      "sha256": "ca81c97d66014f1c56d6de87bbd6849d2e9f9955371e8c1f1a20d451ab132b10",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1496,6 +1561,110 @@
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "description": "A Procedures section: a colonoscopy with an id, timed to the minute and coded in SNOMED CT with a CPT translation; an echocardiography with a nullFlavor id; and a Procedure Activity Act, which this release does not map. Authored here on 2026-10-07, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/fingerprint-keys.xml",
+      "@type": "File",
+      "name": "C-CDA: fingerprint-keys",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "6234",
+      "sha256": "9bfe3383f4e6e6c5a6ef8fa5625d4c5f50a4d675cc2f820c9c0afd8982abd323",
+      "dateCreated": "2026-10-22",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Statements stating exactly the key fields of four of this adapter's fingerprint vectors (one, key-active, key-resolved, key-immunization): two problems with no id, one active and one resolved, an immunization with no id and a procedure with no id, in a document stating a custodian id and one patient with an id. Authored here on 2026-10-22, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/two-patients.xml",
+      "@type": "File",
+      "name": "C-CDA: two-patients",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "3589",
+      "sha256": "918efe5276aab108a68a84b9586f14fea197ee7d13c067c5314a7dc2a832a577",
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Two recordTargets, each patient with an id, a custodian id, and one problem with an id: no patient scope is stated, so every record, both patients included, is named by the document, and the problem's version links no patient. Authored here on 2026-10-23, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/no-record-target.xml",
+      "@type": "File",
+      "name": "C-CDA: no-record-target",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "3221",
+      "sha256": "0f6a00fbf6d5cf5840c9c59cbee97bd35a36b9c04f9106ca4c1138e20b1a290c",
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A custodian id and one allergy with an id, and no recordTarget: no patient is stated, so the allergy is named by the document, its version links no patient, and the document says so. Authored here on 2026-10-23, for a case the conformance corpus does not hold; it validates against the CDA schema bar the missing recordTarget."
+    },
+    {
+      "@id": "fixtures/in/one-id-equal-keys.xml",
+      "@type": "File",
+      "name": "C-CDA: one-id-equal-keys",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "4507",
+      "sha256": "7755434980bcf30af8f765a1cf6a48985d9ed181c44e272c083ddbfe1c01b402",
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Statements sharing an id with nothing in their keys to tell them apart: a problem and a procedure with one id and equal key fields, and two procedures with one id, no key field and another target site each. Authored here on 2026-10-23, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/narrative-reference-to-markup.xml",
+      "@type": "File",
+      "name": "C-CDA: narrative-reference-to-markup",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "6114",
+      "sha256": "fff962588a66598496020b7d07e265bb7518993d13fa0a15e7eca8565fa193c5",
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Three problems whose name is referenced into narrative cells the mappings cannot read: one holding a content element, one holding text and a content element, one empty. Authored here on 2026-10-23, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/fingerprint-repeated-and-reordered.xml",
+      "@type": "File",
+      "name": "C-CDA: fingerprint-repeated-and-reordered",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "4281",
+      "sha256": "bc16eb580cc8840e5fba149240ab210797f053b34c0609b6cbfa76e7251f6bf5",
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Two problems with no id, one stating a value twice and one stating two values, whose other order fingerprint-values-reordered states, so that a fingerprint counting a field once and in no order is pinned by statements. Authored here on 2026-10-23, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/fingerprint-values-reordered.xml",
+      "@type": "File",
+      "name": "C-CDA: fingerprint-values-reordered",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "2995",
+      "sha256": "e972333628c98cb77e259316baf1fa7175d22f916abba3b51b8a41918429c520",
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "One problem with no id stating fingerprint-repeated-and-reordered's two values in the other order. Authored here on 2026-10-23, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/id-root-with-bar.xml",
+      "@type": "File",
+      "name": "C-CDA: id-root-with-bar",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "2628",
+      "sha256": "01e0ff6dbb688fd5969e6e7448685497bd9d91b211e506e6dab99568a317c06f",
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A custodian id and a procedure id whose roots hold a '|', the character the naming rules escape. Authored here on 2026-10-23, for a case the conformance corpus does not hold; it validates against the CDA schema bar those two roots, which no uid allows."
     },
     {
       "@id": "fixtures/in/shared-id.xml",
@@ -1708,8 +1877,8 @@
       "@type": "File",
       "name": "Expected graph for allergies-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "3496",
-      "sha256": "8ade32a5b9a0fc5151681ff8311a25a26c82397af928fce6ad87d6dd5d5f517d",
+      "contentSize": "4517",
+      "sha256": "051fb518dba43e2c6d4f0dca2691e106c2281cb96aaa054a18bcfcdfad3a0856",
       "about": {
         "@id": "fixtures/in/allergies-section.xml"
       },
@@ -1717,15 +1886,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/allergies-section.ttl",
       "@type": "File",
       "name": "Expected findings for allergies-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "9482",
-      "sha256": "7f2b642b93355ee54bace57d62971e9b637e41482dc635803b4e4b8a91af928c",
+      "contentSize": "11632",
+      "sha256": "0484466d2859f854cc3f1560366cf6be669a283e608455d966f2dce20eda6a48",
       "about": {
         "@id": "fixtures/in/allergies-section.xml"
       },
@@ -1740,8 +1909,8 @@
       "@type": "File",
       "name": "Expected graph for cerner-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "5055",
-      "sha256": "c631ab47a4ecc72799ea3d5832bca28e91132806d2b00c8dcd80c98bc48b50f1",
+      "contentSize": "6273",
+      "sha256": "73fa2a1776ccfed453d2697aa973b0d60048a041d369b23668d2bf33252b3acd",
       "about": {
         "@id": "fixtures/in/cerner-summarization.xml"
       },
@@ -1749,15 +1918,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/cerner-summarization.ttl",
       "@type": "File",
       "name": "Expected findings for cerner-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "13228",
-      "sha256": "422c50594ce4864c0289d77eeabd8226725acf697ee713783cb55c75dcdaa5f9",
+      "contentSize": "16679",
+      "sha256": "8d7e4fef676013dfe6dc5b5af20c00957638aa66aac84aad01819fee4fb9a570",
       "about": {
         "@id": "fixtures/in/cerner-summarization.xml"
       },
@@ -1772,8 +1941,8 @@
       "@type": "File",
       "name": "Expected graph for epic-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "9421",
-      "sha256": "51c0ad7104742b461c7442417d7e9d3fd4f522f9a8a98bca404ed034fb7d5f4a",
+      "contentSize": "11437",
+      "sha256": "28c61e12f5c5b010d90c600d0216f5b4d63f4eddb5bb4168f57943d342e4012c",
       "about": {
         "@id": "fixtures/in/epic-summarization.xml"
       },
@@ -1781,15 +1950,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/epic-summarization.ttl",
       "@type": "File",
       "name": "Expected findings for epic-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "12680",
-      "sha256": "6c3164522ac0ad6fab58c2804b321d024e485a92add65e4ef8f40bcf457c5d69",
+      "contentSize": "19870",
+      "sha256": "6531a664124037e506b6fbc0b3e6c078b9d11e801444b068f66e1c6084c384dd",
       "about": {
         "@id": "fixtures/in/epic-summarization.xml"
       },
@@ -1804,8 +1973,8 @@
       "@type": "File",
       "name": "Expected graph for full-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "9366",
-      "sha256": "15223ece78b4614738ebc0eb7ac06d8b890d7807f9037d21a126452315b4b177",
+      "contentSize": "11409",
+      "sha256": "a71dba16b407806cbec3bbb814c7f8ed16d70d38d02332a9e5b3580d37d7802d",
       "about": {
         "@id": "fixtures/in/full-summarization.xml"
       },
@@ -1813,15 +1982,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/full-summarization.ttl",
       "@type": "File",
       "name": "Expected findings for full-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "14364",
-      "sha256": "008e566c98bbdc7c21cc93c5e043786c06c8ae21901ddb29ff4eb5da736a2d19",
+      "contentSize": "21540",
+      "sha256": "0628a39620ccd6abec77fe2107a535c3baeb423bbc3e0f9b94661d31867198f2",
       "about": {
         "@id": "fixtures/in/full-summarization.xml"
       },
@@ -1836,8 +2005,8 @@
       "@type": "File",
       "name": "Expected graph for immunizations-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "3437",
-      "sha256": "57df0a2f7dce916adfc2b496425ff081267480a2c2d6a96bac19ef81c88e3e4f",
+      "contentSize": "4441",
+      "sha256": "167a6cad92dff889d9b7fb9699b9925a2ce9e5049143954660b07bde872efcae",
       "about": {
         "@id": "fixtures/in/immunizations-section.xml"
       },
@@ -1845,15 +2014,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/immunizations-section.ttl",
       "@type": "File",
       "name": "Expected findings for immunizations-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "7707",
-      "sha256": "ce1a847c4e86b3e746cf7cb03d2d6cc186f30ad595b0c676be2b9db9fe127e12",
+      "contentSize": "9809",
+      "sha256": "1d6453370d4cac12c8a02cd8d8d4bfc849abac0e72556b2cdd36c201dfb24858",
       "about": {
         "@id": "fixtures/in/immunizations-section.xml"
       },
@@ -1868,8 +2037,8 @@
       "@type": "File",
       "name": "Expected graph for labs-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "3662",
-      "sha256": "9042cbb291d6b8ea5c6262de1a0affc8f42ef3093fae4b1d75a8d0b5968deb98",
+      "contentSize": "4673",
+      "sha256": "a1130f21ac58af1c9890fedbc05c6e42007b6e00f4e2d08a1bbc9c5522f096f6",
       "about": {
         "@id": "fixtures/in/labs-section.xml"
       },
@@ -1877,15 +2046,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/labs-section.ttl",
       "@type": "File",
       "name": "Expected findings for labs-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "7639",
-      "sha256": "bfdf011bfe2997178b4ed93b59ccbcca7b7a277ffeaa487f7e51783bc5aa49e1",
+      "contentSize": "9838",
+      "sha256": "b1e95713373ac13bd9202940f71a8d0c6160d918d51f4f57806c0ba66b3dcc88",
       "about": {
         "@id": "fixtures/in/labs-section.xml"
       },
@@ -1900,8 +2069,8 @@
       "@type": "File",
       "name": "Expected graph for narrative-only-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "3404",
-      "sha256": "a908e0d92e46e796c623696fc6daac0e102d9557bce81b55c6364b1991658636",
+      "contentSize": "4420",
+      "sha256": "8e38a45923b432df1ff6df5abe6df3abdd0fec5dca10d852956904f5860643ce",
       "about": {
         "@id": "fixtures/in/narrative-only-section.xml"
       },
@@ -1909,15 +2078,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/narrative-only-section.ttl",
       "@type": "File",
       "name": "Expected findings for narrative-only-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "11695",
-      "sha256": "e7bd9bfb566385a7a407845a2c6b3772b0f2b8bde91df6d9a853b96a4ccc463e",
+      "contentSize": "13892",
+      "sha256": "757a86cbd797f58290e178340d2f3d77b9b807697cd617a23cffc46aa3c33399",
       "about": {
         "@id": "fixtures/in/narrative-only-section.xml"
       },
@@ -1932,8 +2101,8 @@
       "@type": "File",
       "name": "Expected graph for custodian-and-author",
       "encodingFormat": "text/turtle",
-      "contentSize": "3969",
-      "sha256": "9a9c6ca6a6d1147837b146a3fb4183fec414144094921756d9212dddb146fc7e",
+      "contentSize": "5343",
+      "sha256": "5401dcd5e1801a9decaa88cdb566dc86cf29347b7889043ed28e9b518220c6a8",
       "about": {
         "@id": "fixtures/in/custodian-and-author.xml"
       },
@@ -1941,15 +2110,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/custodian-and-author.ttl",
       "@type": "File",
       "name": "Expected findings for custodian-and-author",
       "encodingFormat": "text/turtle",
-      "contentSize": "12531",
-      "sha256": "fb5ec4e36f8c7b64a3437d450d7d2221d8d36a6001d6e134018a5ba73b035d10",
+      "contentSize": "13503",
+      "sha256": "d89a87614834bf3bad9509aa2e081597a9f65609dc88d5246a430452ed3cfc23",
       "about": {
         "@id": "fixtures/in/custodian-and-author.xml"
       },
@@ -1990,8 +2159,8 @@
       "@type": "File",
       "name": "Expected graph for allergy-unii-allergen",
       "encodingFormat": "text/turtle",
-      "contentSize": "3622",
-      "sha256": "791b428a13c10b062418a3ad1d880cc83fc236958fb97e2a7270ce22b4c4ee4f",
+      "contentSize": "5020",
+      "sha256": "4c9ecdbb7734900e3f13fd8da8b3808911fd6186a167e7766098f2cf2d6ab745",
       "about": {
         "@id": "fixtures/in/allergy-unii-allergen.xml"
       },
@@ -1999,15 +2168,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/allergy-unii-allergen.ttl",
       "@type": "File",
       "name": "Expected findings for allergy-unii-allergen",
       "encodingFormat": "text/turtle",
-      "contentSize": "10759",
-      "sha256": "176d1bf4749c63a717cb112adac0e0573d8522bfe0032b6ebb1ea242153b960c",
+      "contentSize": "10768",
+      "sha256": "b92df07a345ab28dda4baba827006ad1e4a0509e647554f900db928a220b1472",
       "about": {
         "@id": "fixtures/in/allergy-unii-allergen.xml"
       },
@@ -2022,8 +2191,8 @@
       "@type": "File",
       "name": "Expected graph for medications-ndc-translations",
       "encodingFormat": "text/turtle",
-      "contentSize": "3800",
-      "sha256": "47ff7d48deb625dcdb8a241e7209995cfc9efaae1153f23c09b0a95cfd462e45",
+      "contentSize": "5177",
+      "sha256": "40948bd8b2f52756ea2c63a78fa4b2eb0eeeb9b278efadc17021d2bd62a355a1",
       "about": {
         "@id": "fixtures/in/medications-ndc-translations.xml"
       },
@@ -2031,15 +2200,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/medications-ndc-translations.ttl",
       "@type": "File",
       "name": "Expected findings for medications-ndc-translations",
       "encodingFormat": "text/turtle",
-      "contentSize": "8739",
-      "sha256": "55ac493161eae2a315ab6bb26fa122658a72e22ca143d468ed5fc49421c210a1",
+      "contentSize": "8800",
+      "sha256": "ac366093879daf3bcfe2068f1526b1e500ab1d0f6deadbf474f45d24c6e5451c",
       "about": {
         "@id": "fixtures/in/medications-ndc-translations.xml"
       },
@@ -2054,8 +2223,8 @@
       "@type": "File",
       "name": "Expected graph for several-ids",
       "encodingFormat": "text/turtle",
-      "contentSize": "3669",
-      "sha256": "eba271b01eb72656fdf231aea8ad36d7913c7bb7c0aa0855632d1fbcb7587ada",
+      "contentSize": "5068",
+      "sha256": "eee487241f387ca3f1daafc07c8e908c96bd4cf913c8eb9060aedeaae176f5b7",
       "about": {
         "@id": "fixtures/in/several-ids.xml"
       },
@@ -2063,15 +2232,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/several-ids.ttl",
       "@type": "File",
       "name": "Expected findings for several-ids",
       "encodingFormat": "text/turtle",
-      "contentSize": "8378",
-      "sha256": "55dcb2ff3e1382bc931f5ad0a0201f10c6cf85a379cf094d428bb0fb33e70894",
+      "contentSize": "8379",
+      "sha256": "d8bd84b26c6dfc92fc116245b0a9b10bb444420edd25bacd300304bc3213a7a8",
       "about": {
         "@id": "fixtures/in/several-ids.xml"
       },
@@ -2086,8 +2255,8 @@
       "@type": "File",
       "name": "Expected graph for repeated-ids",
       "encodingFormat": "text/turtle",
-      "contentSize": "6604",
-      "sha256": "4645a61032ef6968e73a6d3eed8fbe28bce8c5ceb9c53547f70fa311092f63de",
+      "contentSize": "9064",
+      "sha256": "21c6769bf4c3bd4c7547f0ff98483be5a6d2472dcf13c8170bfe6a4304f26d10",
       "about": {
         "@id": "fixtures/in/repeated-ids.xml"
       },
@@ -2095,15 +2264,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/repeated-ids.ttl",
       "@type": "File",
       "name": "Expected findings for repeated-ids",
       "encodingFormat": "text/turtle",
-      "contentSize": "9766",
-      "sha256": "42f6c06b178150e008ccaa5bf65587eb0ba489574bac532336e6903f7f2f1b9c",
+      "contentSize": "12454",
+      "sha256": "5c96b2ce9969ae2c81946cb73d74c45f44e4222dea3d4e0fee37931b296834b3",
       "about": {
         "@id": "fixtures/in/repeated-ids.xml"
       },
@@ -2118,8 +2287,8 @@
       "@type": "File",
       "name": "Expected graph for download-a",
       "encodingFormat": "text/turtle",
-      "contentSize": "4989",
-      "sha256": "efaa3929012a7dc27b35d29eeac9bb10dbb76f3823f8c4925dcf0a1135fd9049",
+      "contentSize": "6963",
+      "sha256": "63c21da8f88b6edef6affc7c02361c6ed85ac58689d8a61c041650f18b54feba",
       "about": {
         "@id": "fixtures/in/download-a.xml"
       },
@@ -2127,15 +2296,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/download-a.ttl",
       "@type": "File",
       "name": "Expected findings for download-a",
       "encodingFormat": "text/turtle",
-      "contentSize": "8466",
-      "sha256": "c33a850aececfb45cef72c64d788e8e744a3646f97c89c0fb52f62d6b9839a6f",
+      "contentSize": "8438",
+      "sha256": "b2e3f627e35441274ee4ca70188329cc8276f8943f3b753722d23b7375c82843",
       "about": {
         "@id": "fixtures/in/download-a.xml"
       },
@@ -2150,8 +2319,8 @@
       "@type": "File",
       "name": "Expected graph for download-b",
       "encodingFormat": "text/turtle",
-      "contentSize": "4989",
-      "sha256": "eb77ab62ecf2938b107004c1e85d62fe1f967f90c9ab4bc9a2312c0da037a34a",
+      "contentSize": "7022",
+      "sha256": "611874e2a6947cb150927d18867e4c4eda2a66fa38a441d962bf0b4c29a22531",
       "about": {
         "@id": "fixtures/in/download-b.xml"
       },
@@ -2159,15 +2328,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/download-b.ttl",
       "@type": "File",
       "name": "Expected findings for download-b",
       "encodingFormat": "text/turtle",
-      "contentSize": "8462",
-      "sha256": "99aac947b6c8c06173f6518c6e9f3c8da981183e16afa8a39e4c8dec7858ed4a",
+      "contentSize": "8436",
+      "sha256": "d604e002b53d596b670cf3bd9d2d06c28330b57c6b40f8a4785ab80e78ab29b8",
       "about": {
         "@id": "fixtures/in/download-b.xml"
       },
@@ -2182,8 +2351,8 @@
       "@type": "File",
       "name": "Expected graph for not-a-ccda",
       "encodingFormat": "text/turtle",
-      "contentSize": "2195",
-      "sha256": "6b5ac21e1167159226c3cee1df664bf2c369cc0a377704b272ef19357331e5a6",
+      "contentSize": "3221",
+      "sha256": "6dead72dff5fe78aa7b7c1292f227c586827cf5978a9e900a9d4b82431ceb2c2",
       "about": {
         "@id": "fixtures/in/not-a-ccda.xml"
       },
@@ -2191,15 +2360,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/not-a-ccda.ttl",
       "@type": "File",
       "name": "Expected findings for not-a-ccda",
       "encodingFormat": "text/turtle",
-      "contentSize": "7357",
-      "sha256": "6711c1e6e19755885e2b95816948527a1dc8d8d22c2209ee2f071d1982587477",
+      "contentSize": "7388",
+      "sha256": "e4cda62d07be662e043a301da54043b6c07f2db751327f144994cce938843a02",
       "about": {
         "@id": "fixtures/in/not-a-ccda.xml"
       },
@@ -2214,8 +2383,8 @@
       "@type": "File",
       "name": "Expected graph for procedures",
       "encodingFormat": "text/turtle",
-      "contentSize": "4730",
-      "sha256": "426e50e3b4aaeb80b1ba97969aefcd871e470fe625da8ba2def54fdf177f3ea2",
+      "contentSize": "6786",
+      "sha256": "990f52731c868da826994004545d146af074a1248f49b44ee3f765956be7e20e",
       "about": {
         "@id": "fixtures/in/procedures.xml"
       },
@@ -2223,15 +2392,143 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/fingerprint-keys.ttl",
+      "@type": "File",
+      "name": "Expected graph for fingerprint-keys",
+      "encodingFormat": "text/turtle",
+      "contentSize": "9096",
+      "sha256": "e4b19749b4c4dac705341dbd5083634fe37e99c89dbea7dd5a5c7d679c40fc04",
+      "about": {
+        "@id": "fixtures/in/fingerprint-keys.xml"
+      },
+      "dateCreated": "2026-10-22",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/two-patients.ttl",
+      "@type": "File",
+      "name": "Expected graph for two-patients",
+      "encodingFormat": "text/turtle",
+      "contentSize": "5989",
+      "sha256": "75363d243a262196dc74ddf28fbdd29a999046ae8cdb2b2d9de689f848d213e5",
+      "about": {
+        "@id": "fixtures/in/two-patients.xml"
+      },
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/no-record-target.ttl",
+      "@type": "File",
+      "name": "Expected graph for no-record-target",
+      "encodingFormat": "text/turtle",
+      "contentSize": "3581",
+      "sha256": "f404349c592954f9cb2be1576d1aee29608715ca2e99218b5f849a93cfda660a",
+      "about": {
+        "@id": "fixtures/in/no-record-target.xml"
+      },
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/one-id-equal-keys.ttl",
+      "@type": "File",
+      "name": "Expected graph for one-id-equal-keys",
+      "encodingFormat": "text/turtle",
+      "contentSize": "8924",
+      "sha256": "7adbd53aa5d6806b8934eda538a0e9c264f2c91273d727c1585dfa353b1781bc",
+      "about": {
+        "@id": "fixtures/in/one-id-equal-keys.xml"
+      },
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/narrative-reference-to-markup.ttl",
+      "@type": "File",
+      "name": "Expected graph for narrative-reference-to-markup",
+      "encodingFormat": "text/turtle",
+      "contentSize": "9074",
+      "sha256": "b8e29e61032ee0c48d12bb4cdbcb10668a46d11ae64edde4002f5e4d210cdf51",
+      "about": {
+        "@id": "fixtures/in/narrative-reference-to-markup.xml"
+      },
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/fingerprint-repeated-and-reordered.ttl",
+      "@type": "File",
+      "name": "Expected graph for fingerprint-repeated-and-reordered",
+      "encodingFormat": "text/turtle",
+      "contentSize": "6423",
+      "sha256": "030a26344fe2671bc1b3c6bd15466a7a52c7d39c7f88c8b35bb9a1ebb0728e99",
+      "about": {
+        "@id": "fixtures/in/fingerprint-repeated-and-reordered.xml"
+      },
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/fingerprint-values-reordered.ttl",
+      "@type": "File",
+      "name": "Expected graph for fingerprint-values-reordered",
+      "encodingFormat": "text/turtle",
+      "contentSize": "4809",
+      "sha256": "c6075f5f0c861eb99833c11a04840f62ea842ef47085c93049ee385a47a873f1",
+      "about": {
+        "@id": "fixtures/in/fingerprint-values-reordered.xml"
+      },
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/id-root-with-bar.ttl",
+      "@type": "File",
+      "name": "Expected graph for id-root-with-bar",
+      "encodingFormat": "text/turtle",
+      "contentSize": "4865",
+      "sha256": "cc9633da8e239a703d8fddda97178bd9d42055eadf0e4a7d25d2563b21db5f4c",
+      "about": {
+        "@id": "fixtures/in/id-root-with-bar.xml"
+      },
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/procedures.ttl",
       "@type": "File",
       "name": "Expected findings for procedures",
       "encodingFormat": "text/turtle",
-      "contentSize": "9114",
-      "sha256": "9087ef033b09b7a7449a1c9687a62273d6bcbd6adb9cd756f35f743ba8cb908f",
+      "contentSize": "9142",
+      "sha256": "a08e2089dc5569f7f910dff0918d83cf75228b7cd004cd8456457e1d467a715f",
       "about": {
         "@id": "fixtures/in/procedures.xml"
       },
@@ -2242,12 +2539,140 @@
       "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
     },
     {
+      "@id": "fixtures/findings/fingerprint-keys.ttl",
+      "@type": "File",
+      "name": "Expected findings for fingerprint-keys",
+      "encodingFormat": "text/turtle",
+      "contentSize": "9682",
+      "sha256": "eb99251ac25c6d7e72e5a216c6d07e3b99f9b07116ed012509fb3114adf4458e",
+      "about": {
+        "@id": "fixtures/in/fingerprint-keys.xml"
+      },
+      "dateCreated": "2026-10-22",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/findings/two-patients.ttl",
+      "@type": "File",
+      "name": "Expected findings for two-patients",
+      "encodingFormat": "text/turtle",
+      "contentSize": "11463",
+      "sha256": "345982072aedea22e47bd5be96e8dcbbb503b52928754b41b0a5383cdfb8567f",
+      "about": {
+        "@id": "fixtures/in/two-patients.xml"
+      },
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/findings/no-record-target.ttl",
+      "@type": "File",
+      "name": "Expected findings for no-record-target",
+      "encodingFormat": "text/turtle",
+      "contentSize": "14865",
+      "sha256": "647dad653f85f01a8349bbf79afaeac21107c49927f1ef0b5bca03996a7f5637",
+      "about": {
+        "@id": "fixtures/in/no-record-target.xml"
+      },
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/findings/one-id-equal-keys.ttl",
+      "@type": "File",
+      "name": "Expected findings for one-id-equal-keys",
+      "encodingFormat": "text/turtle",
+      "contentSize": "19168",
+      "sha256": "04f357f8b3d5807dec2c3761e11b159d15ba7a53a362ad7dfef5496dbb13f775",
+      "about": {
+        "@id": "fixtures/in/one-id-equal-keys.xml"
+      },
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/findings/narrative-reference-to-markup.ttl",
+      "@type": "File",
+      "name": "Expected findings for narrative-reference-to-markup",
+      "encodingFormat": "text/turtle",
+      "contentSize": "11801",
+      "sha256": "d8dd3ff24476809a20391748e9aa18093d70785255b92bfa802131cc9bb62b32",
+      "about": {
+        "@id": "fixtures/in/narrative-reference-to-markup.xml"
+      },
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/findings/fingerprint-repeated-and-reordered.ttl",
+      "@type": "File",
+      "name": "Expected findings for fingerprint-repeated-and-reordered",
+      "encodingFormat": "text/turtle",
+      "contentSize": "8434",
+      "sha256": "c505c212a0c43ce48c1e5bdbed498a3c055c3f24c4ba968ac6b0b4ffb3442856",
+      "about": {
+        "@id": "fixtures/in/fingerprint-repeated-and-reordered.xml"
+      },
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/findings/fingerprint-values-reordered.ttl",
+      "@type": "File",
+      "name": "Expected findings for fingerprint-values-reordered",
+      "encodingFormat": "text/turtle",
+      "contentSize": "7079",
+      "sha256": "bc1a99d245c2114d364c206e1b987c048b41e6513bb47fd5581d2c44099534e7",
+      "about": {
+        "@id": "fixtures/in/fingerprint-values-reordered.xml"
+      },
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/findings/id-root-with-bar.ttl",
+      "@type": "File",
+      "name": "Expected findings for id-root-with-bar",
+      "encodingFormat": "text/turtle",
+      "contentSize": "7218",
+      "sha256": "ac5635755b697b95b101af06317626d387b4b8679e63d47a41f0231b4e1e2208",
+      "about": {
+        "@id": "fixtures/in/id-root-with-bar.xml"
+      },
+      "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
       "@id": "fixtures/expected/shared-id.ttl",
       "@type": "File",
       "name": "Expected graph for shared-id",
       "encodingFormat": "text/turtle",
-      "contentSize": "5145",
-      "sha256": "9b34e9befc488c3d37daa69d2a1072bbda67bcee82eaa82392e04905ecd243cf",
+      "contentSize": "6704",
+      "sha256": "28c4742a8309527ca227c7208dd376cad1c9896a836102ab1d72a804ee32525c",
       "about": {
         "@id": "fixtures/in/shared-id.xml"
       },
@@ -2255,15 +2680,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/shared-id.ttl",
       "@type": "File",
       "name": "Expected findings for shared-id",
       "encodingFormat": "text/turtle",
-      "contentSize": "8482",
-      "sha256": "d182b5c5e6bfd2febef30bf525834ab3edd87499b7894498b82dfd271941b5c7",
+      "contentSize": "11151",
+      "sha256": "20f85a14cf8dad9ce4f87737cacdf3a63f9fb7efee7e0564a530c2c828476afb",
       "about": {
         "@id": "fixtures/in/shared-id.xml"
       },
@@ -2278,8 +2703,8 @@
       "@type": "File",
       "name": "Expected graph for negations",
       "encodingFormat": "text/turtle",
-      "contentSize": "5013",
-      "sha256": "1c7199e668024a1d78aff0d2fc48ab89d60f9cec29effc01f2a62ec65007e912",
+      "contentSize": "6699",
+      "sha256": "7f2b0b12c016e7367e03d0545078879cec9da75ac486fd9e0478fb9e6600a867",
       "about": {
         "@id": "fixtures/in/negations.xml"
       },
@@ -2287,15 +2712,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/negations.ttl",
       "@type": "File",
       "name": "Expected findings for negations",
       "encodingFormat": "text/turtle",
-      "contentSize": "9652",
-      "sha256": "db554399afa3016ac21f03ee478592a093587f21b61b43e5838f2eb6e4d35f57",
+      "contentSize": "9669",
+      "sha256": "ed70a49695e99b8cea90d97cf48d39b3ad85f49d7932c0e240be8c28483be1b5",
       "about": {
         "@id": "fixtures/in/negations.xml"
       },
@@ -2310,8 +2735,8 @@
       "@type": "File",
       "name": "Expected graph for download-c",
       "encodingFormat": "text/turtle",
-      "contentSize": "4885",
-      "sha256": "9b0bb44b1a1aa090beea3ec03e166f637203c4c0d9d5cbe6693dd5fd01bf3be1",
+      "contentSize": "6637",
+      "sha256": "a989303fcee053523d4738133d024a0e03809d4064a7e6a0d2425becb11a8e1c",
       "about": {
         "@id": "fixtures/in/download-c.xml"
       },
@@ -2319,15 +2744,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/download-c.ttl",
       "@type": "File",
       "name": "Expected findings for download-c",
       "encodingFormat": "text/turtle",
-      "contentSize": "11901",
-      "sha256": "ef92645088cb8133af54c9fad2fef6b15df9189e633188e726a95b415331c8b9",
+      "contentSize": "11871",
+      "sha256": "dbde7f5f3e1bb4656fa7ddc16d63f4e2e44d378d48ac2ab944d086ba5afe76a7",
       "about": {
         "@id": "fixtures/in/download-c.xml"
       },
@@ -2342,8 +2767,8 @@
       "@type": "File",
       "name": "Expected graph for download-d",
       "encodingFormat": "text/turtle",
-      "contentSize": "4885",
-      "sha256": "002341d631397c51295cd7a88f441086725f0ce93ea3defa9db7f5b9f3be98e6",
+      "contentSize": "6642",
+      "sha256": "4f22aaee6ee9e30398b0da98851109652e7612748654a360488f803c320fd1f4",
       "about": {
         "@id": "fixtures/in/download-d.xml"
       },
@@ -2351,15 +2776,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/download-d.ttl",
       "@type": "File",
       "name": "Expected findings for download-d",
       "encodingFormat": "text/turtle",
-      "contentSize": "11904",
-      "sha256": "aff36fbddb04c7ec51fc4449e0dede77a6bc7879885fca613fd5e901fd984897",
+      "contentSize": "11870",
+      "sha256": "19459d488414683e1946f84f9ef2d90e725f745f8dfccd802be77ec1c13647d8",
       "about": {
         "@id": "fixtures/in/download-d.xml"
       },
@@ -2374,8 +2799,8 @@
       "@type": "File",
       "name": "Expected graph for medications-and-results-a",
       "encodingFormat": "text/turtle",
-      "contentSize": "15515",
-      "sha256": "2113e40902aca27ecc946c92f008e5d5c15ec122d07db805ae387649f96f985e",
+      "contentSize": "20090",
+      "sha256": "8465cc4c53a38f43f880fca44b4695e94a2bfabd527ab4683e7ebe111decabdb",
       "about": {
         "@id": "fixtures/in/medications-and-results-a.xml"
       },
@@ -2383,15 +2808,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/medications-and-results-a.ttl",
       "@type": "File",
       "name": "Expected findings for medications-and-results-a",
       "encodingFormat": "text/turtle",
-      "contentSize": "20465",
-      "sha256": "60459c838a6f9b7bb4ae4ccd98acd55b6266bfd9c8f07549a426c062b16f80dd",
+      "contentSize": "24016",
+      "sha256": "cb7087b7adb367654f7aa5a954e469051a0053e477422d9ddbbe8d5a9ad3d590",
       "about": {
         "@id": "fixtures/in/medications-and-results-a.xml"
       },
@@ -2406,8 +2831,8 @@
       "@type": "File",
       "name": "Expected graph for medications-and-results-edges",
       "encodingFormat": "text/turtle",
-      "contentSize": "8298",
-      "sha256": "f43cb95bd1cd42e98627ceba4a879752ce501aa3190f71296aaeb70272ec150f",
+      "contentSize": "10660",
+      "sha256": "1de6a2ae0eccc190a5f7238d5acfccb9ee8fe728a44929c5af75cd62d586e49e",
       "about": {
         "@id": "fixtures/in/medications-and-results-edges.xml"
       },
@@ -2415,15 +2840,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/medications-and-results-edges.ttl",
       "@type": "File",
       "name": "Expected findings for medications-and-results-edges",
       "encodingFormat": "text/turtle",
-      "contentSize": "10492",
-      "sha256": "3f932717d17cb9408ca769ccb950463173769c6088739a3399f971e67b39445d",
+      "contentSize": "11573",
+      "sha256": "04eef6002cf2a79ec227d620cf9688607f5d9cb3f876677d2f51d5571e59cef7",
       "about": {
         "@id": "fixtures/in/medications-and-results-edges.xml"
       },
@@ -2438,8 +2863,8 @@
       "@type": "File",
       "name": "Expected graph for medications-and-results-b",
       "encodingFormat": "text/turtle",
-      "contentSize": "15515",
-      "sha256": "ae17d9289d687904048a2f10bd5393aabba21b666eac6dd6c8c4da270411cf01",
+      "contentSize": "20100",
+      "sha256": "12911a8b5e7d53709fdbe30792692e090ca66a1ed852e8317708520096cee5c2",
       "about": {
         "@id": "fixtures/in/medications-and-results-b.xml"
       },
@@ -2447,15 +2872,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, a key's fingerprint among them, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/medications-and-results-b.ttl",
       "@type": "File",
       "name": "Expected findings for medications-and-results-b",
       "encodingFormat": "text/turtle",
-      "contentSize": "20463",
-      "sha256": "fd0ccc8d6c3b87861fb5fd047c3c55f98e3f02728f530e4ef62ee6f150c2611a",
+      "contentSize": "23999",
+      "sha256": "b8253cca76333d012eb5c2a5ba46a2a687d57b5d88a5b0f36835f52d0fbe52e7",
       "about": {
         "@id": "fixtures/in/medications-and-results-b.xml"
       },
@@ -2470,8 +2895,8 @@
       "@type": "File",
       "name": "Expected graph for narrative-reference-without-hash",
       "encodingFormat": "text/turtle",
-      "contentSize": "6559",
-      "sha256": "83fe5ae21c4d507248ef9b041199a3ec784fd88f86f3a1956f719441a07b1d15",
+      "contentSize": "8577",
+      "sha256": "5abd4a46b10e705b0830d0bceba9cce5100f4c225cffce96c257f123a755df7c",
       "about": {
         "@id": "fixtures/in/narrative-reference-without-hash.xml"
       },
@@ -2479,15 +2904,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. Each name is the entry's own, since a reference with no '#' names no narrative element. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/narrative-reference-without-hash.ttl",
       "@type": "File",
       "name": "Expected findings for narrative-reference-without-hash",
       "encodingFormat": "text/turtle",
-      "contentSize": "12916",
-      "sha256": "c26d9708254697c7d38e391c5d0a7a9317dfc6747397978c12d15f29ca48ae68",
+      "contentSize": "16402",
+      "sha256": "ca521eb840e03ae4f2adc33ace8ec07cc0018d65025e6e5b6297ef06ff50b4d0",
       "about": {
         "@id": "fixtures/in/narrative-reference-without-hash.xml"
       },
@@ -2502,8 +2927,8 @@
       "@type": "File",
       "name": "Expected graph for narrative-id-twice",
       "encodingFormat": "text/turtle",
-      "contentSize": "6553",
-      "sha256": "79f51334258d9a2da2983175008df63d20d5c3908a54e6238bf5a0e20442b202",
+      "contentSize": "8573",
+      "sha256": "3ad59d6680538be51b969fdb5cade5016a7fef27511c7e0dc57644dacecb8703",
       "about": {
         "@id": "fixtures/in/narrative-id-twice.xml"
       },
@@ -2511,15 +2936,15 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The records layer a Bridge must produce from the input it is about and the facts its test entry supplies, derived by hand from the Cascade Bridge Specification's naming and versioning rules and the vocabulary: each record's name hashed from its inputs outside SPARQL, and each version's name by cascade-bridge-spec's tests/specification/recomputed.py. Each name is the entry's own, since an ID held by two narrative elements names neither. A Bridge's output was then found equal to it."
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
       "@id": "fixtures/findings/narrative-id-twice.ttl",
       "@type": "File",
       "name": "Expected findings for narrative-id-twice",
       "encodingFormat": "text/turtle",
-      "contentSize": "14964",
-      "sha256": "8a203e350df3f306cf7d991f30ca005352dad5082b3ea9707ef064f3f0adae9d",
+      "contentSize": "18299",
+      "sha256": "a857399fe96fb648c442f7960117fb34e89dfe26a0b07786805cafb6c5e69aea",
       "about": {
         "@id": "fixtures/in/narrative-id-twice.xml"
       },
@@ -2528,6 +2953,16 @@
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "in/CLAUDE.md",
+      "@type": "File",
+      "name": "Agent context for the mapping directory",
+      "encodingFormat": "text/markdown",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "That a name's text is the vocabulary's naming rule body, copied, and the check that every rule body in in/sparql/ is still the body of cascade-vocabulary's tests/vectors/naming/, which the specification's lint cannot run."
     },
     {
       "@id": "fixtures/CLAUDE.md",
@@ -2583,105 +3018,105 @@
       "@type": "File",
       "name": "View: allergies",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "1258",
-      "sha256": "fbc71ff10232edcf7c393a6742f92a075a2ef8cf2330a2c1c70e9c0396295b5b",
+      "contentSize": "1136",
+      "sha256": "16802a08a744d2ade3abad0334106ffda29781e981030014db8e23f0f8a2a99e",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
-        "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/c14b56e332a98bb226ee6ccee2e9f587a07c6379/views/allergies.rq"
+        "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/b124be5f352634ab6d69e94807cce62ef7fdd30b/views/allergies.rq"
       },
-      "description": "A SELECT over a Bridge's graph: one row per AllergyRecord record at its current version, else at each version, with its source id and allergen, allergen code, status, verification status, criticality, onset, each a plain string. Copied unchanged on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
+      "description": "A SELECT over a Bridge's graph: one row per AllergyOrIntolerance record at its current version, else at each version, with its source id and allergen, allergen code, status, verification status, criticality, onset, each a plain string. Copied on 2026-10-23 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer, its terms and code stems since moved as cascade-vocabulary's term map and decisions/code-iris.md say. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
     },
     {
       "@id": "views/conditions.rq",
       "@type": "File",
       "name": "View: conditions",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "1459",
-      "sha256": "814b2bfa5a1a192320383d1f72961248c6771e263b1d00ed11af6c00a13ec76a",
+      "contentSize": "1326",
+      "sha256": "5c0f64bd5a3ba4f36357faaa4af226cad472eb02e108cb909a196fe799ce833f",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
-        "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/c14b56e332a98bb226ee6ccee2e9f587a07c6379/views/conditions.rq"
+        "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/b124be5f352634ab6d69e94807cce62ef7fdd30b/views/conditions.rq"
       },
-      "description": "A SELECT over a Bridge's graph: one row per ConditionRecord record at its current version, else at each version, with its source id and name, status, verification status, onset, abatement, SNOMED CT and ICD-10-CM codes, each a plain string. Copied unchanged on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
+      "description": "A SELECT over a Bridge's graph: one row per ProblemOrDiagnosis record at its current version, else at each version, with its source id and name, status, verification status, onset, abatement, SNOMED CT and ICD-10-CM codes, each a plain string. Copied on 2026-10-23 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer, its terms and code stems since moved as cascade-vocabulary's term map and decisions/code-iris.md say. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
     },
     {
       "@id": "views/immunizations.rq",
       "@type": "File",
       "name": "View: immunizations",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "1085",
-      "sha256": "449df8c84e9f692a7c21bf39d459f53fe07568c82d3ae07c3a73db033614f871",
+      "contentSize": "1012",
+      "sha256": "a1877d9b6a03c7d06d931b32f516632c8addf3ce57a333b12aebad0cc0030452",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
-        "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/c14b56e332a98bb226ee6ccee2e9f587a07c6379/views/immunizations.rq"
+        "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/b124be5f352634ab6d69e94807cce62ef7fdd30b/views/immunizations.rq"
       },
-      "description": "A SELECT over a Bridge's graph: one row per ImmunizationRecord record at its current version, else at each version, with its source id and vaccine name, vaccine code, status, administration date, each a plain string. Copied unchanged on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
+      "description": "A SELECT over a Bridge's graph: one row per Vaccination record at its current version, else at each version, with its source id and vaccine name, vaccine code, status, administration date, each a plain string. Copied on 2026-10-23 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer, its terms and code stems since moved as cascade-vocabulary's term map and decisions/code-iris.md say. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
     },
     {
       "@id": "views/procedures.rq",
       "@type": "File",
       "name": "View: procedures",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "1118",
-      "sha256": "20dccb35632c591a6c12a50bba1f77798ee1e0b7ed08d3ea47852abfcf3a85b3",
+      "contentSize": "965",
+      "sha256": "9855ef7d09b7a960842fdbf5575f4e305593086a21c2cdcf0af5c5be3f718c41",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
-        "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/c14b56e332a98bb226ee6ccee2e9f587a07c6379/views/procedures.rq"
+        "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/b124be5f352634ab6d69e94807cce62ef7fdd30b/views/procedures.rq"
       },
-      "description": "A SELECT over a Bridge's graph: one row per clinical:Procedure record at its current version, else at each version, with its source id and name, SNOMED CT code, status, date, each a plain string. Copied unchanged on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
+      "description": "A SELECT over a Bridge's graph: one row per cascade:MedicalProcedure record at its current version, else at each version, with its source id and name, SNOMED CT code, status, date, each a plain string. Copied on 2026-10-23 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer, its terms and code stems since moved as cascade-vocabulary's term map and decisions/code-iris.md say. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
     },
     {
       "@id": "views/patients.rq",
       "@type": "File",
       "name": "View: patients",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "1043",
-      "sha256": "23b57854a0d4b837a58c0ba8f850f6f52d6e786d1f8e8f08ae372ee78d5e1fd1",
+      "contentSize": "866",
+      "sha256": "c274da289aee78fe27e4d605ed3e5cae9b842dda6c4b795e4b8253d752a6fa35",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
-        "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/c14b56e332a98bb226ee6ccee2e9f587a07c6379/views/patients.rq"
+        "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/b124be5f352634ab6d69e94807cce62ef7fdd30b/views/patients.rq"
       },
-      "description": "A SELECT over a Bridge's graph: one row per PatientProfile record at its current version, else at each version, with its source id and date of birth, given, family and full name, each a plain string. Copied unchanged on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
+      "description": "A SELECT over a Bridge's graph: one row per PatientProfile record at its current version, else at each version, with its source id and date of birth, given, family and full name, each a plain string. Copied on 2026-10-23 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer, its terms and code stems since moved as cascade-vocabulary's term map and decisions/code-iris.md say. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
     },
     {
       "@id": "views/medications.rq",
       "@type": "File",
       "name": "View: medications",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "1378",
-      "sha256": "a5d5dd5adc1858999e92eb81ed0193073d7407605e4d6bc6666c9304b66c979a",
+      "contentSize": "1460",
+      "sha256": "09c8192eb969eaf796b5cb4c1bb8f3bbcc873b0e29088246e74157fba65f1be2",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
-        "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/c14b56e332a98bb226ee6ccee2e9f587a07c6379/views/medications.rq"
+        "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/b124be5f352634ab6d69e94807cce62ef7fdd30b/views/medications.rq"
       },
-      "description": "A SELECT over a Bridge's graph: one row per clinical:Medication record at its current version, else at each version, with its source id and drug name, RxNorm code, intent, status, start date, end date and dosage, each a plain string. Copied unchanged on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
+      "description": "A SELECT over a Bridge's graph: one row per cascade:PrescribedOrReportedMedication record at its current version, else at each version, with its source id and drug name, RxNorm code, intent, status, start date, end date and dosage, each a plain string. Copied on 2026-10-23 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer, its terms and code stems since moved as cascade-vocabulary's term map and decisions/code-iris.md say. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
     },
     {
       "@id": "views/lab-results.rq",
       "@type": "File",
       "name": "View: lab-results",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "1475",
-      "sha256": "20fed6ecc711c580df5a5d49e16dc14f8189a3722a0d6ad6e566be8dcf67badd",
+      "contentSize": "1399",
+      "sha256": "963fbd7febced7fe927e97d287a67b9f05cf1a13a58b4763fbaf4bdc9d4b7e22",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
-        "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/c14b56e332a98bb226ee6ccee2e9f587a07c6379/views/lab-results.rq"
+        "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/b124be5f352634ab6d69e94807cce62ef7fdd30b/views/lab-results.rq"
       },
-      "description": "A SELECT over a Bridge's graph: one row per LabResultRecord record at its current version, else at each version, with its source id and test name, LOINC code, value, unit, reference range, interpretation, status and performed date, each a plain string. Copied unchanged on 2026-10-07 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
+      "description": "A SELECT over a Bridge's graph: one row per LaboratoryTestResult record at its current version, else at each version, with its source id and test name, LOINC code, value, unit, reference range, interpretation, status and performed date, each a plain string. Copied on 2026-10-23 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer, its terms and code stems since moved as cascade-vocabulary's term map and decisions/code-iris.md say. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
     },
     {
       "@id": "#view-comparison-with-cascade-cli",
@@ -2818,7 +3253,7 @@
       "isBasedOn": {
         "@id": "https://github.com/the-cascade-protocol/cascade-cli/tree/627de5f63c51d59e2078cc653bd7841a03497acb"
       },
-      "description": "cascade-cli writes cascade:givenName, cascade:familyName, cascade:sourceRecordId, for a procedure health:performedDate, for a medication health:startDate and health:endDate, and for a result health:referenceRangeText, where the adapter writes foaf:givenName, foaf:familyName, the kind's sourceRecordId, clinical:procedureDate, clinical:startDate, clinical:endDate and health:referenceRange."
+      "description": "cascade-cli writes cascade:givenName, cascade:familyName, cascade:sourceRecordId, for a procedure health:performedDate, for a medication health:startDate and health:endDate, and for a result health:referenceRangeText, where the adapter writes foaf:givenName, foaf:familyName, cascade:sourceRecordId, cascade:procedureDate, cascade:medicationUseStartDate, cascade:medicationUseEndDate and cascade:referenceRange."
     },
     {
       "@id": "#correction-severity-on-a-reaction",
@@ -2836,7 +3271,7 @@
       "isBasedOn": {
         "@id": "https://github.com/the-cascade-protocol/cascade-cli/tree/627de5f63c51d59e2078cc653bd7841a03497acb"
       },
-      "description": "cascade-cli writes no CPT code a procedure states in a translation; the adapter writes clinical:cptCode from it (procedures)."
+      "description": "cascade-cli writes no CPT code a procedure states in a translation; the adapter writes cascade:cptCode from it (procedures)."
     },
     {
       "@id": "#correction-codes-as-iris",
@@ -2845,7 +3280,7 @@
       "isBasedOn": {
         "@id": "https://github.com/the-cascade-protocol/cascade-cli/tree/627de5f63c51d59e2078cc653bd7841a03497acb"
       },
-      "description": "cascade-cli writes a CVX code as an IRI in http://hl7.org/fhir/sid/cvx/ (health:cvxCode) and a procedure's SNOMED CT code as an IRI (health:snomedCode), each read as the code alone; a SNOMED CT IRI in http://snomed.info/id/ is read as in http://snomed.info/sct/."
+      "description": "cascade-cli writes a CVX code and a procedure's SNOMED CT code as IRIs under its own stems, where the adapter writes them under the stems ccda-code-systems.ttl gives; each is read as the code alone."
     },
     {
       "@id": "#correction-dose-as-dosage",

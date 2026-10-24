@@ -1,24 +1,21 @@
-PREFIX health: <https://ns.cascadeprotocol.org/health/v1#>
-PREFIX clinical: <https://ns.cascadeprotocol.org/clinical/v1#>
-PREFIX cascade: <https://ns.cascadeprotocol.org/core/v1#>
-PREFIX rec: <https://ns.cascadeprotocol.org/records/v1-draft#>
+PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-SELECT DISTINCT ?record ?sourceRecordId ?procedureName ?snomedCode ?status ?procedureDate
+SELECT DISTINCT ?record ?sourceRecordId ?procedureName ?snomedCode ?workflowStatus ?procedureDate
 WHERE {
-  ?record a clinical:Procedure .
+  ?record a cascade:MedicalProcedure .
   ?version prov:specializationOf ?record .
-  OPTIONAL { ?record rec:currentRevision/rec:version ?current }
+  OPTIONAL { ?record cascade:currentRevision/cascade:version ?current }
   FILTER (!BOUND(?current) || ?current = ?version)
-  OPTIONAL { { ?record clinical:sourceRecordId ?id } UNION { ?version clinical:sourceRecordId ?id } }
-  OPTIONAL { ?version clinical:procedureName ?n }
-  OPTIONAL { ?version clinical:snomedCode ?c }
-  OPTIONAL { ?version clinical:status ?s }
-  OPTIONAL { ?version clinical:procedureDate ?d }
+  OPTIONAL { { ?record cascade:sourceRecordId ?id } UNION { ?version cascade:sourceRecordId ?id } }
+  OPTIONAL { ?version cascade:procedureName ?n }
+  OPTIONAL { ?version cascade:snomedCode ?c }
+  OPTIONAL { ?version cascade:workflowStatus ?s }
+  OPTIONAL { ?version cascade:procedureDate ?d }
   BIND (STR(?id) AS ?sourceRecordId)
   BIND (STR(?n) AS ?procedureName)
   BIND (REPLACE(STR(?c), "^http://snomed.info/id/", "") AS ?snomedCode)
-  BIND (STR(?s) AS ?status)
+  BIND (STR(?s) AS ?workflowStatus)
   BIND (STR(?d) AS ?procedureDate)
 }
