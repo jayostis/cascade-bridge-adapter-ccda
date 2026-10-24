@@ -60,5 +60,5 @@ map is a finding of `section-findings.rq`, not of the accounting.
   step 8's, which maps them.
 - **The narrative is open-ended.** A section's `text` holds any tree of
   NarrativeBlock elements, and only those the inputs carry have an entry; a
-  new one is a `bridge:pathNotAccounted` until it is added, as no verdict covers
+  new one is a `cascade:SourcePathNotAccounted` until it is added, as no verdict covers
   a path and all below it.

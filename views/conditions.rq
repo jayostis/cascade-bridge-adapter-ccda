@@ -2,7 +2,7 @@ PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-SELECT DISTINCT ?record ?sourceRecordId ?conditionName ?status ?verificationStatus ?onsetDate ?abatementDate ?snomedCode ?icd10Code
+SELECT DISTINCT ?record ?sourceRecordId ?conditionName ?clinicalStatus ?verificationStatus ?onsetDate ?abatementDate ?snomedCode ?icd10Code
 WHERE {
   ?record a cascade:ProblemOrDiagnosis .
   ?version prov:specializationOf ?record .
@@ -18,7 +18,7 @@ WHERE {
   OPTIONAL { ?version cascade:icd10Code ?icd }
   BIND (STR(?id) AS ?sourceRecordId)
   BIND (STR(?n) AS ?conditionName)
-  BIND (STR(?s) AS ?status)
+  BIND (STR(?s) AS ?clinicalStatus)
   BIND (STR(?v) AS ?verificationStatus)
   BIND (STR(?o) AS ?onsetDate)
   BIND (STR(?e) AS ?abatementDate)

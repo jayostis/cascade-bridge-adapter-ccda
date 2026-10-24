@@ -39,7 +39,7 @@ the layout the README's. Do not re-derive them.
 
 CI runs the specification's lint at the version it picks when it starts;
 `adapter/validation.md` there says what it checks. By hand, what
-`fixtures/CLAUDE.md` and `schema/CLAUDE.md` say CI cannot run. A commit says
+`in/CLAUDE.md`, `fixtures/CLAUDE.md` and `schema/CLAUDE.md` say CI cannot run. A commit says
 which ran.
 
 ## Where a rule goes

@@ -2,7 +2,7 @@ PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-SELECT DISTINCT ?record ?sourceRecordId ?allergen ?allergenCode ?status ?verificationStatus ?criticality ?onsetDate
+SELECT DISTINCT ?record ?sourceRecordId ?allergen ?allergenCode ?clinicalStatus ?verificationStatus ?allergyCriticality ?onsetDate
 WHERE {
   ?record a cascade:AllergyOrIntolerance .
   ?version prov:specializationOf ?record .
@@ -18,8 +18,8 @@ WHERE {
   BIND (STR(?id) AS ?sourceRecordId)
   BIND (STR(?a) AS ?allergen)
   BIND (STR(?c) AS ?allergenCode)
-  BIND (STR(?s) AS ?status)
+  BIND (STR(?s) AS ?clinicalStatus)
   BIND (STR(?v) AS ?verificationStatus)
-  BIND (STR(?k) AS ?criticality)
+  BIND (STR(?k) AS ?allergyCriticality)
   BIND (STR(?o) AS ?onsetDate)
 }

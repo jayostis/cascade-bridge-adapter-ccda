@@ -2,7 +2,7 @@ PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-SELECT DISTINCT ?record ?sourceRecordId ?testName ?loincCode ?resultValue ?resultUnit ?referenceRange ?interpretation ?status ?performedDate
+SELECT DISTINCT ?record ?sourceRecordId ?testName ?loincCode ?resultValue ?resultUnit ?referenceRange ?resultInterpretation ?workflowStatus ?resultClinicallyRelevantTime
 WHERE {
   ?record a cascade:LaboratoryTestResult .
   ?version prov:specializationOf ?record .
@@ -23,7 +23,7 @@ WHERE {
   BIND (STR(?v) AS ?resultValue)
   BIND (STR(?u) AS ?resultUnit)
   BIND (STR(?r) AS ?referenceRange)
-  BIND (STR(?i) AS ?interpretation)
-  BIND (STR(?s) AS ?status)
-  BIND (STR(?d) AS ?performedDate)
+  BIND (STR(?i) AS ?resultInterpretation)
+  BIND (STR(?s) AS ?workflowStatus)
+  BIND (STR(?d) AS ?resultClinicallyRelevantTime)
 }

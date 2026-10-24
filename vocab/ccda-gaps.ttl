@@ -26,17 +26,20 @@ ccda:entryIdRepeated a skos:Concept ;
 ccda:namingScopeNotStated a skos:Concept ;
   skos:prefLabel "A document states no custodian id, or not exactly one patient with an id, so a record is named by the document and its selector, the patient's included, and the same statement in another document is another record."@en ;
   skos:inScheme ccda:gaps ;
-  skos:broader bridge:carriedWithLoss .
+  skos:broader bridge:carriedWithLoss ;
+  sh:resultSeverity sh:Warning .
 
 ccda:referenceReadsNothing a skos:Concept ;
   skos:prefLabel "An entry holds a reference that names no element of the narrative, or names one that does not hold exactly one run of text and nothing else, so nothing is read through it."@en ;
   skos:inScheme ccda:gaps ;
-  skos:broader bridge:carriedWithLoss .
+  skos:broader bridge:carriedWithLoss ;
+  sh:resultSeverity sh:Warning .
 
 ccda:patientOfStatementNotStated a skos:Concept ;
   skos:prefLabel "A document does not have exactly one recordTarget, so a statement does not say which patient it is about and its version carries no cascade:patient."@en ;
   skos:inScheme ccda:gaps ;
-  skos:broader bridge:carriedWithLoss .
+  skos:broader bridge:carriedWithLoss ;
+  sh:resultSeverity sh:Warning .
 
 ccda:allergyTypeNotMapped a skos:Concept ;
   skos:prefLabel "An allergy states a type outside the concept maps of allergy types and categories, and neither is carried."@en ;
