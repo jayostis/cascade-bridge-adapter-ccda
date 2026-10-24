@@ -38,7 +38,19 @@ wraps it:
 | a medication | a Medication Activity (`4.16`), the entry's own statement in a Medications section, in mood `INT` or `EVN` | `MedicationRequest` |
 | a lab result | a Result Observation (`4.2`) in a Result Organizer (`4.1`), the entry's own statement in a Results section | `Observation` |
 
-The custodian's organisation is the document's author.
+The organizations the header names are records too, outside the table's classes:
+the custodian's `representedCustodianOrganization` and each author's
+`representedOrganization`, each named by the vocabulary's
+`OrganizationNamingRule` from its first usable `id`, the one the custodian scope
+below is read from. HL7's CDA-to-FHIR identifier mapping makes that `id` an
+identifier: a root and an extension give the extension, typed `urn:oid:` and
+the root (`urn:uuid:` and the root in lower case for a UUID root); a root alone
+gives its `urn:oid:` or `urn:uuid:` IRI, typed `urn:ietf:rfc:3986`. The name
+hashes that type and value, as the version's `org:identifier` states them. An
+`id` whose root is neither an OID nor a UUID, or none, names no organization.
+One organization named twice in a document, as custodian and author, is one
+record with one version, read from the custodian; the document names it in
+each role, `cascade:CustodianRole` and `cascade:AuthorRole`.
 
 A section is mapped by its `templateId`: Allergies (`2.16.840.1.113883.10.20.22.2.6.1`),
 Problems (`2.5.1`), Immunizations (`2.2.1`), Procedures (`2.7.1`), Medications
