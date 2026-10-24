@@ -41,16 +41,27 @@ wraps it:
 The organizations the header names are records too, outside the table's classes:
 the custodian's `representedCustodianOrganization` and each author's
 `representedOrganization`, each named by the vocabulary's
-`OrganizationNamingRule` from its first usable `id`, the one the custodian scope
-below is read from. HL7's CDA-to-FHIR identifier mapping makes that `id` an
-identifier: a root and an extension give the extension, typed `urn:oid:` and
-the root (`urn:uuid:` and the root in lower case for a UUID root); a root alone
-gives its `urn:oid:` or `urn:uuid:` IRI, typed `urn:ietf:rfc:3986`. The name
-hashes that type and value, as the version's `org:identifier` states them. An
-`id` whose root is neither an OID nor a UUID, or none, names no organization.
-One organization named twice in a document, as custodian and author, is one
-record with one version, read from the custodian; the document names it in
-each role, `cascade:CustodianRole` and `cascade:AuthorRole`.
+`OrganizationNamingRule` from one of its `id`s, as the vocabulary's
+`decisions/naming.md` maps and picks it. HL7's CDA-to-FHIR identifier mapping
+([C-CDA on FHIR, Mapping Guidance](https://hl7.org/fhir/us/ccda/en/mappingGuidance.html),
+"CDA id → FHIR Identifier", read 2026-10-24) makes each `id` an identifier: a
+root that FHIR's [identifier registry](https://hl7.org/fhir/R4/identifier-registry.html)
+gives a URI is that URI, which for the organizations here is only the NPI's,
+`2.16.840.1.113883.4.6` as `http://hl7.org/fhir/sid/us-npi`; a root and an
+extension give the extension, typed by that URI, or else by `urn:oid:` and the
+root (`urn:uuid:` and the root in lower case for a UUID root); a root alone
+gives its `urn:oid:` or `urn:uuid:` IRI, typed `urn:ietf:rfc:3986`, except the
+NPI's root alone, which is a system with no identifier. A root that is neither
+an OID nor a UUID maps to none. Of the `id`s that map to one, the NPI names
+the record, else the least by code point of type, then value, whatever order
+the document lists them in, so the FHIR adapter names one NPI's organization
+alike. The name hashes that type and value, as the version's `org:identifier`
+states them. An element with no such `id` names no organization. The custodian
+scope below is read from the first usable `id` in document order, the
+vocabulary's `RecordFromCcda` rule. One organization named by several elements
+of a document, as custodian and author or by two authors, is one record with
+one version, read from the custodian, else the first author; the document names
+it once in each role, `cascade:CustodianRole` and `cascade:AuthorRole`.
 
 A section is mapped by its `templateId`: Allergies (`2.16.840.1.113883.10.20.22.2.6.1`),
 Problems (`2.5.1`), Immunizations (`2.2.1`), Procedures (`2.7.1`), Medications

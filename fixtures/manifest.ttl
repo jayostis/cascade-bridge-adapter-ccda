@@ -15,6 +15,7 @@
     <#narrative-only-section>
     <#custodian-and-author>
     <#organizations-root-and-extension>
+    <#organization-ids-in-one-order>
     <#allergy-unii-allergen>
     <#medications-ndc-translations>
     <#several-ids>
@@ -35,6 +36,7 @@
     <#fingerprint-keys>
     <#download-twice-names-one-allergy>
     <#two-documents-name-one-custodian>
+    <#ids-in-two-orders-name-one-organization>
     <#download-twice-nullflavor-id-names-one-allergy>
     <#id-bearing-differs-from-nullflavor-id>
     <#one-id-two-keys-names-two-records>
@@ -158,6 +160,7 @@
 
 <#organizations-root-and-extension> a bridge:IsomorphicConversionTest ;
   mf:name "organizations-root-and-extension" ;
+  rdfs:comment "The custodian's NPI names its organization record, the name the FHIR R4 adapter's bundle-document-custodian-and-authors gives an Organization with that NPI: cascade-vocabulary's organization-from-npi naming vector." ;
   mf:action [
     bridge:input <in/organizations-root-and-extension.xml> ;
     bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
@@ -166,6 +169,19 @@
   mf:result [
     bridge:expectedGraph <expected/organizations-root-and-extension.ttl> ;
     bridge:expectedFindings <findings/organizations-root-and-extension.ttl>
+  ] .
+
+<#organization-ids-in-one-order> a bridge:IsomorphicConversionTest ;
+  mf:name "organization-ids-in-one-order" ;
+  rdfs:comment "A custodian and two authors naming one organization, each listing its ids in another order, the custodian's first an id no identifier maps from: one record, one version read from the custodian, and one attribution in each role." ;
+  mf:action [
+    bridge:input <in/organization-ids-in-one-order.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/organization-ids-in-one-order.ttl> ;
+    bridge:expectedFindings <findings/organization-ids-in-one-order.ttl>
   ] .
 
 <#allergy-unii-allergen> a bridge:IsomorphicConversionTest ;
@@ -413,6 +429,24 @@
       bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='custodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='assignedCustodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='representedCustodianOrganization' and namespace-uri()='urn:hl7-org:v3'][1]"
     ] , [
       bridge:input <in/download-a.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='custodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='assignedCustodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='representedCustodianOrganization' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ]
+  ] ;
+  mf:result [ bridge:sameRecord true ] .
+
+<#ids-in-two-orders-name-one-organization> a bridge:IdentityRelationTest ;
+  mf:name "ids-in-two-orders-name-one-organization" ;
+  rdfs:comment "Two documents whose custodians list one organization's ids in two orders name one organization record." ;
+  mf:action [
+    bridge:conversion [
+      bridge:input <in/organization-ids-in-one-order.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='custodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='assignedCustodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='representedCustodianOrganization' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ] , [
+      bridge:input <in/organization-ids-in-another-order.xml> ;
       bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
       bridge:facts <facts/portal-download.ttl> ;
       bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='custodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='assignedCustodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='representedCustodianOrganization' and namespace-uri()='urn:hl7-org:v3'][1]"

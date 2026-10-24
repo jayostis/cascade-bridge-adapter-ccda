@@ -11,14 +11,17 @@ PREFIX bridge:  <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 
 # The custodian's organization and each author's represented organization is a
-# record, named by cascade-vocabulary's OrganizationNamingRule from the first
-# usable id of its element, the one record.rq scopes the custodian by, as HL7's
-# CDA-to-FHIR identifier mapping makes it an identifier: a root and an extension
-# give the extension, typed urn:oid: and the root (urn:uuid: and the root in
-# lower case for a UUID root); a root alone gives its urn:oid: or urn:uuid: IRI,
-# typed urn:ietf:rfc:3986. A root that is neither an OID nor a UUID maps to no
-# identifier, and its element to no record. The document names each record in
-# the role its element plays.
+# record, named by cascade-vocabulary's OrganizationNamingRule from one id of its
+# element, as HL7's CDA-to-FHIR identifier mapping makes it an identifier: a root
+# the FHIR identifier registry gives a URI, the NPI's, is that URI; a root and an
+# extension give the extension, typed by that URI, or else by urn:oid: and the
+# root (urn:uuid: and the root in lower case for a UUID root); a root alone gives
+# its urn:oid: or urn:uuid: IRI, typed urn:ietf:rfc:3986, unless the registry
+# names it, as a system and no identifier. A root that is neither an OID nor a
+# UUID maps to none. Of the ids that map to one, the NPI names the record, else
+# the least by code point of type, then value, so the order the document lists
+# them in never changes the name; an element with none is no record. The
+# document names each record once in each role its elements play.
 #
 # One element's content is one version, read from the element that comes first
 # among those naming one record, the custodian before any author: two elements
@@ -29,7 +32,9 @@ PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 # Address allows four lines.
 #
 # The elements are listed twice, since a subquery cannot read another's result:
-# once to find the first element naming each record, once to read them all.
+# once to find the first element naming each record, and the first author
+# among them, and once to read them all. An id is ranked by 0 for an NPI and 1
+# for any other, its type, a space, which no type holds, and its value.
 
 CONSTRUCT {
   ?organization a cascade:Organization .
@@ -50,7 +55,7 @@ WHERE {
   bridge:thisRecord bridge:selector ?recordSelector .
   BIND (IRI(?sha256) AS ?document)
   {
-    SELECT ?datatype ?value (MIN(?rank) AS ?first) WHERE {
+    SELECT ?datatype ?value (MIN(?rank) AS ?first) (MIN(?authorsFirst) AS ?firstAmongAuthors) WHERE {
       {
         SELECT ?rank ?datatype ?value WHERE {
           ?root a fx:root, v3:ClinicalDocument ; ?participationSlot ?participation .
@@ -64,27 +69,24 @@ WHERE {
           ?assigned a ?assignedType .
           ?element a ?elementType .
           {
-            SELECT ?element (MIN(?ranked) AS ?firstId) WHERE {
+            SELECT ?element (MIN(?idKey) AS ?chosen) WHERE {
               ?element a ?organizationType ; ?idSlot ?id .
               VALUES ?organizationType { v3:representedCustodianOrganization v3:representedOrganization }
               ?id a v3:id ; xyz:root ?idRoot .
-              FILTER (STRLEN(?idRoot) > 0)
               FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
               OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }
-              BIND (STRAFTER(STR(?idSlot), "#_") AS ?idAt)
-              BIND (CONCAT(SUBSTR("0000000000", STRLEN(?idAt) + 1), ?idAt,
-                           "|", REPLACE(REPLACE(?idRoot, "%", "%25"), "\\|", "%7C"),
-                           "|", REPLACE(REPLACE(COALESCE(?idExtension, ""), "%", "%25"), "\\|", "%7C")) AS ?ranked)
+              BIND (IF(REGEX(?idRoot, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?idRoot),
+                    IF(REGEX(?idRoot, "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"),
+                       CONCAT("urn:uuid:", LCASE(?idRoot)), 1/0)) AS ?rootIri)
+              BIND (IF(?idRoot = "2.16.840.1.113883.4.6", "http://hl7.org/fhir/sid/us-npi", ?rootIri) AS ?idSystem)
+              BIND (IF(BOUND(?idExtension), ?idSystem, IF(?idSystem = ?rootIri, "urn:ietf:rfc:3986", 1/0)) AS ?idType)
+              BIND (IF(BOUND(?idExtension), ?idExtension, ?rootIri) AS ?idValue)
+              FILTER (BOUND(?idType) && BOUND(?idValue))
+              BIND (CONCAT(IF(?idType = "http://hl7.org/fhir/sid/us-npi", "0", "1"), ?idType, " ", ?idValue) AS ?idKey)
             } GROUP BY ?element
           }
-          BIND (REPLACE(REPLACE(STRBEFORE(STRAFTER(?firstId, "|"), "|"), "%7C", "|"), "%25", "%") AS ?firstRoot)
-          BIND (REPLACE(REPLACE(STRAFTER(STRAFTER(?firstId, "|"), "|"), "%7C", "|"), "%25", "%") AS ?firstExtension)
-          BIND (IF(REGEX(?firstRoot, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?firstRoot),
-                IF(REGEX(?firstRoot, "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"),
-                   CONCAT("urn:uuid:", LCASE(?firstRoot)), 1/0)) AS ?system)
-          FILTER (BOUND(?system))
-          BIND (IF(?firstExtension != "", ?system, "urn:ietf:rfc:3986") AS ?datatype)
-          BIND (IF(?firstExtension != "", ?firstExtension, ?system) AS ?value)
+          BIND (STRBEFORE(SUBSTR(?chosen, 2), " ") AS ?datatype)
+          BIND (STRAFTER(SUBSTR(?chosen, 2), " ") AS ?value)
           BIND (STRAFTER(STR(?participationSlot), "#_") AS ?p)
           BIND (STRAFTER(STR(?assignedSlot), "#_") AS ?a)
           BIND (STRAFTER(STR(?elementSlot), "#_") AS ?e)
@@ -92,6 +94,7 @@ WHERE {
                        SUBSTR("0000000000", STRLEN(?e) + 1), ?e) AS ?rank)
         }
       }
+      BIND (CONCAT(IF(STRSTARTS(?rank, "1"), "0", "1"), ?rank) AS ?authorsFirst)
     } GROUP BY ?datatype ?value
   }
   {
@@ -117,27 +120,24 @@ WHERE {
         } GROUP BY ?participation
       }
       {
-        SELECT ?element (MIN(?ranked) AS ?firstId) WHERE {
+        SELECT ?element (MIN(?idKey) AS ?chosen) WHERE {
           ?element a ?organizationType ; ?idSlot ?id .
           VALUES ?organizationType { v3:representedCustodianOrganization v3:representedOrganization }
           ?id a v3:id ; xyz:root ?idRoot .
-          FILTER (STRLEN(?idRoot) > 0)
           FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
           OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }
-          BIND (STRAFTER(STR(?idSlot), "#_") AS ?idAt)
-          BIND (CONCAT(SUBSTR("0000000000", STRLEN(?idAt) + 1), ?idAt,
-                       "|", REPLACE(REPLACE(?idRoot, "%", "%25"), "\\|", "%7C"),
-                       "|", REPLACE(REPLACE(COALESCE(?idExtension, ""), "%", "%25"), "\\|", "%7C")) AS ?ranked)
+          BIND (IF(REGEX(?idRoot, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?idRoot),
+                IF(REGEX(?idRoot, "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"),
+                   CONCAT("urn:uuid:", LCASE(?idRoot)), 1/0)) AS ?rootIri)
+          BIND (IF(?idRoot = "2.16.840.1.113883.4.6", "http://hl7.org/fhir/sid/us-npi", ?rootIri) AS ?idSystem)
+          BIND (IF(BOUND(?idExtension), ?idSystem, IF(?idSystem = ?rootIri, "urn:ietf:rfc:3986", 1/0)) AS ?idType)
+          BIND (IF(BOUND(?idExtension), ?idExtension, ?rootIri) AS ?idValue)
+          FILTER (BOUND(?idType) && BOUND(?idValue))
+          BIND (CONCAT(IF(?idType = "http://hl7.org/fhir/sid/us-npi", "0", "1"), ?idType, " ", ?idValue) AS ?idKey)
         } GROUP BY ?element
       }
-      BIND (REPLACE(REPLACE(STRBEFORE(STRAFTER(?firstId, "|"), "|"), "%7C", "|"), "%25", "%") AS ?firstRoot)
-      BIND (REPLACE(REPLACE(STRAFTER(STRAFTER(?firstId, "|"), "|"), "%7C", "|"), "%25", "%") AS ?firstExtension)
-      BIND (IF(REGEX(?firstRoot, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?firstRoot),
-            IF(REGEX(?firstRoot, "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"),
-               CONCAT("urn:uuid:", LCASE(?firstRoot)), 1/0)) AS ?system)
-      FILTER (BOUND(?system))
-      BIND (IF(?firstExtension != "", ?system, "urn:ietf:rfc:3986") AS ?datatype)
-      BIND (IF(?firstExtension != "", ?firstExtension, ?system) AS ?value)
+      BIND (STRBEFORE(SUBSTR(?chosen, 2), " ") AS ?datatype)
+      BIND (STRAFTER(SUBSTR(?chosen, 2), " ") AS ?value)
       BIND (STRAFTER(STR(?participationSlot), "#_") AS ?p)
       BIND (STRAFTER(STR(?assignedSlot), "#_") AS ?a)
       BIND (STRAFTER(STR(?elementSlot), "#_") AS ?e)
@@ -191,8 +191,10 @@ WHERE {
     OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }
     BIND (IF(REGEX(?idRoot, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?idRoot),
           IF(REGEX(?idRoot, "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"),
-             CONCAT("urn:uuid:", LCASE(?idRoot)), 1/0)) AS ?idSystem)
-    BIND (IF(BOUND(?idExtension), STRDT(?idExtension, IRI(?idSystem)), STRDT(?idSystem, <urn:ietf:rfc:3986>)) AS ?identifier)
+             CONCAT("urn:uuid:", LCASE(?idRoot)), 1/0)) AS ?rootIri)
+    BIND (IF(?idRoot = "2.16.840.1.113883.4.6", "http://hl7.org/fhir/sid/us-npi", ?rootIri) AS ?idSystem)
+    BIND (IF(BOUND(?idExtension), STRDT(?idExtension, IRI(?idSystem)),
+             IF(?idSystem = ?rootIri, STRDT(?rootIri, <urn:ietf:rfc:3986>), 1/0)) AS ?identifier)
   }
   UNION
   {
@@ -254,8 +256,10 @@ WHERE {
     FILTER (STRLEN(?joined) > 0)
     BIND (SUBSTR(?joined, 2) AS ?address)
   }
-  BIND (IF(?branch = "attribution", ?document, 1/0) AS ?attributing)
-  BIND (IF(?branch = "attribution", BNODE(), 1/0) AS ?attribution)
+  BIND (IF(STRSTARTS(?firstAmongAuthors, "0"), SUBSTR(?firstAmongAuthors, 2), "") AS ?firstAuthor)
+  BIND (IF(?branch = "attribution" && ?rank = IF(STRSTARTS(?rank, "0"), ?first, ?firstAuthor), ?document, 1/0)
+        AS ?attributing)
+  BIND (IF(BOUND(?attributing), BNODE(), 1/0) AS ?attribution)
   BIND (IF(?rank = ?first && COALESCE(?branch, "") != "attribution", ?firstVersion, 1/0) AS ?version)
   BIND (IF(?rank = ?first && ?branch = "arrival", BNODE(), 1/0) AS ?arrival)
   BIND (IF(BOUND(?arrival), BNODE(), 1/0) AS ?selectorNode)
