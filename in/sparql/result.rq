@@ -11,19 +11,22 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # A Result Observation the document table makes a record of.
 #
-# A value is written as the source wrote it, a number included, so that two
-# sources stating one value state one literal. Only an observation's first
-# value and first reference range are read; of each, the first of these the
-# source states:
+# Only an observation's first value and first reference range are read. The
+# value is of one of five kinds: a PQ, INT or REAL, or an IVL_PQ with one
+# bound, is a quantity; an RTO a ratio; an IVL_PQ with two bounds a range, each
+# number a node result-quantities.rq writes; a CD, CE, CV or CO is coded, its
+# code and translations in SNOMED CT and LOINC written as code IRIs; an ST is
+# text. A value with a null flavour has no kind. Of each text, the first of
+# these the source states:
 #   - the test's name: the narrative its code's originalText references, the
 #     originalText's own text, the code's displayName;
-#   - a PQ, INT or REAL value: its value, and a PQ's unit; an ST value: its
-#     text; a CD, CE, CV or CO value: the narrative its originalText
-#     references, the originalText's own text, its displayName. Any other type
-#     is a finding of result-findings.rq;
+#   - an ST value: its text; a CD, CE, CV or CO value: the narrative its
+#     originalText references, the originalText's own text, its displayName.
+#     Any other type is a finding of result-findings.rq;
 #   - a reference range: its text, through its reference first, else its
 #     IVL_PQ written as the FHIR R4 adapter writes a range with no text, a
-#     range with one bound as >=low or <=high.
+#     range with one bound as >=low or <=high; its typed bounds are
+#     result-quantities.rq's.
 # A narrative element is read only where its text is one run; one holding
 # markup falls through to the next of these, as does a reference to an ID two
 # elements hold or one with no '#' (docs/format.md, "Narrative references").
@@ -118,20 +121,6 @@ WHERE {
               }
               {
                 SELECT ?resultValue ?p ?tier ?value ?within WHERE {
-                  {
-                    ?resultValue a v3:value ; xsi:type ?written ; xyz:value ?value .
-                    FILTER (REPLACE(?written, "^.*:", "") IN ("PQ", "INT", "REAL"))
-                    BIND (cascade:resultValue AS ?p)
-                    BIND ("1" AS ?tier)
-                  }
-                  UNION
-                  {
-                    ?resultValue a v3:value ; xsi:type ?written ; xyz:unit ?value .
-                    FILTER (REPLACE(?written, "^.*:", "") = "PQ")
-                    BIND (cascade:resultUnit AS ?p)
-                    BIND ("1" AS ?tier)
-                  }
-                  UNION
                   {
                     ?resultValue a v3:value ; xsi:type ?written ; ?vS ?value .
                     FILTER (REPLACE(?written, "^.*:", "") = "ST" && isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
@@ -338,6 +327,64 @@ WHERE {
         ccda:codeSystemLoinc void:uriSpace ?stem .
         BIND (cascade:testCode AS ?p)
         BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?loinc))) AS ?o)
+      }
+      UNION
+      {
+        {
+          SELECT ?result ?resultValue ?type WHERE {
+            ?result ?vlS ?resultValue . ?resultValue a v3:value ; xsi:type ?written .
+            {
+              SELECT ?result (MIN(xsd:integer(STRAFTER(STR(?anyS), "#_"))) AS ?firstAt) WHERE {
+                ?result ?anyS ?any . ?any a v3:value .
+              } GROUP BY ?result
+            }
+            FILTER (xsd:integer(STRAFTER(STR(?vlS), "#_")) = ?firstAt)
+            BIND (REPLACE(?written, "^.*:", "") AS ?type)
+          }
+        }
+        OPTIONAL {
+          {
+            SELECT ?resultValue (COUNT(DISTINCT ?bound) AS ?bounds) WHERE {
+              ?resultValue a v3:value ; ?boundS ?bound . ?bound a ?side ; xyz:value ?boundValue .
+              VALUES ?side { v3:low v3:high }
+            } GROUP BY ?resultValue
+          }
+        }
+        OPTIONAL { ?resultValue xyz:nullFlavor ?absent }
+        FILTER (!BOUND(?absent))
+        BIND (cascade:resultValueKind AS ?p)
+        BIND (IF(?type IN ("PQ", "INT", "REAL") || (?type = "IVL_PQ" && COALESCE(?bounds, 0) = 1), cascade:QuantityResultValue,
+              IF(STRSTARTS(?type, "RTO"), cascade:RatioResultValue,
+              IF(?type = "IVL_PQ" && COALESCE(?bounds, 0) = 2, cascade:RangeResultValue,
+              IF(?type IN ("CD", "CE", "CV", "CO"), cascade:CodedResultValue,
+              IF(?type = "ST", cascade:TextResultValue, 1/0))))) AS ?o)
+      }
+      UNION
+      {
+        {
+          SELECT ?result ?resultValue ?type WHERE {
+            ?result ?vlS ?resultValue . ?resultValue a v3:value ; xsi:type ?written .
+            {
+              SELECT ?result (MIN(xsd:integer(STRAFTER(STR(?anyS), "#_"))) AS ?firstAt) WHERE {
+                ?result ?anyS ?any . ?any a v3:value .
+              } GROUP BY ?result
+            }
+            FILTER (xsd:integer(STRAFTER(STR(?vlS), "#_")) = ?firstAt)
+            BIND (REPLACE(?written, "^.*:", "") AS ?type)
+          }
+        }
+        {
+          SELECT ?resultValue ?answer ?answerSystem WHERE {
+            { ?resultValue a v3:value ; xyz:code ?answer ; xyz:codeSystem ?answerSystem . }
+            UNION
+            { ?resultValue a v3:value ; ?atS ?answerCoding . ?answerCoding a v3:translation ; xyz:code ?answer ; xyz:codeSystem ?answerSystem . }
+          }
+        }
+        ?answerScheme skos:notation ?answerOid ; void:uriSpace ?answerStem .
+        VALUES ?answerScheme { ccda:codeSystemSnomedCt ccda:codeSystemLoinc }
+        FILTER (?type IN ("CD", "CE", "CV", "CO") && REPLACE(?answerSystem, "^urn:oid:", "") = ?answerOid)
+        BIND (cascade:resultCode AS ?p)
+        BIND (IRI(CONCAT(?answerStem, ENCODE_FOR_URI(?answer))) AS ?o)
       }
     }
   }

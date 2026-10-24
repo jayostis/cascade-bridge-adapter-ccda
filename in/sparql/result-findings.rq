@@ -11,9 +11,11 @@ PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # What a result organizer holds that result.rq does not carry: a status outside
-# its concept map, a value of a type no predicate takes or a coded one with no
-# name, a second value, range or interpretation, and a code in a code system
-# other than LOINC, at the result; and
+# its concept map, a value of a type no predicate takes or a coded one with
+# neither a name nor a code in SNOMED CT or LOINC, a coded value's code in
+# another system, a bound of a two-bound IVL_PQ value or of a reference range
+# that is not inclusive, a second value, range or interpretation, and a code in
+# a code system other than LOINC, at the result; and
 # a component of an organizer some result of which is a record, that is no
 # record itself, a vital sign among them, at the component, valued by the least
 # templateId root its statement claims. An organizer no result of which is a
@@ -59,7 +61,7 @@ WHERE {
       ?result ?vS ?resultValue . ?resultValue a v3:value ; xsi:type ?written .
       FILTER NOT EXISTS { ?resultValue xyz:nullFlavor ?absent }
       BIND (REPLACE(?written, "^.*:", "") AS ?value)
-      FILTER (?value NOT IN ("PQ", "INT", "REAL", "ST", "CD", "CE", "CV", "CO"))
+      FILTER (?value NOT IN ("PQ", "INT", "REAL", "IVL_PQ", "ST", "CD", "CE", "CV", "CO") && !STRSTARTS(?value, "RTO"))
       BIND (ccda:resultValueNotCarried AS ?gap)
     }
     UNION
@@ -69,8 +71,40 @@ WHERE {
       FILTER NOT EXISTS { ?resultValue xyz:nullFlavor ?absent }
       FILTER NOT EXISTS { ?resultValue xyz:displayName ?displayName }
       FILTER NOT EXISTS { ?resultValue ?otS ?originalText . ?originalText a v3:originalText }
+      FILTER NOT EXISTS {
+        { ?resultValue xyz:codeSystem ?carriedSystem }
+        UNION
+        { ?resultValue ?ctS ?carriedTranslation . ?carriedTranslation a v3:translation ; xyz:codeSystem ?carriedSystem }
+        FILTER (REPLACE(?carriedSystem, "^urn:oid:", "") IN ("2.16.840.1.113883.6.96", "2.16.840.1.113883.6.1"))
+      }
       BIND (REPLACE(?written, "^.*:", "") AS ?value)
       BIND (ccda:resultValueNotCarried AS ?gap)
+    }
+    UNION
+    {
+      ?result ?vS ?resultValue . ?resultValue a v3:value ; xsi:type ?written .
+      FILTER (REPLACE(?written, "^.*:", "") IN ("CD", "CE", "CV", "CO"))
+      { ?resultValue xyz:code ?value ; xyz:codeSystem ?answerSystem }
+      UNION
+      { ?resultValue ?aS ?answerTranslation . ?answerTranslation a v3:translation ; xyz:code ?value ; xyz:codeSystem ?answerSystem }
+      FILTER (REPLACE(?answerSystem, "^urn:oid:", "") NOT IN ("2.16.840.1.113883.6.96", "2.16.840.1.113883.6.1"))
+      BIND (ccda:resultValueCodeNotCarried AS ?gap)
+    }
+    UNION
+    {
+      {
+        ?result ?vS ?interval . ?interval a v3:value ; xsi:type ?written .
+        FILTER (REPLACE(?written, "^.*:", "") = "IVL_PQ")
+        ?interval ?lowS ?low . ?low a v3:low ; xyz:value ?lowValue .
+        ?interval ?highS ?high . ?high a v3:high ; xyz:value ?highValue .
+      }
+      UNION
+      {
+        ?result ?rS ?range . ?range a v3:referenceRange ; ?orS ?observationRange .
+        ?observationRange a v3:observationRange ; ?ivS ?interval . ?interval a v3:value .
+      }
+      ?interval ?boundS ?bound . ?bound xyz:inclusive "false" ; xyz:value ?value .
+      BIND (ccda:resultBoundNotInclusive AS ?gap)
     }
     UNION
     {

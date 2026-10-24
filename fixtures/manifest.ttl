@@ -32,6 +32,7 @@
     <#download-d>
     <#medications-and-results-a>
     <#medications-and-results-edges>
+    <#results-value-kinds>
     <#medications-and-results-b>
     <#fingerprint-keys>
     <#download-twice-names-one-allergy>
@@ -375,6 +376,19 @@
   mf:result [
     bridge:expectedGraph <expected/medications-and-results-edges.ttl> ;
     bridge:expectedFindings <findings/medications-and-results-edges.ttl>
+  ] .
+
+<#results-value-kinds> a bridge:IsomorphicConversionTest ;
+  mf:name "results-value-kinds" ;
+  rdfs:comment "Results of every kind of value but text: a quantity written with an exponent, a ratio, a range, a one-bound range as a value with the comparator <, and a coded answer as its LOINC code; the reference range interpreted N is typed, its high bound alone since its low bound is not inclusive, which is a finding, as are the local translation and the first range's values." ;
+  mf:action [
+    bridge:input <in/results-value-kinds.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/results-value-kinds.ttl> ;
+    bridge:expectedFindings <findings/results-value-kinds.ttl>
   ] .
 
 <#medications-and-results-b> a bridge:IsomorphicConversionTest ;

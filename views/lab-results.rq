@@ -11,8 +11,14 @@ WHERE {
   OPTIONAL { { ?record cascade:sourceRecordId ?id } UNION { ?version cascade:sourceRecordId ?id } }
   OPTIONAL { ?version cascade:testName ?n }
   OPTIONAL { ?version cascade:testCode ?c }
-  OPTIONAL { ?version cascade:resultValue ?v }
-  OPTIONAL { ?version cascade:resultUnit ?u }
+  OPTIONAL { ?version cascade:resultValue ?text }
+  OPTIONAL {
+    ?version cascade:resultQuantity ?quantity .
+    ?quantity cascade:writtenValue ?written .
+    OPTIONAL { ?quantity cascade:quantityComparator ?comparator }
+    OPTIONAL { ?quantity cascade:unitText ?unitText }
+    OPTIONAL { ?quantity cascade:ucumUnit ?ucumUnit }
+  }
   OPTIONAL { ?version cascade:referenceRange ?r }
   OPTIONAL { ?version cascade:resultInterpretation ?i }
   OPTIONAL { ?version cascade:workflowStatus ?s }
@@ -20,8 +26,8 @@ WHERE {
   BIND (STR(?id) AS ?sourceRecordId)
   BIND (STR(?n) AS ?testName)
   BIND (REPLACE(STR(?c), "^http://loinc.org/rdf/", "") AS ?loincCode)
-  BIND (STR(?v) AS ?resultValue)
-  BIND (STR(?u) AS ?resultUnit)
+  BIND (STR(COALESCE(CONCAT(COALESCE(?comparator, ""), ?written), ?text)) AS ?resultValue)
+  BIND (STR(COALESCE(?unitText, ?ucumUnit)) AS ?resultUnit)
   BIND (STR(?r) AS ?referenceRange)
   BIND (STR(?i) AS ?resultInterpretation)
   BIND (STR(?s) AS ?workflowStatus)
