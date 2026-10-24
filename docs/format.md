@@ -157,8 +157,7 @@ dozen strings, past which a double-precision float rounds.
     is only whitespace is none. An element of mixed content holds several runs,
     each its own string.
 
-The vectors cascade-bridge-spec retired with its `FingerprintTest`, each with
-the statements that pin it in these fixtures:
+The fingerprint vectors, each with the statements that pin it in these fixtures:
 
 | vector | strings | sum | pinned by |
 |---|---|---|---|
@@ -201,6 +200,8 @@ the mappings read the OID after the prefix.
 An RxNorm code and a LOINC code are written under their stems wherever they
 stand: a portal often codes a drug or a test in its own code system and gives
 the RxNorm or LOINC code as a `translation`.
+
+An immunization's `vaccineCode` is written as the first CVX code it carries, the `code` before a `translation`, and no other.
 
 ## Values
 

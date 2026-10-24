@@ -2,7 +2,7 @@ PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-SELECT DISTINCT ?record ?sourceRecordId ?procedureName ?snomedCode ?status ?procedureDate
+SELECT DISTINCT ?record ?sourceRecordId ?procedureName ?snomedCode ?workflowStatus ?procedureDate
 WHERE {
   ?record a cascade:MedicalProcedure .
   ?version prov:specializationOf ?record .
@@ -16,6 +16,6 @@ WHERE {
   BIND (STR(?id) AS ?sourceRecordId)
   BIND (STR(?n) AS ?procedureName)
   BIND (REPLACE(STR(?c), "^http://snomed.info/id/", "") AS ?snomedCode)
-  BIND (STR(?s) AS ?status)
+  BIND (STR(?s) AS ?workflowStatus)
   BIND (STR(?d) AS ?procedureDate)
 }

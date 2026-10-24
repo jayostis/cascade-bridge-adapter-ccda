@@ -2,7 +2,7 @@ PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-SELECT DISTINCT ?record ?sourceRecordId ?vaccineName ?vaccineCode ?status ?administrationDate
+SELECT DISTINCT ?record ?sourceRecordId ?vaccineName ?vaccineCode ?workflowStatus ?vaccinationOccurrenceTime
 WHERE {
   ?record a cascade:Vaccination .
   ?version prov:specializationOf ?record .
@@ -16,6 +16,6 @@ WHERE {
   BIND (STR(?id) AS ?sourceRecordId)
   BIND (STR(?n) AS ?vaccineName)
   BIND (REPLACE(STR(?c), "^https://ns.cascadeprotocol.org/codes/cvx/", "") AS ?vaccineCode)
-  BIND (STR(?s) AS ?status)
-  BIND (STR(?d) AS ?administrationDate)
+  BIND (STR(?s) AS ?workflowStatus)
+  BIND (STR(?d) AS ?vaccinationOccurrenceTime)
 }
