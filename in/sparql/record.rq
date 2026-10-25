@@ -17,6 +17,13 @@ PREFIX ccda:    <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # document with other content. Each rule's text is its
 # tests/vectors/naming/<rule>.rq body, copied, and the one picked is hashed once.
 #
+# The custodian's scope is the id document-organizations.rq names its
+# organization record by, picked by the same key and read back from it as a
+# root and an extension: the NPI's URI is its OID again, a root alone is its
+# urn:oid: or urn:uuid: IRI's tail, and a UUID root is in lower case. So an
+# organization's ids listed in another order scope its records alike, and a
+# custodian with no id its record could be named by states no scope.
+#
 # The patient's name is computed again, by the same lines, for the link a
 # version makes to it: a subquery cannot read another's result. A version names
 # its patient only where the document has one recordTarget: with more, which
@@ -53,23 +60,31 @@ WHERE {
       OPTIONAL { ?row ccda:membersFingerprint ?members }
       OPTIONAL {
         {
-          SELECT (MIN(?ranked) AS ?firstCustodianId) WHERE {
+          SELECT (MIN(?idKey) AS ?custodianKey) WHERE {
             ?root a fx:root, v3:ClinicalDocument ; ?custodianSlot ?custodian .
             ?custodian a v3:custodian ; ?assignedSlot ?assigned .
             ?assigned a v3:assignedCustodian ; ?organizationSlot ?organization .
             ?organization a v3:representedCustodianOrganization ; ?idSlot ?id .
             ?id a v3:id ; xyz:root ?idRoot .
-            FILTER (STRLEN(?idRoot) > 0)
             FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
             OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }
-            BIND (STRAFTER(STR(?idSlot), "#_") AS ?idAt)
-            BIND (CONCAT(SUBSTR("0000000000", STRLEN(?idAt) + 1), ?idAt,
-                         "|", REPLACE(REPLACE(?idRoot, "%", "%25"), "\\|", "%7C"),
-                         "|", REPLACE(REPLACE(COALESCE(?idExtension, ""), "%", "%25"), "\\|", "%7C")) AS ?ranked)
+            BIND (IF(REGEX(?idRoot, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?idRoot),
+                  IF(REGEX(?idRoot, "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"),
+                     CONCAT("urn:uuid:", LCASE(?idRoot)), 1/0)) AS ?rootIri)
+            BIND (IF(?idRoot = "2.16.840.1.113883.4.6", "http://hl7.org/fhir/sid/us-npi", ?rootIri) AS ?idSystem)
+            BIND (IF(BOUND(?idExtension), ?idSystem, IF(?idSystem = ?rootIri, "urn:ietf:rfc:3986", 1/0)) AS ?idType)
+            BIND (IF(BOUND(?idExtension), ?idExtension, ?rootIri) AS ?idValue)
+            FILTER (BOUND(?idType) && BOUND(?idValue))
+            BIND (CONCAT(IF(?idType = "http://hl7.org/fhir/sid/us-npi", "0", "1"), ?idType, " ", ?idValue) AS ?idKey)
           }
         }
-        BIND (REPLACE(REPLACE(STRBEFORE(STRAFTER(?firstCustodianId, "|"), "|"), "%7C", "|"), "%25", "%") AS ?custodianRoot)
-        BIND (REPLACE(REPLACE(STRAFTER(STRAFTER(?firstCustodianId, "|"), "|"), "%7C", "|"), "%25", "%") AS ?custodianExtension)
+        BIND (STRBEFORE(SUBSTR(?custodianKey, 2), " ") AS ?custodianType)
+        BIND (STRAFTER(SUBSTR(?custodianKey, 2), " ") AS ?custodianValue)
+        BIND (IF(?custodianType = "urn:ietf:rfc:3986", ?custodianValue,
+                 IF(?custodianType = "http://hl7.org/fhir/sid/us-npi", "urn:oid:2.16.840.1.113883.4.6", ?custodianType))
+              AS ?custodianRootIri)
+        BIND (CONCAT(STRAFTER(?custodianRootIri, "urn:oid:"), STRAFTER(?custodianRootIri, "urn:uuid:")) AS ?custodianRoot)
+        BIND (IF(?custodianType = "urn:ietf:rfc:3986", "", ?custodianValue) AS ?custodianExtension)
       }
       OPTIONAL {
         {
@@ -152,23 +167,31 @@ WHERE {
         OPTIONAL { ?row ccda:membersFingerprint ?members }
         OPTIONAL {
           {
-            SELECT (MIN(?ranked) AS ?firstCustodianId) WHERE {
+            SELECT (MIN(?idKey) AS ?custodianKey) WHERE {
               ?root a fx:root, v3:ClinicalDocument ; ?custodianSlot ?custodian .
               ?custodian a v3:custodian ; ?assignedSlot ?assigned .
               ?assigned a v3:assignedCustodian ; ?organizationSlot ?organization .
               ?organization a v3:representedCustodianOrganization ; ?idSlot ?id .
               ?id a v3:id ; xyz:root ?idRoot .
-              FILTER (STRLEN(?idRoot) > 0)
               FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
               OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }
-              BIND (STRAFTER(STR(?idSlot), "#_") AS ?idAt)
-              BIND (CONCAT(SUBSTR("0000000000", STRLEN(?idAt) + 1), ?idAt,
-                         "|", REPLACE(REPLACE(?idRoot, "%", "%25"), "\\|", "%7C"),
-                         "|", REPLACE(REPLACE(COALESCE(?idExtension, ""), "%", "%25"), "\\|", "%7C")) AS ?ranked)
+              BIND (IF(REGEX(?idRoot, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?idRoot),
+                    IF(REGEX(?idRoot, "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"),
+                       CONCAT("urn:uuid:", LCASE(?idRoot)), 1/0)) AS ?rootIri)
+              BIND (IF(?idRoot = "2.16.840.1.113883.4.6", "http://hl7.org/fhir/sid/us-npi", ?rootIri) AS ?idSystem)
+              BIND (IF(BOUND(?idExtension), ?idSystem, IF(?idSystem = ?rootIri, "urn:ietf:rfc:3986", 1/0)) AS ?idType)
+              BIND (IF(BOUND(?idExtension), ?idExtension, ?rootIri) AS ?idValue)
+              FILTER (BOUND(?idType) && BOUND(?idValue))
+              BIND (CONCAT(IF(?idType = "http://hl7.org/fhir/sid/us-npi", "0", "1"), ?idType, " ", ?idValue) AS ?idKey)
             }
           }
-          BIND (REPLACE(REPLACE(STRBEFORE(STRAFTER(?firstCustodianId, "|"), "|"), "%7C", "|"), "%25", "%") AS ?custodianRoot)
-          BIND (REPLACE(REPLACE(STRAFTER(STRAFTER(?firstCustodianId, "|"), "|"), "%7C", "|"), "%25", "%") AS ?custodianExtension)
+          BIND (STRBEFORE(SUBSTR(?custodianKey, 2), " ") AS ?custodianType)
+          BIND (STRAFTER(SUBSTR(?custodianKey, 2), " ") AS ?custodianValue)
+          BIND (IF(?custodianType = "urn:ietf:rfc:3986", ?custodianValue,
+                   IF(?custodianType = "http://hl7.org/fhir/sid/us-npi", "urn:oid:2.16.840.1.113883.4.6", ?custodianType))
+                AS ?custodianRootIri)
+          BIND (CONCAT(STRAFTER(?custodianRootIri, "urn:oid:"), STRAFTER(?custodianRootIri, "urn:uuid:")) AS ?custodianRoot)
+          BIND (IF(?custodianType = "urn:ietf:rfc:3986", "", ?custodianValue) AS ?custodianExtension)
         }
         BIND (BOUND(?identifier) && EXISTS {
                 ?other ccda:identifierRoot ?identifierRoot ; ccda:identifierExtension ?identifierExtension ;

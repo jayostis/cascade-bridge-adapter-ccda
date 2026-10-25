@@ -1,0 +1,238 @@
+PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
+PREFIX sh:      <http://www.w3.org/ns/shacl#>
+PREFIX oa:      <http://www.w3.org/ns/oa#>
+PREFIX fx:      <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:     <http://sparql.xyz/facade-x/data/>
+PREFIX v3:      <urn:hl7-org:v3>
+PREFIX bridge:  <https://ns.cascadeprotocol.org/bridge/v1-draft#>
+PREFIX ccda:    <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# An organization element whose record's one version document-organizations.rq
+# reads from another element, and which holds a name, an identifier or an
+# address that version does not carry: its value is the identifier the record is
+# named by. Each element is ranked, keyed and read as document-organizations.rq
+# ranks, keys and reads it, and its content is compared item by item, an item
+# being "name", "identifier" or "address", a space, and what a version would
+# carry.
+
+CONSTRUCT {
+  [] a oa:Annotation ;
+    oa:hasTarget [
+      oa:hasSource bridge:thisRecord ;
+      oa:hasSelector [ a oa:XPathSelector ; rdf:value ?refinement ]
+    ] ;
+    oa:hasBody ccda:duplicateOrganizationNotCarried ;
+    oa:motivatedBy oa:classifying ;
+    sh:value ?identifier .
+}
+WHERE {
+  {
+    SELECT DISTINCT ?refinement ?datatype ?value WHERE {
+      {
+        SELECT ?refinement ?datatype ?value WHERE {
+          {
+            SELECT ?rank ?refinement ?datatype ?value WHERE {
+              ?root a fx:root, v3:ClinicalDocument ; ?participationSlot ?participation .
+              ?participation ?assignedSlot ?assigned .
+              ?assigned ?elementSlot ?element .
+              VALUES (?participationType ?assignedType ?elementType ?roleRank ?participationName ?assignedName ?elementName) {
+                (v3:custodian v3:assignedCustodian v3:representedCustodianOrganization "0"
+                 "custodian" "assignedCustodian" "representedCustodianOrganization")
+                (v3:author    v3:assignedAuthor    v3:representedOrganization          "1"
+                 "author"    "assignedAuthor"    "representedOrganization")
+              }
+              ?participation a ?participationType .
+              ?assigned a ?assignedType .
+              ?element a ?elementType .
+              {
+                SELECT ?participation (COUNT(?earlier) AS ?at) WHERE {
+                  ?parent ?slot ?participation . ?participation a ?type .
+                  ?parent ?earlierSlot ?earlier . ?earlier a ?type .
+                  VALUES ?type { v3:custodian v3:author }
+                  FILTER (xsd:integer(STRAFTER(STR(?earlierSlot), "#_")) <= xsd:integer(STRAFTER(STR(?slot), "#_")))
+                } GROUP BY ?participation
+              }
+              {
+                SELECT ?element (MIN(?idKey) AS ?chosen) WHERE {
+                  ?element a ?organizationType ; ?idSlot ?id .
+                  VALUES ?organizationType { v3:representedCustodianOrganization v3:representedOrganization }
+                  ?id a v3:id ; xyz:root ?idRoot .
+                  FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
+                  OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }
+                  BIND (IF(REGEX(?idRoot, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?idRoot),
+                        IF(REGEX(?idRoot, "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"),
+                           CONCAT("urn:uuid:", LCASE(?idRoot)), 1/0)) AS ?rootIri)
+                  BIND (IF(?idRoot = "2.16.840.1.113883.4.6", "http://hl7.org/fhir/sid/us-npi", ?rootIri) AS ?idSystem)
+                  BIND (IF(BOUND(?idExtension), ?idSystem, IF(?idSystem = ?rootIri, "urn:ietf:rfc:3986", 1/0)) AS ?idType)
+                  BIND (IF(BOUND(?idExtension), ?idExtension, ?rootIri) AS ?idValue)
+                  FILTER (BOUND(?idType) && BOUND(?idValue))
+                  BIND (CONCAT(IF(?idType = "http://hl7.org/fhir/sid/us-npi", "0", "1"), ?idType, " ", ?idValue) AS ?idKey)
+                } GROUP BY ?element
+              }
+              BIND (STRBEFORE(SUBSTR(?chosen, 2), " ") AS ?datatype)
+              BIND (STRAFTER(SUBSTR(?chosen, 2), " ") AS ?value)
+              BIND (STRAFTER(STR(?participationSlot), "#_") AS ?p)
+              BIND (STRAFTER(STR(?assignedSlot), "#_") AS ?a)
+              BIND (STRAFTER(STR(?elementSlot), "#_") AS ?e)
+              BIND (CONCAT(?roleRank, SUBSTR("0000000000", STRLEN(?p) + 1), ?p, SUBSTR("0000000000", STRLEN(?a) + 1), ?a,
+                           SUBSTR("0000000000", STRLEN(?e) + 1), ?e) AS ?rank)
+              BIND (CONCAT("*[local-name()='", ?participationName, "' and namespace-uri()='urn:hl7-org:v3'][", STR(?at), "]",
+                           "/*[local-name()='", ?assignedName, "' and namespace-uri()='urn:hl7-org:v3'][1]",
+                           "/*[local-name()='", ?elementName, "' and namespace-uri()='urn:hl7-org:v3'][1]") AS ?refinement)
+            }
+          }
+          {
+            SELECT ?datatype ?value (MIN(?anyRank) AS ?first) WHERE {
+              ?root a fx:root, v3:ClinicalDocument ; ?participationSlot ?participation .
+              ?participation ?assignedSlot ?assigned .
+              ?assigned ?elementSlot ?element .
+              VALUES (?participationType ?assignedType ?elementType ?roleRank) {
+                (v3:custodian v3:assignedCustodian v3:representedCustodianOrganization "0")
+                (v3:author    v3:assignedAuthor    v3:representedOrganization          "1")
+              }
+              ?participation a ?participationType .
+              ?assigned a ?assignedType .
+              ?element a ?elementType .
+              {
+                SELECT ?element (MIN(?idKey) AS ?chosen) WHERE {
+                  ?element a ?organizationType ; ?idSlot ?id .
+                  VALUES ?organizationType { v3:representedCustodianOrganization v3:representedOrganization }
+                  ?id a v3:id ; xyz:root ?idRoot .
+                  FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
+                  OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }
+                  BIND (IF(REGEX(?idRoot, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?idRoot),
+                        IF(REGEX(?idRoot, "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"),
+                           CONCAT("urn:uuid:", LCASE(?idRoot)), 1/0)) AS ?rootIri)
+                  BIND (IF(?idRoot = "2.16.840.1.113883.4.6", "http://hl7.org/fhir/sid/us-npi", ?rootIri) AS ?idSystem)
+                  BIND (IF(BOUND(?idExtension), ?idSystem, IF(?idSystem = ?rootIri, "urn:ietf:rfc:3986", 1/0)) AS ?idType)
+                  BIND (IF(BOUND(?idExtension), ?idExtension, ?rootIri) AS ?idValue)
+                  FILTER (BOUND(?idType) && BOUND(?idValue))
+                  BIND (CONCAT(IF(?idType = "http://hl7.org/fhir/sid/us-npi", "0", "1"), ?idType, " ", ?idValue) AS ?idKey)
+                } GROUP BY ?element
+              }
+              BIND (STRBEFORE(SUBSTR(?chosen, 2), " ") AS ?datatype)
+              BIND (STRAFTER(SUBSTR(?chosen, 2), " ") AS ?value)
+              BIND (STRAFTER(STR(?participationSlot), "#_") AS ?p)
+              BIND (STRAFTER(STR(?assignedSlot), "#_") AS ?a)
+              BIND (STRAFTER(STR(?elementSlot), "#_") AS ?e)
+              BIND (CONCAT(?roleRank, SUBSTR("0000000000", STRLEN(?p) + 1), ?p, SUBSTR("0000000000", STRLEN(?a) + 1), ?a,
+                           SUBSTR("0000000000", STRLEN(?e) + 1), ?e) AS ?anyRank)
+            } GROUP BY ?datatype ?value
+          }
+          FILTER (?rank != ?first)
+          {
+            SELECT ?itemRank ?item WHERE {
+              ?root a fx:root, v3:ClinicalDocument ; ?participationSlot ?participation .
+              ?participation ?assignedSlot ?assigned .
+              ?assigned ?elementSlot ?element .
+              VALUES (?participationType ?assignedType ?elementType ?roleRank) {
+                (v3:custodian v3:assignedCustodian v3:representedCustodianOrganization "0")
+                (v3:author    v3:assignedAuthor    v3:representedOrganization          "1")
+              }
+              ?participation a ?participationType .
+              ?assigned a ?assignedType .
+              ?element a ?elementType .
+              {
+                {
+                  SELECT ?element (MIN(?ranked) AS ?firstName) WHERE {
+                    ?element a ?organizationType ; ?nameSlot ?nameElement .
+                    VALUES ?organizationType { v3:representedCustodianOrganization v3:representedOrganization }
+                    ?nameElement a v3:name ; rdf:_1 ?text .
+                    FILTER (isLiteral(?text) && STRLEN(?text) > 0)
+                    FILTER NOT EXISTS { ?nameElement rdf:_2 ?more }
+                    BIND (STRAFTER(STR(?nameSlot), "#_") AS ?nameAt)
+                    BIND (CONCAT(SUBSTR("0000000000", STRLEN(?nameAt) + 1), ?nameAt, "|", ?text) AS ?ranked)
+                  } GROUP BY ?element
+                }
+                BIND (CONCAT("name ", STRAFTER(?firstName, "|")) AS ?item)
+              }
+              UNION
+              {
+                ?element ?idSlot ?id .
+                ?id a v3:id ; xyz:root ?idRoot .
+                FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
+                OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }
+                BIND (IF(REGEX(?idRoot, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?idRoot),
+                      IF(REGEX(?idRoot, "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"),
+                         CONCAT("urn:uuid:", LCASE(?idRoot)), 1/0)) AS ?rootIri)
+                BIND (IF(?idRoot = "2.16.840.1.113883.4.6", "http://hl7.org/fhir/sid/us-npi", ?rootIri) AS ?idSystem)
+                BIND (IF(BOUND(?idExtension), ?idSystem, IF(?idSystem = ?rootIri, "urn:ietf:rfc:3986", 1/0)) AS ?idType)
+                BIND (IF(BOUND(?idExtension), ?idExtension, ?rootIri) AS ?idValue)
+                FILTER (BOUND(?idType) && BOUND(?idValue))
+                BIND (CONCAT("identifier ", ?idType, " ", ?idValue) AS ?item)
+              }
+              UNION
+              {
+                ?element ?addrSlot ?addr .
+                ?addr a v3:addr .
+                FILTER NOT EXISTS { ?addr xyz:nullFlavor ?addrNullFlavor }
+                OPTIONAL {
+                  {
+                    SELECT ?addr ?line1 WHERE {
+                      ?addr a v3:addr ; ?lineSlot ?lineElement ; ?earlierSlot ?earlierElement .
+                      ?lineElement a v3:streetAddressLine ; rdf:_1 ?line1 .
+                      ?earlierElement a v3:streetAddressLine ; rdf:_1 ?earlierLine .
+                      FILTER (isLiteral(?line1) && isLiteral(?earlierLine))
+                      FILTER (xsd:integer(STRAFTER(STR(?earlierSlot), "#_")) <= xsd:integer(STRAFTER(STR(?lineSlot), "#_")))
+                    } GROUP BY ?addr ?line1 ?lineSlot HAVING (COUNT(?earlierElement) = 1)
+                  }
+                }
+                OPTIONAL {
+                  {
+                    SELECT ?addr ?line2 WHERE {
+                      ?addr a v3:addr ; ?lineSlot ?lineElement ; ?earlierSlot ?earlierElement .
+                      ?lineElement a v3:streetAddressLine ; rdf:_1 ?line2 .
+                      ?earlierElement a v3:streetAddressLine ; rdf:_1 ?earlierLine .
+                      FILTER (isLiteral(?line2) && isLiteral(?earlierLine))
+                      FILTER (xsd:integer(STRAFTER(STR(?earlierSlot), "#_")) <= xsd:integer(STRAFTER(STR(?lineSlot), "#_")))
+                    } GROUP BY ?addr ?line2 ?lineSlot HAVING (COUNT(?earlierElement) = 2)
+                  }
+                }
+                OPTIONAL {
+                  {
+                    SELECT ?addr ?line3 WHERE {
+                      ?addr a v3:addr ; ?lineSlot ?lineElement ; ?earlierSlot ?earlierElement .
+                      ?lineElement a v3:streetAddressLine ; rdf:_1 ?line3 .
+                      ?earlierElement a v3:streetAddressLine ; rdf:_1 ?earlierLine .
+                      FILTER (isLiteral(?line3) && isLiteral(?earlierLine))
+                      FILTER (xsd:integer(STRAFTER(STR(?earlierSlot), "#_")) <= xsd:integer(STRAFTER(STR(?lineSlot), "#_")))
+                    } GROUP BY ?addr ?line3 ?lineSlot HAVING (COUNT(?earlierElement) = 3)
+                  }
+                }
+                OPTIONAL {
+                  {
+                    SELECT ?addr ?line4 WHERE {
+                      ?addr a v3:addr ; ?lineSlot ?lineElement ; ?earlierSlot ?earlierElement .
+                      ?lineElement a v3:streetAddressLine ; rdf:_1 ?line4 .
+                      ?earlierElement a v3:streetAddressLine ; rdf:_1 ?earlierLine .
+                      FILTER (isLiteral(?line4) && isLiteral(?earlierLine))
+                      FILTER (xsd:integer(STRAFTER(STR(?earlierSlot), "#_")) <= xsd:integer(STRAFTER(STR(?lineSlot), "#_")))
+                    } GROUP BY ?addr ?line4 ?lineSlot HAVING (COUNT(?earlierElement) = 4)
+                  }
+                }
+                OPTIONAL { ?addr ?citySlot ?cityElement . ?cityElement a v3:city ; rdf:_1 ?city . FILTER (isLiteral(?city)) }
+                OPTIONAL { ?addr ?stateSlot ?stateElement . ?stateElement a v3:state ; rdf:_1 ?state . FILTER (isLiteral(?state)) }
+                OPTIONAL { ?addr ?postalSlot ?postalElement . ?postalElement a v3:postalCode ; rdf:_1 ?postalCode . FILTER (isLiteral(?postalCode)) }
+                OPTIONAL { ?addr ?countrySlot ?countryElement . ?countryElement a v3:country ; rdf:_1 ?country . FILTER (isLiteral(?country)) }
+                BIND (CONCAT(COALESCE(CONCAT("\n", ?line1), ""), COALESCE(CONCAT("\n", ?line2), ""), COALESCE(CONCAT("\n", ?line3), ""),
+                             COALESCE(CONCAT("\n", ?line4), ""), COALESCE(CONCAT("\n", ?city), ""), COALESCE(CONCAT("\n", ?state), ""),
+                             COALESCE(CONCAT("\n", ?postalCode), ""), COALESCE(CONCAT("\n", ?country), "")) AS ?joined)
+                FILTER (STRLEN(?joined) > 0)
+                BIND (CONCAT("address ", SUBSTR(?joined, 2)) AS ?item)
+              }
+              BIND (STRAFTER(STR(?participationSlot), "#_") AS ?p)
+              BIND (STRAFTER(STR(?assignedSlot), "#_") AS ?a)
+              BIND (STRAFTER(STR(?elementSlot), "#_") AS ?e)
+              BIND (CONCAT(?roleRank, SUBSTR("0000000000", STRLEN(?p) + 1), ?p, SUBSTR("0000000000", STRLEN(?a) + 1), ?a,
+                           SUBSTR("0000000000", STRLEN(?e) + 1), ?e) AS ?itemRank)
+            }
+          }
+          FILTER (?itemRank = ?rank || ?itemRank = ?first)
+          BIND (IF(?itemRank = ?first, 1, 0) AS ?inVersion)
+        } GROUP BY ?refinement ?datatype ?value ?item HAVING (MAX(?inVersion) = 0)
+      }
+    }
+  }
+  BIND (STRDT(?value, IRI(?datatype)) AS ?identifier)
+}

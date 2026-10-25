@@ -24,7 +24,7 @@ ccda:entryIdRepeated a skos:Concept ;
   skos:broader bridge:idRepeated .
 
 ccda:namingScopeNotStated a skos:Concept ;
-  skos:prefLabel "A document states no custodian id, or not exactly one patient with an id, so a record is named by the document and its selector, the patient's included, and the same statement in another document is another record."@en ;
+  skos:prefLabel "A document's custodian has no id that names an organization, or the document states not exactly one patient with an id, so a record is named by the document and its selector, the patient's included, and the same statement in another document is another record."@en ;
   skos:inScheme ccda:gaps ;
   skos:broader bridge:carriedWithLoss ;
   sh:resultSeverity sh:Warning .
@@ -203,3 +203,8 @@ ccda:nullFlavorNotListed a skos:Concept ;
   skos:prefLabel "A value or a time states a nullFlavor that is no code of HL7 v3 NullFlavor, so no reason for its absence is carried."@en ;
   skos:inScheme ccda:gaps ;
   skos:broader bridge:valueNotMapped .
+
+ccda:duplicateOrganizationNotCarried a skos:Concept ;
+  skos:prefLabel "Two organization elements of one document carry the id one organization record is named by, and the record's one version is read from the custodian's, else the first author's: a name, an identifier or an address only the other holds is not carried."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:carriedWithLoss .
