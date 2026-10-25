@@ -26,6 +26,7 @@
     <#procedures>
     <#shared-id>
     <#negations>
+    <#concern-status-beside-a-problem-status>
     <#narrative-reference-without-hash>
     <#narrative-id-twice>
     <#download-c>
@@ -912,4 +913,17 @@
   mf:result [
     bridge:expectedGraph <expected/null-flavors.ttl> ;
     bridge:expectedFindings <findings/null-flavors.ttl>
+  ] .
+
+<#concern-status-beside-a-problem-status> a bridge:IsomorphicConversionTest ;
+  mf:name "concern-status-beside-a-problem-status" ;
+  rdfs:comment "One problem states its status in a Problem Status Observation and another does not: the other's concern act status, completed, maps to no clinical status and is a finding, whatever the first problem states." ;
+  mf:action [
+    bridge:input <in/concern-status-beside-a-problem-status.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/concern-status-beside-a-problem-status.ttl> ;
+    bridge:expectedFindings <findings/concern-status-beside-a-problem-status.ttl>
   ] .
