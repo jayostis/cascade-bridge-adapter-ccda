@@ -121,9 +121,11 @@ naming the property (`cascade:absentValueProperty`, a result's value being
 another system (cascade-vocabulary's
 `decisions/partial-dates-and-absent-reasons.md`). The seventeen codes are in
 `../vocab/ccda-null-flavors.ttl`, read without regard to case; a flavour that is
-none of them carries nothing, and on a result's value it is a finding,
-`ccda:nullFlavorNotListed`. On an `id` or an address it says only that there is
-none, and elsewhere, where it stands alone, nothing is carried.
+none of them carries nothing and is a finding, `ccda:nullFlavorNotListed`, on a
+result's value, on a time or a bound of it, and on the `birthTime`. A medication
+whose whole `effectiveTime` is a flavour has its start of use absent for it. On
+an `id` or an address it says only that there is none, and elsewhere, where it
+stands alone, nothing is carried.
 
 ## Names
 

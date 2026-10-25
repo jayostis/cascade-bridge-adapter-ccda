@@ -1,0 +1,37 @@
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sh:     <http://www.w3.org/ns/shacl#>
+PREFIX oa:     <http://www.w3.org/ns/oa#>
+PREFIX skos:   <http://www.w3.org/2004/02/skos/core#>
+PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:    <http://sparql.xyz/facade-x/data/>
+PREFIX v3:     <urn:hl7-org:v3>
+PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
+PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# A birth time's nullFlavor that is no NullFlavor code, so patient.rq carries
+# no reason for the absent date of birth; its value is the nullFlavor as
+# written.
+
+CONSTRUCT {
+  [] a oa:Annotation ;
+    oa:hasTarget [
+      oa:hasSource bridge:thisRecord ;
+      oa:hasSelector [ a oa:XPathSelector ; rdf:value ?refinement ]
+    ] ;
+    oa:hasBody ccda:nullFlavorNotListed ;
+    oa:motivatedBy oa:classifying ;
+    sh:value ?value .
+}
+WHERE {
+  ?root a fx:root, v3:ClinicalDocument ; ?rtSlot ?recordTarget .
+  ?recordTarget a v3:recordTarget ; ?prSlot ?patientRole .
+  ?patientRole a v3:patientRole ; ?pS ?patient .
+  ?patient a v3:patient ; ?bS ?birth .
+  ?birth a v3:birthTime ; xyz:nullFlavor ?value .
+  FILTER NOT EXISTS {
+    ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey .
+    FILTER (?flavourKey = LCASE(REPLACE(?value, "^[ \t\r\n]+|[ \t\r\n]+$", "")))
+  }
+  BIND (CONCAT(STRAFTER(STR(?rtSlot), "#_"), ".", STRAFTER(STR(?prSlot), "#_")) AS ?slots)
+  ?row ccda:statementAt ?slots ; ccda:refinement ?refinement .
+}

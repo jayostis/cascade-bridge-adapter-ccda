@@ -15,7 +15,7 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # neither a name nor a code in SNOMED CT or LOINC, a coded value's code in
 # another system, a bound of a two-bound IVL_PQ value or of a reference range
 # that is not inclusive, a number not in REAL's decimal form or beyond twenty
-# digits of the point, a value's nullFlavor that is no NullFlavor code, a
+# digits of the point, a value's or a time's nullFlavor that is no NullFlavor code, a
 # second value, range or interpretation, and a code in
 # a code system other than LOINC, at the result; and
 # a component of an organizer some result of which is a record, that is no
@@ -94,7 +94,13 @@ WHERE {
     }
     UNION
     {
-      ?result ?vS ?resultValue . ?resultValue a v3:value ; xyz:nullFlavor ?value .
+      { ?result ?vS ?resultValue . ?resultValue a v3:value ; xyz:nullFlavor ?value . }
+      UNION
+      { ?result ?flavourTimeSlot ?flavourTime . ?flavourTime a v3:effectiveTime ; xyz:nullFlavor ?value . }
+      UNION
+      { ?result ?flavourTimeSlot ?flavourTime . ?flavourTime a v3:effectiveTime ; ?flavourBoundSlot ?flavourBound .
+        ?flavourBound a ?flavourBoundType ; xyz:nullFlavor ?value .
+        VALUES ?flavourBoundType { v3:low v3:high } }
       FILTER NOT EXISTS {
         ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey .
         FILTER (?flavourKey = LCASE(REPLACE(?value, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))

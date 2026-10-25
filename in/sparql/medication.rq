@@ -140,7 +140,8 @@ WHERE {
         }
         UNION
         {
-          ?medication ?eS ?time . ?time a v3:effectiveTime ; ?lS ?low . ?low a v3:low ; xyz:nullFlavor ?flavour .
+          ?medication ?eS ?time . ?time a v3:effectiveTime .
+          { ?time xyz:nullFlavor ?flavour } UNION { ?time ?lS ?low . ?low a v3:low ; xyz:nullFlavor ?flavour }
           ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey ; skos:exactMatch ?flavourCode .
           FILTER (?flavourKey = LCASE(REPLACE(?flavour, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
           BIND (CONCAT("nullFlavor ", STR(?flavourCode)) AS ?value)
