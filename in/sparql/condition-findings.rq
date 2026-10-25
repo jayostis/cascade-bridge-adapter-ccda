@@ -11,7 +11,8 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # A status a problem states that the concept map condition.rq reads it through
 # does not hold: its Problem Status Observation's, or, where it has none, its
 # concern act's. And a code in a code system no predicate of a condition
-# carries.
+# carries, and a nullFlavor on its time or a bound of it that is no NullFlavor
+# code, so no reason for the absent date is carried.
 
 CONSTRUCT {
   [] a oa:Annotation ;
@@ -88,5 +89,18 @@ WHERE {
     { ?coded ?trS ?translation . ?translation a v3:translation ; xyz:codeSystem ?value . }
     FILTER (REPLACE(?value, "^urn:oid:", "") NOT IN ("2.16.840.1.113883.6.96", "2.16.840.1.113883.6.90"))
     BIND (ccda:codeNotCarried AS ?gap)
+  }
+  UNION
+  {
+    ?condition ?flavourTimeSlot ?flavourTime . ?flavourTime a v3:effectiveTime .
+    { ?flavourTime xyz:nullFlavor ?value }
+    UNION
+    { ?flavourTime ?flavourBoundSlot ?flavourBound . ?flavourBound a ?flavourBoundType ; xyz:nullFlavor ?value .
+      VALUES ?flavourBoundType { v3:low v3:high } }
+    FILTER NOT EXISTS {
+      ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey .
+      FILTER (?flavourKey = LCASE(REPLACE(?value, "^[ \t\r\n]+|[ \t\r\n]+$", "")))
+    }
+    BIND (ccda:nullFlavorNotListed AS ?gap)
   }
 }

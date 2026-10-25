@@ -10,7 +10,8 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # A status an immunization, a procedure or a medication states that the
 # concept map its mapping reads it through does not hold, and a code in a code
-# system no predicate of its kind carries. A statement whose negationInd is true is
+# system no predicate of its kind carries, and a nullFlavor on its time or a
+# bound of it that is no NullFlavor code. A statement whose negationInd is true is
 # not-done whatever its statusCode says.
 
 CONSTRUCT {
@@ -75,5 +76,18 @@ WHERE {
       FILTER (REPLACE(?value, "^urn:oid:", "") = ?anyCarried)
     }
     BIND (ccda:codeNotCarried AS ?gap)
+  }
+  UNION
+  {
+    ?statement ?flavourTimeSlot ?flavourTime . ?flavourTime a v3:effectiveTime .
+    { ?flavourTime xyz:nullFlavor ?value }
+    UNION
+    { ?flavourTime ?flavourBoundSlot ?flavourBound . ?flavourBound a ?flavourBoundType ; xyz:nullFlavor ?value .
+      VALUES ?flavourBoundType { v3:low v3:high } }
+    FILTER NOT EXISTS {
+      ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey .
+      FILTER (?flavourKey = LCASE(REPLACE(?value, "^[ \t\r\n]+|[ \t\r\n]+$", "")))
+    }
+    BIND (ccda:nullFlavorNotListed AS ?gap)
   }
 }

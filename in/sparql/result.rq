@@ -16,8 +16,9 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # bound, is a quantity; an RTO a ratio; an IVL_PQ with two bounds a range, each
 # number a node result-quantities.rq writes; a CD, CE, CV or CO is coded, its
 # code and translations in SNOMED CT and LOINC written as code IRIs; an ST is
-# text. A value with a null flavour has no kind. Of each text, the first of
-# these the source states:
+# text. A value with a null flavour has no kind: its flavour is the reason it is
+# absent, the version's node #absent-resultValueKind, as a time's is the reason
+# its property is absent. Of each text, the first of these the source states:
 #   - the test's name: the narrative its code's originalText references, the
 #     originalText's own text, the code's displayName;
 #   - an ST value: its text; a CD, CE, CV or CO value: the narrative its
@@ -44,6 +45,12 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 CONSTRUCT {
   ?version ?p ?o .
+  ?version cascade:paddedDateTime ?paddedNode .
+  ?paddedNode cascade:paddedDateTimeProperty ?p ;
+    cascade:writtenDate ?writtenTime .
+  ?version cascade:valueAbsentForReason ?absentNode .
+  ?absentNode cascade:absentValueProperty ?absentProperty ;
+    cascade:absentReasonCode ?absentReason .
 }
 WHERE {
   ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
@@ -263,7 +270,7 @@ WHERE {
             UNION
             {
               ?result ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?value .
-              FILTER (REGEX(?value, "^[0-9]{8}([0-9]{2}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?)?([+-][0-9]{4})?$"))
+              FILTER (REGEX(?value, "^[0-9]{4}([0-9]{2}([0-9]{2}([0-9]{2}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?)?)?)?([+-][0-9]{4})?$"))
               BIND (cascade:resultClinicallyRelevantTime AS ?p)
               BIND (STRAFTER(STR(?eS), "#_") AS ?at)
               BIND ("1" AS ?tier)
@@ -271,10 +278,21 @@ WHERE {
             UNION
             {
               ?result ?eS ?time . ?time a v3:effectiveTime ; ?lS ?low . ?low a v3:low ; xyz:value ?value .
-              FILTER (REGEX(?value, "^[0-9]{8}([0-9]{2}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?)?([+-][0-9]{4})?$"))
+              FILTER (REGEX(?value, "^[0-9]{4}([0-9]{2}([0-9]{2}([0-9]{2}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?)?)?)?([+-][0-9]{4})?$"))
               BIND (cascade:resultClinicallyRelevantTime AS ?p)
               BIND (STRAFTER(STR(?eS), "#_") AS ?at)
               BIND ("2" AS ?tier)
+            }
+            UNION
+            {
+              ?result ?eS ?time . ?time a v3:effectiveTime .
+              { ?time xyz:nullFlavor ?flavour } UNION { ?time ?lS ?low . ?low a v3:low ; xyz:nullFlavor ?flavour }
+              ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey ; skos:exactMatch ?flavourCode .
+              FILTER (?flavourKey = LCASE(REPLACE(?flavour, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+              BIND (CONCAT("nullFlavor ", STR(?flavourCode)) AS ?value)
+              BIND (cascade:resultClinicallyRelevantTime AS ?p)
+              BIND ("9" AS ?tier)
+              BIND (STRAFTER(STR(?eS), "#_") AS ?at)
             }
             UNION
             {
@@ -301,17 +319,25 @@ WHERE {
     }
     BIND (STRAFTER(?first, "|") AS ?value)
     BIND (IF(?p != cascade:resultClinicallyRelevantTime, ?value,
-          IF(REGEX(?value, "^[0-9]{12}([0-9]{2}(\\.[0-9]+)?)?([+-][0-9]{4})?$"),
+          IF(REGEX(?value, "^[0-9]{10}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?([+-][0-9]{4})?$"),
              STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),
-                          "T", SUBSTR(?value, 9, 2), ":", SUBSTR(?value, 11, 2), ":",
+                          "T", SUBSTR(?value, 9, 2), ":", IF(REGEX(?value, "^[0-9]{12}"), SUBSTR(?value, 11, 2), "00"), ":",
                           IF(REGEX(?value, "^[0-9]{14}"), REPLACE(?value, "^[0-9]{12}([0-9]{2}(\\.[0-9]+)?).*$", "$1"), "00"),
                           IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")),
                    xsd:dateTime),
-          IF(REGEX(?value, "^[0-9]{8}([0-9]{2})?([+-][0-9]{4})?$"),
-             STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),
-                          IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")),
-                   xsd:date),
-             1/0))) AS ?o)
+          IF(REGEX(?value, "^[0-9]{8}([+-][0-9]{4})?$"),
+             STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2), IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")), xsd:date),
+          IF(REGEX(?value, "^[0-9]{6}([+-][0-9]{4})?$"),
+             STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")), xsd:gYearMonth),
+          IF(REGEX(?value, "^[0-9]{4}([+-][0-9]{4})?$"),
+             STRDT(CONCAT(SUBSTR(?value, 1, 4), IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")), xsd:gYear),
+             1/0))))) AS ?o)
+    BIND (IF(?p IN (cascade:resultClinicallyRelevantTime) && REGEX(?value, "^[0-9]{10}([0-9]{2})?([+-][0-9]{4})?$"),
+             CONCAT("#padded-", STRAFTER(STR(?p), "#")), 1/0) AS ?paddedFragment)
+    BIND (IF(BOUND(?paddedFragment), ?value, 1/0) AS ?writtenTime)
+    BIND (IF(STRSTARTS(?value, "nullFlavor "), CONCAT("#absent-", STRAFTER(STR(?p), "#")), 1/0) AS ?absentFragment)
+    BIND (IF(BOUND(?absentFragment), ?p, 1/0) AS ?absentProperty)
+    BIND (IF(BOUND(?absentFragment), IRI(STRAFTER(?value, "nullFlavor ")), 1/0) AS ?absentReason)
   }
   UNION
   {
@@ -511,4 +537,20 @@ WHERE {
       }
     }
   }
+  UNION
+  {
+    {
+      SELECT ?result (MIN(xsd:integer(STRAFTER(STR(?anyS), "#_"))) AS ?firstAt) WHERE {
+        ?result ?anyS ?any . ?any a v3:value .
+      } GROUP BY ?result
+    }
+    ?result ?vlS ?resultValue . ?resultValue a v3:value ; xyz:nullFlavor ?flavour .
+    FILTER (xsd:integer(STRAFTER(STR(?vlS), "#_")) = ?firstAt)
+    ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey ; skos:exactMatch ?absentReason .
+    FILTER (?flavourKey = LCASE(REPLACE(?flavour, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+    BIND ("#absent-resultValueKind" AS ?absentFragment)
+    BIND (cascade:resultValueKind AS ?absentProperty)
+  }
+  BIND (IF(BOUND(?paddedFragment), IRI(CONCAT(STR(?version), ?paddedFragment)), 1/0) AS ?paddedNode)
+  BIND (IF(BOUND(?absentFragment), IRI(CONCAT(STR(?version), ?absentFragment)), 1/0) AS ?absentNode)
 }

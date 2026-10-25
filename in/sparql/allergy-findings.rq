@@ -11,7 +11,8 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # A code an allergy states that the concept map allergy.rq reads it through
 # does not hold, or holds in another code system, and an NDC, which the map
 # holds for medications and allergy.rq never writes. A path holds the values of every observation an allergy nests,
-# so the accounting cannot name the map; this does, by template.
+# so the accounting cannot name the map; this does, by template. And a nullFlavor
+# on its time or a bound of it that is no NullFlavor code.
 
 CONSTRUCT {
   [] a oa:Annotation ;
@@ -99,5 +100,18 @@ WHERE {
       FILTER (?systemKey = LCASE(REPLACE(?value, "^urn:oid:", "")) && ?systemKey != "2.16.840.1.113883.6.69")
     }
     BIND (ccda:codeSystemNotMapped AS ?gap)
+  }
+  UNION
+  {
+    ?allergy ?flavourTimeSlot ?flavourTime . ?flavourTime a v3:effectiveTime .
+    { ?flavourTime xyz:nullFlavor ?value }
+    UNION
+    { ?flavourTime ?flavourBoundSlot ?flavourBound . ?flavourBound a ?flavourBoundType ; xyz:nullFlavor ?value .
+      VALUES ?flavourBoundType { v3:low v3:high } }
+    FILTER NOT EXISTS {
+      ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey .
+      FILTER (?flavourKey = LCASE(REPLACE(?value, "^[ \t\r\n]+|[ \t\r\n]+$", "")))
+    }
+    BIND (ccda:nullFlavorNotListed AS ?gap)
   }
 }
