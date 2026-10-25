@@ -57,8 +57,9 @@ the record, else the least by code point of type, then value, whatever order
 the document lists them in, so the FHIR adapter names one NPI's organization
 alike. The name hashes that type and value, as the version's `org:identifier`
 states them. An element with no such `id` names no organization. The custodian
-scope below is read from the first usable `id` in document order, the
-vocabulary's `RecordFromCcda` rule. One organization named by several elements
+scope below is read from the `id` that names the custodian's organization, so
+two documents listing one organization's `id`s in two orders scope their
+records alike. One organization named by several elements
 of a document, as custodian and author or by two authors, is one record with
 one version, read from the custodian, else the first author; the document names
 it once in each role, `cascade:CustodianRole` and `cascade:AuthorRole`.
@@ -132,11 +133,13 @@ stands alone, nothing is carried.
 A record's name is one of cascade-vocabulary's naming rules, each the body of
 its `tests/vectors/naming/<rule>.rq` there, copied into `../in/sparql/record.rq`
 and hashed once for the rule picked. Two scopes say whose an id is: the
-**custodian**, the first usable `id` of
-`custodian/assignedCustodian/representedCustodianOrganization`, and the
-**patient**, the first usable `id` of the `patientRole` of the document's one
-`recordTarget`, each usable as the section above says. A document with more
-than one `recordTarget` states no patient scope.
+**custodian**, the `id` of
+`custodian/assignedCustodian/representedCustodianOrganization` that names its
+organization record, as above, as its root and extension (the NPI's URI as its
+OID again, a UUID root in lower case), and the **patient**, the first usable
+`id` of the `patientRole` of the document's one `recordTarget`, usable as the
+section above says. A document with more than one `recordTarget` states no
+patient scope.
 
 | a statement | its rule | its inputs, after the rule |
 |---|---|---|
@@ -147,7 +150,8 @@ than one `recordTarget` states no patient scope.
 
 A statement is named by the document where:
 
-- the document states no custodian id, or not exactly one patient with an id.
+- the document's custodian has no `id` that names an organization, or the
+  document states not exactly one patient with an id.
   An empty scope would fuse every scope-less document's statements of one id,
   or of one class and key, two patients' among them, which the scopes exist to
   stop; a name by the document errs the other way, two records a judgment can

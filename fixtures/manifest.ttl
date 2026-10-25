@@ -42,6 +42,7 @@
     <#download-twice-names-one-allergy>
     <#two-documents-name-one-custodian>
     <#ids-in-two-orders-name-one-organization>
+    <#ids-in-two-orders-scope-one-patient>
     <#download-twice-nullflavor-id-names-one-allergy>
     <#id-bearing-differs-from-nullflavor-id>
     <#one-id-two-keys-names-two-records>
@@ -481,6 +482,24 @@
       bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
       bridge:facts <facts/portal-download.ttl> ;
       bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='custodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='assignedCustodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='representedCustodianOrganization' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ]
+  ] ;
+  mf:result [ bridge:sameRecord true ] .
+
+<#ids-in-two-orders-scope-one-patient> a bridge:IdentityRelationTest ;
+  mf:name "ids-in-two-orders-scope-one-patient" ;
+  rdfs:comment "Two documents whose custodians list one organization's ids in two orders, one listing first an id no identifier maps from, scope their records alike: the patient both name by one id is one record." ;
+  mf:action [
+    bridge:conversion [
+      bridge:input <in/organization-ids-in-one-order.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ] , [
+      bridge:input <in/organization-ids-in-another-order.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][1]"
     ]
   ] ;
   mf:result [ bridge:sameRecord true ] .

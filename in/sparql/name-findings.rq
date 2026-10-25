@@ -12,8 +12,9 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 #   - its id is another statement's of the document with other content: the
 #     source broke its own id, and the record is named by the document; its
 #     value is the id;
-#   - the document states no custodian id, or not exactly one patient with an
-#     id, so the record is named by the document; its value is its class;
+#   - the document's custodian has no id that names an organization, or the
+#     document states not exactly one patient with an id, so the record is
+#     named by the document; its value is its class;
 # and what record.rq's patient link says: in a document without exactly one
 # recordTarget, a record that is no patient links none; its value is how many
 # there are.
@@ -43,8 +44,9 @@ WHERE {
           ?assigned a v3:assignedCustodian ; ?organizationSlot ?organization .
           ?organization a v3:representedCustodianOrganization ; ?idSlot ?id .
           ?id a v3:id ; xyz:root ?idRoot .
-          FILTER (STRLEN(?idRoot) > 0)
           FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
+          FILTER (REGEX(?idRoot, "^([0-2](\\.(0|[1-9][0-9]*))+|[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12})$"))
+          FILTER (?idRoot != "2.16.840.1.113883.4.6" || EXISTS { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) })
         }
       }
     }
