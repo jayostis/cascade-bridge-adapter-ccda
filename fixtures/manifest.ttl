@@ -33,6 +33,7 @@
     <#medications-and-results-a>
     <#medications-and-results-edges>
     <#results-value-kinds>
+    <#results-identifiers>
     <#medications-and-results-b>
     <#fingerprint-keys>
     <#download-twice-names-one-allergy>
@@ -389,6 +390,19 @@
   mf:result [
     bridge:expectedGraph <expected/results-value-kinds.ttl> ;
     bridge:expectedFindings <findings/results-value-kinds.ttl>
+  ] .
+
+<#results-identifiers> a bridge:IsomorphicConversionTest ;
+  mf:name "results-identifiers" ;
+  rdfs:comment "A result's ids as business identifiers, as HL7's CDA-to-FHIR identifier mapping makes them: a root and extension as the extension typed by urn:oid: and the root, a root alone as its urn:oid: IRI typed urn:ietf:rfc:3986, a UUID root as its urn:uuid: IRI in lower case; an id with a null flavour and one whose root is neither an OID nor a UUID give none." ;
+  mf:action [
+    bridge:input <in/results-identifiers.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/results-identifiers.ttl> ;
+    bridge:expectedFindings <findings/results-identifiers.ttl>
   ] .
 
 <#medications-and-results-b> a bridge:IsomorphicConversionTest ;

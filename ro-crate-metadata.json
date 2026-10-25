@@ -136,6 +136,9 @@
           "@id": "in/sparql/result-quantities.rq"
         },
         {
+          "@id": "in/sparql/result-identifiers.rq"
+        },
+        {
           "@id": "in/sparql/document-organizations.rq"
         }
       ],
@@ -293,6 +296,9 @@
         },
         {
           "@id": "in/sparql/result-quantities.rq"
+        },
+        {
+          "@id": "in/sparql/result-identifiers.rq"
         },
         {
           "@id": "in/sparql/medication-findings.rq"
@@ -455,6 +461,9 @@
         },
         {
           "@id": "fixtures/in/results-value-kinds.xml"
+        },
+        {
+          "@id": "fixtures/in/results-identifiers.xml"
         },
         {
           "@id": "fixtures/in/medications-and-results-b.xml"
@@ -670,10 +679,16 @@
           "@id": "fixtures/expected/results-value-kinds.ttl"
         },
         {
+          "@id": "fixtures/expected/results-identifiers.ttl"
+        },
+        {
           "@id": "fixtures/findings/medications-and-results-edges.ttl"
         },
         {
           "@id": "fixtures/findings/results-value-kinds.ttl"
+        },
+        {
+          "@id": "fixtures/findings/results-identifiers.ttl"
         },
         {
           "@id": "fixtures/expected/medications-and-results-b.ttl"
@@ -1113,6 +1128,18 @@
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "description": "Each number a Result Observation's first value and its typed reference range state, as a cascade:Quantity node of its version, <version>#<role>: a PQ's, INT's or REAL's value with a PQ's unit as its UCUM unit, an RTO's numerator and denominator, a two-bound IVL_PQ's bounds, a one-bound IVL_PQ's bound as a value with the comparator C-CDA on FHIR gives it, and the bounds of the one reference range interpreted N, or of the only one; each with its number as written and as a canonical xsd:decimal. A range bound that is not inclusive is not written."
+    },
+    {
+      "@id": "in/sparql/result-identifiers.rq",
+      "@type": "File",
+      "name": "Mapping: the business identifiers of a result",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "2839",
+      "sha256": "f865ee59e9b08a5f8241c55fff0e481cb85d71b0c66f455087a9a72f5571ba93",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Each id of a Result Observation, as a dct:identifier of its version, mapped as HL7's CDA-to-FHIR identifier mapping makes it one: the extension typed by the root's registered URI or its urn:oid: or urn:uuid: IRI, or a root alone as that IRI typed urn:ietf:rfc:3986."
     },
     {
       "@id": "in/sparql/medication-findings.rq",
@@ -1845,6 +1872,19 @@
       "description": "Results whose first values are of every kind but text: a leukocyte count written 6.20E3 /uL with two reference ranges, the second interpreted N with a low bound that is not inclusive and a high bound written 1.10e4; an antinuclear antibody titre as an RTO_PQ_PQ of 1 to 64; a urine leukocyte range of 0 to 5 /[HPF] as an IVL_PQ; a troponin I as an IVL_PQ with only a high bound of 0.01 ng/mL that is not inclusive;, a hepatitis B surface antigen coded as the LOINC answer LA6577-6 with a local translation; and a potassium whose PQ value is written <2.5, not a number. Authored here on 2026-10-24, for a case the conformance corpus does not hold."
     },
     {
+      "@id": "fixtures/in/results-identifiers.xml",
+      "@type": "File",
+      "name": "C-CDA: results-identifiers",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "4266",
+      "sha256": "0db02dbc6082fd7f8e7f37eeed22e78c178492a80080f5778b0a4af38be091a4",
+      "dateCreated": "2026-10-24",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A potassium Result Observation carrying four ids: a root 2.16.840.1.113883.19.5.99999.2 with the extension K-20260804-1, a root alone, an id with a null flavour, and a root that is neither an OID nor a UUID; and a sodium whose only id is an upper-case UUID root. Authored here on 2026-10-24, for a case the conformance corpus does not hold: a result's ids as business identifiers."
+    },
+    {
       "@id": "fixtures/in/medications-and-results-b.xml",
       "@type": "File",
       "name": "C-CDA: medications-and-results-b",
@@ -2041,8 +2081,8 @@
       "@type": "File",
       "name": "Expected graph for epic-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "11815",
-      "sha256": "15edf02292ed25b129cb78953ae0425f3ce54ba9088a51ca4610f5833df7d484",
+      "contentSize": "11935",
+      "sha256": "af0b42ba35dcbaf2c0d814f2c10e37cf3d2926760468ebd49c446a143a019177",
       "about": {
         "@id": "fixtures/in/epic-summarization.xml"
       },
@@ -2073,8 +2113,8 @@
       "@type": "File",
       "name": "Expected graph for full-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "11801",
-      "sha256": "3f561aec98eedfdf1a52a035a9324c3056e48a4c0f3fe2ee2422581ee426472a",
+      "contentSize": "11918",
+      "sha256": "d07ce7fb375ee0b7027798c82768faf973116351eb729c9bd126e3bdc8cc0d8c",
       "about": {
         "@id": "fixtures/in/full-summarization.xml"
       },
@@ -2137,8 +2177,8 @@
       "@type": "File",
       "name": "Expected graph for labs-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "5065",
-      "sha256": "99c37acbbc9114c8a0062dba9aa56c1b5ed544f91998f7d383e2d4831250152b",
+      "contentSize": "5182",
+      "sha256": "1a9aa2909a538eb8db1cfcaed60a68d8fa05a8e937def556f8e7562676038c5e",
       "about": {
         "@id": "fixtures/in/labs-section.xml"
       },
@@ -2963,8 +3003,8 @@
       "@type": "File",
       "name": "Expected graph for medications-and-results-a",
       "encodingFormat": "text/turtle",
-      "contentSize": "22801",
-      "sha256": "5b76eb8be16a364e5f4956a47823e872b3193f246acccb6ff116fc9ddd4f2d73",
+      "contentSize": "23494",
+      "sha256": "fe940f28256a6e962121a28688077e0abe5beeb8f5597ccff2b9a9e25fea8c9e",
       "about": {
         "@id": "fixtures/in/medications-and-results-a.xml"
       },
@@ -2995,8 +3035,8 @@
       "@type": "File",
       "name": "Expected graph for medications-and-results-edges",
       "encodingFormat": "text/turtle",
-      "contentSize": "13282",
-      "sha256": "b57f58135b3dd4edfaa1b21cefdf34a5a46166d5a11054ba0e6904967a658109",
+      "contentSize": "13717",
+      "sha256": "0aeff2b5b3e2e63a97b6bdeb394a08d04ce29be2aafc753d59fb627eec7427c4",
       "about": {
         "@id": "fixtures/in/medications-and-results-edges.xml"
       },
@@ -3011,10 +3051,26 @@
       "@type": "File",
       "name": "Expected graph for results-value-kinds",
       "encodingFormat": "text/turtle",
-      "contentSize": "17934",
-      "sha256": "f78cc278dc6cef905d3214311eff3a0404a443e0fe86613c094c3a47cfcfe9da",
+      "contentSize": "18753",
+      "sha256": "339ac0ed50fc9d65b74ea3a88d671fac5e858f5e09095473b6f6e6fd6751427c",
       "about": {
         "@id": "fixtures/in/results-value-kinds.xml"
+      },
+      "dateCreated": "2026-10-24",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/results-identifiers.ttl",
+      "@type": "File",
+      "name": "Expected graph for results-identifiers",
+      "encodingFormat": "text/turtle",
+      "contentSize": "9257",
+      "sha256": "f0432f0221ac22b5c40fd40c0706fde6675d33dcef296c45b9a98b58f70a1d8d",
+      "about": {
+        "@id": "fixtures/in/results-identifiers.xml"
       },
       "dateCreated": "2026-10-24",
       "license": {
@@ -3055,12 +3111,28 @@
       "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
     },
     {
+      "@id": "fixtures/findings/results-identifiers.ttl",
+      "@type": "File",
+      "name": "Expected findings for results-identifiers",
+      "encodingFormat": "text/turtle",
+      "contentSize": "6481",
+      "sha256": "120b3330d1873f57a55564b02cd0cd131d84413645ab39c758b0ea3bebb26c1c",
+      "about": {
+        "@id": "fixtures/in/results-identifiers.xml"
+      },
+      "dateCreated": "2026-10-24",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
       "@id": "fixtures/expected/medications-and-results-b.ttl",
       "@type": "File",
       "name": "Expected graph for medications-and-results-b",
       "encodingFormat": "text/turtle",
-      "contentSize": "22810",
-      "sha256": "02386a530e10b441db5b8ed4849121484bf0054819933aee1cec5500ab194877",
+      "contentSize": "23501",
+      "sha256": "48ec3ce4de7a7b85e9a01fc7f681474705791293ae0cbc4cd52889462cce662c",
       "about": {
         "@id": "fixtures/in/medications-and-results-b.xml"
       },
@@ -3091,8 +3163,8 @@
       "@type": "File",
       "name": "Expected graph for narrative-reference-without-hash",
       "encodingFormat": "text/turtle",
-      "contentSize": "10134",
-      "sha256": "a300e77ff83f7f35a596fd9d19bc490c8b45f34bb63f75fdd6f46955745fe1b5",
+      "contentSize": "10250",
+      "sha256": "0cb422f577f6329044e12c95d3049987dc8b7ef32e9f45d99adb1a08e3440b1a",
       "about": {
         "@id": "fixtures/in/narrative-reference-without-hash.xml"
       },
@@ -3123,8 +3195,8 @@
       "@type": "File",
       "name": "Expected graph for narrative-id-twice",
       "encodingFormat": "text/turtle",
-      "contentSize": "10130",
-      "sha256": "b0437a9c89bad991a4037fb7f3049bfc7d62b026ee32ec4c03a9603854baa9fa",
+      "contentSize": "10249",
+      "sha256": "31ded1232bf1ef25584e33694a830bc44024777982a25373edb51dec24384f50",
       "about": {
         "@id": "fixtures/in/narrative-id-twice.xml"
       },
