@@ -33,6 +33,8 @@
     <#medications-and-results-a>
     <#medications-and-results-edges>
     <#results-value-kinds>
+    <#null-flavors>
+    <#times-by-precision>
     <#medications-and-results-b>
     <#fingerprint-keys>
     <#download-twice-names-one-allergy>
@@ -823,3 +825,29 @@
     ]
   ] ;
   mf:result [ bridge:sameRecord true ] .
+
+<#times-by-precision> a bridge:IsomorphicConversionTest ;
+  mf:name "times-by-precision" ;
+  rdfs:comment "Each time at the precision it is written: a birth time and an immunization to the month as xsd:gYearMonth, a medication's start in a year as xsd:gYear, a problem from a year to a month, and three times short of the second padded to it, each beside a node keeping the characters written: a medication's end at an hour with no offset, a procedure at an hour with one, and a result at a minute with none." ;
+  mf:action [
+    bridge:input <in/times-by-precision.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/times-by-precision.ttl> ;
+    bridge:expectedFindings <findings/times-by-precision.ttl>
+  ] .
+
+<#null-flavors> a bridge:IsomorphicConversionTest ;
+  mf:name "null-flavors" ;
+  rdfs:comment "Each null flavour where a value or a time would be is the reason that property is absent, a node of the version naming it and the NullFlavor code: a birth time UNK, an immunization's time NI, a medication's end UNK beside its start, a problem's onset ASKU, a result's value MSK, so it has no value kind, and a result's time NAV beside its value; a result value's nullFlavor XYZ, no NullFlavor code, is carried as nothing and is a finding." ;
+  mf:action [
+    bridge:input <in/null-flavors.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/null-flavors.ttl> ;
+    bridge:expectedFindings <findings/null-flavors.ttl>
+  ] .
