@@ -55,6 +55,11 @@ WHERE {
           STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
           STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?actSlot), "#_"), ".", ?innerSlots) AS ?slots)
   ?row ccda:statementAt ?slots ; ccda:refinement ?refinement .
+  BIND (EXISTS {
+          ?condition ?anyS ?anyRelationship . ?anyRelationship a v3:entryRelationship ; ?anyO ?anyStatus .
+          ?anyStatus a v3:observation ; ?anyT ?anyTemplate .
+          ?anyTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.6" .
+        } AS ?statedStatus)
   {
     ?condition ?rS ?statusRelationship . ?statusRelationship a v3:entryRelationship ; ?oS ?observation .
     ?observation a v3:observation ; ?otS ?ot ; ?ovS ?coded .
@@ -70,11 +75,6 @@ WHERE {
   UNION
   {
     ?act ?sS ?status . ?status a v3:statusCode ; xyz:code ?value .
-    FILTER NOT EXISTS {
-      ?condition ?anyS ?anyRelationship . ?anyRelationship a v3:entryRelationship ; ?anyO ?anyStatus .
-      ?anyStatus a v3:observation ; ?anyT ?anyTemplate .
-      ?anyTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.6" .
-    }
     FILTER NOT EXISTS {
       ?concept skos:inScheme ccda:concernStatuses ; skos:notation ?key .
       FILTER (?key = LCASE(REPLACE(?value, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
@@ -103,4 +103,5 @@ WHERE {
     }
     BIND (ccda:nullFlavorNotListed AS ?gap)
   }
+  FILTER (?gap != ccda:concernStatusNotMapped || !?statedStatus)
 }
