@@ -48,7 +48,6 @@ WHERE {
   BIND (CONCAT(?organizerSlots, ".", STRAFTER(STR(?memberSlot), "#_"), ".") AS ?memberSlots)
   {
     ?member ?statementSlot ?result .
-    ?row ccda:recordClass "Observation" ; ccda:statementAt ?slots ; ccda:refinement ?refinement .
     BIND (STRAFTER(STR(?statementSlot), "#_") AS ?statementAt)
     {
       ?result ?sS ?statusCode . ?statusCode a v3:statusCode ; xyz:code ?value .
@@ -201,12 +200,15 @@ WHERE {
       }
     }
     BIND (ccda:resultComponentNotMapped AS ?gap)
-    BIND (CONCAT(?organizerAt, "/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?memberAt), "]") AS ?refinement)
+    BIND (CONCAT(?organizerAt, "/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?memberAt), "]") AS ?componentRefinement)
   }
+  BIND (COALESCE(CONCAT(?memberSlots, ?statementAt), "") AS ?slots)
+  OPTIONAL { ?row ccda:recordClass "Observation" ; ccda:statementAt ?slots ; ccda:refinement ?rowRefinement }
+  BIND (COALESCE(?rowRefinement, ?componentRefinement) AS ?refinement)
   FILTER (IF(?gap = ccda:resultComponentNotMapped,
              NOT EXISTS {
                ?own ccda:statementAt ?ownSlots .
                FILTER (STRSTARTS(?ownSlots, ?memberSlots))
              },
-             ?slots = CONCAT(?memberSlots, ?statementAt)))
+             BOUND(?row)))
 }
