@@ -15,7 +15,8 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # neither a name nor a code in SNOMED CT or LOINC, a coded value's code in
 # another system, a bound of a two-bound IVL_PQ value or of a reference range
 # that is not inclusive, a number not in REAL's decimal form or beyond twenty
-# digits of the point, a second value, range or interpretation, and a code in
+# digits of the point, a value's nullFlavor that is no NullFlavor code, a
+# second value, range or interpretation, and a code in
 # a code system other than LOINC, at the result; and
 # a component of an organizer some result of which is a record, that is no
 # record itself, a vital sign among them, at the component, valued by the least
@@ -90,6 +91,15 @@ WHERE {
       { ?resultValue ?aS ?answerTranslation . ?answerTranslation a v3:translation ; xyz:code ?value ; xyz:codeSystem ?answerSystem }
       FILTER (REPLACE(?answerSystem, "^urn:oid:", "") NOT IN ("2.16.840.1.113883.6.96", "2.16.840.1.113883.6.1"))
       BIND (ccda:resultValueCodeNotCarried AS ?gap)
+    }
+    UNION
+    {
+      ?result ?vS ?resultValue . ?resultValue a v3:value ; xyz:nullFlavor ?value .
+      FILTER NOT EXISTS {
+        ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey .
+        FILTER (?flavourKey = LCASE(REPLACE(?value, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+      }
+      BIND (ccda:nullFlavorNotListed AS ?gap)
     }
     UNION
     {

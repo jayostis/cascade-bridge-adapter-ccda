@@ -30,6 +30,12 @@ PREFIX ccda:    <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 CONSTRUCT {
   ?version ?p ?o .
+  ?version cascade:paddedDateTime ?paddedNode .
+  ?paddedNode cascade:paddedDateTimeProperty ?p ;
+    cascade:writtenDate ?writtenTime .
+  ?version cascade:valueAbsentForReason ?absentNode .
+  ?absentNode cascade:absentValueProperty ?absentProperty ;
+    cascade:absentReasonCode ?absentReason .
 }
 WHERE {
   ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
@@ -130,7 +136,27 @@ WHERE {
             BIND (cascade:medicationUseEndDate AS ?p)
             BIND ("1" AS ?tier)
           }
-          FILTER (REGEX(?value, "^[0-9]{8}([0-9]{2}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?)?([+-][0-9]{4})?$"))
+          FILTER (REGEX(?value, "^[0-9]{4}([0-9]{2}([0-9]{2}([0-9]{2}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?)?)?)?([+-][0-9]{4})?$"))
+        }
+        UNION
+        {
+          ?medication ?eS ?time . ?time a v3:effectiveTime ; ?lS ?low . ?low a v3:low ; xyz:nullFlavor ?flavour .
+          ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey ; skos:exactMatch ?flavourCode .
+          FILTER (?flavourKey = LCASE(REPLACE(?flavour, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+          BIND (CONCAT("nullFlavor ", STR(?flavourCode)) AS ?value)
+          BIND (cascade:medicationUseStartDate AS ?p)
+          BIND ("9" AS ?tier)
+          BIND (STRAFTER(STR(?eS), "#_") AS ?at)
+        }
+        UNION
+        {
+          ?medication ?eS ?time . ?time a v3:effectiveTime ; ?hS ?high . ?high a v3:high ; xyz:nullFlavor ?flavour .
+          ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey ; skos:exactMatch ?flavourCode .
+          FILTER (?flavourKey = LCASE(REPLACE(?flavour, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+          BIND (CONCAT("nullFlavor ", STR(?flavourCode)) AS ?value)
+          BIND (cascade:medicationUseEndDate AS ?p)
+          BIND ("9" AS ?tier)
+          BIND (STRAFTER(STR(?eS), "#_") AS ?at)
         }
         UNION
         {
@@ -180,17 +206,25 @@ WHERE {
     }
     BIND (STRAFTER(?first, "|") AS ?value)
     BIND (IF(?p NOT IN (cascade:medicationUseStartDate, cascade:medicationUseEndDate), ?value,
-          IF(REGEX(?value, "^[0-9]{12}([0-9]{2}(\\.[0-9]+)?)?([+-][0-9]{4})?$"),
+          IF(REGEX(?value, "^[0-9]{10}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?([+-][0-9]{4})?$"),
              STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),
-                          "T", SUBSTR(?value, 9, 2), ":", SUBSTR(?value, 11, 2), ":",
+                          "T", SUBSTR(?value, 9, 2), ":", IF(REGEX(?value, "^[0-9]{12}"), SUBSTR(?value, 11, 2), "00"), ":",
                           IF(REGEX(?value, "^[0-9]{14}"), REPLACE(?value, "^[0-9]{12}([0-9]{2}(\\.[0-9]+)?).*$", "$1"), "00"),
                           IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")),
                    xsd:dateTime),
-          IF(REGEX(?value, "^[0-9]{8}([0-9]{2})?([+-][0-9]{4})?$"),
-             STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),
-                          IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")),
-                   xsd:date),
-             1/0))) AS ?o)
+          IF(REGEX(?value, "^[0-9]{8}([+-][0-9]{4})?$"),
+             STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2), IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")), xsd:date),
+          IF(REGEX(?value, "^[0-9]{6}([+-][0-9]{4})?$"),
+             STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")), xsd:gYearMonth),
+          IF(REGEX(?value, "^[0-9]{4}([+-][0-9]{4})?$"),
+             STRDT(CONCAT(SUBSTR(?value, 1, 4), IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")), xsd:gYear),
+             1/0))))) AS ?o)
+    BIND (IF(?p IN (cascade:medicationUseStartDate, cascade:medicationUseEndDate) && REGEX(?value, "^[0-9]{10}([0-9]{2})?([+-][0-9]{4})?$"),
+             CONCAT("#padded-", STRAFTER(STR(?p), "#")), 1/0) AS ?paddedFragment)
+    BIND (IF(BOUND(?paddedFragment), ?value, 1/0) AS ?writtenTime)
+    BIND (IF(STRSTARTS(?value, "nullFlavor "), CONCAT("#absent-", STRAFTER(STR(?p), "#")), 1/0) AS ?absentFragment)
+    BIND (IF(BOUND(?absentFragment), ?p, 1/0) AS ?absentProperty)
+    BIND (IF(BOUND(?absentFragment), IRI(STRAFTER(?value, "nullFlavor ")), 1/0) AS ?absentReason)
   }
   UNION
   {
@@ -218,4 +252,6 @@ WHERE {
              1/0)))))) AS ?digits)
     BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?digits))) AS ?o)
   }
+  BIND (IF(BOUND(?paddedFragment), IRI(CONCAT(STR(?version), ?paddedFragment)), 1/0) AS ?paddedNode)
+  BIND (IF(BOUND(?absentFragment), IRI(CONCAT(STR(?version), ?absentFragment)), 1/0) AS ?absentNode)
 }

@@ -18,12 +18,21 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # A coded value is carried only through the concept map its rows were
 # transcribed into, and only in the code system that map reads; a code outside it is a finding of allergy-findings.rq. An
 # NDC names a packaged product, not the substance a person is allergic to, so it
-# is never written as an allergen or a manifestation. A
-# time stating the minute is a date-time, one stating a day or an hour a date,
-# and one stating less fits no Cascade date and is not carried.
+# is never written as an allergen or a manifestation. A time is typed by its
+# precision: a year, a month, a day, or a date-time where it states the second;
+# one stating the hour or the minute is padded to the second, beside a node
+# <version>#padded-<property> keeping what was written (docs/format.md,
+# "Timestamps"). A null flavour where the time would be, with no time beside it,
+# is a node <version>#absent-<property>, the reason the time is absent.
 
 CONSTRUCT {
   ?version ?p ?o .
+  ?version cascade:paddedDateTime ?paddedNode .
+  ?paddedNode cascade:paddedDateTimeProperty ?p ;
+    cascade:writtenDate ?writtenTime .
+  ?version cascade:valueAbsentForReason ?absentNode .
+  ?absentNode cascade:absentValueProperty ?absentProperty ;
+    cascade:absentReasonCode ?absentReason .
 }
 WHERE {
   ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
@@ -150,8 +159,19 @@ WHERE {
           { ?time xyz:value ?value . BIND ("1" AS ?tier) }
           UNION
           { ?time ?lS ?low . ?low a v3:low ; xyz:value ?value . BIND ("2" AS ?tier) }
-          FILTER (REGEX(?value, "^[0-9]{8}"))
+          FILTER (REGEX(?value, "^[0-9]{4}"))
           BIND (cascade:onsetDate AS ?p)
+          BIND (STRAFTER(STR(?eS), "#_") AS ?at)
+        }
+        UNION
+        {
+          ?allergy ?eS ?time . ?time a v3:effectiveTime .
+          { ?time xyz:nullFlavor ?flavour } UNION { ?time ?lS ?low . ?low a v3:low ; xyz:nullFlavor ?flavour }
+          ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey ; skos:exactMatch ?flavourCode .
+          FILTER (?flavourKey = LCASE(REPLACE(?flavour, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+          BIND (CONCAT("nullFlavor ", STR(?flavourCode)) AS ?value)
+          BIND (cascade:onsetDate AS ?p)
+          BIND ("9" AS ?tier)
           BIND (STRAFTER(STR(?eS), "#_") AS ?at)
         }
         BIND (COALESCE(?within, "") AS ?inner)
@@ -161,17 +181,25 @@ WHERE {
     }
     BIND (STRAFTER(?first, "|") AS ?value)
     BIND (IF(?p != cascade:onsetDate, ?value,
-          IF(REGEX(?value, "^[0-9]{12}([0-9]{2}(\\.[0-9]+)?)?([+-][0-9]{4})?$"),
+          IF(REGEX(?value, "^[0-9]{10}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?([+-][0-9]{4})?$"),
              STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),
-                          "T", SUBSTR(?value, 9, 2), ":", SUBSTR(?value, 11, 2), ":",
+                          "T", SUBSTR(?value, 9, 2), ":", IF(REGEX(?value, "^[0-9]{12}"), SUBSTR(?value, 11, 2), "00"), ":",
                           IF(REGEX(?value, "^[0-9]{14}"), REPLACE(?value, "^[0-9]{12}([0-9]{2}(\\.[0-9]+)?).*$", "$1"), "00"),
                           IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")),
                    xsd:dateTime),
-          IF(REGEX(?value, "^[0-9]{8}([0-9]{2})?([+-][0-9]{4})?$"),
-             STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),
-                          IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")),
-                   xsd:date),
-             1/0))) AS ?o)
+          IF(REGEX(?value, "^[0-9]{8}([+-][0-9]{4})?$"),
+             STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2), IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")), xsd:date),
+          IF(REGEX(?value, "^[0-9]{6}([+-][0-9]{4})?$"),
+             STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")), xsd:gYearMonth),
+          IF(REGEX(?value, "^[0-9]{4}([+-][0-9]{4})?$"),
+             STRDT(CONCAT(SUBSTR(?value, 1, 4), IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")), xsd:gYear),
+             1/0))))) AS ?o)
+    BIND (IF(?p IN (cascade:onsetDate) && REGEX(?value, "^[0-9]{10}([0-9]{2})?([+-][0-9]{4})?$"),
+             CONCAT("#padded-", STRAFTER(STR(?p), "#")), 1/0) AS ?paddedFragment)
+    BIND (IF(BOUND(?paddedFragment), ?value, 1/0) AS ?writtenTime)
+    BIND (IF(STRSTARTS(?value, "nullFlavor "), CONCAT("#absent-", STRAFTER(STR(?p), "#")), 1/0) AS ?absentFragment)
+    BIND (IF(BOUND(?absentFragment), ?p, 1/0) AS ?absentProperty)
+    BIND (IF(BOUND(?absentFragment), IRI(STRAFTER(?value, "nullFlavor ")), 1/0) AS ?absentReason)
   }
   UNION
   {
@@ -205,4 +233,6 @@ WHERE {
       BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?codeValue))) AS ?o)
     }
   }
+  BIND (IF(BOUND(?paddedFragment), IRI(CONCAT(STR(?version), ?paddedFragment)), 1/0) AS ?paddedNode)
+  BIND (IF(BOUND(?absentFragment), IRI(CONCAT(STR(?version), ?absentFragment)), 1/0) AS ?absentNode)
 }

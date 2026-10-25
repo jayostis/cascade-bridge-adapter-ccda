@@ -111,7 +111,19 @@ so a record is named from its id only where no other statement of the document
 carries that id with other content ([Names](#names)).
 
 A `nullFlavor` stands where a value would: on an `id`, a `code`, a `value` or a
-time. Where it stands alone, nothing is carried.
+time. On a result's first `value`, on a time a record's date is read from (an
+`effectiveTime`, its `low` or its `high`) where no time is stated in its
+place, and on the patient's `birthTime`, it is the reason that value is absent:
+the version carries a node `<version>#absent-` and the property's local name,
+naming the property (`cascade:absentValueProperty`, a result's value being
+`cascade:resultValueKind`) and the code as cascade-vocabulary's
+`cascade:NullFlavor` writes it (`cascade:absentReasonCode`), never mapped to
+another system (cascade-vocabulary's
+`decisions/partial-dates-and-absent-reasons.md`). The seventeen codes are in
+`../vocab/ccda-null-flavors.ttl`, read without regard to case; a flavour that is
+none of them carries nothing, and on a result's value it is a finding,
+`ccda:nullFlavorNotListed`. On an `id` or an address it says only that there is
+none, and elsewhere, where it stands alone, nothing is carried.
 
 ## Names
 
@@ -237,9 +249,18 @@ finding.
 ## Timestamps
 
 A `ts` is `YYYYMMDDHHMMSS.UUUU[+|-ZZzz]`, digits left off the right to state
-less precision. A time stating the minute or the second is an `xsd:dateTime`,
-and one stating a day or an hour an `xsd:date`, each with its offset where it
-states one. One stating less than a day fits no Cascade date and is not carried.
+less precision, and each time is typed by the precision it states, as
+cascade-vocabulary's `decisions/partial-dates-and-absent-reasons.md` rules: a
+year is an `xsd:gYear`, a month an `xsd:gYearMonth`, a day an `xsd:date`, and a
+time stating the second an `xsd:dateTime`, each with its offset where it states
+one and with none where it does not. A time stating the hour or the minute and
+no second has no XSD form, so it is an `xsd:dateTime` padded with zeros to the
+second, again with no offset invented, and the version carries a node
+`<version>#padded-` and the property's local name, naming the property
+(`cascade:paddedDateTimeProperty`) and the time exactly as it is written
+(`cascade:writtenDate`), so its precision is never lost. Of the times a record's
+date is read from, the first in the order its query says is carried, whatever
+its precision.
 
 ## Narrative references
 

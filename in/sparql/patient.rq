@@ -5,14 +5,22 @@ PREFIX xyz:     <http://sparql.xyz/facade-x/data/>
 PREFIX v3:      <urn:hl7-org:v3>
 PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX foaf:    <http://xmlns.com/foaf/0.1/>
+PREFIX skos:    <http://www.w3.org/2004/02/skos/core#>
+PREFIX ccda:    <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # The vocabulary holds one name, so the first given and the first family the
-# patient's names state, in document order, are carried. A birth time states a
-# day at least, or fits no Cascade date and is not carried; its time of day is
-# not carried.
+# patient's names state, in document order, are carried. A birth time is typed
+# by its precision as every time is (allergy.rq), and its null flavour is the
+# reason it is absent.
 
 CONSTRUCT {
   ?version ?p ?o .
+  ?version cascade:paddedDateTime ?paddedNode .
+  ?paddedNode cascade:paddedDateTimeProperty ?p ;
+    cascade:writtenDate ?writtenTime .
+  ?version cascade:valueAbsentForReason ?absentNode .
+  ?absentNode cascade:absentValueProperty ?absentProperty ;
+    cascade:absentReasonCode ?absentReason .
 }
 WHERE {
   ?root a fx:root, v3:ClinicalDocument ; ?rtSlot ?recordTarget .
@@ -38,9 +46,34 @@ WHERE {
   UNION
   {
     ?patientRole ?pS ?patient . ?patient a v3:patient ; ?bS ?birth .
-    ?birth a v3:birthTime ; xyz:value ?born .
-    FILTER (REGEX(?born, "^[0-9]{8}([0-9]{2}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?)?([+-][0-9]{4})?$"))
+    ?birth a v3:birthTime ; xyz:value ?value .
     BIND (cascade:dateOfBirth AS ?p)
-    BIND (STRDT(CONCAT(SUBSTR(?born, 1, 4), "-", SUBSTR(?born, 5, 2), "-", SUBSTR(?born, 7, 2)), xsd:date) AS ?o)
+    BIND (IF(REGEX(?value, "^[0-9]{10}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?([+-][0-9]{4})?$"),
+             STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),
+                          "T", SUBSTR(?value, 9, 2), ":", IF(REGEX(?value, "^[0-9]{12}"), SUBSTR(?value, 11, 2), "00"), ":",
+                          IF(REGEX(?value, "^[0-9]{14}"), REPLACE(?value, "^[0-9]{12}([0-9]{2}(\\.[0-9]+)?).*$", "$1"), "00"),
+                          IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")),
+                   xsd:dateTime),
+          IF(REGEX(?value, "^[0-9]{8}([+-][0-9]{4})?$"),
+             STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2), IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")), xsd:date),
+          IF(REGEX(?value, "^[0-9]{6}([+-][0-9]{4})?$"),
+             STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")), xsd:gYearMonth),
+          IF(REGEX(?value, "^[0-9]{4}([+-][0-9]{4})?$"),
+             STRDT(CONCAT(SUBSTR(?value, 1, 4), IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")), xsd:gYear),
+             1/0)))) AS ?o)
+    BIND (IF(REGEX(?value, "^[0-9]{10}([0-9]{2})?([+-][0-9]{4})?$"), "#padded-dateOfBirth", 1/0) AS ?paddedFragment)
+    BIND (IF(BOUND(?paddedFragment), ?value, 1/0) AS ?writtenTime)
   }
+  UNION
+  {
+    ?patientRole ?pS ?patient . ?patient a v3:patient ; ?bS ?birth .
+    ?birth a v3:birthTime ; xyz:nullFlavor ?flavour .
+    FILTER NOT EXISTS { ?birth xyz:value ?born }
+    ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey ; skos:exactMatch ?absentReason .
+    FILTER (?flavourKey = LCASE(REPLACE(?flavour, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+    BIND ("#absent-dateOfBirth" AS ?absentFragment)
+    BIND (cascade:dateOfBirth AS ?absentProperty)
+  }
+  BIND (IF(BOUND(?paddedFragment), IRI(CONCAT(STR(?version), ?paddedFragment)), 1/0) AS ?paddedNode)
+  BIND (IF(BOUND(?absentFragment), IRI(CONCAT(STR(?version), ?absentFragment)), 1/0) AS ?absentNode)
 }
