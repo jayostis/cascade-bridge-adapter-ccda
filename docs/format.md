@@ -62,7 +62,9 @@ two documents listing one organization's `id`s in two orders scope their
 records alike. One organization named by several elements
 of a document, as custodian and author or by two authors, is one record with
 one version, read from the custodian, else the first author; the document names
-it once in each role, `cascade:CustodianRole` and `cascade:AuthorRole`.
+it once in each role, `cascade:CustodianRole` and `cascade:AuthorRole`. Another
+element holding a name, an identifier or an address that version does not carry
+is a finding, `ccda:duplicateOrganizationNotCarried`.
 
 A section is mapped by its `templateId`: Allergies (`2.16.840.1.113883.10.20.22.2.6.1`),
 Problems (`2.5.1`), Immunizations (`2.2.1`), Procedures (`2.7.1`), Medications
