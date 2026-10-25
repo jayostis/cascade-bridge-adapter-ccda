@@ -12,6 +12,7 @@ WHERE {
   OPTIONAL { ?version cascade:testName ?n }
   OPTIONAL { ?version cascade:testCode ?c }
   OPTIONAL { ?version cascade:resultValue ?text }
+  OPTIONAL { ?version cascade:resultUnit ?textUnit }
   OPTIONAL {
     ?version cascade:resultQuantity ?quantity .
     ?quantity cascade:writtenValue ?written .
@@ -27,7 +28,7 @@ WHERE {
   BIND (STR(?n) AS ?testName)
   BIND (REPLACE(STR(?c), "^http://loinc.org/rdf/", "") AS ?loincCode)
   BIND (STR(COALESCE(CONCAT(COALESCE(?comparator, ""), ?written), ?text)) AS ?resultValue)
-  BIND (STR(COALESCE(?unitText, ?ucumUnit)) AS ?resultUnit)
+  BIND (STR(COALESCE(?unitText, ?ucumUnit, ?textUnit)) AS ?resultUnit)
   BIND (STR(?r) AS ?referenceRange)
   BIND (STR(?i) AS ?resultInterpretation)
   BIND (STR(?s) AS ?workflowStatus)

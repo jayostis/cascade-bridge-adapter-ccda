@@ -22,7 +22,10 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 #     originalText's own text, the code's displayName;
 #   - an ST value: its text; a CD, CE, CV or CO value: the narrative its
 #     originalText references, the originalText's own text, its displayName.
-#     Any other type is a finding of result-findings.rq;
+#     Any other type is a finding of result-findings.rq. A value holding a
+#     number result-quantities.rq refuses is text instead, its numbers as the
+#     document wrote them and a PQ's or one-bound IVL_PQ's unit as its text,
+#     so that no number is lost; result-findings.rq reports the number;
 #   - a reference range: its text, through its reference first, else its
 #     IVL_PQ written as the FHIR R4 adapter writes a range with no text, a
 #     range with one bound as >=low or <=high; its typed bounds are
@@ -352,12 +355,132 @@ WHERE {
         }
         OPTIONAL { ?resultValue xyz:nullFlavor ?absent }
         FILTER (!BOUND(?absent))
+        OPTIONAL {
+          {
+            SELECT DISTINCT ?resultValue (true AS ?valueRefused) WHERE {
+              ?resultValue a v3:value .
+              {
+                ?resultValue xyz:value ?refusedWritten .
+                BIND (false AS ?refusedOpen)
+              }
+              UNION
+              {
+                ?resultValue ?refusedS ?refusedPart . ?refusedPart a ?refusedSide ; xyz:value ?refusedWritten .
+                VALUES ?refusedSide { v3:numerator v3:denominator v3:low v3:high }
+                OPTIONAL { ?refusedPart xyz:inclusive ?refusedInclusive }
+                OPTIONAL {
+                  {
+                    SELECT ?resultValue (COUNT(DISTINCT ?refusedAnyBound) AS ?refusedBounds) WHERE {
+                      ?resultValue a v3:value ; ?refusedAnyS ?refusedAnyBound .
+                      ?refusedAnyBound a ?refusedAnySide ; xyz:value ?refusedAnyValue .
+                      VALUES ?refusedAnySide { v3:low v3:high }
+                    } GROUP BY ?resultValue
+                  }
+                }
+                BIND (COALESCE(?refusedInclusive, "true") = "false" && COALESCE(?refusedBounds, 0) = 2 AS ?refusedOpen)
+              }
+              BIND (REPLACE(REPLACE(?refusedWritten, "^[+-]", ""), "[eE].*$", "") AS ?refusedMantissa)
+              BIND (IF(CONTAINS(?refusedMantissa, "."), STRBEFORE(?refusedMantissa, "."), ?refusedMantissa) AS ?refusedWhole)
+              BIND (STRLEN(?refusedWhole)
+                    + IF(REGEX(?refusedWritten, "[eE]"), xsd:integer(REPLACE(?refusedWritten, "^[^eE]*[eE]", "")), 0) AS ?refusedPoint)
+              FILTER (!REGEX(?refusedWritten, "^[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][+-]?[0-9]+)?$")
+                      || COALESCE(?refusedPoint + 20 < 0
+                                  || ?refusedPoint - STRLEN(CONCAT(?refusedWhole, STRAFTER(?refusedMantissa, "."))) > 20, true)
+                      || ?refusedOpen)
+            }
+          }
+        }
         BIND (cascade:resultValueKind AS ?p)
-        BIND (IF(?type IN ("PQ", "INT", "REAL") || (?type = "IVL_PQ" && COALESCE(?bounds, 0) = 1), cascade:QuantityResultValue,
+        BIND (IF(BOUND(?valueRefused), cascade:TextResultValue,
+              IF(?type IN ("PQ", "INT", "REAL") || (?type = "IVL_PQ" && COALESCE(?bounds, 0) = 1), cascade:QuantityResultValue,
               IF(STRSTARTS(?type, "RTO"), cascade:RatioResultValue,
               IF(?type = "IVL_PQ" && COALESCE(?bounds, 0) = 2, cascade:RangeResultValue,
               IF(?type IN ("CD", "CE", "CV", "CO"), cascade:CodedResultValue,
-              IF(?type = "ST", cascade:TextResultValue, 1/0))))) AS ?o)
+              IF(?type = "ST", cascade:TextResultValue, 1/0)))))) AS ?o)
+      }
+      UNION
+      {
+        {
+          SELECT ?result ?resultValue ?type WHERE {
+            ?result ?vlS ?resultValue . ?resultValue a v3:value ; xsi:type ?written .
+            {
+              SELECT ?result (MIN(xsd:integer(STRAFTER(STR(?anyS), "#_"))) AS ?firstAt) WHERE {
+                ?result ?anyS ?any . ?any a v3:value .
+              } GROUP BY ?result
+            }
+            FILTER (xsd:integer(STRAFTER(STR(?vlS), "#_")) = ?firstAt)
+            BIND (REPLACE(?written, "^.*:", "") AS ?type)
+          }
+        }
+        {
+          SELECT DISTINCT ?resultValue (true AS ?valueRefused) WHERE {
+            ?resultValue a v3:value .
+            {
+              ?resultValue xyz:value ?refusedWritten .
+              BIND (false AS ?refusedOpen)
+            }
+            UNION
+            {
+              ?resultValue ?refusedS ?refusedPart . ?refusedPart a ?refusedSide ; xyz:value ?refusedWritten .
+              VALUES ?refusedSide { v3:numerator v3:denominator v3:low v3:high }
+              OPTIONAL { ?refusedPart xyz:inclusive ?refusedInclusive }
+              OPTIONAL {
+                {
+                  SELECT ?resultValue (COUNT(DISTINCT ?refusedAnyBound) AS ?refusedBounds) WHERE {
+                    ?resultValue a v3:value ; ?refusedAnyS ?refusedAnyBound .
+                    ?refusedAnyBound a ?refusedAnySide ; xyz:value ?refusedAnyValue .
+                    VALUES ?refusedAnySide { v3:low v3:high }
+                  } GROUP BY ?resultValue
+                }
+              }
+              BIND (COALESCE(?refusedInclusive, "true") = "false" && COALESCE(?refusedBounds, 0) = 2 AS ?refusedOpen)
+            }
+            BIND (REPLACE(REPLACE(?refusedWritten, "^[+-]", ""), "[eE].*$", "") AS ?refusedMantissa)
+            BIND (IF(CONTAINS(?refusedMantissa, "."), STRBEFORE(?refusedMantissa, "."), ?refusedMantissa) AS ?refusedWhole)
+            BIND (STRLEN(?refusedWhole)
+                  + IF(REGEX(?refusedWritten, "[eE]"), xsd:integer(REPLACE(?refusedWritten, "^[^eE]*[eE]", "")), 0) AS ?refusedPoint)
+            FILTER (!REGEX(?refusedWritten, "^[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][+-]?[0-9]+)?$")
+                    || COALESCE(?refusedPoint + 20 < 0
+                                || ?refusedPoint - STRLEN(CONCAT(?refusedWhole, STRAFTER(?refusedMantissa, "."))) > 20, true)
+                    || ?refusedOpen)
+          }
+        }
+        OPTIONAL { ?resultValue xyz:value ?plainValue }
+        OPTIONAL { ?resultValue xyz:unit ?plainUnit }
+        OPTIONAL {
+          SELECT ?resultValue ?numeratorValue WHERE {
+            ?resultValue a v3:value ; ?nS ?numerator . ?numerator a v3:numerator ; xyz:value ?numeratorValue .
+          }
+        }
+        OPTIONAL {
+          SELECT ?resultValue ?denominatorValue WHERE {
+            ?resultValue a v3:value ; ?dS ?denominator . ?denominator a v3:denominator ; xyz:value ?denominatorValue .
+          }
+        }
+        OPTIONAL {
+          SELECT ?resultValue ?lowValue ?lowUnit ?lowInclusive WHERE {
+            ?resultValue a v3:value ; ?lS ?low . ?low a v3:low ; xyz:value ?lowValue .
+            OPTIONAL { ?low xyz:unit ?lowUnit }
+            OPTIONAL { ?low xyz:inclusive ?lowInclusive }
+          }
+        }
+        OPTIONAL {
+          SELECT ?resultValue ?highValue ?highUnit ?highInclusive WHERE {
+            ?resultValue a v3:value ; ?hS ?high . ?high a v3:high ; xyz:value ?highValue .
+            OPTIONAL { ?high xyz:unit ?highUnit }
+            OPTIONAL { ?high xyz:inclusive ?highInclusive }
+          }
+        }
+        BIND (BOUND(?lowValue) && BOUND(?highValue) AS ?twoBounds)
+        BIND (IF(?type IN ("PQ", "INT", "REAL"), ?plainValue,
+              IF(STRSTARTS(?type, "RTO"), CONCAT(COALESCE(?numeratorValue, ""), ":", COALESCE(?denominatorValue, "")),
+              IF(?twoBounds, CONCAT(?lowValue, "-", ?highValue, IF(BOUND(?lowUnit) || BOUND(?highUnit), CONCAT(" ", COALESCE(?lowUnit, ?highUnit)), "")),
+              IF(BOUND(?lowValue), CONCAT(IF(COALESCE(?lowInclusive, "true") = "false", ">", ">="), ?lowValue),
+                 CONCAT(IF(COALESCE(?highInclusive, "true") = "false", "<", "<="), ?highValue))))) AS ?text)
+        BIND (IF(?type IN ("PQ", "INT", "REAL"), ?plainUnit,
+              IF(?type = "IVL_PQ" && !?twoBounds, COALESCE(?lowUnit, ?highUnit), 1/0)) AS ?unit)
+        VALUES ?p { cascade:resultValue cascade:resultUnit }
+        BIND (IF(?p = cascade:resultValue, ?text, ?unit) AS ?o)
       }
       UNION
       {

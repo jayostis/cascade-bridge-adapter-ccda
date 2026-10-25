@@ -14,7 +14,8 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # its concept map, a value of a type no predicate takes or a coded one with
 # neither a name nor a code in SNOMED CT or LOINC, a coded value's code in
 # another system, a bound of a two-bound IVL_PQ value or of a reference range
-# that is not inclusive, a second value, range or interpretation, and a code in
+# that is not inclusive, a number not in REAL's decimal form or beyond twenty
+# digits of the point, a second value, range or interpretation, and a code in
 # a code system other than LOINC, at the result; and
 # a component of an organizer some result of which is a record, that is no
 # record itself, a vital sign among them, at the component, valued by the least
@@ -105,6 +106,35 @@ WHERE {
       }
       ?interval ?boundS ?bound . ?bound xyz:inclusive "false" ; xyz:value ?value .
       BIND (ccda:resultBoundNotInclusive AS ?gap)
+    }
+    UNION
+    {
+      {
+        ?result ?vS ?numbered . ?numbered a v3:value .
+      }
+      UNION
+      {
+        ?result ?vS ?parted . ?parted a v3:value ; ?pS ?numbered . ?numbered a ?part .
+        VALUES ?part { v3:numerator v3:denominator v3:low v3:high }
+      }
+      UNION
+      {
+        ?result ?rS ?range . ?range a v3:referenceRange ; ?orS ?observationRange .
+        ?observationRange a v3:observationRange ; ?ivS ?interval . ?interval a v3:value ; ?bS ?numbered .
+        ?numbered a ?side .
+        VALUES ?side { v3:low v3:high }
+      }
+      ?numbered xyz:value ?refusedWritten .
+      BIND (REPLACE(REPLACE(?refusedWritten, "^[+-]", ""), "[eE].*$", "") AS ?refusedMantissa)
+      BIND (IF(CONTAINS(?refusedMantissa, "."), STRBEFORE(?refusedMantissa, "."), ?refusedMantissa) AS ?refusedWhole)
+      BIND (STRLEN(?refusedWhole)
+            + IF(REGEX(?refusedWritten, "[eE]"), xsd:integer(REPLACE(?refusedWritten, "^[^eE]*[eE]", "")), 0) AS ?refusedPoint)
+      FILTER (!REGEX(?refusedWritten, "^[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][+-]?[0-9]+)?$")
+              || COALESCE(?refusedPoint + 20 < 0
+                          || ?refusedPoint - STRLEN(CONCAT(?refusedWhole, STRAFTER(?refusedMantissa, "."))) > 20, true)
+              || false)
+      BIND (?refusedWritten AS ?value)
+      BIND (ccda:resultNumberRefused AS ?gap)
     }
     UNION
     {

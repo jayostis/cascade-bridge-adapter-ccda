@@ -20,7 +20,12 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # written as its UCUM code, as C-CDA says it should be. A bound is inside its
 # range, so a range bound the document marks not inclusive is not written, and
 # result-findings.rq reports it; a bound with no value, as a null flavour, is
-# none.
+# none. A number refused, one not in REAL's decimal form, beyond twenty digits
+# either side of the point, or a two-bound range's bound that is not
+# inclusive, is no node, and nor is any other number of its value or its
+# reference range: the value is text (result.rq), a range's text keeps both
+# bounds, and half a range would say it is one-sided. result-findings.rq
+# reports each refused number.
 #
 # Each template test, first value, bound count and reference range choice is a
 # subquery joined to the rows, as in result.rq.
@@ -106,6 +111,42 @@ WHERE {
     }
     FILTER ((?shape = "number" && ?type IN ("PQ", "INT", "REAL")) || (?shape = "ratio" && STRSTARTS(?type, "RTO"))
             || (?shape = "interval" && ?type = "IVL_PQ"))
+    OPTIONAL {
+      {
+        SELECT DISTINCT ?resultValue (true AS ?valueRefused) WHERE {
+          ?resultValue a v3:value .
+          {
+            ?resultValue xyz:value ?refusedWritten .
+            BIND (false AS ?refusedOpen)
+          }
+          UNION
+          {
+            ?resultValue ?refusedS ?refusedPart . ?refusedPart a ?refusedSide ; xyz:value ?refusedWritten .
+            VALUES ?refusedSide { v3:numerator v3:denominator v3:low v3:high }
+            OPTIONAL { ?refusedPart xyz:inclusive ?refusedInclusive }
+            OPTIONAL {
+              {
+                SELECT ?resultValue (COUNT(DISTINCT ?refusedAnyBound) AS ?refusedBounds) WHERE {
+                  ?resultValue a v3:value ; ?refusedAnyS ?refusedAnyBound .
+                  ?refusedAnyBound a ?refusedAnySide ; xyz:value ?refusedAnyValue .
+                  VALUES ?refusedAnySide { v3:low v3:high }
+                } GROUP BY ?resultValue
+              }
+            }
+            BIND (COALESCE(?refusedInclusive, "true") = "false" && COALESCE(?refusedBounds, 0) = 2 AS ?refusedOpen)
+          }
+          BIND (REPLACE(REPLACE(?refusedWritten, "^[+-]", ""), "[eE].*$", "") AS ?refusedMantissa)
+          BIND (IF(CONTAINS(?refusedMantissa, "."), STRBEFORE(?refusedMantissa, "."), ?refusedMantissa) AS ?refusedWhole)
+          BIND (STRLEN(?refusedWhole)
+                + IF(REGEX(?refusedWritten, "[eE]"), xsd:integer(REPLACE(?refusedWritten, "^[^eE]*[eE]", "")), 0) AS ?refusedPoint)
+          FILTER (!REGEX(?refusedWritten, "^[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][+-]?[0-9]+)?$")
+                  || COALESCE(?refusedPoint + 20 < 0
+                              || ?refusedPoint - STRLEN(CONCAT(?refusedWhole, STRAFTER(?refusedMantissa, "."))) > 20, true)
+                  || ?refusedOpen)
+        }
+      }
+    }
+    FILTER (!BOUND(?valueRefused))
   }
   UNION
   {
@@ -147,6 +188,24 @@ WHERE {
       (v3:low "reference-low" cascade:referenceRangeLow)
       (v3:high "reference-high" cascade:referenceRangeHigh)
     }
+    OPTIONAL {
+      {
+        SELECT DISTINCT ?rangeValue (true AS ?rangeRefused) WHERE {
+          ?rangeValue a v3:value ; ?refusedS ?refusedPart . ?refusedPart a ?refusedSide ; xyz:value ?refusedWritten .
+          VALUES ?refusedSide { v3:low v3:high }
+          OPTIONAL { ?refusedPart xyz:inclusive ?refusedInclusive }
+          BIND (REPLACE(REPLACE(?refusedWritten, "^[+-]", ""), "[eE].*$", "") AS ?refusedMantissa)
+          BIND (IF(CONTAINS(?refusedMantissa, "."), STRBEFORE(?refusedMantissa, "."), ?refusedMantissa) AS ?refusedWhole)
+          BIND (STRLEN(?refusedWhole)
+                + IF(REGEX(?refusedWritten, "[eE]"), xsd:integer(REPLACE(?refusedWritten, "^[^eE]*[eE]", "")), 0) AS ?refusedPoint)
+          FILTER (!REGEX(?refusedWritten, "^[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][+-]?[0-9]+)?$")
+                  || COALESCE(?refusedPoint + 20 < 0
+                              || ?refusedPoint - STRLEN(CONCAT(?refusedWhole, STRAFTER(?refusedMantissa, "."))) > 20, true)
+                  || COALESCE(?refusedInclusive, "true") = "false")
+        }
+      }
+    }
+    FILTER (!BOUND(?rangeRefused))
   }
 
   OPTIONAL { ?quantity xyz:unit ?ucumUnit }
