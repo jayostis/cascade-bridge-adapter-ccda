@@ -133,6 +133,9 @@
           "@id": "in/sparql/result.rq"
         },
         {
+          "@id": "in/sparql/result-quantities.rq"
+        },
+        {
           "@id": "in/sparql/document-organizations.rq"
         }
       ],
@@ -287,6 +290,9 @@
         },
         {
           "@id": "in/sparql/result.rq"
+        },
+        {
+          "@id": "in/sparql/result-quantities.rq"
         },
         {
           "@id": "in/sparql/medication-findings.rq"
@@ -446,6 +452,9 @@
         },
         {
           "@id": "fixtures/in/medications-and-results-edges.xml"
+        },
+        {
+          "@id": "fixtures/in/results-value-kinds.xml"
         },
         {
           "@id": "fixtures/in/medications-and-results-b.xml"
@@ -658,7 +667,13 @@
           "@id": "fixtures/expected/medications-and-results-edges.ttl"
         },
         {
+          "@id": "fixtures/expected/results-value-kinds.ttl"
+        },
+        {
           "@id": "fixtures/findings/medications-and-results-edges.ttl"
+        },
+        {
+          "@id": "fixtures/findings/results-value-kinds.ttl"
         },
         {
           "@id": "fixtures/expected/medications-and-results-b.ttl"
@@ -1080,12 +1095,24 @@
       "@type": "File",
       "name": "Mapping: result",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "17445",
-      "sha256": "c1e44c931367455fb0e867b757888a0e62a0b4f85d2335d1e1baffb65a0946ab",
+      "contentSize": "26447",
+      "sha256": "26692d8785753e8b084aa8f68a57d995a3e18e395a839a489427c617c2d1db20",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "A Result Observation's test name, LOINC codes, value and unit, reference range, interpretation, performed time and status."
+      "description": "A Result Observation's test name, LOINC codes, the kind of its first value (quantity, ratio, range, coded or text), a coded value's SNOMED CT and LOINC codes and its name, a text value, its first reference range as text, interpretation, performed time and status; its numbers are result-quantities.rq's."
+    },
+    {
+      "@id": "in/sparql/result-quantities.rq",
+      "@type": "File",
+      "name": "Mapping: the numbers of a result",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "11611",
+      "sha256": "40413a69cbd1d8ebc843ec9d9a447b1096d0b1aff7a8d3d13be17f738149630f",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Each number a Result Observation's first value and its typed reference range state, as a cascade:Quantity node of its version, <version>#<role>: a PQ's, INT's or REAL's value with a PQ's unit as its UCUM unit, an RTO's numerator and denominator, a two-bound IVL_PQ's bounds, a one-bound IVL_PQ's bound as a value with the comparator C-CDA on FHIR gives it, and the bounds of the one reference range interpreted N, or of the only one; each with its number as written and as a canonical xsd:decimal. A range bound that is not inclusive is not written."
     },
     {
       "@id": "in/sparql/medication-findings.rq",
@@ -1104,8 +1131,8 @@
       "@type": "File",
       "name": "Findings: results",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "5948",
-      "sha256": "a86ea213178df657ac2e95ceded11411f082b3b3bb3ccbcf032c3e0ea43b0ed8",
+      "contentSize": "9125",
+      "sha256": "3adc3e89533143f926d6c91b5eb6375da79e9af13c0949a077872c83f7a30a3a",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1140,8 +1167,8 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML gaps",
       "encodingFormat": "text/turtle",
-      "contentSize": "9126",
-      "sha256": "3b413feb0c71a4e302a19aa333339091da9cf9d8322cf3e7745b2bde8f32cd53",
+      "contentSize": "10215",
+      "sha256": "a3af362268a47286b418144c4179ae315f02ad8a3386de72dc7eadb0bd058aa3",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1152,8 +1179,8 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML source accounting",
       "encodingFormat": "text/turtle",
-      "contentSize": "364217",
-      "sha256": "cc7909617b7247a0239331c6e4ea266dacfad9a839e221a0cca2489e4ba0d810",
+      "contentSize": "377282",
+      "sha256": "554493bda34132052f428e1664070b7be90c0983df4d70a11bb0f97a720d5409",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1805,6 +1832,19 @@
       "description": "Medications and results stated at their edges: a medication whose narrative name holds markup and whose code names it whole; a glucose with two interpretation codes and a range with only a high bound; a protein result coded with no name; and a creatinine with two values and a range with only a low bound. Authored here on 2026-10-07, for a case the conformance corpus does not hold; it validates against the CDA schema."
     },
     {
+      "@id": "fixtures/in/results-value-kinds.xml",
+      "@type": "File",
+      "name": "C-CDA: results-value-kinds",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "8227",
+      "sha256": "d8814cc789cb3b66e54366d487382a01811c288008e4f606ba430bfbac5e0809",
+      "dateCreated": "2026-10-24",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Results whose first values are of every kind but text: a leukocyte count written 6.20E3 /uL with two reference ranges, the second interpreted N with a low bound that is not inclusive and a high bound written 1.10e4; an antinuclear antibody titre as an RTO_PQ_PQ of 1 to 64; a urine leukocyte range of 0 to 5 /[HPF] as an IVL_PQ; a troponin I as an IVL_PQ with only a high bound of 0.01 ng/mL that is not inclusive;, a hepatitis B surface antigen coded as the LOINC answer LA6577-6 with a local translation; and a potassium whose PQ value is written <2.5, not a number. Authored here on 2026-10-24, for a case the conformance corpus does not hold."
+    },
+    {
       "@id": "fixtures/in/medications-and-results-b.xml",
       "@type": "File",
       "name": "C-CDA: medications-and-results-b",
@@ -2001,8 +2041,8 @@
       "@type": "File",
       "name": "Expected graph for epic-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "11437",
-      "sha256": "28c61e12f5c5b010d90c600d0216f5b4d63f4eddb5bb4168f57943d342e4012c",
+      "contentSize": "11815",
+      "sha256": "15edf02292ed25b129cb78953ae0425f3ce54ba9088a51ca4610f5833df7d484",
       "about": {
         "@id": "fixtures/in/epic-summarization.xml"
       },
@@ -2033,8 +2073,8 @@
       "@type": "File",
       "name": "Expected graph for full-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "11409",
-      "sha256": "a71dba16b407806cbec3bbb814c7f8ed16d70d38d02332a9e5b3580d37d7802d",
+      "contentSize": "11801",
+      "sha256": "3f561aec98eedfdf1a52a035a9324c3056e48a4c0f3fe2ee2422581ee426472a",
       "about": {
         "@id": "fixtures/in/full-summarization.xml"
       },
@@ -2097,8 +2137,8 @@
       "@type": "File",
       "name": "Expected graph for labs-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "4673",
-      "sha256": "a1130f21ac58af1c9890fedbc05c6e42007b6e00f4e2d08a1bbc9c5522f096f6",
+      "contentSize": "5065",
+      "sha256": "99c37acbbc9114c8a0062dba9aa56c1b5ed544f91998f7d383e2d4831250152b",
       "about": {
         "@id": "fixtures/in/labs-section.xml"
       },
@@ -2923,8 +2963,8 @@
       "@type": "File",
       "name": "Expected graph for medications-and-results-a",
       "encodingFormat": "text/turtle",
-      "contentSize": "20683",
-      "sha256": "3ecd6bafd7fc74dfcbcb37e4816e74a460e3cc11b743344d5f69384633214960",
+      "contentSize": "22801",
+      "sha256": "5b76eb8be16a364e5f4956a47823e872b3193f246acccb6ff116fc9ddd4f2d73",
       "about": {
         "@id": "fixtures/in/medications-and-results-a.xml"
       },
@@ -2939,8 +2979,8 @@
       "@type": "File",
       "name": "Expected findings for medications-and-results-a",
       "encodingFormat": "text/turtle",
-      "contentSize": "24016",
-      "sha256": "cb7087b7adb367654f7aa5a954e469051a0053e477422d9ddbbe8d5a9ad3d590",
+      "contentSize": "22703",
+      "sha256": "333ba381eae77241752bb1a89796ca3b84874a31b0105a4c9735549081d09a1a",
       "about": {
         "@id": "fixtures/in/medications-and-results-a.xml"
       },
@@ -2955,8 +2995,8 @@
       "@type": "File",
       "name": "Expected graph for medications-and-results-edges",
       "encodingFormat": "text/turtle",
-      "contentSize": "11905",
-      "sha256": "08963fe569c4a819ea90c6310c9c1563417f9b6e20dce29b79b87e8fc573f19c",
+      "contentSize": "13282",
+      "sha256": "b57f58135b3dd4edfaa1b21cefdf34a5a46166d5a11054ba0e6904967a658109",
       "about": {
         "@id": "fixtures/in/medications-and-results-edges.xml"
       },
@@ -2967,12 +3007,28 @@
       "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
     },
     {
+      "@id": "fixtures/expected/results-value-kinds.ttl",
+      "@type": "File",
+      "name": "Expected graph for results-value-kinds",
+      "encodingFormat": "text/turtle",
+      "contentSize": "17934",
+      "sha256": "f78cc278dc6cef905d3214311eff3a0404a443e0fe86613c094c3a47cfcfe9da",
+      "about": {
+        "@id": "fixtures/in/results-value-kinds.xml"
+      },
+      "dateCreated": "2026-10-24",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
       "@id": "fixtures/findings/medications-and-results-edges.ttl",
       "@type": "File",
       "name": "Expected findings for medications-and-results-edges",
       "encodingFormat": "text/turtle",
-      "contentSize": "11573",
-      "sha256": "04eef6002cf2a79ec227d620cf9688607f5d9cb3f876677d2f51d5571e59cef7",
+      "contentSize": "10265",
+      "sha256": "93585ea3ba1fca573ba4081f35b014a98ab4488943c6ef5313ee892253b65ad9",
       "about": {
         "@id": "fixtures/in/medications-and-results-edges.xml"
       },
@@ -2983,12 +3039,28 @@
       "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
     },
     {
+      "@id": "fixtures/findings/results-value-kinds.ttl",
+      "@type": "File",
+      "name": "Expected findings for results-value-kinds",
+      "encodingFormat": "text/turtle",
+      "contentSize": "13034",
+      "sha256": "81a671565c4a8fc15ddf360e97fc8264180e66a44d3fbb81bf612b5e39cf5cf8",
+      "about": {
+        "@id": "fixtures/in/results-value-kinds.xml"
+      },
+      "dateCreated": "2026-10-24",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
       "@id": "fixtures/expected/medications-and-results-b.ttl",
       "@type": "File",
       "name": "Expected graph for medications-and-results-b",
       "encodingFormat": "text/turtle",
-      "contentSize": "20696",
-      "sha256": "710c97b01461f8455d740b75eefd7b60796609b3312b0fa52bcac07895d1934c",
+      "contentSize": "22810",
+      "sha256": "02386a530e10b441db5b8ed4849121484bf0054819933aee1cec5500ab194877",
       "about": {
         "@id": "fixtures/in/medications-and-results-b.xml"
       },
@@ -3003,8 +3075,8 @@
       "@type": "File",
       "name": "Expected findings for medications-and-results-b",
       "encodingFormat": "text/turtle",
-      "contentSize": "23999",
-      "sha256": "b8253cca76333d012eb5c2a5ba46a2a687d57b5d88a5b0f36835f52d0fbe52e7",
+      "contentSize": "22694",
+      "sha256": "05b2e74a3efd70c87b6f27cc128298177e45dc6b15e7fd66799ecfdeb9355992",
       "about": {
         "@id": "fixtures/in/medications-and-results-b.xml"
       },
@@ -3019,8 +3091,8 @@
       "@type": "File",
       "name": "Expected graph for narrative-reference-without-hash",
       "encodingFormat": "text/turtle",
-      "contentSize": "9822",
-      "sha256": "e5b80a33da37538a201a6d7a04765940a181eff7161ddbcf7a727acd2af81c43",
+      "contentSize": "10134",
+      "sha256": "a300e77ff83f7f35a596fd9d19bc490c8b45f34bb63f75fdd6f46955745fe1b5",
       "about": {
         "@id": "fixtures/in/narrative-reference-without-hash.xml"
       },
@@ -3051,8 +3123,8 @@
       "@type": "File",
       "name": "Expected graph for narrative-id-twice",
       "encodingFormat": "text/turtle",
-      "contentSize": "9816",
-      "sha256": "d4412e16d045927aa14b91625ea443dfe2bc15d5a651a8012a59b6f4249cc0f2",
+      "contentSize": "10130",
+      "sha256": "b0437a9c89bad991a4037fb7f3049bfc7d62b026ee32ec4c03a9603854baa9fa",
       "about": {
         "@id": "fixtures/in/narrative-id-twice.xml"
       },
@@ -3232,8 +3304,8 @@
       "@type": "File",
       "name": "View: lab-results",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "1399",
-      "sha256": "963fbd7febced7fe927e97d287a67b9f05cf1a13a58b4763fbaf4bdc9d4b7e22",
+      "contentSize": "1791",
+      "sha256": "084fd659843e46dd8b0070d5cae87596809b90d00f53b8bab83e61a7fa670f07",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },

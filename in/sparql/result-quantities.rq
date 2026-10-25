@@ -1,0 +1,233 @@
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+PREFIX xsi:      <http://www.w3.org/2001/XMLSchema-instance>
+PREFIX fx:       <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:      <http://sparql.xyz/facade-x/data/>
+PREFIX v3:       <urn:hl7-org:v3>
+PREFIX cascade:  <https://ns.cascadeprotocol.org/cascade#>
+PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# Each number a Result Observation the document table makes a record of
+# states, as a cascade:Quantity node of its version named by its role, from
+# its first value only, as result.rq reads it: a PQ's, INT's or REAL's value;
+# an RTO's numerator and denominator; an IVL_PQ's low and high where it has
+# both, a range; an IVL_PQ with one bound, a value with a comparator, as C-CDA
+# on FHIR maps it: <= before a high and >= after a low, < and > where the bound
+# is not inclusive. And the low and high of the one reference range whose
+# observationRange is interpreted N, or of the only one. The number is written
+# twice: as the document wrote it, and as a canonical xsd:decimal, an exponent
+# written out, so that every Bridge names the version alike. A PQ's unit is
+# written as its UCUM code, as C-CDA says it should be. A bound is inside its
+# range, so a range bound the document marks not inclusive is not written, and
+# result-findings.rq reports it; a bound with no value, as a null flavour, is
+# none. A number refused, one not in REAL's decimal form, beyond twenty digits
+# either side of the point, or a two-bound range's bound that is not
+# inclusive, is no node, and nor is any other number of its value or its
+# reference range: the value is text (result.rq), a range's text keeps both
+# bounds, and half a range would say it is one-sided. result-findings.rq
+# reports each refused number.
+#
+# Each template test, first value, bound count and reference range choice is a
+# subquery joined to the rows, as in result.rq.
+
+CONSTRUCT {
+  ?version ?link ?node .
+  ?node cascade:decimalValue ?decimal ;
+    cascade:writtenValue ?written ;
+    cascade:quantityComparator ?comparator ;
+    cascade:ucumUnit ?ucumUnit .
+}
+WHERE {
+  ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
+  ?outer a v3:component ; ?bodySlot ?body .
+  ?body a v3:structuredBody ; ?componentSlot ?component .
+  ?component a v3:component ; ?sectionSlot ?section .
+  ?section a v3:section ; ?entrySlot ?entry .
+  ?entry a v3:entry ; ?organizerSlot ?organizer .
+  ?organizer a v3:organizer ; ?memberSlot ?member .
+  ?member a v3:component ; ?statementSlot ?result .
+  ?result a v3:observation .
+  BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
+               STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
+               STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?organizerSlot), "#_"), ".",
+               STRAFTER(STR(?memberSlot), "#_"), ".", STRAFTER(STR(?statementSlot), "#_")) AS ?slots)
+  ?row ccda:statementAt ?slots ; ccda:recordClass "Observation" .
+  BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(?slots))) AS ?version)
+  {
+    SELECT DISTINCT ?result WHERE {
+      ?result a v3:observation ; ?tS ?t .
+      ?t a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.2" .
+    }
+  }
+
+  {
+    {
+      SELECT ?result ?resultValue ?type WHERE {
+        ?result ?vlS ?resultValue . ?resultValue a v3:value ; xsi:type ?written .
+        {
+          SELECT ?result (MIN(xsd:integer(STRAFTER(STR(?anyS), "#_"))) AS ?firstAt) WHERE {
+            ?result ?anyS ?any . ?any a v3:value .
+          } GROUP BY ?result
+        }
+        FILTER (xsd:integer(STRAFTER(STR(?vlS), "#_")) = ?firstAt)
+        BIND (REPLACE(?written, "^.*:", "") AS ?type)
+      }
+    }
+    {
+      ?resultValue xyz:value ?written .
+      BIND ("number" AS ?shape)
+      BIND (?resultValue AS ?quantity)
+      BIND ("value" AS ?role) BIND (cascade:resultQuantity AS ?link)
+    }
+    UNION
+    {
+      ?resultValue ?partS ?quantity . ?quantity a ?part ; xyz:value ?written .
+      BIND ("ratio" AS ?shape)
+      VALUES (?part ?role ?link) {
+        (v3:numerator "numerator" cascade:resultRatioNumerator)
+        (v3:denominator "denominator" cascade:resultRatioDenominator)
+      }
+    }
+    UNION
+    {
+      {
+        SELECT ?resultValue (COUNT(DISTINCT ?bound) AS ?bounds) WHERE {
+          ?resultValue a v3:value ; ?boundS ?bound . ?bound a ?side ; xyz:value ?boundValue .
+          VALUES ?side { v3:low v3:high }
+        } GROUP BY ?resultValue
+      }
+      ?resultValue ?sideS ?quantity . ?quantity a ?side ; xyz:value ?written .
+      BIND ("interval" AS ?shape)
+      OPTIONAL { ?quantity xyz:inclusive ?inclusive }
+      VALUES (?side ?rangeRole ?rangeLink ?inclusiveComparator ?exclusiveComparator) {
+        (v3:low "range-low" cascade:resultRangeLow ">=" ">")
+        (v3:high "range-high" cascade:resultRangeHigh "<=" "<")
+      }
+      FILTER (?bounds = 1 || COALESCE(?inclusive, "true") != "false")
+      BIND (IF(?bounds = 1, "value", ?rangeRole) AS ?role)
+      BIND (IF(?bounds = 1, cascade:resultQuantity, ?rangeLink) AS ?link)
+      BIND (IF(?bounds = 1, IF(COALESCE(?inclusive, "true") = "false", ?exclusiveComparator, ?inclusiveComparator), 1/0)
+            AS ?comparator)
+    }
+    FILTER ((?shape = "number" && ?type IN ("PQ", "INT", "REAL")) || (?shape = "ratio" && STRSTARTS(?type, "RTO"))
+            || (?shape = "interval" && ?type = "IVL_PQ"))
+    OPTIONAL {
+      {
+        SELECT DISTINCT ?resultValue (true AS ?valueRefused) WHERE {
+          ?resultValue a v3:value .
+          {
+            ?resultValue xyz:value ?refusedWritten .
+            BIND (false AS ?refusedOpen)
+          }
+          UNION
+          {
+            ?resultValue ?refusedS ?refusedPart . ?refusedPart a ?refusedSide ; xyz:value ?refusedWritten .
+            VALUES ?refusedSide { v3:numerator v3:denominator v3:low v3:high }
+            OPTIONAL { ?refusedPart xyz:inclusive ?refusedInclusive }
+            OPTIONAL {
+              {
+                SELECT ?resultValue (COUNT(DISTINCT ?refusedAnyBound) AS ?refusedBounds) WHERE {
+                  ?resultValue a v3:value ; ?refusedAnyS ?refusedAnyBound .
+                  ?refusedAnyBound a ?refusedAnySide ; xyz:value ?refusedAnyValue .
+                  VALUES ?refusedAnySide { v3:low v3:high }
+                } GROUP BY ?resultValue
+              }
+            }
+            BIND (COALESCE(?refusedInclusive, "true") = "false" && COALESCE(?refusedBounds, 0) = 2 AS ?refusedOpen)
+          }
+          BIND (REPLACE(REPLACE(?refusedWritten, "^[+-]", ""), "[eE].*$", "") AS ?refusedMantissa)
+          BIND (IF(CONTAINS(?refusedMantissa, "."), STRBEFORE(?refusedMantissa, "."), ?refusedMantissa) AS ?refusedWhole)
+          BIND (STRLEN(?refusedWhole)
+                + IF(REGEX(?refusedWritten, "[eE]"), xsd:integer(REPLACE(?refusedWritten, "^[^eE]*[eE]", "")), 0) AS ?refusedPoint)
+          FILTER (!REGEX(?refusedWritten, "^[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][+-]?[0-9]+)?$")
+                  || COALESCE(?refusedPoint + 20 < 0
+                              || ?refusedPoint - STRLEN(CONCAT(?refusedWhole, STRAFTER(?refusedMantissa, "."))) > 20, true)
+                  || ?refusedOpen)
+        }
+      }
+    }
+    FILTER (!BOUND(?valueRefused))
+  }
+  UNION
+  {
+    {
+      SELECT ?result ?range WHERE {
+        ?result ?rrS ?range . ?range a v3:referenceRange .
+        {
+          SELECT ?result (COUNT(DISTINCT ?anyRange) AS ?ranges) WHERE {
+            ?result ?anyS ?anyRange . ?anyRange a v3:referenceRange .
+          } GROUP BY ?result
+        }
+        OPTIONAL {
+          {
+            SELECT ?range WHERE {
+              ?range a v3:referenceRange ; ?orS ?observationRange .
+              ?observationRange a v3:observationRange ; ?icS ?interpretation .
+              ?interpretation a v3:interpretationCode ; xyz:code "N" .
+            }
+          }
+          BIND (true AS ?normal)
+        }
+        OPTIONAL {
+          {
+            SELECT ?result (COUNT(DISTINCT ?normalRange) AS ?normals) WHERE {
+              ?result ?nS ?normalRange . ?normalRange a v3:referenceRange ; ?norS ?normalObservationRange .
+              ?normalObservationRange a v3:observationRange ; ?nicS ?normalInterpretation .
+              ?normalInterpretation a v3:interpretationCode ; xyz:code "N" .
+            } GROUP BY ?result
+          }
+        }
+        FILTER (?ranges = 1 || (COALESCE(?normal, false) && ?normals = 1))
+      }
+    }
+    ?range ?orS ?observationRange . ?observationRange a v3:observationRange ; ?ovS ?rangeValue .
+    ?rangeValue a v3:value ; ?sideS ?quantity . ?quantity a ?side ; xyz:value ?written .
+    OPTIONAL { ?quantity xyz:inclusive ?inclusive }
+    FILTER (COALESCE(?inclusive, "true") != "false")
+    VALUES (?side ?role ?link) {
+      (v3:low "reference-low" cascade:referenceRangeLow)
+      (v3:high "reference-high" cascade:referenceRangeHigh)
+    }
+    OPTIONAL {
+      {
+        SELECT DISTINCT ?rangeValue (true AS ?rangeRefused) WHERE {
+          ?rangeValue a v3:value ; ?refusedS ?refusedPart . ?refusedPart a ?refusedSide ; xyz:value ?refusedWritten .
+          VALUES ?refusedSide { v3:low v3:high }
+          OPTIONAL { ?refusedPart xyz:inclusive ?refusedInclusive }
+          BIND (REPLACE(REPLACE(?refusedWritten, "^[+-]", ""), "[eE].*$", "") AS ?refusedMantissa)
+          BIND (IF(CONTAINS(?refusedMantissa, "."), STRBEFORE(?refusedMantissa, "."), ?refusedMantissa) AS ?refusedWhole)
+          BIND (STRLEN(?refusedWhole)
+                + IF(REGEX(?refusedWritten, "[eE]"), xsd:integer(REPLACE(?refusedWritten, "^[^eE]*[eE]", "")), 0) AS ?refusedPoint)
+          FILTER (!REGEX(?refusedWritten, "^[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][+-]?[0-9]+)?$")
+                  || COALESCE(?refusedPoint + 20 < 0
+                              || ?refusedPoint - STRLEN(CONCAT(?refusedWhole, STRAFTER(?refusedMantissa, "."))) > 20, true)
+                  || COALESCE(?refusedInclusive, "true") = "false")
+        }
+      }
+    }
+    FILTER (!BOUND(?rangeRefused))
+  }
+
+  OPTIONAL { ?quantity xyz:unit ?ucumUnit }
+
+  FILTER (REGEX(?written, "^[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][+-]?[0-9]+)?$"))
+  BIND (STRSTARTS(?written, "-") AS ?negative)
+  BIND (REPLACE(?written, "^[+-]", "") AS ?unsigned)
+  BIND (REPLACE(?unsigned, "[eE].*$", "") AS ?mantissa)
+  BIND (IF(REGEX(?unsigned, "[eE]"), xsd:integer(REPLACE(?unsigned, "^[^eE]*[eE]", "")), 0) AS ?exponent)
+  BIND (IF(CONTAINS(?mantissa, "."), STRBEFORE(?mantissa, "."), ?mantissa) AS ?whole)
+  BIND (CONCAT(?whole, STRAFTER(?mantissa, ".")) AS ?digits)
+  BIND (STRLEN(?whole) + ?exponent AS ?point)
+  BIND ("000000000000000000000000000000000000000000000000000000000000" AS ?zeros)
+  BIND (IF(?point + 20 < 0 || ?point - STRLEN(?digits) > 20, 1/0,
+           IF(?point <= 0, CONCAT("0.", SUBSTR(?zeros, 1, 0 - ?point), ?digits),
+              IF(?point >= STRLEN(?digits), CONCAT(?digits, SUBSTR(?zeros, 1, ?point - STRLEN(?digits))),
+                 CONCAT(SUBSTR(?digits, 1, ?point), ".", SUBSTR(?digits, ?point + 1))))) AS ?plain)
+  BIND (REPLACE(IF(CONTAINS(?plain, "."), STRBEFORE(?plain, "."), ?plain), "^0+", "") AS ?wholeDigits)
+  BIND (REPLACE(STRAFTER(?plain, "."), "0+$", "") AS ?fractionDigits)
+  BIND (CONCAT(IF(?wholeDigits = "", "0", ?wholeDigits), IF(?fractionDigits = "", "", CONCAT(".", ?fractionDigits)))
+        AS ?magnitude)
+  BIND (STRDT(CONCAT(IF(?negative && ?magnitude != "0", "-", ""), ?magnitude), xsd:decimal) AS ?decimal)
+  FILTER (BOUND(?decimal))
+  BIND (IRI(CONCAT(STR(?version), "#", ?role)) AS ?node)
+}
