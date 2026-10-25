@@ -168,6 +168,9 @@
           "@id": "in/sparql/name-findings.rq"
         },
         {
+          "@id": "in/sparql/patient-findings.rq"
+        },
+        {
           "@id": "in/sparql/reference-findings.rq"
         }
       ],
@@ -311,6 +314,9 @@
         },
         {
           "@id": "in/sparql/name-findings.rq"
+        },
+        {
+          "@id": "in/sparql/patient-findings.rq"
         },
         {
           "@id": "in/sparql/reference-findings.rq"
@@ -473,6 +479,9 @@
         },
         {
           "@id": "fixtures/in/null-flavors.xml"
+        },
+        {
+          "@id": "fixtures/in/null-flavors-not-listed.xml"
         },
         {
           "@id": "fixtures/in/times-by-precision.xml"
@@ -697,6 +706,9 @@
           "@id": "fixtures/expected/null-flavors.ttl"
         },
         {
+          "@id": "fixtures/expected/null-flavors-not-listed.ttl"
+        },
+        {
           "@id": "fixtures/expected/times-by-precision.ttl"
         },
         {
@@ -710,6 +722,9 @@
         },
         {
           "@id": "fixtures/findings/null-flavors.ttl"
+        },
+        {
+          "@id": "fixtures/findings/null-flavors-not-listed.ttl"
         },
         {
           "@id": "fixtures/findings/times-by-precision.ttl"
@@ -1050,8 +1065,8 @@
       "@type": "File",
       "name": "Findings: allergy codes not mapped",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "4614",
-      "sha256": "e3a298da630689c299b1e09fd28f2a0916753a6ccc1e3e44918ea880a310ed65",
+      "contentSize": "5243",
+      "sha256": "6e5774f46be9100c1cfcd2e885ca0a90454bd9134b70c2b480c19efb6beab626",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1098,8 +1113,8 @@
       "@type": "File",
       "name": "Findings: problem codes not mapped",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "3893",
-      "sha256": "20b32ce9f125a6ab81307c54d20fb4a7372b627f81ca4e1ddc5487fe4ec8b86b",
+      "contentSize": "4569",
+      "sha256": "62a48eb6ef5e8bf7a040ea8bb2b6182f14aacb6ef35f1ec8614a5f6c62554732",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1110,8 +1125,8 @@
       "@type": "File",
       "name": "Findings: immunization and procedure codes not mapped",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "3257",
-      "sha256": "83651bb60c2d6ec2e46b424eda0cea230134075a7bf73c8fe477409a848a8670",
+      "contentSize": "3888",
+      "sha256": "54ebfaac071213c58222f6873c5a3d0899736f67a0c83b71ce1b8991d807fc27",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1122,8 +1137,8 @@
       "@type": "File",
       "name": "Mapping: medication",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "13643",
-      "sha256": "c2719d37c29897851366f3504c8805cd0e027024572ca8d7e29e07002eba8754",
+      "contentSize": "13701",
+      "sha256": "5dde57ab90554143a45eb92cc34d1323f947c7b03c4095627f193a28287a616f",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1182,8 +1197,8 @@
       "@type": "File",
       "name": "Findings: results",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "9537",
-      "sha256": "94239527318ac8033df7381bad59a651af39359bf73c04fe5a5fbcb44f5aadcb",
+      "contentSize": "9923",
+      "sha256": "693b4759cb02f5d00d607b041d1afa4532dfdb48804d6420dcfeee874f4effa5",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1200,6 +1215,18 @@
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "description": "Each record whose id another statement of the document carries with another key, each record named by the document for want of a custodian id or of one patient with an id, and each record in its scopes that states no identifier, no key field and no member."
+    },
+    {
+      "@id": "in/sparql/patient-findings.rq",
+      "@type": "File",
+      "name": "Findings: a birth time's unlisted null flavour",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "1517",
+      "sha256": "fa6e23e5fbcc6a8134ddfac43d9a5b6fbf2a24979aedcb00eeb9ff64ee8a77c4",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A birth time's nullFlavor that is no code of HL7 v3 NullFlavor, so no reason for the absent date of birth is carried; its value is the nullFlavor as written."
     },
     {
       "@id": "in/sparql/reference-findings.rq",
@@ -1230,8 +1257,8 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML source accounting",
       "encodingFormat": "text/turtle",
-      "contentSize": "386660",
-      "sha256": "1e017496ac93a438c7293c37492a9ab0cad0110438466caf1c431b1b7823928f",
+      "contentSize": "387272",
+      "sha256": "6c28e4ffcd2bf331bbac4d3ac77fae242389b8199f0cbfb10934500361210dc0",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1928,13 +1955,26 @@
       "@type": "File",
       "name": "C-CDA: null-flavors",
       "encodingFormat": "application/cda+xml",
-      "contentSize": "8747",
-      "sha256": "296e200a62dcffdba0aea8cec0b74c18c60ab21eea4a0979cc5e83085a861ced",
+      "contentSize": "9621",
+      "sha256": "73a2c31f97ecea7a343fa60eedfe07f12fae20fcdabb0ee9eafb21af3d4a76ea",
       "dateCreated": "2026-10-24",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "Null flavours where a value or a time would be: a birth time UNK, an immunization time NI, a medication's end UNK, a problem's onset ASKU, a result value MSK, a result time NAV, and a result value whose nullFlavor XYZ is no NullFlavor code. Authored here on 2026-10-24, for a case the conformance corpus does not hold."
+      "description": "Null flavours where a value or a time would be: a birth time UNK, an immunization time NI, a medication's end UNK, another medication's whole time UNK, a problem's onset ASKU, a result value MSK, a result time NAV, and a result value whose nullFlavor XYZ is no NullFlavor code. Authored here on 2026-10-24, for a case the conformance corpus does not hold."
+    },
+    {
+      "@id": "fixtures/in/null-flavors-not-listed.xml",
+      "@type": "File",
+      "name": "C-CDA: null-flavors-not-listed",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "8747",
+      "sha256": "b626cd0867bf9ce53b94b1dc0f3519735283e08be71434fdc3561cbdcff08a0a",
+      "dateCreated": "2026-10-24",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The null-flavors document with a nullFlavor that is no NullFlavor code on the birth time, an immunization's time, a medication's end, a problem's onset, a procedure's time, a result's time and a result's value. Authored here on 2026-10-24, for a case the conformance corpus does not hold."
     },
     {
       "@id": "fixtures/in/times-by-precision.xml",
@@ -3068,8 +3108,8 @@
       "@type": "File",
       "name": "Expected graph for medications-and-results-a",
       "encodingFormat": "text/turtle",
-      "contentSize": "23494",
-      "sha256": "fe940f28256a6e962121a28688077e0abe5beeb8f5597ccff2b9a9e25fea8c9e",
+      "contentSize": "24195",
+      "sha256": "c51f413776ff915d519f33585af7b97bdf399f169803dd7dd2f6156af01e4ec9",
       "about": {
         "@id": "fixtures/in/medications-and-results-a.xml"
       },
@@ -3148,10 +3188,26 @@
       "@type": "File",
       "name": "Expected graph for null-flavors",
       "encodingFormat": "text/turtle",
-      "contentSize": "17191",
-      "sha256": "eef7f35b23d31bcbb9512c24679ab3a6321b2d3382a5819c3acb06ff022a3a7a",
+      "contentSize": "19661",
+      "sha256": "ea9bda87bdedfe889836d408f443dc822eb56a8e04566688a8480b6dd19ac047",
       "about": {
         "@id": "fixtures/in/null-flavors.xml"
+      },
+      "dateCreated": "2026-10-24",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/null-flavors-not-listed.ttl",
+      "@type": "File",
+      "name": "Expected graph for null-flavors-not-listed",
+      "encodingFormat": "text/turtle",
+      "contentSize": "15623",
+      "sha256": "506e0c942d60d644b9c49ce111e3f45c97f490cf7c3a65e392cfb791505962cc",
+      "about": {
+        "@id": "fixtures/in/null-flavors-not-listed.xml"
       },
       "dateCreated": "2026-10-24",
       "license": {
@@ -3164,8 +3220,8 @@
       "@type": "File",
       "name": "Expected graph for times-by-precision",
       "encodingFormat": "text/turtle",
-      "contentSize": "12897",
-      "sha256": "3d95b2b65eb61655fb4705bcc2b3fce6c4ade511d1d8936c42c573df748a9ef7",
+      "contentSize": "13014",
+      "sha256": "92322fbde1a65f24227bfba74638b797fd0621c0a6c5d7e9c97ed7d6bfba738d",
       "about": {
         "@id": "fixtures/in/times-by-precision.xml"
       },
@@ -3228,10 +3284,26 @@
       "@type": "File",
       "name": "Expected findings for null-flavors",
       "encodingFormat": "text/turtle",
-      "contentSize": "23106",
-      "sha256": "961962bcc8dbdc9262b2f3f37ac9f39275135e85d5c103ffc55c8faa77fd1370",
+      "contentSize": "24302",
+      "sha256": "5b9c79f2aed87cdf326d825871f39e5ba9e13c5ed1fae6291aec63fcbb19d2ed",
       "about": {
         "@id": "fixtures/in/null-flavors.xml"
+      },
+      "dateCreated": "2026-10-24",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/findings/null-flavors-not-listed.ttl",
+      "@type": "File",
+      "name": "Expected findings for null-flavors-not-listed",
+      "encodingFormat": "text/turtle",
+      "contentSize": "32735",
+      "sha256": "cee1c315ecf476188f5e747d0160f2fdb0698551cd4494f1042df64288ac8cdf",
+      "about": {
+        "@id": "fixtures/in/null-flavors-not-listed.xml"
       },
       "dateCreated": "2026-10-24",
       "license": {
@@ -3260,8 +3332,8 @@
       "@type": "File",
       "name": "Expected graph for medications-and-results-b",
       "encodingFormat": "text/turtle",
-      "contentSize": "23501",
-      "sha256": "48ec3ce4de7a7b85e9a01fc7f681474705791293ae0cbc4cd52889462cce662c",
+      "contentSize": "24208",
+      "sha256": "eb7ef97cf21c88a849ae609f6f9bbaafaf1ff66421a34b144b18bf704f4705f9",
       "about": {
         "@id": "fixtures/in/medications-and-results-b.xml"
       },

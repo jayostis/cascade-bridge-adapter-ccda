@@ -34,6 +34,7 @@
     <#medications-and-results-edges>
     <#results-value-kinds>
     <#null-flavors>
+    <#null-flavors-not-listed>
     <#times-by-precision>
     <#results-identifiers>
     <#medications-and-results-b>
@@ -853,9 +854,22 @@
     bridge:expectedFindings <findings/times-by-precision.ttl>
   ] .
 
+<#null-flavors-not-listed> a bridge:IsomorphicConversionTest ;
+  mf:name "null-flavors-not-listed" ;
+  rdfs:comment "The null-flavors document with a nullFlavor that is no NullFlavor code wherever a time would be: a birth time, an immunization's time, a medication's end, a problem's onset, a procedure's time and a result's time, and a result value's. No reason is carried for any of them, and each is a finding, ccda:nullFlavorNotListed, valued by the nullFlavor as written." ;
+  mf:action [
+    bridge:input <in/null-flavors-not-listed.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/null-flavors-not-listed.ttl> ;
+    bridge:expectedFindings <findings/null-flavors-not-listed.ttl>
+  ] .
+
 <#null-flavors> a bridge:IsomorphicConversionTest ;
   mf:name "null-flavors" ;
-  rdfs:comment "Each null flavour where a value or a time would be is the reason that property is absent, a node of the version naming it and the NullFlavor code: a birth time UNK, an immunization's time NI, a medication's end UNK beside its start, a problem's onset ASKU, a result's value MSK, so it has no value kind, and a result's time NAV beside its value; a result value's nullFlavor XYZ, no NullFlavor code, is carried as nothing and is a finding." ;
+  rdfs:comment "Each null flavour where a value or a time would be is the reason that property is absent, a node of the version naming it and the NullFlavor code: a birth time UNK, an immunization's time NI, a medication's end UNK beside its start, another's whole time UNK, which is its start of use, a problem's onset ASKU, a result's value MSK, so it has no value kind, and a result's time NAV beside its value; a result value's nullFlavor XYZ, no NullFlavor code, is carried as nothing and is a finding." ;
   mf:action [
     bridge:input <in/null-flavors.xml> ;
     bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
