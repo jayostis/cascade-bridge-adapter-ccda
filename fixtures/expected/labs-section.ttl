@@ -6,39 +6,40 @@
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix oa: <http://www.w3.org/ns/oa#> .
-<ni:///sha-256;zo7X_a9o9e99j7vDT01_WzsIUCI8rRRSHg0t1y7cQVU> foaf:givenName "Jane" ;
-	foaf:familyName "Doe" ;
-	cascade:dateOfBirth "1965-01-01"^^xsd:date .
+<ni:///sha-256;_y7wkcCtEXMGrX4zy_Ynnx1ZnKxvdvYSUms07sUkZWM> foaf:familyName "Doe" ;
+	foaf:givenName "Jane" ;
+	cascade:dateOfBirth "1965-01-01"^^xsd:date ;
+	cascade:administrativeGender "female" .
+<urn:uuid:fc3ba21f-3c6c-8837-86b3-fe3ccd96dece> a cascade:PatientProfile ;
+	cascade:sourceRecordId "2.16.840.1.113883.4.1:000-00-0000" .
+<ni:///sha-256;_y7wkcCtEXMGrX4zy_Ynnx1ZnKxvdvYSUms07sUkZWM> prov:specializationOf <urn:uuid:fc3ba21f-3c6c-8837-86b3-fe3ccd96dece> .
+_:b51bef1b030c64df4a02cf0848141d4a a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][1]" .
+_:bb0c78cf75489adf1e81b6f564fdf89e bridge:arrivedAs <ni:///sha-256;_y7wkcCtEXMGrX4zy_Ynnx1ZnKxvdvYSUms07sUkZWM> ;
+	oa:hasSelector _:b51bef1b030c64df4a02cf0848141d4a .
 <urn:uuid:5bd70e90-f05d-863e-a94b-040fefde8519> a cascade:LaboratoryTestResult ;
 	cascade:sourceRecordId "2.16.840.1.113883.3.88.11.32.1:LAB-OBS-001" .
 <ni:///sha-256;4s6k_3ocGUyF8xnNjFMQNbs84ZPvzacTyGFqw7RYJZI> prov:specializationOf <urn:uuid:5bd70e90-f05d-863e-a94b-040fefde8519> ;
 	cascade:patient <urn:uuid:fc3ba21f-3c6c-8837-86b3-fe3ccd96dece> .
-_:ec6bcd73e80d1a690edaeef1eb9c01af a oa:XPathSelector ;
+_:d92d53e80c22bb060dba1ad8986cdf57 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='organizer' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:5a6b3c046c9ef9d10b389fc6c10e4983 bridge:arrivedAs <ni:///sha-256;4s6k_3ocGUyF8xnNjFMQNbs84ZPvzacTyGFqw7RYJZI> ;
-	oa:hasSelector _:ec6bcd73e80d1a690edaeef1eb9c01af .
-<urn:uuid:fc3ba21f-3c6c-8837-86b3-fe3ccd96dece> a cascade:PatientProfile ;
-	cascade:sourceRecordId "2.16.840.1.113883.4.1:000-00-0000" .
-<ni:///sha-256;zo7X_a9o9e99j7vDT01_WzsIUCI8rRRSHg0t1y7cQVU> prov:specializationOf <urn:uuid:fc3ba21f-3c6c-8837-86b3-fe3ccd96dece> .
-_:ef4f2c0f4162cf9beaddce74b2bae40d a oa:XPathSelector ;
-	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:52b1eb42aa88a22130de1a019dc06c01 bridge:arrivedAs <ni:///sha-256;zo7X_a9o9e99j7vDT01_WzsIUCI8rRRSHg0t1y7cQVU> ;
-	oa:hasSelector _:ef4f2c0f4162cf9beaddce74b2bae40d .
+	oa:hasSelector _:d92d53e80c22bb060dba1ad8986cdf57 .
 <ni:///sha-256;4s6k_3ocGUyF8xnNjFMQNbs84ZPvzacTyGFqw7RYJZI> dct:identifier "LAB-OBS-001"^^<urn:oid:2.16.840.1.113883.3.88.11.32.1> ;
 	cascade:resultQuantity <ni:///sha-256;4s6k_3ocGUyF8xnNjFMQNbs84ZPvzacTyGFqw7RYJZI#value> .
 <ni:///sha-256;4s6k_3ocGUyF8xnNjFMQNbs84ZPvzacTyGFqw7RYJZI#value> cascade:decimalValue "95"^^xsd:decimal ;
 	cascade:writtenValue "95" ;
 	cascade:ucumUnit "mg/dL" .
-<ni:///sha-256;4s6k_3ocGUyF8xnNjFMQNbs84ZPvzacTyGFqw7RYJZI> cascade:workflowStatus "final" ;
+<ni:///sha-256;4s6k_3ocGUyF8xnNjFMQNbs84ZPvzacTyGFqw7RYJZI> cascade:resultClinicallyRelevantTime "2026-01-01"^^xsd:date ;
 	cascade:testName "Glucose [Mass/volume] in Serum or Plasma" ;
-	cascade:resultClinicallyRelevantTime "2026-01-01"^^xsd:date ;
+	cascade:workflowStatus "final" ;
 	cascade:referenceRange "70-100 mg/dL" ;
 	cascade:testCode <http://loinc.org/rdf/2345-7> ;
 	cascade:resultValueKind cascade:QuantityResultValue .
 _:5a6b3c046c9ef9d10b389fc6c10e4983 oa:hasSource <ni:///sha-256;L9YH1AKhW66DVgzi8UcgcOE3PJAd5seUsUA40tUmjxs> ;
 	prov:wasDerivedFrom <ni:///sha-256;L9YH1AKhW66DVgzi8UcgcOE3PJAd5seUsUA40tUmjxs> ;
 	prov:wasGeneratedBy _:46ee4df3408d622a93be6cd1879d236 .
-_:52b1eb42aa88a22130de1a019dc06c01 oa:hasSource <ni:///sha-256;L9YH1AKhW66DVgzi8UcgcOE3PJAd5seUsUA40tUmjxs> ;
+_:bb0c78cf75489adf1e81b6f564fdf89e oa:hasSource <ni:///sha-256;L9YH1AKhW66DVgzi8UcgcOE3PJAd5seUsUA40tUmjxs> ;
 	prov:wasDerivedFrom <ni:///sha-256;L9YH1AKhW66DVgzi8UcgcOE3PJAd5seUsUA40tUmjxs> ;
 	prov:wasGeneratedBy _:46ee4df3408d622a93be6cd1879d236 .
 <ni:///sha-256;L9YH1AKhW66DVgzi8UcgcOE3PJAd5seUsUA40tUmjxs> <http://purl.org/pav/retrievedOn> "2025-07-02T09:00:00Z"^^xsd:dateTime .

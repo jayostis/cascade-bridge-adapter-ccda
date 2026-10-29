@@ -209,6 +209,9 @@
           "@id": "vocab/ccda-severities.ttl"
         },
         {
+          "@id": "vocab/ccda-administrative-genders.ttl"
+        },
+        {
           "@id": "vocab/ccda-medication-statuses.ttl"
         },
         {
@@ -367,6 +370,9 @@
           "@id": "vocab/ccda-severities.ttl"
         },
         {
+          "@id": "vocab/ccda-administrative-genders.ttl"
+        },
+        {
           "@id": "vocab/ccda-medication-statuses.ttl"
         },
         {
@@ -440,6 +446,12 @@
         },
         {
           "@id": "fixtures/in/two-patients.xml"
+        },
+        {
+          "@id": "fixtures/in/patient-deceased.xml"
+        },
+        {
+          "@id": "fixtures/in/patient-gender-and-death-edges.xml"
         },
         {
           "@id": "fixtures/in/no-record-target.xml"
@@ -631,6 +643,12 @@
           "@id": "fixtures/expected/two-patients.ttl"
         },
         {
+          "@id": "fixtures/expected/patient-deceased.ttl"
+        },
+        {
+          "@id": "fixtures/expected/patient-gender-and-death-edges.ttl"
+        },
+        {
           "@id": "fixtures/expected/no-record-target.ttl"
         },
         {
@@ -656,6 +674,12 @@
         },
         {
           "@id": "fixtures/findings/two-patients.ttl"
+        },
+        {
+          "@id": "fixtures/findings/patient-deceased.ttl"
+        },
+        {
+          "@id": "fixtures/findings/patient-gender-and-death-edges.ttl"
         },
         {
           "@id": "fixtures/findings/no-record-target.ttl"
@@ -1029,8 +1053,8 @@
       "@type": "File",
       "name": "Mapping: patient",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "4547",
-      "sha256": "603247d896a76eff3b72990123f1f1bbf47adcffbb5d63470a9f6faaea622ffe",
+      "contentSize": "6507",
+      "sha256": "184fd8d638a6117f0695c91dc0104abfe060ca507da3c6248b01e6c7b2db91bb",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1245,8 +1269,8 @@
       "@type": "File",
       "name": "Findings: a birth time's unlisted null flavour",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "1517",
-      "sha256": "fa6e23e5fbcc6a8134ddfac43d9a5b6fbf2a24979aedcb00eeb9ff64ee8a77c4",
+      "contentSize": "2367",
+      "sha256": "71a1ae524111cab740f6a5ef7bf193a905326ba61e24b0cbbe2a7eb3546e2b70",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1269,8 +1293,8 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML gaps",
       "encodingFormat": "text/turtle",
-      "contentSize": "10908",
-      "sha256": "0b99d57313e47e5a2e7bef33cdf21236cfbfe6ab61152e0b02d02cd9defd0e39",
+      "contentSize": "10989",
+      "sha256": "8ac86fc559d8591013f0aca77754e1c5f346ca3aba1dced16e0df2c74fea4ef7",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1281,8 +1305,8 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML source accounting",
       "encodingFormat": "text/turtle",
-      "contentSize": "387776",
-      "sha256": "892d71da2916f68306107c384c8b42e5174722523d8c2ef7c7d9e15754dd3e73",
+      "contentSize": "390773",
+      "sha256": "8ee32608edc6cf74e88abd536709dc7405df8f399412e2e2f5487dc1ad47a376",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1472,6 +1496,21 @@
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-Severity.xml"
       },
       "description": "SNOMED CT severities to FHIR reaction severity codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
+    },
+    {
+      "@id": "vocab/ccda-administrative-genders.ttl",
+      "@type": "File",
+      "name": "Concept map: administrative genders",
+      "encodingFormat": "text/turtle",
+      "contentSize": "938",
+      "sha256": "96d374d08444fa470cc6ef9319c3c5637104075cdf5ccd57c83e0d6b3b91b498",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "isBasedOn": {
+        "@id": "https://hl7.org/fhir/us/ccda/ConceptMap-CF-AdministrativeGender.json"
+      },
+      "description": "HL7 v3 AdministrativeGender codes to FHIR administrative gender codes. Transcribed from HL7's C-CDA on FHIR concept map CF-AdministrativeGender, version 2.0.0, at the isBasedOn URL, read on 2026-10-29: each row HL7 marks equivalent, M and F, as a skos:exactMatch of the FHIR code and its system, and UN, which it marks wider, as a skos:broadMatch of other."
     },
     {
       "@id": "vocab/ccda-medication-statuses.ttl",
@@ -1793,6 +1832,32 @@
       "description": "Two recordTargets, each patient with an id, a custodian id, and one problem with an id: no patient scope is stated, so every record, both patients included, is named by the document, and the problem's version links no patient. Authored here on 2026-10-23, for a case the conformance corpus does not hold; it validates against the CDA schema."
     },
     {
+      "@id": "fixtures/in/patient-deceased.xml",
+      "@type": "File",
+      "name": "C-CDA: patient-deceased",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "3306",
+      "sha256": "0f3dc58e272a94412f9e9eea228b597be48974917f1d77e85b3d6fd26af2ce47",
+      "dateCreated": "2026-10-29",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "One recordTarget, a patient with an id, a gender F, a birth time, an sdtc:deceasedInd true and an sdtc:deceasedTime that is a day, and a custodian id and one problem with an id. Authored here on 2026-10-29, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/patient-gender-and-death-edges.xml",
+      "@type": "File",
+      "name": "C-CDA: patient-gender-and-death-edges",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "4539",
+      "sha256": "8e72727b48da301b477a103599c75bd7ead196d2fb47ea6c52ac1b8d36b67168",
+      "dateCreated": "2026-10-29",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Four recordTargets, each patient with an id: a gender UN with a false sdtc:deceasedInd beside an sdtc:deceasedTime that is a month; a gender nullFlavor UNK with a true indicator beside a death time nullFlavor UNK; a gender code U, outside the concept map, with a null-flavoured indicator and death time; and a gender M with a false indicator alone. A custodian id and one problem with an id. Authored here on 2026-10-29, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
       "@id": "fixtures/in/no-record-target.xml",
       "@type": "File",
       "name": "C-CDA: no-record-target",
@@ -1900,8 +1965,8 @@
       "@type": "File",
       "name": "Expected graph for custodian-ids-naming-no-organization",
       "encodingFormat": "text/turtle",
-      "contentSize": "4487",
-      "sha256": "439ac6b5d692100d793bcf24d52df3988bcbb44f17d9a195a01840518dc8ce54",
+      "contentSize": "4494",
+      "sha256": "ccdac6cc877c2422b6640711cfa5d70eca3a55106335c821f5fbcf734a345284",
       "about": {
         "@id": "fixtures/in/custodian-ids-naming-no-organization.xml"
       },
@@ -1916,8 +1981,8 @@
       "@type": "File",
       "name": "Expected findings for custodian-ids-naming-no-organization",
       "encodingFormat": "text/turtle",
-      "contentSize": "7272",
-      "sha256": "0a56a9cd537db2edb0667f03de8fba299159374fdc657bd3edbdd2603d96adda",
+      "contentSize": "5930",
+      "sha256": "3ee5d94b0e07b2ba9f04c43b500aeefd56a4b234c4e1180c72579c193a0a5c96",
       "about": {
         "@id": "fixtures/in/custodian-ids-naming-no-organization.xml"
       },
@@ -1958,8 +2023,8 @@
       "@type": "File",
       "name": "Expected graph for concern-status-beside-a-problem-status",
       "encodingFormat": "text/turtle",
-      "contentSize": "8067",
-      "sha256": "628a0f844e6392b949fdeca361e70a23fd6a6a13221026909d53b8c92dbeac46",
+      "contentSize": "8106",
+      "sha256": "4fd166e60a6fa929f151c61f7e9cbc1db5c4a3d40a45547e6bc597d8075b684f",
       "about": {
         "@id": "fixtures/in/concern-status-beside-a-problem-status.xml"
       },
@@ -1974,8 +2039,8 @@
       "@type": "File",
       "name": "Expected findings for concern-status-beside-a-problem-status",
       "encodingFormat": "text/turtle",
-      "contentSize": "9899",
-      "sha256": "076fc996a43673638c53faec2182c9306cf4b7b88cf2b6d82bb6869209e077c0",
+      "contentSize": "8551",
+      "sha256": "16ed26a79eea5abf817ec3d33e65e66dd1d626f917f14bdb2c6808ccb11c8271",
       "about": {
         "@id": "fixtures/in/concern-status-beside-a-problem-status.xml"
       },
@@ -2248,8 +2313,8 @@
       "@type": "File",
       "name": "Expected graph for allergies-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "4517",
-      "sha256": "051fb518dba43e2c6d4f0dca2691e106c2281cb96aaa054a18bcfcdfad3a0856",
+      "contentSize": "4604",
+      "sha256": "36f3350795acb7cd6b38d05b58b17a484ada66db65ca37ba3e442c4d3871637f",
       "about": {
         "@id": "fixtures/in/allergies-section.xml"
       },
@@ -2264,8 +2329,8 @@
       "@type": "File",
       "name": "Expected findings for allergies-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "11632",
-      "sha256": "0484466d2859f854cc3f1560366cf6be669a283e608455d966f2dce20eda6a48",
+      "contentSize": "10306",
+      "sha256": "93682125e26dc4ff87d56d3f0b01d8b030785aeda84a2bc96c21cdf7e6dcfa42",
       "about": {
         "@id": "fixtures/in/allergies-section.xml"
       },
@@ -2280,8 +2345,8 @@
       "@type": "File",
       "name": "Expected graph for cerner-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "6273",
-      "sha256": "73fa2a1776ccfed453d2697aa973b0d60048a041d369b23668d2bf33252b3acd",
+      "contentSize": "6422",
+      "sha256": "35c6184a504712afa1997fd5b1da3bbf6e9cb36bec9b7c1a9cc7990cc68c1a7e",
       "about": {
         "@id": "fixtures/in/cerner-summarization.xml"
       },
@@ -2296,8 +2361,8 @@
       "@type": "File",
       "name": "Expected findings for cerner-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "16679",
-      "sha256": "8d7e4fef676013dfe6dc5b5af20c00957638aa66aac84aad01819fee4fb9a570",
+      "contentSize": "15349",
+      "sha256": "3b5b8625bc238ab3da2585e1f429d2a0ece87373d6785614a5e6255f9653055d",
       "about": {
         "@id": "fixtures/in/cerner-summarization.xml"
       },
@@ -2312,8 +2377,8 @@
       "@type": "File",
       "name": "Expected graph for epic-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "11935",
-      "sha256": "af0b42ba35dcbaf2c0d814f2c10e37cf3d2926760468ebd49c446a143a019177",
+      "contentSize": "11980",
+      "sha256": "105a6da879a1c0022805984df0ad5b5b6d3d6f2f41c8b9427508d7b95403efd2",
       "about": {
         "@id": "fixtures/in/epic-summarization.xml"
       },
@@ -2328,8 +2393,8 @@
       "@type": "File",
       "name": "Expected findings for epic-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "19870",
-      "sha256": "6531a664124037e506b6fbc0b3e6c078b9d11e801444b068f66e1c6084c384dd",
+      "contentSize": "18537",
+      "sha256": "5af49326e5f0f5ed0a1bf6277e11dbaa0e42cf3aadd054dcaf19c237883ea03b",
       "about": {
         "@id": "fixtures/in/epic-summarization.xml"
       },
@@ -2344,8 +2409,8 @@
       "@type": "File",
       "name": "Expected graph for full-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "11918",
-      "sha256": "d07ce7fb375ee0b7027798c82768faf973116351eb729c9bd126e3bdc8cc0d8c",
+      "contentSize": "11959",
+      "sha256": "8b14d72b390a7282e3e0404eeedf5c4b31916ef95dbad92b2ae549a0f4647393",
       "about": {
         "@id": "fixtures/in/full-summarization.xml"
       },
@@ -2360,8 +2425,8 @@
       "@type": "File",
       "name": "Expected findings for full-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "21540",
-      "sha256": "0628a39620ccd6abec77fe2107a535c3baeb423bbc3e0f9b94661d31867198f2",
+      "contentSize": "20219",
+      "sha256": "19ab6e058d41a7f712eadf4ab77f10c41ecd12f2386769e5cdb0a4807d4efdab",
       "about": {
         "@id": "fixtures/in/full-summarization.xml"
       },
@@ -2376,8 +2441,8 @@
       "@type": "File",
       "name": "Expected graph for immunizations-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "4441",
-      "sha256": "167a6cad92dff889d9b7fb9699b9925a2ce9e5049143954660b07bde872efcae",
+      "contentSize": "4596",
+      "sha256": "16a72f7d7a780a34da74e0c2344926116649feac6a05f7b55690702a0bf48e90",
       "about": {
         "@id": "fixtures/in/immunizations-section.xml"
       },
@@ -2392,8 +2457,8 @@
       "@type": "File",
       "name": "Expected findings for immunizations-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "9809",
-      "sha256": "1d6453370d4cac12c8a02cd8d8d4bfc849abac0e72556b2cdd36c201dfb24858",
+      "contentSize": "8482",
+      "sha256": "56f6c74e0a15b1fe5fa2340091c8308c84219108576dff0b45fd2af361238fbd",
       "about": {
         "@id": "fixtures/in/immunizations-section.xml"
       },
@@ -2408,8 +2473,8 @@
       "@type": "File",
       "name": "Expected graph for labs-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "5182",
-      "sha256": "1a9aa2909a538eb8db1cfcaed60a68d8fa05a8e937def556f8e7562676038c5e",
+      "contentSize": "5223",
+      "sha256": "f6c8cec615c40583b743ad83d42cb9c0e64fd512bc790afb4263e0f48a6cc7c8",
       "about": {
         "@id": "fixtures/in/labs-section.xml"
       },
@@ -2424,8 +2489,8 @@
       "@type": "File",
       "name": "Expected findings for labs-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "9838",
-      "sha256": "b1e95713373ac13bd9202940f71a8d0c6160d918d51f4f57806c0ba66b3dcc88",
+      "contentSize": "8527",
+      "sha256": "289a70de79325d69b004aab8ec485038078f1bef48c88c11a5433921cfa97359",
       "about": {
         "@id": "fixtures/in/labs-section.xml"
       },
@@ -2440,8 +2505,8 @@
       "@type": "File",
       "name": "Expected graph for narrative-only-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "4420",
-      "sha256": "8e38a45923b432df1ff6df5abe6df3abdd0fec5dca10d852956904f5860643ce",
+      "contentSize": "4509",
+      "sha256": "900fff59d1cc9d084bc707750c2d4149be8b95cc63f9ca1145616acd453c3bd5",
       "about": {
         "@id": "fixtures/in/narrative-only-section.xml"
       },
@@ -2456,8 +2521,8 @@
       "@type": "File",
       "name": "Expected findings for narrative-only-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "13892",
-      "sha256": "757a86cbd797f58290e178340d2f3d77b9b807697cd617a23cffc46aa3c33399",
+      "contentSize": "12567",
+      "sha256": "7d3dc2bdc09a2f20d33649339853a6ff6b0ac9877864e6aafbe390ae46aec071",
       "about": {
         "@id": "fixtures/in/narrative-only-section.xml"
       },
@@ -2472,8 +2537,8 @@
       "@type": "File",
       "name": "Expected graph for custodian-and-author",
       "encodingFormat": "text/turtle",
-      "contentSize": "6844",
-      "sha256": "0bb33d4fa4e269275c0aa99d9751449317be9879cab3404bc1403a32756b749c",
+      "contentSize": "6887",
+      "sha256": "9d18a6b093ffc15378b58b0883020e10ad1457e32719b12796ff35e3f8ad562b",
       "about": {
         "@id": "fixtures/in/custodian-and-author.xml"
       },
@@ -2488,8 +2553,8 @@
       "@type": "File",
       "name": "Expected graph for organizations-root-and-extension",
       "encodingFormat": "text/turtle",
-      "contentSize": "8194",
-      "sha256": "10603a618ed12ceb400a0d4ef0d0f0930408456e4a8e15a32b428963657a5930",
+      "contentSize": "8269",
+      "sha256": "d758a6c1e35600974ad809580a5492c44d2de4196a5c036d8fdd8cbcbcb6be2d",
       "about": {
         "@id": "fixtures/in/organizations-root-and-extension.xml"
       },
@@ -2504,8 +2569,8 @@
       "@type": "File",
       "name": "Expected graph for organization-ids-in-one-order",
       "encodingFormat": "text/turtle",
-      "contentSize": "6972",
-      "sha256": "858a680c1ef14ae196ad5b8b50d57cb2b4741af93fb853c6874da9503007faf4",
+      "contentSize": "7013",
+      "sha256": "b9d0a96cfb217489e9cf4ff82ac9d7aeb537f7393c050ae05da8cfedd2c78478",
       "about": {
         "@id": "fixtures/in/organization-ids-in-one-order.xml"
       },
@@ -2520,8 +2585,8 @@
       "@type": "File",
       "name": "Expected findings for custodian-and-author",
       "encodingFormat": "text/turtle",
-      "contentSize": "14492",
-      "sha256": "4e9a5287d76d0372da86ba2dc664744ce7d6d4922c64f7113e4ed7bbadf7c68d",
+      "contentSize": "13152",
+      "sha256": "5b2b56fed85ed55e73fabbd7e6d9fd92cbc2b50cfe464535d8b541b8e2716dc3",
       "about": {
         "@id": "fixtures/in/custodian-and-author.xml"
       },
@@ -2536,8 +2601,8 @@
       "@type": "File",
       "name": "Expected findings for organizations-root-and-extension",
       "encodingFormat": "text/turtle",
-      "contentSize": "13647",
-      "sha256": "a9bcc0bc4d367cd9b0a49e2b3a8b928fc804d1b9119e2e467ae85ecf221dc364",
+      "contentSize": "12295",
+      "sha256": "21037731f5322645a99b42bf15ad3b260aabcf2e2202753b46e4ed33a945cc5b",
       "about": {
         "@id": "fixtures/in/organizations-root-and-extension.xml"
       },
@@ -2552,8 +2617,8 @@
       "@type": "File",
       "name": "Expected findings for organization-ids-in-one-order",
       "encodingFormat": "text/turtle",
-      "contentSize": "13670",
-      "sha256": "2fbeb242b12dc642cb00d307aabbb42eb4f55d3b24b7211a900700eb1298a0f2",
+      "contentSize": "12329",
+      "sha256": "2527eac7c3b00e8443d73bb1b832e7edfd90510eb503cbea5acf854d4d857849",
       "about": {
         "@id": "fixtures/in/organization-ids-in-one-order.xml"
       },
@@ -2594,8 +2659,8 @@
       "@type": "File",
       "name": "Expected graph for allergy-unii-allergen",
       "encodingFormat": "text/turtle",
-      "contentSize": "6513",
-      "sha256": "042b98e61e9dac521dcf4ef911dbd738cef7cdda324c2f944f58b2a2574809cf",
+      "contentSize": "6558",
+      "sha256": "d9e3e76d323f8e7050ef22c66c2b8f3bd63bdca7389d2c301a844cb0f811c3a1",
       "about": {
         "@id": "fixtures/in/allergy-unii-allergen.xml"
       },
@@ -2610,8 +2675,8 @@
       "@type": "File",
       "name": "Expected findings for allergy-unii-allergen",
       "encodingFormat": "text/turtle",
-      "contentSize": "10768",
-      "sha256": "b92df07a345ab28dda4baba827006ad1e4a0509e647554f900db928a220b1472",
+      "contentSize": "9437",
+      "sha256": "c76861e96c749813c090bf993a5c6ecad1145a2bbb8e3ccb87315f41479fa5bb",
       "about": {
         "@id": "fixtures/in/allergy-unii-allergen.xml"
       },
@@ -2626,8 +2691,8 @@
       "@type": "File",
       "name": "Expected graph for medications-ndc-translations",
       "encodingFormat": "text/turtle",
-      "contentSize": "6674",
-      "sha256": "3850ccf6f2e76f9b135fdc5ed122f75bff83164ad0850cb143099fddb7934000",
+      "contentSize": "6719",
+      "sha256": "4df096767e140545d61044b3d0f6c675f2b8edfaf0297ea04d005d8ea5997003",
       "about": {
         "@id": "fixtures/in/medications-ndc-translations.xml"
       },
@@ -2642,8 +2707,8 @@
       "@type": "File",
       "name": "Expected findings for medications-ndc-translations",
       "encodingFormat": "text/turtle",
-      "contentSize": "8800",
-      "sha256": "ac366093879daf3bcfe2068f1526b1e500ab1d0f6deadbf474f45d24c6e5451c",
+      "contentSize": "7465",
+      "sha256": "ee31a9e711eeebfd265e9f2099405348e5a1b90f823b4a0431a0a34e165753b7",
       "about": {
         "@id": "fixtures/in/medications-ndc-translations.xml"
       },
@@ -2658,8 +2723,8 @@
       "@type": "File",
       "name": "Expected graph for several-ids",
       "encodingFormat": "text/turtle",
-      "contentSize": "6313",
-      "sha256": "73fa6b715dd586c5dba14d085105bbf537557dac8fb5230d9c412c8d84ce6e0f",
+      "contentSize": "6356",
+      "sha256": "a9d89988c501a5a47fb97f480dded8a8fc7bafdd77c18c4ec249b1875fd10c9a",
       "about": {
         "@id": "fixtures/in/several-ids.xml"
       },
@@ -2674,8 +2739,8 @@
       "@type": "File",
       "name": "Expected findings for several-ids",
       "encodingFormat": "text/turtle",
-      "contentSize": "8379",
-      "sha256": "d8bd84b26c6dfc92fc116245b0a9b10bb444420edd25bacd300304bc3213a7a8",
+      "contentSize": "7058",
+      "sha256": "41d6f67ebe0f3541b154a6a6b4367fba411e73dd70e98a679fdc51de7ea26cbb",
       "about": {
         "@id": "fixtures/in/several-ids.xml"
       },
@@ -2690,8 +2755,8 @@
       "@type": "File",
       "name": "Expected graph for repeated-ids",
       "encodingFormat": "text/turtle",
-      "contentSize": "9772",
-      "sha256": "71c1dc9231207a95a97767539e78c687ca46336c386d893740895bff1a8e186c",
+      "contentSize": "9815",
+      "sha256": "c63c898973443e570009e00eae08b532070051795ef8b5c2f4c9cc02ab1b50d6",
       "about": {
         "@id": "fixtures/in/repeated-ids.xml"
       },
@@ -2706,8 +2771,8 @@
       "@type": "File",
       "name": "Expected findings for repeated-ids",
       "encodingFormat": "text/turtle",
-      "contentSize": "12454",
-      "sha256": "5c96b2ce9969ae2c81946cb73d74c45f44e4222dea3d4e0fee37931b296834b3",
+      "contentSize": "11144",
+      "sha256": "a73d3553bae6a5e6561de0b56a1953158a7ad3c35d73e8aa3908d5f2402b1c81",
       "about": {
         "@id": "fixtures/in/repeated-ids.xml"
       },
@@ -2722,8 +2787,8 @@
       "@type": "File",
       "name": "Expected graph for download-a",
       "encodingFormat": "text/turtle",
-      "contentSize": "7972",
-      "sha256": "1e9e5ea0aeb519f46a92ff7ff42feac9d56e06658702cb2495f272d5078540c4",
+      "contentSize": "8013",
+      "sha256": "25e5f738d8051d07e96443fd06f9e304756644d87d1b42c134cc55ec858a97ea",
       "about": {
         "@id": "fixtures/in/download-a.xml"
       },
@@ -2738,8 +2803,8 @@
       "@type": "File",
       "name": "Expected findings for download-a",
       "encodingFormat": "text/turtle",
-      "contentSize": "8438",
-      "sha256": "b2e3f627e35441274ee4ca70188329cc8276f8943f3b753722d23b7375c82843",
+      "contentSize": "7116",
+      "sha256": "1290dbe153714cc652db984aeae03d6447c73c2e7ea96fb95542a0e6eb43cb2b",
       "about": {
         "@id": "fixtures/in/download-a.xml"
       },
@@ -2754,8 +2819,8 @@
       "@type": "File",
       "name": "Expected graph for download-b",
       "encodingFormat": "text/turtle",
-      "contentSize": "7972",
-      "sha256": "47e3b20ccf24bd134ea970442967ea18dac08707e641f5cffdc7e47f5eb04273",
+      "contentSize": "8013",
+      "sha256": "6a2d9e798364dddfefe4fee2eeb4b30aace1893d29fcbc70de5a3613e63b07c2",
       "about": {
         "@id": "fixtures/in/download-b.xml"
       },
@@ -2770,8 +2835,8 @@
       "@type": "File",
       "name": "Expected findings for download-b",
       "encodingFormat": "text/turtle",
-      "contentSize": "8436",
-      "sha256": "d604e002b53d596b670cf3bd9d2d06c28330b57c6b40f8a4785ab80e78ab29b8",
+      "contentSize": "7118",
+      "sha256": "7b758b0edf5b885c243fe7a48ea42a6fcfec4102fad7c9f0a28815b1f8ea10da",
       "about": {
         "@id": "fixtures/in/download-b.xml"
       },
@@ -2786,8 +2851,8 @@
       "@type": "File",
       "name": "Expected graph for not-a-ccda",
       "encodingFormat": "text/turtle",
-      "contentSize": "4499",
-      "sha256": "b7ab7156a33117cc42481a1d03e35d63bdd234a0755aaf6da08ba0f055ba865e",
+      "contentSize": "4540",
+      "sha256": "78be2ace9387611791c202326f683f8600c809eb7a90bb66f09c74a8d10adb0b",
       "about": {
         "@id": "fixtures/in/not-a-ccda.xml"
       },
@@ -2802,8 +2867,8 @@
       "@type": "File",
       "name": "Expected findings for not-a-ccda",
       "encodingFormat": "text/turtle",
-      "contentSize": "7388",
-      "sha256": "e4cda62d07be662e043a301da54043b6c07f2db751327f144994cce938843a02",
+      "contentSize": "6073",
+      "sha256": "aeec5a836e9182f122dec47fe5ea44047789937f570e843de2c98f38c61749bf",
       "about": {
         "@id": "fixtures/in/not-a-ccda.xml"
       },
@@ -2818,8 +2883,8 @@
       "@type": "File",
       "name": "Expected graph for procedures",
       "encodingFormat": "text/turtle",
-      "contentSize": "8024",
-      "sha256": "8e9d7b125ed46f2cd9acc5172c2f4aa40c1b5261a162c641e7115e44001166ea",
+      "contentSize": "8065",
+      "sha256": "1f9e4a68334ca1f511489b812e2d624d25cfa751e511c485fb8aea4359cdcad2",
       "about": {
         "@id": "fixtures/in/procedures.xml"
       },
@@ -2834,8 +2899,8 @@
       "@type": "File",
       "name": "Expected graph for fingerprint-keys",
       "encodingFormat": "text/turtle",
-      "contentSize": "10215",
-      "sha256": "3383a05344216359e0500bf80b7428530f818807e7d675b4446f9d00412febf7",
+      "contentSize": "10262",
+      "sha256": "884126dc705fa303be689957b8ebbe4c790c074efe0a798fb284737839103e77",
       "about": {
         "@id": "fixtures/in/fingerprint-keys.xml"
       },
@@ -2850,12 +2915,44 @@
       "@type": "File",
       "name": "Expected graph for two-patients",
       "encodingFormat": "text/turtle",
-      "contentSize": "7234",
-      "sha256": "33c5b21e4efbb8551b9e66a43696a28eca9bc573e92f00d444175a39b8abf777",
+      "contentSize": "7314",
+      "sha256": "be5a1666ccebe475d39ed9dcc6404cdad4f33a8431e00d8e9fa80f0c684dfe07",
       "about": {
         "@id": "fixtures/in/two-patients.xml"
       },
       "dateCreated": "2026-10-23",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/patient-deceased.ttl",
+      "@type": "File",
+      "name": "Expected graph for patient-deceased",
+      "encodingFormat": "text/turtle",
+      "contentSize": "6422",
+      "sha256": "30c0e7dcd3d3e68b2e0e42a87f1538332b5dadbfe76bb7b88b0b2f3d690cd64c",
+      "about": {
+        "@id": "fixtures/in/patient-deceased.xml"
+      },
+      "dateCreated": "2026-10-29",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/patient-gender-and-death-edges.ttl",
+      "@type": "File",
+      "name": "Expected graph for patient-gender-and-death-edges",
+      "encodingFormat": "text/turtle",
+      "contentSize": "10311",
+      "sha256": "a4c0078085072ce8c707d5c4b1402e46088bfa4463209dbe00bc49456c3606ee",
+      "about": {
+        "@id": "fixtures/in/patient-gender-and-death-edges.xml"
+      },
+      "dateCreated": "2026-10-29",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -2882,8 +2979,8 @@
       "@type": "File",
       "name": "Expected graph for one-id-equal-keys",
       "encodingFormat": "text/turtle",
-      "contentSize": "10169",
-      "sha256": "e7d96e60ba19499a2e6c407a4ae8eca64d9775f4fe3c5d0ad1c4558668cc560d",
+      "contentSize": "10208",
+      "sha256": "fb04fe7c4a7e5dc1124cd68ac9d1c3ad85dcc267fec131f0b783d43c965943d1",
       "about": {
         "@id": "fixtures/in/one-id-equal-keys.xml"
       },
@@ -2898,8 +2995,8 @@
       "@type": "File",
       "name": "Expected graph for narrative-reference-to-markup",
       "encodingFormat": "text/turtle",
-      "contentSize": "10321",
-      "sha256": "38942caeccf1680d39da9a31fb0f99ea16fe441692ef783e87d5e447dec630de",
+      "contentSize": "10362",
+      "sha256": "0c625d0c2a8b288244d127254df9b90451f802393824805b774c24cddafea334",
       "about": {
         "@id": "fixtures/in/narrative-reference-to-markup.xml"
       },
@@ -2914,8 +3011,8 @@
       "@type": "File",
       "name": "Expected graph for fingerprint-repeated-and-reordered",
       "encodingFormat": "text/turtle",
-      "contentSize": "7607",
-      "sha256": "f66dc5697883ff28c8820aa16807302303295692a5e85279d30ee1621679525b",
+      "contentSize": "7650",
+      "sha256": "8a8d925f5be47973ece3b820047085ae607d96794258be0759a63292f9821aaa",
       "about": {
         "@id": "fixtures/in/fingerprint-repeated-and-reordered.xml"
       },
@@ -2930,8 +3027,8 @@
       "@type": "File",
       "name": "Expected graph for fingerprint-values-reordered",
       "encodingFormat": "text/turtle",
-      "contentSize": "6052",
-      "sha256": "60f38a961944bdd3cdcfcaee17dda0f25ab6f22bbb7db0ae46b00c9b052334fd",
+      "contentSize": "6059",
+      "sha256": "ee6d463bfec99299f00f08789d48843a6444a7dce620c1ed707fb91296833013",
       "about": {
         "@id": "fixtures/in/fingerprint-values-reordered.xml"
       },
@@ -2946,8 +3043,8 @@
       "@type": "File",
       "name": "Expected graph for id-root-with-bar",
       "encodingFormat": "text/turtle",
-      "contentSize": "6108",
-      "sha256": "1d05f9f043c20849f4c23dc22e296ed70692e6cd65ea2da3a36b925d3111e6f9",
+      "contentSize": "6117",
+      "sha256": "c7e6ce502fdbcb98781cbbb4dbafb337268bc5e78026a451e05076f8fe475446",
       "about": {
         "@id": "fixtures/in/id-root-with-bar.xml"
       },
@@ -2962,8 +3059,8 @@
       "@type": "File",
       "name": "Expected findings for procedures",
       "encodingFormat": "text/turtle",
-      "contentSize": "9142",
-      "sha256": "a08e2089dc5569f7f910dff0918d83cf75228b7cd004cd8456457e1d467a715f",
+      "contentSize": "7816",
+      "sha256": "7854ce1f9351e4b5c66ef100613c68f3aed58b4e8573d1d7c5fd2ce252a6be7f",
       "about": {
         "@id": "fixtures/in/procedures.xml"
       },
@@ -2978,8 +3075,8 @@
       "@type": "File",
       "name": "Expected findings for fingerprint-keys",
       "encodingFormat": "text/turtle",
-      "contentSize": "9682",
-      "sha256": "eb99251ac25c6d7e72e5a216c6d07e3b99f9b07116ed012509fb3114adf4458e",
+      "contentSize": "8363",
+      "sha256": "40d89d05949702c7241268f9887c399503a5992b3dce217e15308993d99c489b",
       "about": {
         "@id": "fixtures/in/fingerprint-keys.xml"
       },
@@ -2994,8 +3091,8 @@
       "@type": "File",
       "name": "Expected findings for two-patients",
       "encodingFormat": "text/turtle",
-      "contentSize": "11463",
-      "sha256": "345982072aedea22e47bd5be96e8dcbbb503b52928754b41b0a5383cdfb8567f",
+      "contentSize": "10078",
+      "sha256": "b4221ab7d7e7297b0b5fcfd6331506bca7a4d719f99b44a30bd0d2af03b096d2",
       "about": {
         "@id": "fixtures/in/two-patients.xml"
       },
@@ -3006,12 +3103,44 @@
       "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
     },
     {
+      "@id": "fixtures/findings/patient-deceased.ttl",
+      "@type": "File",
+      "name": "Expected findings for patient-deceased",
+      "encodingFormat": "text/turtle",
+      "contentSize": "5683",
+      "sha256": "88165490ffc4b3f12e583f43c9d5a2e00e387226856774a35099d174a701565c",
+      "about": {
+        "@id": "fixtures/in/patient-deceased.xml"
+      },
+      "dateCreated": "2026-10-29",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/findings/patient-gender-and-death-edges.ttl",
+      "@type": "File",
+      "name": "Expected findings for patient-gender-and-death-edges",
+      "encodingFormat": "text/turtle",
+      "contentSize": "12926",
+      "sha256": "e89b950a5fe8144b2b30140327326e47126b3ea6352cc282c3a3d6f411019174",
+      "about": {
+        "@id": "fixtures/in/patient-gender-and-death-edges.xml"
+      },
+      "dateCreated": "2026-10-29",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
       "@id": "fixtures/findings/no-record-target.ttl",
       "@type": "File",
       "name": "Expected findings for no-record-target",
       "encodingFormat": "text/turtle",
-      "contentSize": "14865",
-      "sha256": "647dad653f85f01a8349bbf79afaeac21107c49927f1ef0b5bca03996a7f5637",
+      "contentSize": "14869",
+      "sha256": "140a7194e65dfb04cabac67251ea6b4816ec0459d2c3ca04f2c841f80cd3b39b",
       "about": {
         "@id": "fixtures/in/no-record-target.xml"
       },
@@ -3026,8 +3155,8 @@
       "@type": "File",
       "name": "Expected findings for one-id-equal-keys",
       "encodingFormat": "text/turtle",
-      "contentSize": "19168",
-      "sha256": "04f357f8b3d5807dec2c3761e11b159d15ba7a53a362ad7dfef5496dbb13f775",
+      "contentSize": "17840",
+      "sha256": "51d69a512077d3424f9cd5353287b7a964290ec4fac5fb467731122973887d0d",
       "about": {
         "@id": "fixtures/in/one-id-equal-keys.xml"
       },
@@ -3042,8 +3171,8 @@
       "@type": "File",
       "name": "Expected findings for narrative-reference-to-markup",
       "encodingFormat": "text/turtle",
-      "contentSize": "11801",
-      "sha256": "d8dd3ff24476809a20391748e9aa18093d70785255b92bfa802131cc9bb62b32",
+      "contentSize": "10470",
+      "sha256": "63f08c2759a37d3787c1a15677adfc1e59f0ccfffb506a0ff7addd2b8fb765ac",
       "about": {
         "@id": "fixtures/in/narrative-reference-to-markup.xml"
       },
@@ -3058,8 +3187,8 @@
       "@type": "File",
       "name": "Expected findings for fingerprint-repeated-and-reordered",
       "encodingFormat": "text/turtle",
-      "contentSize": "8434",
-      "sha256": "c505c212a0c43ce48c1e5bdbed498a3c055c3f24c4ba968ac6b0b4ffb3442856",
+      "contentSize": "7090",
+      "sha256": "2cf93df1015dc72277c3ab4a4ea28fb4b70935a5a3ca545e45bc54ae815fa395",
       "about": {
         "@id": "fixtures/in/fingerprint-repeated-and-reordered.xml"
       },
@@ -3074,8 +3203,8 @@
       "@type": "File",
       "name": "Expected findings for fingerprint-values-reordered",
       "encodingFormat": "text/turtle",
-      "contentSize": "7079",
-      "sha256": "bc1a99d245c2114d364c206e1b987c048b41e6513bb47fd5581d2c44099534e7",
+      "contentSize": "5743",
+      "sha256": "06a5b2afc52eb9643d393da3deac8ebcebcfdfd2ac1c09af3fa359ba938f287d",
       "about": {
         "@id": "fixtures/in/fingerprint-values-reordered.xml"
       },
@@ -3090,8 +3219,8 @@
       "@type": "File",
       "name": "Expected findings for id-root-with-bar",
       "encodingFormat": "text/turtle",
-      "contentSize": "6226",
-      "sha256": "094ef6a3b9e770a876ba216b84e0306a4869346d088f8cec8662a892f74ae900",
+      "contentSize": "4899",
+      "sha256": "65aa61e84a446a620a85fa6df976253c93982974d22a370beb6c2c4d8ebbf2d7",
       "about": {
         "@id": "fixtures/in/id-root-with-bar.xml"
       },
@@ -3106,8 +3235,8 @@
       "@type": "File",
       "name": "Expected graph for shared-id",
       "encodingFormat": "text/turtle",
-      "contentSize": "7949",
-      "sha256": "6a3e533e2430c7f468ed1b4c342fce3139af15608bcf3b6aa51ea28ef3e09cde",
+      "contentSize": "7990",
+      "sha256": "579c52df22327cfaad7604615fe202623996c96cfdddfd3b15e15367f1adadef",
       "about": {
         "@id": "fixtures/in/shared-id.xml"
       },
@@ -3122,8 +3251,8 @@
       "@type": "File",
       "name": "Expected findings for shared-id",
       "encodingFormat": "text/turtle",
-      "contentSize": "11151",
-      "sha256": "20f85a14cf8dad9ce4f87737cacdf3a63f9fb7efee7e0564a530c2c828476afb",
+      "contentSize": "9832",
+      "sha256": "0065e2f2af37c991c782f62855d14fa4243b79f0c9a485e350a0449d6e9210e0",
       "about": {
         "@id": "fixtures/in/shared-id.xml"
       },
@@ -3138,8 +3267,8 @@
       "@type": "File",
       "name": "Expected graph for negations",
       "encodingFormat": "text/turtle",
-      "contentSize": "7944",
-      "sha256": "c3462794e9a864f62975381c408d5360ec72e9b42f7eda66436b01c6ce34af7d",
+      "contentSize": "7987",
+      "sha256": "3b65a2317465ba1e2ae7dcfe8b15cf6db0c4580717fa5fb9e7fe205ed1c9f285",
       "about": {
         "@id": "fixtures/in/negations.xml"
       },
@@ -3154,8 +3283,8 @@
       "@type": "File",
       "name": "Expected findings for negations",
       "encodingFormat": "text/turtle",
-      "contentSize": "9669",
-      "sha256": "ed70a49695e99b8cea90d97cf48d39b3ad85f49d7932c0e240be8c28483be1b5",
+      "contentSize": "8347",
+      "sha256": "d291a9ab02327cee300b832dbfae1d1f006679a33054b60eb5c7c87a95f74cee",
       "about": {
         "@id": "fixtures/in/negations.xml"
       },
@@ -3170,8 +3299,8 @@
       "@type": "File",
       "name": "Expected graph for download-c",
       "encodingFormat": "text/turtle",
-      "contentSize": "7883",
-      "sha256": "19a9beb47f265385033ef85954e31048322fec86b32d33a36675e2ab150b7d5f",
+      "contentSize": "7920",
+      "sha256": "fc3a5c1028fee9def56e0418220ee1fcd917303b774cd81145907f4e066b983d",
       "about": {
         "@id": "fixtures/in/download-c.xml"
       },
@@ -3186,8 +3315,8 @@
       "@type": "File",
       "name": "Expected findings for download-c",
       "encodingFormat": "text/turtle",
-      "contentSize": "11871",
-      "sha256": "dbde7f5f3e1bb4656fa7ddc16d63f4e2e44d378d48ac2ab944d086ba5afe76a7",
+      "contentSize": "10553",
+      "sha256": "e723e9588862214d826558d052712a3455dae072e0496beab2b886ef7f4aae19",
       "about": {
         "@id": "fixtures/in/download-c.xml"
       },
@@ -3202,8 +3331,8 @@
       "@type": "File",
       "name": "Expected graph for download-d",
       "encodingFormat": "text/turtle",
-      "contentSize": "7891",
-      "sha256": "8b2b2fd51a80af74e1e7f2518c1c1db9888a0f76378aaece3edcf549b4c7dea5",
+      "contentSize": "7932",
+      "sha256": "65c66794971330fa596ca23ffbc97d9ab92bfe29ac5f6bca73877e06b10ddfb5",
       "about": {
         "@id": "fixtures/in/download-d.xml"
       },
@@ -3218,8 +3347,8 @@
       "@type": "File",
       "name": "Expected findings for download-d",
       "encodingFormat": "text/turtle",
-      "contentSize": "11870",
-      "sha256": "19459d488414683e1946f84f9ef2d90e725f745f8dfccd802be77ec1c13647d8",
+      "contentSize": "10551",
+      "sha256": "a3c6e7cf7f89f615defca12d5edeed784c64325ac8bf8177d826b325d17b4655",
       "about": {
         "@id": "fixtures/in/download-d.xml"
       },
@@ -3234,8 +3363,8 @@
       "@type": "File",
       "name": "Expected graph for medications-and-results-a",
       "encodingFormat": "text/turtle",
-      "contentSize": "24195",
-      "sha256": "c51f413776ff915d519f33585af7b97bdf399f169803dd7dd2f6156af01e4ec9",
+      "contentSize": "24234",
+      "sha256": "d17eab7b7a706289b14646f16184d96e6af36bc3d86fce8a16600cb5148df1d6",
       "about": {
         "@id": "fixtures/in/medications-and-results-a.xml"
       },
@@ -3250,8 +3379,8 @@
       "@type": "File",
       "name": "Expected findings for medications-and-results-a",
       "encodingFormat": "text/turtle",
-      "contentSize": "22703",
-      "sha256": "333ba381eae77241752bb1a89796ca3b84874a31b0105a4c9735549081d09a1a",
+      "contentSize": "21360",
+      "sha256": "baea8a542b3f1aea0dc6c6abeb0d23111138538d636b83c8bb83c3e44935860e",
       "about": {
         "@id": "fixtures/in/medications-and-results-a.xml"
       },
@@ -3266,8 +3395,8 @@
       "@type": "File",
       "name": "Expected graph for medications-and-results-edges",
       "encodingFormat": "text/turtle",
-      "contentSize": "13717",
-      "sha256": "0aeff2b5b3e2e63a97b6bdeb394a08d04ce29be2aafc753d59fb627eec7427c4",
+      "contentSize": "13758",
+      "sha256": "bd4613249bc113f0e2692ebcbc1cd10390425cb1da720196d0c2ac780f6aa459",
       "about": {
         "@id": "fixtures/in/medications-and-results-edges.xml"
       },
@@ -3282,8 +3411,8 @@
       "@type": "File",
       "name": "Expected graph for results-value-kinds",
       "encodingFormat": "text/turtle",
-      "contentSize": "18753",
-      "sha256": "339ac0ed50fc9d65b74ea3a88d671fac5e858f5e09095473b6f6e6fd6751427c",
+      "contentSize": "18796",
+      "sha256": "2b0e6fffc86e643f62b1b8afdf50d605c32beac8985a6f20983985db4f97fdad",
       "about": {
         "@id": "fixtures/in/results-value-kinds.xml"
       },
@@ -3298,8 +3427,8 @@
       "@type": "File",
       "name": "Expected graph for results-identifiers",
       "encodingFormat": "text/turtle",
-      "contentSize": "9257",
-      "sha256": "d30f4872bfe77dfc72052148333a581f5162dc5b50f1c607eefa7d56724111f0",
+      "contentSize": "9298",
+      "sha256": "6c4a99b73403556d4534947736a40333e1ab902d662432ab8d7ba52e662ce752",
       "about": {
         "@id": "fixtures/in/results-identifiers.xml"
       },
@@ -3314,8 +3443,8 @@
       "@type": "File",
       "name": "Expected graph for null-flavors",
       "encodingFormat": "text/turtle",
-      "contentSize": "19661",
-      "sha256": "ea9bda87bdedfe889836d408f443dc822eb56a8e04566688a8480b6dd19ac047",
+      "contentSize": "19702",
+      "sha256": "bb41fc111be238dda6295cd11700aeebf82bed2d1e42e7a3b5bffa1a19153131",
       "about": {
         "@id": "fixtures/in/null-flavors.xml"
       },
@@ -3330,8 +3459,8 @@
       "@type": "File",
       "name": "Expected graph for null-flavors-not-listed",
       "encodingFormat": "text/turtle",
-      "contentSize": "15623",
-      "sha256": "506e0c942d60d644b9c49ce111e3f45c97f490cf7c3a65e392cfb791505962cc",
+      "contentSize": "15668",
+      "sha256": "ff063806d8d00cb69273ccdadac6892562f8b1ab6d720527f7f55e6c7eadbebe",
       "about": {
         "@id": "fixtures/in/null-flavors-not-listed.xml"
       },
@@ -3346,8 +3475,8 @@
       "@type": "File",
       "name": "Expected graph for times-by-precision",
       "encodingFormat": "text/turtle",
-      "contentSize": "13014",
-      "sha256": "92322fbde1a65f24227bfba74638b797fd0621c0a6c5d7e9c97ed7d6bfba738d",
+      "contentSize": "13057",
+      "sha256": "cd0a427aa495fb67197a2db7d59fc1732bc1163f40bd58bfacb809e104c1f7d5",
       "about": {
         "@id": "fixtures/in/times-by-precision.xml"
       },
@@ -3362,8 +3491,8 @@
       "@type": "File",
       "name": "Expected findings for medications-and-results-edges",
       "encodingFormat": "text/turtle",
-      "contentSize": "10265",
-      "sha256": "93585ea3ba1fca573ba4081f35b014a98ab4488943c6ef5313ee892253b65ad9",
+      "contentSize": "8926",
+      "sha256": "79f65aebe27a5466a61dca301b8ce2422f877232e4036e4344524b13ceb17ac2",
       "about": {
         "@id": "fixtures/in/medications-and-results-edges.xml"
       },
@@ -3378,8 +3507,8 @@
       "@type": "File",
       "name": "Expected findings for results-value-kinds",
       "encodingFormat": "text/turtle",
-      "contentSize": "13034",
-      "sha256": "81a671565c4a8fc15ddf360e97fc8264180e66a44d3fbb81bf612b5e39cf5cf8",
+      "contentSize": "11710",
+      "sha256": "3a112cd1054796b0b56ee2d3cc0398e49958b4398388d18dac1bb1d04a1961f9",
       "about": {
         "@id": "fixtures/in/results-value-kinds.xml"
       },
@@ -3394,8 +3523,8 @@
       "@type": "File",
       "name": "Expected findings for results-identifiers",
       "encodingFormat": "text/turtle",
-      "contentSize": "6481",
-      "sha256": "120b3330d1873f57a55564b02cd0cd131d84413645ab39c758b0ea3bebb26c1c",
+      "contentSize": "5153",
+      "sha256": "11a2f8330d0a8438a3c6a606c05dcc44eb6c71c1e234d141813062336c2fdf99",
       "about": {
         "@id": "fixtures/in/results-identifiers.xml"
       },
@@ -3410,8 +3539,8 @@
       "@type": "File",
       "name": "Expected findings for null-flavors",
       "encodingFormat": "text/turtle",
-      "contentSize": "24302",
-      "sha256": "5b9c79f2aed87cdf326d825871f39e5ba9e13c5ed1fae6291aec63fcbb19d2ed",
+      "contentSize": "22976",
+      "sha256": "533ca51afd26de25b52ea6dd6bc8b596b87913f3ee4cd6e6ac9f47d31f9240cd",
       "about": {
         "@id": "fixtures/in/null-flavors.xml"
       },
@@ -3426,8 +3555,8 @@
       "@type": "File",
       "name": "Expected findings for null-flavors-not-listed",
       "encodingFormat": "text/turtle",
-      "contentSize": "32735",
-      "sha256": "cee1c315ecf476188f5e747d0160f2fdb0698551cd4494f1042df64288ac8cdf",
+      "contentSize": "31396",
+      "sha256": "5cc7ae4e38bb8df0ac0a12a9a48dd34872f294ca0101567a18af63489ecbd004",
       "about": {
         "@id": "fixtures/in/null-flavors-not-listed.xml"
       },
@@ -3442,8 +3571,8 @@
       "@type": "File",
       "name": "Expected findings for times-by-precision",
       "encodingFormat": "text/turtle",
-      "contentSize": "18043",
-      "sha256": "84ed5b755824d3999d0fbfd58306ca63f0455d06d81b4b4992435324eebf7e1e",
+      "contentSize": "16721",
+      "sha256": "9ee199e06a579f736d2827da24b42e82f32fb2635d28b890b59d67ef79f29df9",
       "about": {
         "@id": "fixtures/in/times-by-precision.xml"
       },
@@ -3458,8 +3587,8 @@
       "@type": "File",
       "name": "Expected graph for medications-and-results-b",
       "encodingFormat": "text/turtle",
-      "contentSize": "24208",
-      "sha256": "eb7ef97cf21c88a849ae609f6f9bbaafaf1ff66421a34b144b18bf704f4705f9",
+      "contentSize": "24245",
+      "sha256": "afc9fdcbd7d816338b1ebc45fe5f8425caa9af2b1e00c109b61bc2861b10284f",
       "about": {
         "@id": "fixtures/in/medications-and-results-b.xml"
       },
@@ -3474,8 +3603,8 @@
       "@type": "File",
       "name": "Expected findings for medications-and-results-b",
       "encodingFormat": "text/turtle",
-      "contentSize": "22694",
-      "sha256": "05b2e74a3efd70c87b6f27cc128298177e45dc6b15e7fd66799ecfdeb9355992",
+      "contentSize": "21363",
+      "sha256": "b446dd9f56275f6a34471ed5f852db708af6aae4b13a1c2c2da72c38ae1db1bf",
       "about": {
         "@id": "fixtures/in/medications-and-results-b.xml"
       },
@@ -3490,8 +3619,8 @@
       "@type": "File",
       "name": "Expected graph for narrative-reference-without-hash",
       "encodingFormat": "text/turtle",
-      "contentSize": "10250",
-      "sha256": "0cb422f577f6329044e12c95d3049987dc8b7ef32e9f45d99adb1a08e3440b1a",
+      "contentSize": "10297",
+      "sha256": "7cf6ed42c4fb133470ac6fbd009ecb2615b4533dac49090ff0890d780f7ff8bb",
       "about": {
         "@id": "fixtures/in/narrative-reference-without-hash.xml"
       },
@@ -3506,8 +3635,8 @@
       "@type": "File",
       "name": "Expected findings for narrative-reference-without-hash",
       "encodingFormat": "text/turtle",
-      "contentSize": "16402",
-      "sha256": "ca521eb840e03ae4f2adc33ace8ec07cc0018d65025e6e5b6297ef06ff50b4d0",
+      "contentSize": "15063",
+      "sha256": "fe9a87d6621d72f5f553e1765c87400f2088be13bb1659502a42bcee9b68d93a",
       "about": {
         "@id": "fixtures/in/narrative-reference-without-hash.xml"
       },
@@ -3522,8 +3651,8 @@
       "@type": "File",
       "name": "Expected graph for narrative-id-twice",
       "encodingFormat": "text/turtle",
-      "contentSize": "10249",
-      "sha256": "31ded1232bf1ef25584e33694a830bc44024777982a25373edb51dec24384f50",
+      "contentSize": "10290",
+      "sha256": "234276633c3170ad02a04cec577f10b6e513e54343f891e5c612213d7aeb0a32",
       "about": {
         "@id": "fixtures/in/narrative-id-twice.xml"
       },
@@ -3538,8 +3667,8 @@
       "@type": "File",
       "name": "Expected findings for narrative-id-twice",
       "encodingFormat": "text/turtle",
-      "contentSize": "18299",
-      "sha256": "a857399fe96fb648c442f7960117fb34e89dfe26a0b07786805cafb6c5e69aea",
+      "contentSize": "16969",
+      "sha256": "07c55ec6f8e98cfe0b146a080b533f1c4ef06191c4099301aad32aaa3d33f7ed",
       "about": {
         "@id": "fixtures/in/narrative-id-twice.xml"
       },
