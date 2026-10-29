@@ -226,7 +226,7 @@ FHIR R5 says "there is no simple formula for determining the correct IRI stem
 from a Coding.system" ([RDF](https://hl7.org/fhir/R5/rdf.html#iri-stem), read on
 2026-10-10). The table holds the OIDs this release knows. A
 `translation` is the same concept in another code system. A status, a severity,
-a criticality and an allergy's type are SNOMED CT or HL7 codes, and reach the
+a criticality, an allergy's type and the patient's administrative gender are SNOMED CT or HL7 codes, and reach the
 vocabulary's FHIR codes through the concept maps in `../vocab/`.
 
 An NDC is the exception to "then the code": a C-CDA writes it as a labeler

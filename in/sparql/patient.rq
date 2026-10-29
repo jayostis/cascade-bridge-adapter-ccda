@@ -79,7 +79,7 @@ WHERE {
     ?element a ?absentType ; xyz:nullFlavor ?flavour .
     FILTER NOT EXISTS { ?element ?statedAs ?stated }
     FILTER (?absentType != sdtc:deceasedTime || EXISTS {
-      ?patient ?iS ?indicator . ?indicator a sdtc:deceasedInd ; xyz:value "true" .
+      ?patient ?iS ?indicator . ?indicator a sdtc:deceasedInd ; xyz:value ?indicatorValue . FILTER (REPLACE(?indicatorValue, "^[ \t\r\n]+|[ \t\r\n]+$", "") = "true")
     })
     ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey ; skos:exactMatch ?absentReason .
     FILTER (?flavourKey = LCASE(REPLACE(?flavour, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
@@ -100,12 +100,12 @@ WHERE {
   {
     ?patientRole ?pS ?patient . ?patient a v3:patient .
     {
-      ?patient ?dS ?death . ?death a sdtc:deceasedInd ; xyz:value "true" .
+      ?patient ?dS ?death . ?death a sdtc:deceasedInd ; xyz:value ?deathValue . FILTER (REPLACE(?deathValue, "^[ \t\r\n]+|[ \t\r\n]+$", "") = "true")
       BIND (true AS ?o)
     }
     UNION
     {
-      ?patient ?dS ?death . ?death a sdtc:deceasedInd ; xyz:value "false" .
+      ?patient ?dS ?death . ?death a sdtc:deceasedInd ; xyz:value ?livingValue . FILTER (REPLACE(?livingValue, "^[ \t\r\n]+|[ \t\r\n]+$", "") = "false")
       FILTER NOT EXISTS { ?patient ?tS ?time . ?time a sdtc:deceasedTime ; xyz:value ?when }
       BIND (false AS ?o)
     }

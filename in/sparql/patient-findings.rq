@@ -32,7 +32,7 @@ WHERE {
     VALUES ?flavouredType { v3:birthTime v3:administrativeGenderCode sdtc:deceasedTime }
     ?patient ?eS ?element . ?element a ?flavouredType ; xyz:nullFlavor ?value .
     FILTER (?flavouredType != sdtc:deceasedTime || EXISTS {
-      ?patient ?iS ?indicator . ?indicator a sdtc:deceasedInd ; xyz:value "true" .
+      ?patient ?iS ?indicator . ?indicator a sdtc:deceasedInd ; xyz:value ?indicatorValue . FILTER (REPLACE(?indicatorValue, "^[ \t\r\n]+|[ \t\r\n]+$", "") = "true")
     })
     FILTER NOT EXISTS {
       ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey .
