@@ -1,0 +1,20 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
+
+ccda:administrativeGenders a skos:ConceptScheme ;
+  skos:prefLabel "HL7 v3 AdministrativeGender to FHIR administrative gender"@en .
+
+ccda:administrativeGenderMale a skos:Concept ;
+  skos:inScheme ccda:administrativeGenders ;
+  skos:notation "m" ;
+  skos:exactMatch [ skos:notation "male" ; skos:inScheme <http://hl7.org/fhir/administrative-gender> ] .
+
+ccda:administrativeGenderFemale a skos:Concept ;
+  skos:inScheme ccda:administrativeGenders ;
+  skos:notation "f" ;
+  skos:exactMatch [ skos:notation "female" ; skos:inScheme <http://hl7.org/fhir/administrative-gender> ] .
+
+ccda:administrativeGenderUndifferentiated a skos:Concept ;
+  skos:inScheme ccda:administrativeGenders ;
+  skos:notation "un" ;
+  skos:broadMatch [ skos:notation "other" ; skos:inScheme <http://hl7.org/fhir/administrative-gender> ] .

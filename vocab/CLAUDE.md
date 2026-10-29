@@ -15,7 +15,8 @@ to say, and a failing run prints it.
   of this namespace stands where the standard has one. No registry defines an
   IRI for these systems' codes, so none is made up for the node. A row is
   `skos:exactMatch` its target where it alone leads there, and `skos:broadMatch`
-  where several rows of its map do, since each then means less than the target.
+  where several rows of its map do or where HL7 marks the row `wider`, since
+  each then means less than the target. A mapping reads both.
   The mapping writes the code alone, as the vocabulary's shapes take it.
 - A code system's FHIR URI is its `cascade:codingSystemUri`, never a
   `skos:exactMatch`, which would make the system a concept.

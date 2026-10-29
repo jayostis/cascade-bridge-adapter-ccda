@@ -7,11 +7,15 @@ PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX foaf:    <http://xmlns.com/foaf/0.1/>
 PREFIX skos:    <http://www.w3.org/2004/02/skos/core#>
 PREFIX ccda:    <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+PREFIX sdtc:    <urn:hl7-org:sdtc>
 
 # The vocabulary holds one name, so the first given and the first family the
-# patient's names state, in document order, are carried. A birth time is typed
-# by its precision as every time is (allergy.rq), and its null flavour is the
-# reason it is absent.
+# patient's names state, in document order, are carried. A birth or death time
+# is typed by its precision as every time is (allergy.rq), and a null flavour on
+# it or on the gender is the reason it is absent; a death time's only beside a
+# true indicator, since alone it states no death. A death time with a value is a
+# death whatever the indicator says, as C-CDA on FHIR's Patient map reads them
+# (https://hl7.org/fhir/us/ccda/en/CF-patient.html, read 2026-10-29).
 
 CONSTRUCT {
   ?version ?p ?o .
@@ -45,9 +49,9 @@ WHERE {
   }
   UNION
   {
-    ?patientRole ?pS ?patient . ?patient a v3:patient ; ?bS ?birth .
-    ?birth a v3:birthTime ; xyz:value ?value .
-    BIND (cascade:dateOfBirth AS ?p)
+    VALUES (?timeType ?p) { (v3:birthTime cascade:dateOfBirth) (sdtc:deceasedTime cascade:dateOfDeath) }
+    ?patientRole ?pS ?patient . ?patient a v3:patient ; ?eS ?element .
+    ?element a ?timeType ; xyz:value ?value .
     BIND (IF(REGEX(?value, "^[0-9]{10}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?([+-][0-9]{4})?$"),
              STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),
                           "T", SUBSTR(?value, 9, 2), ":", IF(REGEX(?value, "^[0-9]{12}"), SUBSTR(?value, 11, 2), "00"), ":",
@@ -61,18 +65,56 @@ WHERE {
           IF(REGEX(?value, "^[0-9]{4}([+-][0-9]{4})?$"),
              STRDT(CONCAT(SUBSTR(?value, 1, 4), IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")), xsd:gYear),
              1/0)))) AS ?o)
-    BIND (IF(REGEX(?value, "^[0-9]{10}([0-9]{2})?([+-][0-9]{4})?$"), "#padded-dateOfBirth", 1/0) AS ?paddedFragment)
+    BIND (IF(REGEX(?value, "^[0-9]{10}([0-9]{2})?([+-][0-9]{4})?$"), CONCAT("#padded-", STRAFTER(STR(?p), "#")), 1/0) AS ?paddedFragment)
     BIND (IF(BOUND(?paddedFragment), ?value, 1/0) AS ?writtenTime)
   }
   UNION
   {
-    ?patientRole ?pS ?patient . ?patient a v3:patient ; ?bS ?birth .
-    ?birth a v3:birthTime ; xyz:nullFlavor ?flavour .
-    FILTER NOT EXISTS { ?birth xyz:value ?born }
+    VALUES (?absentType ?absentProperty ?statedAs) {
+      (v3:birthTime                 cascade:dateOfBirth          xyz:value)
+      (sdtc:deceasedTime            cascade:dateOfDeath          xyz:value)
+      (v3:administrativeGenderCode  cascade:administrativeGender xyz:code)
+    }
+    ?patientRole ?pS ?patient . ?patient a v3:patient ; ?eS ?element .
+    ?element a ?absentType ; xyz:nullFlavor ?flavour .
+    FILTER NOT EXISTS { ?element ?statedAs ?stated }
+    FILTER (?absentType != sdtc:deceasedTime || EXISTS {
+      ?patient ?iS ?indicator . ?indicator a sdtc:deceasedInd ; xyz:value "true" .
+    })
     ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey ; skos:exactMatch ?absentReason .
     FILTER (?flavourKey = LCASE(REPLACE(?flavour, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
-    BIND ("#absent-dateOfBirth" AS ?absentFragment)
-    BIND (cascade:dateOfBirth AS ?absentProperty)
+    BIND (CONCAT("#absent-", STRAFTER(STR(?absentProperty), "#")) AS ?absentFragment)
+  }
+  UNION
+  {
+    ?patientRole ?pS ?patient . ?patient a v3:patient ; ?gS ?gender .
+    ?gender a v3:administrativeGenderCode ; xyz:code ?code ; xyz:codeSystem ?genderSystem .
+    FILTER (REPLACE(?genderSystem, "^urn:oid:", "") = "2.16.840.1.113883.5.1")
+    ?genderConcept skos:inScheme ccda:administrativeGenders ; skos:notation ?genderKey ;
+      skos:exactMatch|skos:broadMatch ?genderTarget .
+    ?genderTarget skos:notation ?o .
+    FILTER (?genderKey = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+    BIND (cascade:administrativeGender AS ?p)
+  }
+  UNION
+  {
+    ?patientRole ?pS ?patient . ?patient a v3:patient .
+    {
+      ?patient ?dS ?death . ?death a sdtc:deceasedInd ; xyz:value "true" .
+      BIND (true AS ?o)
+    }
+    UNION
+    {
+      ?patient ?dS ?death . ?death a sdtc:deceasedInd ; xyz:value "false" .
+      FILTER NOT EXISTS { ?patient ?tS ?time . ?time a sdtc:deceasedTime ; xyz:value ?when }
+      BIND (false AS ?o)
+    }
+    UNION
+    {
+      ?patient ?dS ?death . ?death a sdtc:deceasedTime ; xyz:value ?when .
+      BIND (true AS ?o)
+    }
+    BIND (cascade:deceased AS ?p)
   }
   BIND (IF(BOUND(?paddedFragment), IRI(CONCAT(STR(?version), ?paddedFragment)), 1/0) AS ?paddedNode)
   BIND (IF(BOUND(?absentFragment), IRI(CONCAT(STR(?version), ?absentFragment)), 1/0) AS ?absentNode)
