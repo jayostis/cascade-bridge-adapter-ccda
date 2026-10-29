@@ -68,6 +68,8 @@
     <#one-id-on-two-procedures-without-key-and-other-members-names-two-records>
     <#a-value-stated-twice-names-the-record-of-it-stated-once>
     <#values-in-another-order-name-one-record>
+    <#patient-deceased>
+    <#patient-gender-and-death-edges>
   ) .
 
 <#allergies-section> a bridge:IsomorphicConversionTest ;
@@ -926,4 +928,30 @@
   mf:result [
     bridge:expectedGraph <expected/concern-status-beside-a-problem-status.ttl> ;
     bridge:expectedFindings <findings/concern-status-beside-a-problem-status.ttl>
+  ] .
+
+<#patient-deceased> a bridge:IsomorphicConversionTest ;
+  mf:name "patient-deceased" ;
+  rdfs:comment "A patient whose death indicator is true and whose death time is a day: the version holds deceased true, the date of death as an xsd:date, and the administrative gender F mapped by C-CDA on FHIR's concept map to female." ;
+  mf:action [
+    bridge:input <in/patient-deceased.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/patient-deceased.ttl> ;
+    bridge:expectedFindings <findings/patient-deceased.ttl>
+  ] .
+
+<#patient-gender-and-death-edges> a bridge:IsomorphicConversionTest ;
+  mf:name "patient-gender-and-death-edges" ;
+  rdfs:comment "Six patients, one way of stating gender and death each. UN maps to other, the map's wider row, and a death time with a value beside a false indicator is a death, its date a month. A null flavour UNK on the gender is the reason it is absent, and a null flavour on the death time beside a true indicator is the reason the date of death is absent. A gender code U, outside the map, is carried as nothing and is a finding, ccda:administrativeGenderNotMapped, and a null-flavoured indicator and time state no death, so nothing is carried for either. A false indicator alone is deceased false, and M is male. A null flavour that is no NullFlavor code on the gender and on the death time, beside a true indicator, is carried as nothing and is a finding, ccda:nullFlavorNotListed, for each. M in another code system is carried as nothing and is a finding, ccda:administrativeGenderNotMapped, and an indicator padded with spaces, \" true \", is a true indicator." ;
+  mf:action [
+    bridge:input <in/patient-gender-and-death-edges.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/patient-gender-and-death-edges.ttl> ;
+    bridge:expectedFindings <findings/patient-gender-and-death-edges.ttl>
   ] .

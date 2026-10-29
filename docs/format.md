@@ -116,7 +116,9 @@ carries that id with other content ([Names](#names)).
 A `nullFlavor` stands where a value would: on an `id`, a `code`, a `value` or a
 time. On a result's first `value`, on a time a record's date is read from (an
 `effectiveTime`, its `low` or its `high`) where no time is stated in its
-place, and on the patient's `birthTime`, it is the reason that value is absent:
+place, on the patient's `birthTime` and `administrativeGenderCode`, and on the
+`sdtc:deceasedTime` beside an `sdtc:deceasedInd` that is true, it is the reason
+that value is absent:
 the version carries a node `<version>#absent-` and the property's local name,
 naming the property (`cascade:absentValueProperty`, a result's value being
 `cascade:resultValueKind`) and the code as cascade-vocabulary's
@@ -125,10 +127,11 @@ another system (cascade-vocabulary's
 `decisions/partial-dates-and-absent-reasons.md`). The seventeen codes are in
 `../vocab/ccda-null-flavors.ttl`, read without regard to case; a flavour that is
 none of them carries nothing and is a finding, `ccda:nullFlavorNotListed`, on a
-result's value, on a time or a bound of it, and on the `birthTime`. A medication
+result's value, on a time or a bound of it, and on the patient's. A medication
 whose whole `effectiveTime` is a flavour has its start of use absent for it. On
 an `id` or an address it says only that there is none, and elsewhere, where it
-stands alone, nothing is carried.
+stands alone, nothing is carried: on an `sdtc:deceasedInd`, or a death time
+with no true indicator, it states no death.
 
 ## Names
 
@@ -223,7 +226,7 @@ FHIR R5 says "there is no simple formula for determining the correct IRI stem
 from a Coding.system" ([RDF](https://hl7.org/fhir/R5/rdf.html#iri-stem), read on
 2026-10-10). The table holds the OIDs this release knows. A
 `translation` is the same concept in another code system. A status, a severity,
-a criticality and an allergy's type are SNOMED CT or HL7 codes, and reach the
+a criticality, an allergy's type and the patient's administrative gender are SNOMED CT or HL7 codes, and reach the
 vocabulary's FHIR codes through the concept maps in `../vocab/`.
 
 An NDC is the exception to "then the code": a C-CDA writes it as a labeler
