@@ -96,6 +96,7 @@
     <#unstructured-document-pdf>
     <#unstructured-document-reference>
     <#narrative-reference-invisible>
+    <#an-amended-unstructured-document-names-the-same-note>
   ) .
 
 <#allergies-section> a bridge:IsomorphicConversionTest ;
@@ -1334,3 +1335,21 @@
     bridge:expectedGraph <expected/narrative-reference-invisible.ttl> ;
     bridge:expectedFindings <findings/narrative-reference-invisible.ttl>
   ] .
+
+<#an-amended-unstructured-document-names-the-same-note> a bridge:IdentityRelationTest ;
+  mf:name "an-amended-unstructured-document-names-the-same-note" ;
+  rdfs:comment "An Unstructured Document amended (a new id, the same setId, a higher versionNumber) is a new version of the same note: an unstructured document's note is named by its setId where it states one." ;
+  mf:action [
+    bridge:conversion [
+      bridge:input <in/unstructured-document-amended-first.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='nonXMLBody' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ] , [
+      bridge:input <in/unstructured-document-amended-second.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='nonXMLBody' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ]
+  ] ;
+  mf:result [ bridge:sameRecord true ] .
