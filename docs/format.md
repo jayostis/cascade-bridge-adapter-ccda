@@ -107,7 +107,10 @@ document, so the note borrows its Note Activity mapping: its type is the documen
 `displayName`, its date the document's `effectiveTime`, its text the body's base64 decoded where it is plain text, and
 the body is its one attachment, with its media type and the address of a file it only references. A PDF, any other
 media type, and a referenced file are not read as text, and are the finding `ccda:noteDataNotRead`. The note is named
-by the document's `id`, so one document imported twice is one note.
+by the document's `setId` where it states one, else by its `id`: an amended document keeps its `setId` under a
+new `id` and a higher `versionNumber`, so each amendment is a new version of the same note, and one document
+imported twice is one note. The `versionNumber` itself is not carried; the versions are ordered as the documents
+arrive.
 
 A Note Activity is a note, as C-CDA on FHIR maps it to a DocumentReference
 ([Notes](https://hl7.org/fhir/us/ccda/en/CF-notes.html), read 2026-10-30): its type is its code's translations

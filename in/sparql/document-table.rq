@@ -453,11 +453,17 @@ WHERE {
   OPTIONAL {
     {
       SELECT ?statement (MIN(?ranked) AS ?firstIdentifier) WHERE {
-        # An unstructured document's body is named by its document's id.
-        { ?statement ?idSlot ?id . }
+        # An unstructured document's body is named by its document's setId, which
+        # its amendments keep, else by its document's id.
+        { ?statement ?idSlot ?id . ?id a v3:id . }
         UNION
-        { ?statement a v3:nonXMLBody . ?idRootElement a fx:root, v3:ClinicalDocument ; ?idSlot ?id . }
-        ?id a v3:id ; xyz:root ?idRoot .
+        { ?statement a v3:nonXMLBody . ?idRootElement a fx:root, v3:ClinicalDocument ; ?idSlot ?id . ?id a v3:setId . }
+        UNION
+        {
+          ?statement a v3:nonXMLBody . ?idRootElement a fx:root, v3:ClinicalDocument ; ?idSlot ?id . ?id a v3:id .
+          FILTER NOT EXISTS { ?idRootElement ?setIdSlot ?setId . ?setId a v3:setId ; xyz:root ?setIdRoot . }
+        }
+        ?id xyz:root ?idRoot .
         FILTER (STRLEN(?idRoot) > 0)
         FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
         OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }

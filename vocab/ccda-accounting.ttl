@@ -2647,3 +2647,25 @@
 [] a bridge:PathEntry ;
   bridge:sourcePath "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='nonXMLBody' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='text' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='reference' and namespace-uri()='urn:hl7-org:v3']/@value" ;
   bridge:verdict bridge:carried .
+
+[] a bridge:PathEntry ;
+  bridge:sourcePath "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='setId' and namespace-uri()='urn:hl7-org:v3']" ;
+  bridge:verdict bridge:consumed .
+
+[] a bridge:PathEntry ;
+  bridge:sourcePath "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='setId' and namespace-uri()='urn:hl7-org:v3']/@root" ;
+  bridge:verdict bridge:carried .
+
+[] a bridge:PathEntry ;
+  bridge:sourcePath "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='setId' and namespace-uri()='urn:hl7-org:v3']/@extension" ;
+  bridge:verdict bridge:carried .
+
+[] a bridge:PathEntry ;
+  bridge:sourcePath "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='versionNumber' and namespace-uri()='urn:hl7-org:v3']" ;
+  bridge:verdict bridge:ignored ;
+  bridge:because "A document's version number orders its amendments, which are the versions of one note; no Cascade predicate carries the number." .
+
+[] a bridge:PathEntry ;
+  bridge:sourcePath "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='versionNumber' and namespace-uri()='urn:hl7-org:v3']/@value" ;
+  bridge:verdict bridge:ignored ;
+  bridge:because "A document's version number orders its amendments, which are the versions of one note; no Cascade predicate carries the number." .
