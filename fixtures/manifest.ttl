@@ -89,6 +89,9 @@
     <#a-note-section-sent-again-names-the-same-record>
     <#a-grown-note-section-names-another-record>
     <#a-note-activity-sent-again-names-the-same-record>
+    <#note-edges>
+    <#narrative-reference-across-breaks>
+    <#report-time-null-flavor>
   ) .
 
 <#allergies-section> a bridge:IsomorphicConversionTest ;
@@ -1236,3 +1239,42 @@
     ]
   ] ;
   mf:result [ bridge:sameRecord true ] .
+
+<#note-edges> a bridge:IsomorphicConversionTest ;
+  mf:name "note-edges" ;
+  rdfs:comment "Note sections and notes at their edges: an Assessment holding an entry, an Assessment and Plan with a null flavour and an empty History of Present Illness make no note and are sectionNotMapped; two identical Plan of Treatment sections are one note, the second's version not kept (bridge:versionNotKept), so its title is dropped; a Note Activity in base64 text/plain is decoded into its text and is its attachment; one in base64 application/pdf and one in base64 text/html each have an attachment with its media type, no text (decoded HTML would be markup), and the finding ccda:noteDataNotRead; and a Notes section entry that is no Note Activity is entryNotMapped." ;
+  mf:action [
+    bridge:input <in/note-edges.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/note-edges.ttl> ;
+    bridge:expectedFindings <findings/note-edges.ttl>
+  ] .
+
+<#narrative-reference-across-breaks> a bridge:IsomorphicConversionTest ;
+  mf:name "narrative-reference-across-breaks" ;
+  rdfs:comment "Two drugs named through narrative references: a cell holding a line break and a row of two cells, each read with a space at the break (Lisinopril 10 mg tablet, Amlodipine 5 mg tablet); and a procedure with no id and no key field, named by its members, which leave out the text values the lift writes." ;
+  mf:action [
+    bridge:input <in/narrative-reference-across-breaks.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/narrative-reference-across-breaks.ttl> ;
+    bridge:expectedFindings <findings/narrative-reference-across-breaks.ttl>
+  ] .
+
+<#report-time-null-flavor> a bridge:IsomorphicConversionTest ;
+  mf:name "report-time-null-flavor" ;
+  rdfs:comment "Two Result Organizers: one whose effectiveTime is null-flavoured UNK, the reason its time is absent, and one whose low is null-flavoured XX, no NullFlavor code, so no reason is carried and it is the finding ccda:nullFlavorNotListed." ;
+  mf:action [
+    bridge:input <in/report-time-null-flavor.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/report-time-null-flavor.ttl> ;
+    bridge:expectedFindings <findings/report-time-null-flavor.ttl>
+  ] .
