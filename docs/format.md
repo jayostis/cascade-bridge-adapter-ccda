@@ -72,9 +72,9 @@ is a finding, `ccda:duplicateOrganizationNotCarried`.
 A section is mapped by its `templateId`: Allergies (`2.16.840.1.113883.10.20.22.2.6.1`),
 Problems (`2.5.1`), Immunizations (`2.2.1`), Procedures (`2.7.1`), Medications
 (`2.1.1`) and Results (`2.3.1`), each also by the root without `.1`, where its
-entries are optional. A note section holding no entry is itself a note, and a section holding a Note Activity is carried for it. Every
-other section is a finding, vital signs among them, and so is a note section holding entries, until a release maps
-it. An entry of a mapped section or of a Notes section (`2.16.840.1.113883.10.20.22.2.65`) holding a statement this
+entries are optional. A note section holding no entry, with no `nullFlavor` and a text holding more than whitespace,
+is itself a note, and a section holding a Note Activity is carried for it. Every other section is a finding, vital
+signs among them, and so is a note section holding entries, null-flavoured or empty, until a release maps it. An entry of a mapped section or of a Notes section (`2.16.840.1.113883.10.20.22.2.65`) holding a statement this
 release does not read, a Procedure Activity Act or Observation among them, is a finding too.
 
 A problem's status is its Problem Status Observation's, else its concern act's
@@ -102,13 +102,22 @@ A Note Activity is a note, as C-CDA on FHIR maps it to a DocumentReference
 ([Notes](https://hl7.org/fhir/us/ccda/en/CF-notes.html), read 2026-10-30): its type is its code's translations
 where it has one, else its code, the root code being always 34109-9, Note; its type name the first translation's
 `displayName`, else the code's; its date its first author's `time`; its text the narrative its `text` references,
-else its `text`'s own, else its `text`'s base64 decoded, which is then its one attachment. A note section's type is
+else its `text`'s own, else its `text`'s base64 decoded where it is plain text (no `mediaType`, or `text/plain`).
+A base64 `text` is also the note's one attachment, with its media type. Base64 in any other media type, a PDF, RTF
+or HTML among them, is not read as the note's text, since decoded HTML or RTF is markup, not the note's words: the
+note carries the attachment's media type and no text, its bytes stay in the kept document, and it is the finding
+`ccda:noteDataNotRead`, as is base64 the Bridge cannot decode. A note section's type is
 its `code`, its type name the code's `displayName`, its title its `title`, its date the document's `effectiveTime`
 and its text its `text`. A text is the Bridge's text of the element with a line for each block of the narrative
-(each element the crate's `bridge:elementNameBreakingText` lists, NarrativeBlock's block elements). A C-CDA note's
+(each element the crate's `bridge:elementNameBreakingText` lists: NarrativeBlock's elements that are not inline,
+its paragraphs, lists and items, tables and their parts, captions, footnotes and line breaks). A C-CDA note's
 status is `current`: C-CDA states none other, and no document status, so none is carried. A note section's key
 is its code and its text ([Names](#names)), so a source that sends one section again, unchanged, in a later document
-sends the same note; one whose text has grown is another note.
+sends the same note, a version for each document's date. One whose text has changed at all, grown by a visit or
+only a typo fixed, is another note, and the earlier one stays its own record: the adapter joins no two texts, and
+whether a later note of one type from one source supersedes an earlier one is the vocabulary's matcher's to rule.
+Two identical note sections in one document are one note: the Bridge keeps one version (`bridge:versionNotKept`),
+and the other's title is not carried.
 
 The class is the FHIR resource type a record of its kind is mapped from; a
 record is typed by the Cascade class it is written as, and a statement with no
@@ -333,9 +342,10 @@ whose elements may carry an `ID`. An entry points into it with a `reference`
 whose `value` is `#` and that `ID`, from a statement's `text` or a code's
 `originalText`. An allergen's, a drug's and a test's name, a coded result and a
 reference range's text are each read through such a reference first: the
-whole text of the element it points to, every text under it in document order
-(the Bridge's text content), its whitespace collapsed to single spaces and trimmed,
-so `lisinopril <content>10 mg</content> tablet` is `lisinopril 10 mg tablet`. A reference names an element only as
+whole text of the element it points to, every text under it in document order,
+as the Bridge's text with element breaks gives it, each break and each run of whitespace one space, trimmed:
+`lisinopril <content>10 mg</content> tablet` is `lisinopril 10 mg tablet`, `Lisinopril<br/>10 mg tablet` is
+`Lisinopril 10 mg tablet`, and a row `<td>Amlodipine</td><td>5 mg</td>` is `Amlodipine 5 mg`. A reference names an element only as
 `#` and that element's `ID`, whitespace around the value aside: one with no
 `#`, or with nothing after it, names none. An `ID` that two elements hold names neither: the CDA schema makes an
 `ID` unique within a document, so a document that repeats one gives no ground

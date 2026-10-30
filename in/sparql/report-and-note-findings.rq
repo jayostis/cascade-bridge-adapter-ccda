@@ -1,0 +1,71 @@
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sh:     <http://www.w3.org/ns/shacl#>
+PREFIX oa:     <http://www.w3.org/ns/oa#>
+PREFIX skos:   <http://www.w3.org/2004/02/skos/core#>
+PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:    <http://sparql.xyz/facade-x/data/>
+PREFIX v3:     <urn:hl7-org:v3>
+PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
+PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# A Note Activity whose text is base64 that note-or-document.rq does not read as
+# the note's text: data in a media type other than text/plain (a PDF, RTF, HTML),
+# or data the Bridge could not decode. Its attachment states the media type; the
+# bytes stay in the kept document. Valued by the media type as written, else
+# text/plain, CDA's default. And a report's time, or its low, whose nullFlavor is
+# no NullFlavor code, so report.rq carries no reason for its absence, valued by
+# the flavour.
+
+CONSTRUCT {
+  [] a oa:Annotation ;
+    oa:hasTarget [
+      oa:hasSource bridge:thisRecord ;
+      oa:hasSelector [ a oa:XPathSelector ; rdf:value ?refinement ]
+    ] ;
+    oa:hasBody ?gap ;
+    oa:motivatedBy oa:classifying ;
+    sh:value ?value .
+}
+WHERE {
+  {
+    ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
+    ?outer a v3:component ; ?bodySlot ?body .
+    ?body a v3:structuredBody ; ?componentSlot ?component .
+    ?component a v3:component ; ?sectionSlot ?section .
+    ?section a v3:section ; ?entrySlot ?entry .
+    ?entry a v3:entry ; ?statementSlot ?note .
+    ?note a v3:act ; ?textSlot ?text .
+    ?text a v3:text ; xyz:representation ?representation .
+    FILTER (UCASE(?representation) = "B64")
+    BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
+                 STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
+                 STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?statementSlot), "#_")) AS ?slots)
+    ?row ccda:statementAt ?slots ; ccda:recordClass "DocumentReference" ; ccda:refinement ?refinement .
+    OPTIONAL { ?text xyz:mediaType ?mediaType }
+    OPTIONAL { ?text bridge:textDecodedFromBase64 ?decoded }
+    FILTER (!BOUND(?decoded) || (BOUND(?mediaType) && !REGEX(?mediaType, "^[ \\t]*text/plain[ \\t]*(;.*)?$", "i")))
+    BIND (COALESCE(?mediaType, "text/plain") AS ?value)
+    BIND (ccda:noteDataNotRead AS ?gap)
+  }
+  UNION
+  {
+    ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
+    ?outer a v3:component ; ?bodySlot ?body .
+    ?body a v3:structuredBody ; ?componentSlot ?component .
+    ?component a v3:component ; ?sectionSlot ?section .
+    ?section a v3:section ; ?entrySlot ?entry .
+    ?entry a v3:entry ; ?statementSlot ?organizer .
+    ?organizer a v3:organizer ; ?timeSlot ?time .
+    ?time a v3:effectiveTime .
+    { ?time xyz:nullFlavor ?value } UNION { ?time ?lowSlot ?low . ?low a v3:low ; xyz:nullFlavor ?value }
+    FILTER NOT EXISTS {
+      ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey .
+      FILTER (?flavourKey = LCASE(REPLACE(?value, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+    }
+    BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
+                 STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
+                 STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?statementSlot), "#_")) AS ?slots)
+    ?row ccda:statementAt ?slots ; ccda:recordClass "DiagnosticReport" ; ccda:refinement ?refinement .
+    BIND (ccda:nullFlavorNotListed AS ?gap)
+  }
+}

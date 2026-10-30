@@ -213,3 +213,9 @@ ccda:noteAuthor a skos:Concept ;
   skos:prefLabel "A note names the person or device that wrote it, and no Cascade predicate carries them; when it was written is carried as the note's date."@en ;
   skos:inScheme ccda:gaps ;
   skos:broader bridge:noPredicate .
+
+ccda:noteDataNotRead a skos:Concept ;
+  skos:prefLabel "A note's text is base64 data that is not plain text, a PDF, RTF or HTML among them, or that cannot be decoded, so no narrative text is carried for it; its media type is carried as its attachment's, and its bytes stay in the kept document."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:carriedWithLoss ;
+  sh:resultSeverity sh:Warning .

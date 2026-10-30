@@ -4,7 +4,7 @@ PREFIX skos:     <http://www.w3.org/2004/02/skos/core#>
 PREFIX void:     <http://rdfs.org/ns/void#>
 PREFIX fx:       <http://sparql.xyz/facade-x/ns/>
 PREFIX xyz:      <http://sparql.xyz/facade-x/data/>
-PREFIX dom:      <https://dom.spec.whatwg.org/#dom-node->
+PREFIX bridge:   <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX v3:       <urn:hl7-org:v3>
 PREFIX cascade:  <https://ns.cascadeprotocol.org/cascade#>
 PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
@@ -68,7 +68,7 @@ WHERE {
               SELECT ?anchor (SAMPLE(?written) AS ?value) WHERE {
                 ?narrative xyz:ID ?anchor .
                 OPTIONAL {
-                  ?narrative dom:textcontent ?text .
+                  ?narrative bridge:textWithElementBreaks ?text .
                   BIND (REPLACE(REPLACE(?text, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "[ \\t\\r\\n]+", " ") AS ?written)
                 }
               } GROUP BY ?anchor HAVING (COUNT(DISTINCT ?narrative) = 1 && COUNT(?written) = 1)

@@ -396,6 +396,14 @@ WHERE {
           }
         }
         FILTER (!BOUND(?holdsEntry))
+        # A section with a null flavour, or whose text holds nothing, is no note.
+        FILTER NOT EXISTS { ?statement xyz:nullFlavor ?sectionNullFlavor }
+        {
+          SELECT DISTINCT ?statement WHERE {
+            ?statement a v3:section ; ?sectionTextSlot ?sectionText .
+            ?sectionText a v3:text ; bridge:textWithElementBreaks ?sectionPassage .
+          }
+        }
         {
           SELECT ?outer (COUNT(?earlierOuter) AS ?outerAt) WHERE {
             ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .

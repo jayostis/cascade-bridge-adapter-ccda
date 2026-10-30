@@ -19,7 +19,10 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # specific translation; its type name is the first translation's displayName,
 # else its code's; its date is its first author's time; its text is the text of
 # the narrative element its text references, else its text's own, else the
-# decoded text of its text in base64, which is also its one attachment. A
+# decoded text of its text in base64 where that is plain text (no media type, or
+# text/plain): HTML or RTF decoded would be markup, not the note's words, and is
+# left out, as a PDF is; note-findings.rq names that loss. A text in base64 is
+# also the note's one attachment, with its media type. A
 # section's type is its code, its type name the code's displayName, its title
 # its title's text, its date the document's effectiveTime and its text its
 # text's. A text is the lift's text with element breaks, a line for each block
@@ -142,6 +145,8 @@ WHERE {
         UNION
         {
           ?statement ?xS ?text . ?text a v3:text ; bridge:textDecodedFromBase64 ?value .
+          OPTIONAL { ?text xyz:mediaType ?decodedMediaType }
+          FILTER (!BOUND(?decodedMediaType) || REGEX(?decodedMediaType, "^[ \\t]*text/plain[ \\t]*(;.*)?$", "i"))
           BIND (cascade:narrativeText AS ?p)
           BIND ("3" AS ?tier)
           BIND (STRAFTER(STR(?xS), "#_") AS ?at)

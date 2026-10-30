@@ -3,7 +3,6 @@ PREFIX sh:     <http://www.w3.org/ns/shacl#>
 PREFIX oa:     <http://www.w3.org/ns/oa#>
 PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
 PREFIX xyz:    <http://sparql.xyz/facade-x/data/>
-PREFIX dom:    <https://dom.spec.whatwg.org/#dom-node->
 PREFIX v3:     <urn:hl7-org:v3>
 PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
@@ -45,7 +44,7 @@ WHERE {
     {
       SELECT ?anchor (COUNT(DISTINCT ?holder) AS ?holders) (COUNT(?text) AS ?texts) WHERE {
         ?holder xyz:ID ?anchor .
-        OPTIONAL { ?holder dom:textcontent ?text }
+        OPTIONAL { ?holder bridge:textWithElementBreaks ?text }
       } GROUP BY ?anchor
     }
     FILTER (?anchor = STRAFTER(?trimmed, "#"))
