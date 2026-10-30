@@ -38,7 +38,9 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 #   DocumentReference  effectiveTime's value, low and high; statusCode; and a
 #                      Note Activity's translations' codes and code systems and
 #                      its author's time. A note section's code, code system and
-#                      text with element breaks, never its document's time.
+#                      text with element breaks, never its document's time. An
+#                      unstructured document's body: its document's id, else its
+#                      code, code system and effectiveTime.
 #   Excluded members, every class, also: the text values the lift writes of an
 #   element, which restate its runs.
 #   Excluded members, every class: each ID attribute and each reference's
@@ -374,6 +376,24 @@ WHERE {
       }
       UNION
       {
+        # An unstructured document's body, its nonXMLBody: one note.
+        ?root ?outerSlot ?outer . ?outer a v3:component .
+        ?outer ?bodySlot ?statement . ?statement a v3:nonXMLBody .
+        {
+          SELECT ?outer (COUNT(?earlierOuter) AS ?outerAt) WHERE {
+            ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
+            ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
+            FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) <= xsd:integer(STRAFTER(STR(?outerS), "#_")))
+          } GROUP BY ?outer
+        }
+        BIND ("DocumentReference" AS ?class)
+        BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_")) AS ?slots)
+        BIND (CONCAT(
+          "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?outerAt), "]",
+          "/*[local-name()='nonXMLBody' and namespace-uri()='urn:hl7-org:v3'][1]") AS ?refinement)
+      }
+      UNION
+      {
         # A section whose template is a note's and which holds no entry: one
         # note, the section itself (docs/format.md, "What a record is").
         ?root ?outerSlot ?outer . ?outer a v3:component .
@@ -433,7 +453,11 @@ WHERE {
   OPTIONAL {
     {
       SELECT ?statement (MIN(?ranked) AS ?firstIdentifier) WHERE {
-        ?statement ?idSlot ?id . ?id a v3:id ; xyz:root ?idRoot .
+        # An unstructured document's body is named by its document's id.
+        { ?statement ?idSlot ?id . }
+        UNION
+        { ?statement a v3:nonXMLBody . ?idRootElement a fx:root, v3:ClinicalDocument ; ?idSlot ?id . }
+        ?id a v3:id ; xyz:root ?idRoot .
         FILTER (STRLEN(?idRoot) > 0)
         FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
         OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }
@@ -747,6 +771,24 @@ WHERE {
                 }
               }
             }
+            UNION
+            {
+              # An unstructured document's key is its document's code and time.
+              ?statement a v3:nonXMLBody .
+              {
+                SELECT ?statement ?field WHERE {
+                  ?statement a v3:nonXMLBody .
+                  ?document a fx:root, v3:ClinicalDocument .
+                  {
+                    ?document ?cS ?code . ?code a v3:code ; ?attribute ?v .
+                    VALUES (?attribute ?name) { (xyz:code "code") (xyz:codeSystem "codeSystem") }
+                    BIND (CONCAT(?name, "=", ?v) AS ?field)
+                  }
+                  UNION
+                  { ?document ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?v . BIND (CONCAT("effectiveTime=", ?v) AS ?field) }
+                }
+              }
+            }
           }
         }
         BIND (SUBSTR(SHA256(?field), 1, 12) AS ?h)
@@ -775,7 +817,8 @@ WHERE {
             {
               SELECT DISTINCT ?statement WHERE {
                 {
-                  ?statement a v3:patientRole .
+                  ?statement a ?bodyOrPatient .
+                  VALUES ?bodyOrPatient { v3:patientRole v3:nonXMLBody }
                 }
                 UNION
                 {

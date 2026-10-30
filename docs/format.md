@@ -39,6 +39,7 @@ wraps it:
 | a lab result | a Result Observation (`4.2`) in a Result Organizer (`4.1`), the entry's own statement in a Results section | `Observation` |
 | a report | a Result Organizer (`4.1`), the entry's own statement in a Results section | `DiagnosticReport` |
 | a note | a Note Activity (`4.202`), the entry's own statement in any section | `DocumentReference` |
+| a note | an unstructured document's body, its `nonXMLBody` | `DocumentReference` |
 | a note | a note section holding no entry: Assessment (`2.16.840.1.113883.10.20.22.2.8`), Assessment and Plan (`2.9`), Plan of Treatment (`2.10`), History of Present Illness (`1.3.6.1.4.1.19376.1.5.3.1.3.4`), Hospital Course (`1.3.6.1.4.1.19376.1.5.3.1.3.5`) | `DocumentReference` |
 
 The organizations the header names are records too, outside the table's classes:
@@ -97,6 +98,16 @@ a test's are, its name is its code's `displayName`, its time its `effectiveTime`
 `effectivePeriod.start`; the end is not carried), and its status is C-CDA on FHIR's report status map,
 `../vocab/ccda-report-statuses.ttl`. A C-CDA states no time a report was issued and no category, so neither is
 carried.
+
+An Unstructured Document (`2.16.840.1.113883.10.20.22.1.10`,
+[C-CDA 5.0.0](https://hl7.org/cda/us/ccda/StructureDefinition-UnstructuredDocument.html), read 2026-10-30) has a
+`nonXMLBody` in place of sections: one `text`, either base64 data with its `mediaType`, or a `reference` to a file. Any
+document with a `nonXMLBody` makes one note of it, whatever templates it claims. C-CDA on FHIR maps no unstructured
+document, so the note borrows its Note Activity mapping: its type is the document's `code`, its type name that code's
+`displayName`, its date the document's `effectiveTime`, its text the body's base64 decoded where it is plain text, and
+the body is its one attachment, with its media type and the address of a file it only references. A PDF, any other
+media type, and a referenced file are not read as text, and are the finding `ccda:noteDataNotRead`. The note is named
+by the document's `id`, so one document imported twice is one note.
 
 A Note Activity is a note, as C-CDA on FHIR maps it to a DocumentReference
 ([Notes](https://hl7.org/fhir/us/ccda/en/CF-notes.html), read 2026-10-30): its type is its code's translations
