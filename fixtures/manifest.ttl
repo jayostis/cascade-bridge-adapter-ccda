@@ -95,6 +95,7 @@
     <#unstructured-document-text>
     <#unstructured-document-pdf>
     <#unstructured-document-reference>
+    <#narrative-reference-invisible>
   ) .
 
 <#allergies-section> a bridge:IsomorphicConversionTest ;
@@ -1319,4 +1320,17 @@
   mf:result [
     bridge:expectedGraph <expected/unstructured-document-reference.ttl> ;
     bridge:expectedFindings <findings/unstructured-document-reference.ttl>
+  ] .
+
+<#narrative-reference-invisible> a bridge:IsomorphicConversionTest ;
+  mf:name "narrative-reference-invisible" ;
+  rdfs:comment "Seven drugs whose names are referenced into narrative cells holding nothing visible: a space, a no-break space, a line break, an empty content element and a zero-width space, an ideographic space, a next-line control and a line separator. None is read as a name, each falls through to the code's displayName, and each reference is ccda:referenceReadsNothing." ;
+  mf:action [
+    bridge:input <in/narrative-reference-invisible.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/narrative-reference-invisible.ttl> ;
+    bridge:expectedFindings <findings/narrative-reference-invisible.ttl>
   ] .
