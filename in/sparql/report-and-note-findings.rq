@@ -13,8 +13,9 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # not read as the note's text: data in a media type other than text/plain (a
 # PDF, RTF, HTML), data the Bridge could not decode, or a file the document
 # only references. Its attachment states the media type; the bytes stay in the
-# kept document, or at the file's address. Valued by the media type as written, else
-# text/plain, CDA's default. And a report's time, or its low, whose nullFlavor is
+# kept document, or at the file's address. Valued by the media type as written,
+# else, for inline base64, text/plain, CDA's default; a referenced file stating
+# no media type has no value, since nothing says what it is. And a report's time, or its low, whose nullFlavor is
 # no NullFlavor code, so report.rq carries no reason for its absence, valued by
 # the flavour.
 
@@ -56,9 +57,10 @@ WHERE {
     BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_")) AS ?slots)
     ?row ccda:statementAt ?slots ; ccda:recordClass "DocumentReference" ; ccda:refinement ?refinement .
     OPTIONAL { ?text xyz:mediaType ?mediaType }
+    OPTIONAL { ?text xyz:representation ?bodyRepresentation }
     OPTIONAL { ?text bridge:textDecodedFromBase64 ?decoded }
     FILTER (!BOUND(?decoded) || (BOUND(?mediaType) && !REGEX(?mediaType, "^[ \\t]*text/plain[ \\t]*(;.*)?$", "i")))
-    BIND (COALESCE(?mediaType, "text/plain") AS ?value)
+    BIND (COALESCE(?mediaType, IF(UCASE(COALESCE(?bodyRepresentation, "")) = "B64", "text/plain", 1/0)) AS ?value)
     BIND (ccda:noteDataNotRead AS ?gap)
   }
   UNION
