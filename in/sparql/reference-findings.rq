@@ -10,7 +10,8 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # A reference in an entry a record is made from through which the mappings
 # read nothing: one naming no narrative element (no '#', nothing after it, or
 # an ID no element or two elements hold, trimmed as the mappings trim it), or
-# naming one that holds no text but whitespace, as the mappings' HAVING asks. What they read through a reference is
+# naming one that holds no visible character (only spaces of any kind, controls
+# or format characters), as the mappings' HAVING asks. What they read through a reference is
 # then read from the next place it is stated, and the reference itself is lost;
 # this says so, on the entry, with the reference as written as its value.
 
@@ -44,7 +45,10 @@ WHERE {
     {
       SELECT ?anchor (COUNT(DISTINCT ?holder) AS ?holders) (COUNT(?text) AS ?texts) WHERE {
         ?holder xyz:ID ?anchor .
-        OPTIONAL { ?holder bridge:textWithElementBreaks ?text }
+        OPTIONAL {
+          ?holder bridge:textWithElementBreaks ?text .
+          FILTER (REGEX(?text, "[^\\p{Z}\\p{Cc}\\p{Cf}]"))
+        }
       } GROUP BY ?anchor
     }
     FILTER (?anchor = STRAFTER(?trimmed, "#"))

@@ -354,7 +354,8 @@ whose `value` is `#` and that `ID`, from a statement's `text` or a code's
 `originalText`. An allergen's, a drug's and a test's name, a coded result and a
 reference range's text are each read through such a reference first: the
 whole text of the element it points to, every text under it in document order,
-as the Bridge's text with element breaks gives it, each break and each run of whitespace one space, trimmed:
+as the Bridge's text with element breaks gives it, each break and each run of spaces of any kind (a no-break space
+included) or controls one space, and trimmed of those and of format characters (a zero-width space among them):
 `lisinopril <content>10 mg</content> tablet` is `lisinopril 10 mg tablet`, `Lisinopril<br/>10 mg tablet` is
 `Lisinopril 10 mg tablet`, and a row `<td>Amlodipine</td><td>5 mg</td>` is `Amlodipine 5 mg`. A reference names an element only as
 `#` and that element's `ID`, whitespace around the value aside: one with no
@@ -363,8 +364,8 @@ as the Bridge's text with element breaks gives it, each break and each run of wh
 for choosing, and the name is read from the next place it is stated. A
 portal's next download of one document may number the `ID`s afresh, so neither
 an `ID` nor a reference is part of a key or a member. A reference through which
-nothing can be read, one naming no element or naming one that holds no text but
-whitespace, is a finding on its entry,
+nothing can be read, one naming no element or naming one that holds no visible
+character, is a finding on its entry,
 `ccda:referenceReadsNothing`.
 
 ## The schema

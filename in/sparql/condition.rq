@@ -97,7 +97,8 @@ WHERE {
                           ?narrative xyz:ID ?anchor .
                           OPTIONAL {
                             ?narrative bridge:textWithElementBreaks ?text .
-                            BIND (REPLACE(REPLACE(?text, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "[ \\t\\r\\n]+", " ") AS ?written)
+                            BIND (REPLACE(REPLACE(?text, "^[\\p{Z}\\p{Cc}\\p{Cf}]+|[\\p{Z}\\p{Cc}\\p{Cf}]+$", ""), "[\\p{Z}\\p{Cc}]+", " ") AS ?written)
+                            FILTER (STRLEN(?written) > 0)
                           }
                         } GROUP BY ?anchor HAVING (COUNT(DISTINCT ?narrative) = 1 && COUNT(?written) = 1)
                       }
