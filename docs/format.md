@@ -109,7 +109,7 @@ the body is its one attachment, with its media type and the address of a file it
 media type, and a referenced file are not read as text, and are the finding `ccda:noteDataNotRead`. The note is named
 by the document's `setId` where it states one, else by its `id`: an amended document keeps its `setId` under a
 new `id` and a higher `versionNumber`, so each amendment is a new version of the same note, and one document
-imported twice is one note. Its version carries the document's `id` as a `dct:identifier`, mapped as a result's
+imported twice is one note. Its version carries the document's `id` as its `cascade:noteOrDocumentMasterIdentifier`, mapped as a result's
 ids are, as FHIR's `DocumentReference.masterIdentifier` holds it, so one document arriving through both adapters can
 be joined. A section's note and a Note Activity carry no document id: each is a part of its document, not the
 document itself. The `versionNumber` itself is not carried; the versions are ordered as the documents
