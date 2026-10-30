@@ -2,7 +2,7 @@ PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-SELECT DISTINCT ?record ?sourceRecordId ?testName ?loincCode ?resultValue ?resultUnit ?referenceRange ?resultInterpretation ?workflowStatus ?resultClinicallyRelevantTime
+SELECT DISTINCT ?record ?sourceRecordId ?testName ?loincCode ?resultValue ?resultUnit ?referenceRange ?resultInterpretationCode ?workflowStatus ?resultClinicallyRelevantTime
 WHERE {
   ?record a cascade:LaboratoryTestResult .
   ?version prov:specializationOf ?record .
@@ -10,7 +10,7 @@ WHERE {
   FILTER (!BOUND(?current) || ?current = ?version)
   OPTIONAL { { ?record cascade:sourceRecordId ?id } UNION { ?version cascade:sourceRecordId ?id } }
   OPTIONAL { ?version cascade:testName ?n }
-  OPTIONAL { ?version cascade:testCode ?c }
+  OPTIONAL { ?version cascade:testCode ?c . FILTER (STRSTARTS(STR(?c), "http://loinc.org/rdf/")) }
   OPTIONAL { ?version cascade:resultValue ?text }
   OPTIONAL { ?version cascade:resultUnit ?textUnit }
   OPTIONAL {
@@ -21,16 +21,16 @@ WHERE {
     OPTIONAL { ?quantity cascade:ucumUnit ?ucumUnit }
   }
   OPTIONAL { ?version cascade:referenceRange ?r }
-  OPTIONAL { ?version cascade:resultInterpretation ?i }
+  OPTIONAL { ?version cascade:resultInterpretationCode ?i }
   OPTIONAL { ?version cascade:workflowStatus ?s }
   OPTIONAL { ?version cascade:resultClinicallyRelevantTime ?d }
   BIND (STR(?id) AS ?sourceRecordId)
   BIND (STR(?n) AS ?testName)
-  BIND (REPLACE(STR(?c), "^http://loinc.org/rdf/", "") AS ?loincCode)
+  BIND (REPLACE(STR(?c), "^http://loinc\\.org/rdf/", "") AS ?loincCode)
   BIND (STR(COALESCE(CONCAT(COALESCE(?comparator, ""), ?written), ?text)) AS ?resultValue)
   BIND (STR(COALESCE(?unitText, ?ucumUnit, ?textUnit)) AS ?resultUnit)
   BIND (STR(?r) AS ?referenceRange)
-  BIND (STR(?i) AS ?resultInterpretation)
+  BIND (REPLACE(STR(?i), "^https://ns\\.cascadeprotocol\\.org/codes/observationinterpretation/", "") AS ?resultInterpretationCode)
   BIND (STR(?s) AS ?workflowStatus)
   BIND (STR(?d) AS ?resultClinicallyRelevantTime)
 }

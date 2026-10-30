@@ -11,16 +11,20 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # A Procedure Activity Procedure. Where the vocabulary holds one value and the
 # source states several, the first in document order is carried: the name, read
 # in this order: the narrative its code's originalText references, the
-# originalText's own text, the code's displayName; and the SNOMED CT and CPT
-# codes, the code's own before a translation's: SNOMED CT as the IRI
-# ../../vocab/ccda-code-systems.ttl gives it, CPT as the code alone, as the
-# vocabulary's terms take them. The status is not-done where
+# originalText's own text, the code's displayName; and the CPT code, the code's
+# own before a translation's. Every SNOMED CT code of the code and its
+# translations is carried. Each code is the IRI
+# ../../vocab/ccda-code-systems.ttl gives it. Every code in another code system,
+# of the code and its translations, is a cascade:procedureCodeInOtherSystem
+# literal, as result.rq writes a test's. The status is not-done where
 # negationInd is true, the procedure not performed, and otherwise the
 # statusCode, where it maps to a procedure status. A time is written as
 # allergy.rq writes it.
 
 CONSTRUCT {
   ?version ?p ?o .
+  ?version cascade:procedureCodeInOtherSystem ?otherSystemCode .
+  ?version cascade:snomedCode ?snomedIri .
   ?version cascade:paddedDateTime ?paddedNode .
   ?paddedNode cascade:paddedDateTimeProperty ?p ;
     cascade:writtenDate ?writtenTime .
@@ -95,12 +99,13 @@ WHERE {
             BIND ("2" AS ?tier)
             BIND (STRAFTER(STR(?trS), "#_") AS ?within)
           }
-          ?coding xyz:code ?value ; xyz:codeSystem ?codeSystem .
+          ?coding xyz:code ?statedCode ; xyz:codeSystem ?codeSystem .
+          BIND (REPLACE(?statedCode, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?value)
+          FILTER (?value != "")
           VALUES (?system ?p) {
-            ("2.16.840.1.113883.6.96" cascade:snomedCode)
             ("2.16.840.1.113883.6.12" cascade:cptCode)
           }
-          FILTER (?system = REPLACE(?codeSystem, "^urn:oid:", ""))
+          FILTER (?system = LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")))
         }
       }
       UNION
@@ -147,9 +152,41 @@ WHERE {
                    SUBSTR("00000000000000000000", STRLEN(?inner) + 1), ?inner, "|", ?value) AS ?ranked)
     } GROUP BY ?procedure ?p
   }
+  UNION
+  {
+    SELECT ?procedure ?otherSystemCode WHERE {
+      ?procedure a v3:procedure .
+      { ?procedure ?cS ?coding . ?coding a v3:code }
+      UNION
+      { ?procedure ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
+      ?coding xyz:code ?codeValue ; xyz:codeSystem ?codeSystem .
+      BIND (COALESCE(LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")), "") AS ?systemKey)
+      OPTIONAL { ?listed skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; cascade:codingSystemUri ?listedUri }
+      BIND (COALESCE(STR(?listedUri), IF(REGEX(?systemKey, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?systemKey), 1/0)) AS ?datatype)
+      FILTER (?datatype NOT IN ("http://snomed.info/sct", "http://www.ama-assn.org/go/cpt"))
+      BIND (REPLACE(?codeValue, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?otherCode)
+      FILTER (?otherCode != "")
+      BIND (STRDT(?otherCode, IRI(?datatype)) AS ?otherSystemCode)
+    }
+  }
+  UNION
+  {
+    SELECT ?procedure ?snomedIri WHERE {
+      ?procedure a v3:procedure .
+      { ?procedure ?cS ?coding . ?coding a v3:code }
+      UNION
+      { ?procedure ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
+      ?coding xyz:code ?statedSnomed ; xyz:codeSystem ?codeSystem .
+      ccda:codeSystemSnomedCt skos:notation ?snomedKey ; void:uriSpace ?snomedStem .
+      FILTER (?snomedKey = LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")))
+      BIND (REPLACE(?statedSnomed, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?snomed)
+      FILTER (?snomed != "")
+      BIND (IRI(CONCAT(?snomedStem, ENCODE_FOR_URI(?snomed))) AS ?snomedIri)
+    }
+  }
   BIND (STRAFTER(?first, "|") AS ?value)
-  ccda:codeSystemSnomedCt void:uriSpace ?snomedStem .
-  BIND (IF(?p = cascade:snomedCode, IRI(CONCAT(?snomedStem, ENCODE_FOR_URI(?value))),
+  ccda:codeSystemCpt void:uriSpace ?cptStem .
+  BIND (IF(?p = cascade:cptCode, IRI(CONCAT(?cptStem, ENCODE_FOR_URI(?value))),
         IF(?p != cascade:procedureDate, ?value,
         IF(REGEX(?value, "^[0-9]{10}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?([+-][0-9]{4})?$"),
            STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),

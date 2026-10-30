@@ -16,8 +16,9 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # another system, a bound of a two-bound IVL_PQ value or of a reference range
 # that is not inclusive, a number not in REAL's decimal form or beyond twenty
 # digits of the point, a value's or a time's nullFlavor that is no NullFlavor code, a
-# second value, range or interpretation, and a code in
-# a code system other than LOINC, at the result; and
+# second value or range, a code of the test with no code system, or a code
+# system that is no OID, or no code, and an interpretation flag in a code
+# system other than HL7 ObservationInterpretation, at the result; and
 # a component of an organizer some result of which is a record, that is no
 # record itself, a vital sign among them, at the component, valued by the least
 # templateId root its statement claims. An organizer no result of which is a
@@ -154,7 +155,7 @@ WHERE {
     UNION
     {
       ?result ?elementS ?element . ?element a ?elementType .
-      VALUES ?elementType { v3:value v3:referenceRange v3:interpretationCode }
+      VALUES ?elementType { v3:value v3:referenceRange }
       FILTER EXISTS {
         ?result ?earlierS ?earlier . ?earlier a ?elementType .
         FILTER (xsd:integer(STRAFTER(STR(?earlierS), "#_")) < xsd:integer(STRAFTER(STR(?elementS), "#_")))
@@ -164,11 +165,19 @@ WHERE {
     }
     UNION
     {
-      ?result ?cS ?code . ?code a v3:code .
-      { ?code xyz:codeSystem ?value . }
+      { ?result ?cS ?coding . ?coding a v3:code }
       UNION
-      { ?code ?trS ?translation . ?translation a v3:translation ; xyz:codeSystem ?value . }
-      FILTER (REPLACE(?value, "^urn:oid:", "") != "2.16.840.1.113883.6.1")
+      { ?result ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
+      UNION
+      { ?result ?iS ?coding . ?coding a v3:interpretationCode . BIND (true AS ?flag) }
+      UNION
+      { ?result ?iS ?flagged . ?flagged a v3:interpretationCode ; ?ftS ?coding . ?coding a v3:translation . BIND (true AS ?flag) }
+      OPTIONAL { ?coding xyz:code ?statedCode }
+      OPTIONAL { ?coding xyz:codeSystem ?statedSystem }
+      FILTER (BOUND(?statedCode) || BOUND(?statedSystem))
+      BIND (LCASE(REPLACE(REPLACE(?statedSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")) AS ?statedKey)
+      FILTER (!BOUND(?statedCode) || !BOUND(?statedSystem) || !REGEX(?statedKey, "^[0-2](\\.(0|[1-9][0-9]*))+$") || REPLACE(?statedCode, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") = "" || (BOUND(?flag) && ?statedKey != "2.16.840.1.113883.5.83"))
+      BIND (COALESCE(?statedSystem, ?statedCode) AS ?value)
       BIND (ccda:codeNotCarried AS ?gap)
     }
   }

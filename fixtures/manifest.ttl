@@ -70,6 +70,21 @@
     <#values-in-another-order-name-one-record>
     <#patient-deceased>
     <#patient-gender-and-death-edges>
+    <#codes-in-other-systems>
+    <#result-interpretation-in-another-system>
+    <#result-interpretation-not-carried>
+    <#result-interpretation-null-flavor>
+    <#procedure-two-cpt-codes>
+    <#procedure-two-snomed-ct-codes>
+    <#procedure-icd9-cm-procedure-oid>
+    <#condition-icd9-cm-under-its-other-oids>
+    <#result-codes-padded-with-spaces>
+    <#result-code-system-urn-oid-capitals>
+    <#result-code-blank>
+    <#result-code-without-code>
+    <#result-code-system-not-an-oid>
+    <#result-test-code-in-snomed-ct>
+    <#allergy-codes-in-other-systems>
   ) .
 
 <#allergies-section> a bridge:IsomorphicConversionTest ;
@@ -209,7 +224,7 @@
 
 <#medications-ndc-translations> a bridge:IsomorphicConversionTest ;
   mf:name "medications-ndc-translations" ;
-  rdfs:comment "A Medication Activity whose material is coded in a portal's own code system, with two RxNorm translations and three NDC translations: both RxNorm codes and the two NDCs of a hyphenated form, as 11-digit codes, are carried, the portal's own code is a finding, and so is the NDC of ten digits with no hyphens, whose segments cannot be told." ;
+  rdfs:comment "A Medication Activity whose material is coded in a portal's own code system, with two RxNorm translations and three NDC translations: both RxNorm codes and the two NDCs of a hyphenated form, as 11-digit codes, are carried, the portal's own code as a cascade:medicationCodeInOtherSystem literal typed by urn:oid: and the portal's OID, and the NDC of ten digits with no hyphens, whose segments cannot be told, is a finding." ;
   mf:action [
     bridge:input <in/medications-ndc-translations.xml> ;
     bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
@@ -954,4 +969,199 @@
   mf:result [
     bridge:expectedGraph <expected/patient-gender-and-death-edges.ttl> ;
     bridge:expectedFindings <findings/patient-gender-and-death-edges.ttl>
+  ] .
+
+<#codes-in-other-systems> a bridge:IsomorphicConversionTest ;
+  mf:name "codes-in-other-systems" ;
+  rdfs:comment "A drug coded by a formulary's code with an RxNorm translation, a problem coded in ICD-9-CM with a SNOMED CT translation, a procedure coded in HCPCS with CPT and SNOMED CT translations, and a test coded by a lab's local code with a LOINC translation. Each code in a system its kind has a term for is that term's IRI, the CPT code under Cascade's CPT stem; every other is a literal on its kind's cascade:medicationCodeInOtherSystem, conditionCodeInOtherSystem, procedureCodeInOtherSystem or testCodeInOtherSystem, typed by the system's FHIR URI where the code system table lists its OID (ICD-9-CM, HCPCS Level II) and by urn:oid: and the OID where it does not, and none is a finding." ;
+  mf:action [
+    bridge:input <in/codes-in-other-systems.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/codes-in-other-systems.ttl> ;
+    bridge:expectedFindings <findings/codes-in-other-systems.ttl>
+  ] .
+
+<#result-interpretation-in-another-system> a bridge:IsomorphicConversionTest ;
+  mf:name "result-interpretation-in-another-system" ;
+  rdfs:comment "A result flagged L in HL7 Table 0078 with a translation into HL7 ObservationInterpretation. The translation is carried, as the cascade:resultInterpretationCode L, and the flag in Table 0078 is not carried and is a finding, ccda:codeNotCarried." ;
+  mf:action [
+    bridge:input <in/result-interpretation-in-another-system.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/result-interpretation-in-another-system.ttl> ;
+    bridge:expectedFindings <findings/result-interpretation-in-another-system.ttl>
+  ] .
+
+<#allergy-codes-in-other-systems> a bridge:IsomorphicConversionTest ;
+  mf:name "allergy-codes-in-other-systems" ;
+  rdfs:comment "An allergy to penicillin coded in RxNorm, with translations in HCPCS Level II, HL7 ObservationInterpretation and ICD-9-CM: only the RxNorm code is carried, as the allergenCode, as before any other code system was added to the table, and each translation is the finding ccda:codeSystemNotMapped, since an allergen is never carried in another code system." ;
+  mf:action [
+    bridge:input <in/allergy-codes-in-other-systems.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/allergy-codes-in-other-systems.ttl> ;
+    bridge:expectedFindings <findings/allergy-codes-in-other-systems.ttl>
+  ] .
+
+<#result-test-code-in-snomed-ct> a bridge:IsomorphicConversionTest ;
+  mf:name "result-test-code-in-snomed-ct" ;
+  rdfs:comment "A result coded in SNOMED CT: the code is the IRI under SNOMED CT's stem on cascade:testCode." ;
+  mf:action [
+    bridge:input <in/result-test-code-in-snomed-ct.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/result-test-code-in-snomed-ct.ttl> ;
+    bridge:expectedFindings <findings/result-test-code-in-snomed-ct.ttl>
+  ] .
+
+<#result-code-system-not-an-oid> a bridge:IsomorphicConversionTest ;
+  mf:name "result-code-system-not-an-oid" ;
+  rdfs:comment "A result whose code names its code system as LOINC instead of by OID: the code is not carried and is a finding, ccda:codeNotCarried." ;
+  mf:action [
+    bridge:input <in/result-code-system-not-an-oid.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/result-code-system-not-an-oid.ttl> ;
+    bridge:expectedFindings <findings/result-code-system-not-an-oid.ttl>
+  ] .
+
+<#result-code-without-code> a bridge:IsomorphicConversionTest ;
+  mf:name "result-code-without-code" ;
+  rdfs:comment "A result whose code states a code system and no code: nothing is carried for it and it is a finding, ccda:codeNotCarried." ;
+  mf:action [
+    bridge:input <in/result-code-without-code.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/result-code-without-code.ttl> ;
+    bridge:expectedFindings <findings/result-code-without-code.ttl>
+  ] .
+
+<#result-code-blank> a bridge:IsomorphicConversionTest ;
+  mf:name "result-code-blank" ;
+  rdfs:comment "A result whose code is spaces only, in LOINC: nothing is carried for it and it is a finding, ccda:codeNotCarried." ;
+  mf:action [
+    bridge:input <in/result-code-blank.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/result-code-blank.ttl> ;
+    bridge:expectedFindings <findings/result-code-blank.ttl>
+  ] .
+
+<#result-code-system-urn-oid-capitals> a bridge:IsomorphicConversionTest ;
+  mf:name "result-code-system-urn-oid-capitals" ;
+  rdfs:comment "A result whose LOINC code system is written URN:OID: and the OID, in capitals: the code is read as LOINC and is the IRI under LOINC's stem." ;
+  mf:action [
+    bridge:input <in/result-code-system-urn-oid-capitals.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/result-code-system-urn-oid-capitals.ttl> ;
+    bridge:expectedFindings <findings/result-code-system-urn-oid-capitals.ttl>
+  ] .
+
+<#result-codes-padded-with-spaces> a bridge:IsomorphicConversionTest ;
+  mf:name "result-codes-padded-with-spaces" ;
+  rdfs:comment "A result coded with a LOINC code padded with spaces and a translation in a lab's own code system padded with spaces: the LOINC IRI and the literal on cascade:testCodeInOtherSystem are both of the code trimmed." ;
+  mf:action [
+    bridge:input <in/result-codes-padded-with-spaces.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/result-codes-padded-with-spaces.ttl> ;
+    bridge:expectedFindings <findings/result-codes-padded-with-spaces.ttl>
+  ] .
+
+<#condition-icd9-cm-under-its-other-oids> a bridge:IsomorphicConversionTest ;
+  mf:name "condition-icd9-cm-under-its-other-oids" ;
+  rdfs:comment "A problem coded in ICD-9-CM under the OID FHIR R4 gives it, 2.16.840.1.113883.6.42, with a translation under the retired OID 2.16.840.1.113883.6.2: both are literals on cascade:conditionCodeInOtherSystem typed by http://hl7.org/fhir/sid/icd-9-cm." ;
+  mf:action [
+    bridge:input <in/condition-icd9-cm-under-its-other-oids.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/condition-icd9-cm-under-its-other-oids.ttl> ;
+    bridge:expectedFindings <findings/condition-icd9-cm-under-its-other-oids.ttl>
+  ] .
+
+<#procedure-icd9-cm-procedure-oid> a bridge:IsomorphicConversionTest ;
+  mf:name "procedure-icd9-cm-procedure-oid" ;
+  rdfs:comment "A procedure coded in ICD-9-CM procedure codes, OID 2.16.840.1.113883.6.104: a literal on cascade:procedureCodeInOtherSystem typed by http://hl7.org/fhir/sid/icd-9-cm." ;
+  mf:action [
+    bridge:input <in/procedure-icd9-cm-procedure-oid.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/procedure-icd9-cm-procedure-oid.ttl> ;
+    bridge:expectedFindings <findings/procedure-icd9-cm-procedure-oid.ttl>
+  ] .
+
+<#procedure-two-snomed-ct-codes> a bridge:IsomorphicConversionTest ;
+  mf:name "procedure-two-snomed-ct-codes" ;
+  rdfs:comment "A procedure with a SNOMED CT code and a SNOMED CT translation: both are carried, as cascade:snomedCode IRIs, and nothing is a finding." ;
+  mf:action [
+    bridge:input <in/procedure-two-snomed-ct-codes.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/procedure-two-snomed-ct-codes.ttl> ;
+    bridge:expectedFindings <findings/procedure-two-snomed-ct-codes.ttl>
+  ] .
+
+<#procedure-two-cpt-codes> a bridge:IsomorphicConversionTest ;
+  mf:name "procedure-two-cpt-codes" ;
+  rdfs:comment "A procedure with a CPT code and a different CPT translation: the code's own is carried, as cascade:cptCode, and the translation is not and is a finding, ccda:onlyFirstCarried." ;
+  mf:action [
+    bridge:input <in/procedure-two-cpt-codes.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/procedure-two-cpt-codes.ttl> ;
+    bridge:expectedFindings <findings/procedure-two-cpt-codes.ttl>
+  ] .
+
+<#result-interpretation-null-flavor> a bridge:IsomorphicConversionTest ;
+  mf:name "result-interpretation-null-flavor" ;
+  rdfs:comment "A result whose interpretationCode states a null flavour and no code: nothing is carried for it and it is no finding." ;
+  mf:action [
+    bridge:input <in/result-interpretation-null-flavor.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/result-interpretation-null-flavor.ttl> ;
+    bridge:expectedFindings <findings/result-interpretation-null-flavor.ttl>
+  ] .
+
+<#result-interpretation-not-carried> a bridge:IsomorphicConversionTest ;
+  mf:name "result-interpretation-not-carried" ;
+  rdfs:comment "A result flagged A in HL7 Table 0078 alone: the flag is not carried and is a finding, ccda:codeNotCarried." ;
+  mf:action [
+    bridge:input <in/result-interpretation-not-carried.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/result-interpretation-not-carried.ttl> ;
+    bridge:expectedFindings <findings/result-interpretation-not-carried.ttl>
   ] .
