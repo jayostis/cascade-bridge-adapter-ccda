@@ -1,5 +1,6 @@
 PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+PREFIX dct:      <http://purl.org/dc/terms/>
 PREFIX skos:     <http://www.w3.org/2004/02/skos/core#>
 PREFIX void:     <http://rdfs.org/ns/void#>
 PREFIX fx:       <http://sparql.xyz/facade-x/ns/>
@@ -240,6 +241,24 @@ WHERE {
       BIND (IF(BOUND(?loincStem), cascade:noteOrDocumentType, cascade:noteOrDocumentTypeInOtherSystem) AS ?p)
       BIND (IF(BOUND(?loincStem), IRI(CONCAT(STR(?loincStem), ENCODE_FOR_URI(?typeCode))), STRDT(?typeCode, IRI(?datatype))) AS ?o)
     }
+  }
+  UNION
+  {
+    # An unstructured document's note is identified by its document's id, as
+    # FHIR's DocumentReference.masterIdentifier holds it, mapped as
+    # result-identifiers.rq maps a result's.
+    ?statement a v3:nonXMLBody .
+    ?document a fx:root, v3:ClinicalDocument ; ?documentIdSlot ?documentId .
+    ?documentId a v3:id ; xyz:root ?documentIdRoot .
+    FILTER NOT EXISTS { ?documentId xyz:nullFlavor ?documentIdNullFlavor }
+    OPTIONAL { ?documentId xyz:extension ?documentIdExtension FILTER (STRLEN(?documentIdExtension) > 0) }
+    BIND (IF(REGEX(?documentIdRoot, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?documentIdRoot),
+          IF(REGEX(?documentIdRoot, "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"),
+             CONCAT("urn:uuid:", LCASE(?documentIdRoot)), 1/0)) AS ?documentRootIri)
+    BIND (IF(?documentIdRoot = "2.16.840.1.113883.4.6", "http://hl7.org/fhir/sid/us-npi", ?documentRootIri) AS ?documentIdSystem)
+    BIND (dct:identifier AS ?p)
+    BIND (IF(BOUND(?documentIdExtension), STRDT(?documentIdExtension, IRI(?documentIdSystem)),
+             IF(?documentIdSystem = ?documentRootIri, STRDT(?documentRootIri, <urn:ietf:rfc:3986>), 1/0)) AS ?o)
   }
   UNION
   {
