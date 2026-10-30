@@ -1,0 +1,15 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
+
+ccda:reportStatuses a skos:ConceptScheme ;
+  skos:prefLabel "C-CDA result organizer status to FHIR DiagnosticReport status"@en .
+
+ccda:reportStatusCancelled a skos:Concept ;
+  skos:inScheme ccda:reportStatuses ;
+  skos:notation "cancelled" ;
+  skos:exactMatch [ skos:notation "cancelled" ; skos:inScheme <http://hl7.org/fhir/diagnostic-report-status> ] .
+
+ccda:reportStatusCompleted a skos:Concept ;
+  skos:inScheme ccda:reportStatuses ;
+  skos:notation "completed" ;
+  skos:exactMatch [ skos:notation "final" ; skos:inScheme <http://hl7.org/fhir/diagnostic-report-status> ] .

@@ -14,6 +14,7 @@
       "bridge:envelope": "bridge:envelope",
       "bridge:docRootElementName": "bridge:docRootElementName",
       "bridge:elementNameOfEachRecord": "bridge:elementNameOfEachRecord",
+      "bridge:elementNameBreakingText": "bridge:elementNameBreakingText",
       "bridge:testManifest": "bridge:testManifest",
       "bridge:detectQuery": "bridge:detectQuery",
       "bridge:mapping": "bridge:mapping",
@@ -101,6 +102,7 @@
         }
       ],
       "bridge:elementNameOfEachRecord": "ClinicalDocument",
+      "bridge:elementNameBreakingText": ["br", "caption", "footnote", "item", "list", "paragraph", "table", "tbody", "td", "tfoot", "th", "thead", "tr"],
       "bridge:detectQuery": {
         "@id": "in/sparql/detect.rq"
       },
@@ -137,6 +139,12 @@
         },
         {
           "@id": "in/sparql/result-identifiers.rq"
+        },
+        {
+          "@id": "in/sparql/report.rq"
+        },
+        {
+          "@id": "in/sparql/note-or-document.rq"
         },
         {
           "@id": "in/sparql/document-organizations.rq"
@@ -216,6 +224,9 @@
         },
         {
           "@id": "vocab/ccda-result-statuses.ttl"
+        },
+        {
+          "@id": "vocab/ccda-report-statuses.ttl"
         },
         {
           "@id": "vocab/ccda-null-flavors.ttl"
@@ -313,6 +324,12 @@
           "@id": "in/sparql/result-identifiers.rq"
         },
         {
+          "@id": "in/sparql/report.rq"
+        },
+        {
+          "@id": "in/sparql/note-or-document.rq"
+        },
+        {
           "@id": "in/sparql/medication-findings.rq"
         },
         {
@@ -377,6 +394,9 @@
         },
         {
           "@id": "vocab/ccda-result-statuses.ttl"
+        },
+        {
+          "@id": "vocab/ccda-report-statuses.ttl"
         },
         {
           "@id": "vocab/ccda-null-flavors.ttl"
@@ -1182,8 +1202,8 @@
       "@type": "File",
       "name": "Document table: the clinical statements",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "35119",
-      "sha256": "95441390827847219e264a0276a6ddb10e38ead1cdb267488ef6232fa480f91b",
+      "contentSize": "45382",
+      "sha256": "9897dee92ff9462904dd05d8575ea940c050d9f1178442272eb3655786dde509",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1194,8 +1214,8 @@
       "@type": "File",
       "name": "Mapping: records, versions and arrivals",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "15588",
-      "sha256": "6734054e847d5efd32e423fc77f362060d107b8e14bdae1991514d20e1747583",
+      "contentSize": "16072",
+      "sha256": "934b0bd6ca4f953df9afdae640c1d7537bd857a684b64a1d7d9864451f79bf4f",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1218,8 +1238,8 @@
       "@type": "File",
       "name": "Mapping: allergy",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "13538",
-      "sha256": "88bd6aa1a64d666d4628b98fe0cdba8afc28ceb76cff5331c78278a8cbd1989f",
+      "contentSize": "13666",
+      "sha256": "a3d0701ff3dc55efccad9f5c6add98a6a62e3fc86643937b1004903bee599028",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1242,8 +1262,8 @@
       "@type": "File",
       "name": "Findings: sections not mapped",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "3453",
-      "sha256": "4ca42be173a26bab6b40ac8032a274f0de2261f380cb78d3b88068f13b81fbee",
+      "contentSize": "3502",
+      "sha256": "f7375657a9128ff406aaed8a64dd6ffef6c848166698dafa6342081822ef5f8f",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1254,8 +1274,8 @@
       "@type": "File",
       "name": "Findings: entries not mapped",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "4059",
-      "sha256": "6ca657b102b2adf49deed2113a640aa658ccc3b81dccd18921d9e59e030971c9",
+      "contentSize": "4099",
+      "sha256": "2f551bd5b4cf1a55c4c19ad2a2d04172c95406390a5dbd1b42f5d46cb0fd6bce",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1278,8 +1298,8 @@
       "@type": "File",
       "name": "Mapping: condition",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "14936",
-      "sha256": "9bed14215f6cd9f9c63273ee5fb53b6bf6aadfed533fa32ef2ba5e47cd096885",
+      "contentSize": "15095",
+      "sha256": "580a010d713e790c551da2b597e3158d7a6d4d5158a4c8fb79603f05875d32f0",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1290,8 +1310,8 @@
       "@type": "File",
       "name": "Mapping: immunization",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "9892",
-      "sha256": "048f5960e2da0fb2510f413e97ef73d029c2a66a053ca1a3162dd2f1a3e04e98",
+      "contentSize": "10020",
+      "sha256": "72484ac7ed7c7224584cfb12189364018d3c30e7cb148881f268b8098a003531",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1302,8 +1322,8 @@
       "@type": "File",
       "name": "Mapping: procedure",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "10898",
-      "sha256": "478d1bd89800169eff04997e43b9fa334a03c8b179f0dbda43e58c754caec02a",
+      "contentSize": "11026",
+      "sha256": "3f23f590a08923ac7d98b15e3642d99ebd340d799dc933ca6b00279e57cd152a",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1338,8 +1358,8 @@
       "@type": "File",
       "name": "Mapping: medication",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "15178",
-      "sha256": "49887392b0201b3ffa4e2a2b6662f932c8b5f435baea3808762d6aca341f0980",
+      "contentSize": "15382",
+      "sha256": "8bd94e37eb960e1c4e367cdb0f393d51c599231c7b43a97b003c4c255290e049",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1350,8 +1370,8 @@
       "@type": "File",
       "name": "Mapping: result",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "31342",
-      "sha256": "f8209401ffa1194684ca7d20ae53d776add2bcd66dfaf389da533206ff612313",
+      "contentSize": "31762",
+      "sha256": "e3e288d9ed4862c75e105dda6d70e0c051351939e1e1af3d78581c36dfe45899",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1380,6 +1400,30 @@
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "description": "Each id of a Result Observation, as a dct:identifier of its version, mapped as HL7's CDA-to-FHIR identifier mapping makes it one: the extension typed by the root's registered URI or its urn:oid: or urn:uuid: IRI, or a root alone as that IRI typed urn:ietf:rfc:3986."
+    },
+    {
+      "@id": "in/sparql/report.rq",
+      "@type": "File",
+      "name": "Mapping: reports",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "8693",
+      "sha256": "2017590a2cca1ee461302238250b7b2f0a5b3d0187567151e11cc1ec2cace5cf",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A Result Organizer of a Results section, as a cascade:DiagnosticReport, as C-CDA on FHIR maps an organizer to a DiagnosticReport: its code and translations as code IRIs or literals typed by their system, its code's displayName as its name, its time typed by its precision, its status through the report status map. record.rq links each Result Observation in it by obo:RO_0002351."
+    },
+    {
+      "@id": "in/sparql/note-or-document.rq",
+      "@type": "File",
+      "name": "Mapping: notes",
+      "encodingFormat": "application/sparql-query",
+      "contentSize": "11155",
+      "sha256": "e17acdfe380b3dae40a158e4d1685f11024ed04aca079a8aceca8b5151e5b739",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A Note Activity, and a note section that holds no entry (Assessment, Plan of Treatment, Assessment and Plan, History of Present Illness, Hospital Course), as a cascade:ClinicalNoteOrDocument: its type, type name, title, date, status and narrative text, the text being the lift's text with element breaks of the narrative it holds or references, or the decoded text of a base64 text, which is also its attachment."
     },
     {
       "@id": "in/sparql/medication-findings.rq",
@@ -1434,8 +1478,8 @@
       "@type": "File",
       "name": "Findings: references that name nothing",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "3031",
-      "sha256": "38922ff9e271583912b963c4f25b4bc47e2034544ea279a25b99e436803f67d2",
+      "contentSize": "2932",
+      "sha256": "918cd1e57ac155114261dde3860eced1b80db42b51440d1120ac6b1b5615cceb",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1446,8 +1490,8 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML gaps",
       "encodingFormat": "text/turtle",
-      "contentSize": "11125",
-      "sha256": "d960806359f4d23050f08201052658032e12e5944a03917a7a25fba686f902bb",
+      "contentSize": "11547",
+      "sha256": "796678f05f45cb6bbf90daf24095cc2ccc39dab829761aba15fe202693bd4b32",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1458,8 +1502,8 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML source accounting",
       "encodingFormat": "text/turtle",
-      "contentSize": "400885",
-      "sha256": "4256e40ae2aa6fd89ba48318e41da9216cfe492fd27585493cf37895100fb141",
+      "contentSize": "413444",
+      "sha256": "ae15e7ec516b9c048d44132a6743b9add1d55c0e2660e4d393075571869c2b30",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1700,6 +1744,21 @@
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ResultStatus.xml"
       },
       "description": "HL7 act statuses to FHIR Observation status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equal, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code; the rows it marks wider or inexact are left out."
+    },
+    {
+      "@id": "vocab/ccda-report-statuses.ttl",
+      "@type": "File",
+      "name": "Concept map: report statuses",
+      "encodingFormat": "text/turtle",
+      "contentSize": "705",
+      "sha256": "9f22fe2151fa3928ca11892f5f43f7045ce5f7ec0365a410efd86c7080e91aff",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ResultReportStatus.xml"
+      },
+      "description": "HL7 act statuses of a result organizer to FHIR DiagnosticReport status codes. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-30: each row HL7 marks equal, as a skos:exactMatch of the FHIR code and its system; the rows it marks wider or inexact are left out."
     },
     {
       "@id": "vocab/ccda-null-flavors.ttl",
@@ -2300,7 +2359,7 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "Three problems whose name is referenced into narrative cells the mappings cannot read: one holding a content element, one holding text and a content element, one empty. Authored here on 2026-10-23, for a case the conformance corpus does not hold; it validates against the CDA schema."
+      "description": "Three problems whose name is referenced into narrative cells holding markup or nothing: one holding a content element and one holding text and a content element, each read whole, and one empty, through which nothing is read. Authored here on 2026-10-23, for a case the conformance corpus does not hold; it validates against the CDA schema."
     },
     {
       "@id": "fixtures/in/fingerprint-repeated-and-reordered.xml",
@@ -2519,7 +2578,7 @@
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "Medications and results stated at their edges: a medication whose narrative name holds markup and whose code names it whole; a glucose with two interpretation codes and a range with only a high bound; a protein result coded with no name; and a creatinine with two values and a range with only a low bound. Authored here on 2026-10-07, for a case the conformance corpus does not hold; it validates against the CDA schema."
+      "description": "Medications and results stated at their edges: a medication whose narrative name holds markup, read whole as its name; a glucose with two interpretation codes and a range with only a high bound; a protein result coded with no name; and a creatinine with two values and a range with only a low bound. Authored here on 2026-10-07, for a case the conformance corpus does not hold; it validates against the CDA schema."
     },
     {
       "@id": "fixtures/in/results-value-kinds.xml",

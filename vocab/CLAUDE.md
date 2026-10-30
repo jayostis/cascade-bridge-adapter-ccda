@@ -55,10 +55,9 @@ verdict is settled against `../in/sparql/`, and a section this release does not
 map is a finding of `section-findings.rq`, not of the accounting.
 
 - **A loss is reported once.** An element whose content no predicate carries
-  (`/author`, a section's `text`, an `addr`) is `bridge:noHome` and names its
+  (`/author`, an `addr`) is `bridge:noHome` and names its
   gap; every path under it is `bridge:ignored`, held under it.
-- **A path a later release maps is left to it.** A result organizer's paths are
-  step 8's, which maps them.
+- **A path a later release maps is left to it**, not given a verdict ahead of the mapping.
 - **The narrative is open-ended.** A section's `text` holds any tree of
   NarrativeBlock elements, and only those the inputs carry have an entry; a
   new one is a `cascade:SourcePathNotAccounted` until it is added, as no verdict covers
