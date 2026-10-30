@@ -92,6 +92,9 @@
     <#note-edges>
     <#narrative-reference-across-breaks>
     <#report-time-null-flavor>
+    <#unstructured-document-text>
+    <#unstructured-document-pdf>
+    <#unstructured-document-reference>
   ) .
 
 <#allergies-section> a bridge:IsomorphicConversionTest ;
@@ -1277,4 +1280,43 @@
   mf:result [
     bridge:expectedGraph <expected/report-time-null-flavor.ttl> ;
     bridge:expectedFindings <findings/report-time-null-flavor.ttl>
+  ] .
+
+<#unstructured-document-text> a bridge:IsomorphicConversionTest ;
+  mf:name "unstructured-document-text" ;
+  rdfs:comment "An Unstructured Document whose nonXMLBody holds base64 text/plain: one note, named by the document's id, typed by its code 18842-5, dated by its effectiveTime, its text the decoded body, and the body its attachment, text/plain." ;
+  mf:action [
+    bridge:input <in/unstructured-document-text.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/unstructured-document-text.ttl> ;
+    bridge:expectedFindings <findings/unstructured-document-text.ttl>
+  ] .
+
+<#unstructured-document-pdf> a bridge:IsomorphicConversionTest ;
+  mf:name "unstructured-document-pdf" ;
+  rdfs:comment "An Unstructured Document whose nonXMLBody holds a base64 PDF: one note with its attachment, application/pdf, and no text, and the finding ccda:noteDataNotRead." ;
+  mf:action [
+    bridge:input <in/unstructured-document-pdf.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/unstructured-document-pdf.ttl> ;
+    bridge:expectedFindings <findings/unstructured-document-pdf.ttl>
+  ] .
+
+<#unstructured-document-reference> a bridge:IsomorphicConversionTest ;
+  mf:name "unstructured-document-reference" ;
+  rdfs:comment "An Unstructured Document whose nonXMLBody references a PDF file: one note whose attachment holds the media type and the file's address as written, no text, and the finding ccda:noteDataNotRead." ;
+  mf:action [
+    bridge:input <in/unstructured-document-reference.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/unstructured-document-reference.ttl> ;
+    bridge:expectedFindings <findings/unstructured-document-reference.ttl>
   ] .
