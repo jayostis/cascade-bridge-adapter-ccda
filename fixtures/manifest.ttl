@@ -85,6 +85,10 @@
     <#result-code-system-not-an-oid>
     <#result-test-code-in-snomed-ct>
     <#allergy-codes-in-other-systems>
+    <#note-activity>
+    <#a-note-section-sent-again-names-the-same-record>
+    <#a-grown-note-section-names-another-record>
+    <#a-note-activity-sent-again-names-the-same-record>
   ) .
 
 <#allergies-section> a bridge:IsomorphicConversionTest ;
@@ -1165,3 +1169,70 @@
     bridge:expectedGraph <expected/result-interpretation-not-carried.ttl> ;
     bridge:expectedFindings <findings/result-interpretation-not-carried.ttl>
   ] .
+
+<#note-activity> a bridge:IsomorphicConversionTest ;
+  mf:name "note-activity" ;
+  rdfs:comment "A Note Activity in a Notes section, coded 34109-9 with the translation 11506-3, its text a reference to a narrative item holding a caption and two paragraphs: one note record, typed by the translation, named Progress note, dated by its author's time padded to the second, current, its text the item's, a line for each block." ;
+  mf:action [
+    bridge:input <in/note-activity.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/note-activity.ttl> ;
+    bridge:expectedFindings <findings/note-activity.ttl>
+  ] .
+
+<#a-note-section-sent-again-names-the-same-record> a bridge:IdentityRelationTest ;
+  mf:name "a-note-section-sent-again-names-the-same-record" ;
+  rdfs:comment "A note section a source sends again, unchanged, in a later document is the same note: its name is its code and its text in the source's scope, never its document's date." ;
+  mf:action [
+    bridge:conversion [
+      bridge:input <in/plan-of-treatment-sent-first.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ] , [
+      bridge:input <in/plan-of-treatment-sent-again.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ]
+  ] ;
+  mf:result [ bridge:sameRecord true ] .
+
+<#a-grown-note-section-names-another-record> a bridge:IdentityRelationTest ;
+  mf:name "a-grown-note-section-names-another-record" ;
+  rdfs:comment "A note section whose text a later document of the source has grown is another note: nothing in the adapter joins it to the earlier one, which is the matcher's to rule." ;
+  mf:action [
+    bridge:conversion [
+      bridge:input <in/plan-of-treatment-sent-first.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ] , [
+      bridge:input <in/plan-of-treatment-grown.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ]
+  ] ;
+  mf:result [ bridge:sameRecord false ] .
+
+<#a-note-activity-sent-again-names-the-same-record> a bridge:IdentityRelationTest ;
+  mf:name "a-note-activity-sent-again-names-the-same-record" ;
+  rdfs:comment "A Note Activity a source sends again in another document is the same note, named by its id in the source's scope." ;
+  mf:action [
+    bridge:conversion [
+      bridge:input <in/note-activity.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='act' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ] , [
+      bridge:input <in/plan-of-treatment-sent-first.xml> ;
+      bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+      bridge:facts <facts/portal-download.ttl> ;
+      bridge:selector "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][2]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='act' and namespace-uri()='urn:hl7-org:v3'][1]"
+    ]
+  ] ;
+  mf:result [ bridge:sameRecord true ] .
