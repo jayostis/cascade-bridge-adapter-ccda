@@ -70,6 +70,8 @@
     <#values-in-another-order-name-one-record>
     <#patient-deceased>
     <#patient-gender-and-death-edges>
+    <#codes-in-other-systems>
+    <#result-interpretation-in-another-system>
   ) .
 
 <#allergies-section> a bridge:IsomorphicConversionTest ;
@@ -209,7 +211,7 @@
 
 <#medications-ndc-translations> a bridge:IsomorphicConversionTest ;
   mf:name "medications-ndc-translations" ;
-  rdfs:comment "A Medication Activity whose material is coded in a portal's own code system, with two RxNorm translations and three NDC translations: both RxNorm codes and the two NDCs of a hyphenated form, as 11-digit codes, are carried, the portal's own code is a finding, and so is the NDC of ten digits with no hyphens, whose segments cannot be told." ;
+  rdfs:comment "A Medication Activity whose material is coded in a portal's own code system, with two RxNorm translations and three NDC translations: both RxNorm codes and the two NDCs of a hyphenated form, as 11-digit codes, are carried, the portal's own code as a cascade:medicationCodeInOtherSystem literal typed by urn:oid: and the portal's OID, and the NDC of ten digits with no hyphens, whose segments cannot be told, is a finding." ;
   mf:action [
     bridge:input <in/medications-ndc-translations.xml> ;
     bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
@@ -954,4 +956,30 @@
   mf:result [
     bridge:expectedGraph <expected/patient-gender-and-death-edges.ttl> ;
     bridge:expectedFindings <findings/patient-gender-and-death-edges.ttl>
+  ] .
+
+<#codes-in-other-systems> a bridge:IsomorphicConversionTest ;
+  mf:name "codes-in-other-systems" ;
+  rdfs:comment "A drug coded by a formulary's code with an RxNorm translation, a problem coded in ICD-9-CM with a SNOMED CT translation, a procedure coded in HCPCS with CPT and SNOMED CT translations, and a test coded by a lab's local code with a LOINC translation. Each code in a system its kind has a term for is that term's IRI, the CPT code under Cascade's CPT stem; every other is a literal on its kind's cascade:medicationCodeInOtherSystem, conditionCodeInOtherSystem, procedureCodeInOtherSystem or testCodeInOtherSystem, typed by the system's FHIR URI where the code system table lists its OID (ICD-9-CM, HCPCS Level II) and by urn:oid: and the OID where it does not, and none is a finding." ;
+  mf:action [
+    bridge:input <in/codes-in-other-systems.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/codes-in-other-systems.ttl> ;
+    bridge:expectedFindings <findings/codes-in-other-systems.ttl>
+  ] .
+
+<#result-interpretation-in-another-system> a bridge:IsomorphicConversionTest ;
+  mf:name "result-interpretation-in-another-system" ;
+  rdfs:comment "A result flagged L in HL7 Table 0078 with a translation into HL7 ObservationInterpretation, and A in Table 0078 alone. The translation is carried, as the cascade:resultInterpretationCode L, and each flag in Table 0078 is not carried and is a finding, ccda:codeNotCarried." ;
+  mf:action [
+    bridge:input <in/result-interpretation-in-another-system.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/result-interpretation-in-another-system.ttl> ;
+    bridge:expectedFindings <findings/result-interpretation-in-another-system.ttl>
   ] .

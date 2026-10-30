@@ -454,6 +454,12 @@
           "@id": "fixtures/in/patient-gender-and-death-edges.xml"
         },
         {
+          "@id": "fixtures/in/codes-in-other-systems.xml"
+        },
+        {
+          "@id": "fixtures/in/result-interpretation-in-another-system.xml"
+        },
+        {
           "@id": "fixtures/in/no-record-target.xml"
         },
         {
@@ -649,6 +655,12 @@
           "@id": "fixtures/expected/patient-gender-and-death-edges.ttl"
         },
         {
+          "@id": "fixtures/expected/codes-in-other-systems.ttl"
+        },
+        {
+          "@id": "fixtures/expected/result-interpretation-in-another-system.ttl"
+        },
+        {
           "@id": "fixtures/expected/no-record-target.ttl"
         },
         {
@@ -680,6 +692,12 @@
         },
         {
           "@id": "fixtures/findings/patient-gender-and-death-edges.ttl"
+        },
+        {
+          "@id": "fixtures/findings/codes-in-other-systems.ttl"
+        },
+        {
+          "@id": "fixtures/findings/result-interpretation-in-another-system.ttl"
         },
         {
           "@id": "fixtures/findings/no-record-target.ttl"
@@ -1858,6 +1876,32 @@
       "description": "Six recordTargets, each patient with an id: a gender UN with a false sdtc:deceasedInd beside an sdtc:deceasedTime that is a month; a gender nullFlavor UNK with a true indicator beside a death time nullFlavor UNK; a gender code U, outside the concept map, with a null-flavoured indicator and death time; a gender M with a false indicator alone; a gender nullFlavor and a death time nullFlavor that are no NullFlavor code, beside a true indicator; and a gender M in another code system with an indicator padded with spaces, true. A custodian id and one problem with an id. Authored here on 2026-10-29, for a case the conformance corpus does not hold; it validates against the CDA schema."
     },
     {
+      "@id": "fixtures/in/codes-in-other-systems.xml",
+      "@type": "File",
+      "name": "C-CDA: codes-in-other-systems",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "7806",
+      "sha256": "70b0ec04e198f9976414343ac392b822f1188b928b8d75a323f164f5f4395293",
+      "dateCreated": "2026-10-29",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "One recordTarget, a custodian id, and four statements each coded in a system beside one its kind has a term for: a Medication Activity coded FRM-4471 in a formulary's OID with the RxNorm translation 314076; a Problem Observation valued 493.90 in ICD-9-CM (2.16.840.1.113883.6.103) with the SNOMED CT translation 195967001; a Procedure Activity Procedure coded G0121 in HCPCS Level II (2.16.840.1.113883.6.285) with the translations CPT 45378 and SNOMED CT 73761001; and a Result Observation coded B12-SER in a lab's OID with the LOINC translation 2132-9. LOINC 2132-9 read on NLM Clinical Tables, ICD-9-CM 493.90 on NLM Clinical Tables and SNOMED CT 73761001 and 195967001 on tx.fhir.org, 2026-10-29; G0121 as cascade-vocabulary's tests/shape-cases/record-procedure/valid.ttl holds it. Authored here on 2026-10-29, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/result-interpretation-in-another-system.xml",
+      "@type": "File",
+      "name": "C-CDA: result-interpretation-in-another-system",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "3850",
+      "sha256": "c5f4d537cda778b71bc107201d9259a5fb98758660bf527ae0988f63c3cca077",
+      "dateCreated": "2026-10-29",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "One recordTarget, a custodian id, and one Result Observation, LOINC 2132-9, with two interpretationCodes in HL7 Table 0078 (2.16.840.1.113883.12.78): L, with a translation L in HL7 ObservationInterpretation (2.16.840.1.113883.5.83), and A alone. Authored here on 2026-10-29, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
       "@id": "fixtures/in/no-record-target.xml",
       "@type": "File",
       "name": "C-CDA: no-record-target",
@@ -2691,8 +2735,8 @@
       "@type": "File",
       "name": "Expected graph for medications-ndc-translations",
       "encodingFormat": "text/turtle",
-      "contentSize": "6719",
-      "sha256": "4df096767e140545d61044b3d0f6c675f2b8edfaf0297ea04d005d8ea5997003",
+      "contentSize": "6807",
+      "sha256": "833cb625172dab79828cb98c38f03216853a235c25ab9a85b4bf44d0361045cc",
       "about": {
         "@id": "fixtures/in/medications-ndc-translations.xml"
       },
@@ -2707,8 +2751,8 @@
       "@type": "File",
       "name": "Expected findings for medications-ndc-translations",
       "encodingFormat": "text/turtle",
-      "contentSize": "7465",
-      "sha256": "ee31a9e711eeebfd265e9f2099405348e5a1b90f823b4a0431a0a34e165753b7",
+      "contentSize": "6320",
+      "sha256": "c2e3af9b0e79196205ca4faaaa31c6c0974ce31120d3556932de3a305c9b9f5b",
       "about": {
         "@id": "fixtures/in/medications-ndc-translations.xml"
       },
@@ -2883,8 +2927,8 @@
       "@type": "File",
       "name": "Expected graph for procedures",
       "encodingFormat": "text/turtle",
-      "contentSize": "8065",
-      "sha256": "1f9e4a68334ca1f511489b812e2d624d25cfa751e511c485fb8aea4359cdcad2",
+      "contentSize": "8045",
+      "sha256": "71d0047ba7420adfe5175be4927ea3e92bcf5ba1f7f8c39f4f62f0b97132246e",
       "about": {
         "@id": "fixtures/in/procedures.xml"
       },
@@ -2951,6 +2995,38 @@
       "sha256": "0ede979bbb8125f2c0f485a2bc82e8c9bf810b918cc82ecaceddfa608d39bdfa",
       "about": {
         "@id": "fixtures/in/patient-gender-and-death-edges.xml"
+      },
+      "dateCreated": "2026-10-29",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/codes-in-other-systems.ttl",
+      "@type": "File",
+      "name": "Expected graph for codes-in-other-systems",
+      "encodingFormat": "text/turtle",
+      "contentSize": "12532",
+      "sha256": "9f77f68d285dca157d14906491f35733329266b085de585927d4d69e77a44885",
+      "about": {
+        "@id": "fixtures/in/codes-in-other-systems.xml"
+      },
+      "dateCreated": "2026-10-29",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/result-interpretation-in-another-system.ttl",
+      "@type": "File",
+      "name": "Expected graph for result-interpretation-in-another-system",
+      "encodingFormat": "text/turtle",
+      "contentSize": "6961",
+      "sha256": "9812384d13fcd80aed459cbac82ef3e73e0a4a808750e1997f5476c20aff4bf3",
+      "about": {
+        "@id": "fixtures/in/result-interpretation-in-another-system.xml"
       },
       "dateCreated": "2026-10-29",
       "license": {
@@ -3075,8 +3151,8 @@
       "@type": "File",
       "name": "Expected findings for fingerprint-keys",
       "encodingFormat": "text/turtle",
-      "contentSize": "8363",
-      "sha256": "40d89d05949702c7241268f9887c399503a5992b3dce217e15308993d99c489b",
+      "contentSize": "12061",
+      "sha256": "6cf932ff2d233935d2d2061f53066cfaefbf6eb7cbc6874b548b7b8de51be2c0",
       "about": {
         "@id": "fixtures/in/fingerprint-keys.xml"
       },
@@ -3127,6 +3203,38 @@
       "sha256": "d107b75e1d1c0fe2e14c9a10c97bcd7ea4a0df946df62db7036cebe24e108bd3",
       "about": {
         "@id": "fixtures/in/patient-gender-and-death-edges.xml"
+      },
+      "dateCreated": "2026-10-29",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/findings/codes-in-other-systems.ttl",
+      "@type": "File",
+      "name": "Expected findings for codes-in-other-systems",
+      "encodingFormat": "text/turtle",
+      "contentSize": "5710",
+      "sha256": "51b9631bfbe0b788530f883a3f9131e167227df7817ae9b7301c8d2cc10d94e9",
+      "about": {
+        "@id": "fixtures/in/codes-in-other-systems.xml"
+      },
+      "dateCreated": "2026-10-29",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/findings/result-interpretation-in-another-system.ttl",
+      "@type": "File",
+      "name": "Expected findings for result-interpretation-in-another-system",
+      "encodingFormat": "text/turtle",
+      "contentSize": "6499",
+      "sha256": "d2a50e0bfaaf1b67c040265a2ee730924c66c8f84a1a81b0f1070c8e1adcad2c",
+      "about": {
+        "@id": "fixtures/in/result-interpretation-in-another-system.xml"
       },
       "dateCreated": "2026-10-29",
       "license": {
@@ -3187,8 +3295,8 @@
       "@type": "File",
       "name": "Expected findings for fingerprint-repeated-and-reordered",
       "encodingFormat": "text/turtle",
-      "contentSize": "7090",
-      "sha256": "2cf93df1015dc72277c3ab4a4ea28fb4b70935a5a3ca545e45bc54ae815fa395",
+      "contentSize": "12448",
+      "sha256": "2cc2585527e790706e504a8148213725156ee3f89983fe16a917e1ad77530d52",
       "about": {
         "@id": "fixtures/in/fingerprint-repeated-and-reordered.xml"
       },
@@ -3203,8 +3311,8 @@
       "@type": "File",
       "name": "Expected findings for fingerprint-values-reordered",
       "encodingFormat": "text/turtle",
-      "contentSize": "5743",
-      "sha256": "06a5b2afc52eb9643d393da3deac8ebcebcfdfd2ac1c09af3fa359ba938f287d",
+      "contentSize": "8373",
+      "sha256": "1329ddceeb84bada5ce2fe7c2f371b4f464e79bce730bafcc78d46d5ff1694b6",
       "about": {
         "@id": "fixtures/in/fingerprint-values-reordered.xml"
       },
@@ -3363,8 +3471,8 @@
       "@type": "File",
       "name": "Expected graph for medications-and-results-a",
       "encodingFormat": "text/turtle",
-      "contentSize": "24234",
-      "sha256": "d17eab7b7a706289b14646f16184d96e6af36bc3d86fce8a16600cb5148df1d6",
+      "contentSize": "24482",
+      "sha256": "0d27701607928fd23c4b2bb731ec72ad96cab343c0dbaa085f1fb55481e547e3",
       "about": {
         "@id": "fixtures/in/medications-and-results-a.xml"
       },
@@ -3379,8 +3487,8 @@
       "@type": "File",
       "name": "Expected findings for medications-and-results-a",
       "encodingFormat": "text/turtle",
-      "contentSize": "21360",
-      "sha256": "baea8a542b3f1aea0dc6c6abeb0d23111138538d636b83c8bb83c3e44935860e",
+      "contentSize": "18753",
+      "sha256": "3b672a0765714e39d870de6e52ff713aa8adf1ba26b4db059b56ad05baf14bc6",
       "about": {
         "@id": "fixtures/in/medications-and-results-a.xml"
       },
@@ -3395,8 +3503,8 @@
       "@type": "File",
       "name": "Expected graph for medications-and-results-edges",
       "encodingFormat": "text/turtle",
-      "contentSize": "13758",
-      "sha256": "bd4613249bc113f0e2692ebcbc1cd10390425cb1da720196d0c2ac780f6aa459",
+      "contentSize": "13894",
+      "sha256": "f9ef854c7a68966f8514d10c1d629ccc91e960515cc7b3989aca0cae81883dbd",
       "about": {
         "@id": "fixtures/in/medications-and-results-edges.xml"
       },
@@ -3491,8 +3599,8 @@
       "@type": "File",
       "name": "Expected findings for medications-and-results-edges",
       "encodingFormat": "text/turtle",
-      "contentSize": "8926",
-      "sha256": "79f65aebe27a5466a61dca301b8ce2422f877232e4036e4344524b13ceb17ac2",
+      "contentSize": "7531",
+      "sha256": "4995d92e4382cb6fdd41e925986e05f38a0519c72fbd7e1230e401a63cb6eab7",
       "about": {
         "@id": "fixtures/in/medications-and-results-edges.xml"
       },
@@ -3587,8 +3695,8 @@
       "@type": "File",
       "name": "Expected graph for medications-and-results-b",
       "encodingFormat": "text/turtle",
-      "contentSize": "24245",
-      "sha256": "afc9fdcbd7d816338b1ebc45fe5f8425caa9af2b1e00c109b61bc2861b10284f",
+      "contentSize": "24489",
+      "sha256": "89506b94de2e3c857c27f2a40bad7b76163327537e7ac22f0477bdce0375f665",
       "about": {
         "@id": "fixtures/in/medications-and-results-b.xml"
       },
@@ -3603,8 +3711,8 @@
       "@type": "File",
       "name": "Expected findings for medications-and-results-b",
       "encodingFormat": "text/turtle",
-      "contentSize": "21363",
-      "sha256": "b446dd9f56275f6a34471ed5f852db708af6aae4b13a1c2c2da72c38ae1db1bf",
+      "contentSize": "18737",
+      "sha256": "67c221fdd27f42a67627c6488c6f247ff18b77283c0c85e74ed8077c9fe9a11d",
       "about": {
         "@id": "fixtures/in/medications-and-results-b.xml"
       },
