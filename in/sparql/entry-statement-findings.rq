@@ -11,8 +11,9 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # A status an immunization, a procedure or a medication states that the
 # concept map its mapping reads it through does not hold; a vaccine's code in a
 # code system no predicate of an immunization carries; a code of a drug or a
-# procedure with no code system, or a code system that is no OID, or no code;
-# and a nullFlavor on its time or a
+# procedure with no code system, or a code system that is no OID, or no code, or
+# a code of blanks; a procedure's CPT code other than the first, the one
+# procedure.rq writes, as onlyFirstCarried; and a nullFlavor on its time or a
 # bound of it that is no NullFlavor code. A statement whose negationInd is true is
 # not-done whatever its statusCode says.
 
@@ -84,9 +85,33 @@ WHERE {
     OPTIONAL { ?coding xyz:codeSystem ?statedSystem }
     FILTER (BOUND(?statedCode) || BOUND(?statedSystem))
     BIND (LCASE(REPLACE(REPLACE(?statedSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")) AS ?statedKey)
-    FILTER (!BOUND(?statedCode) || !BOUND(?statedSystem) || !REGEX(?statedKey, "^[0-2](\\.(0|[1-9][0-9]*))+$"))
+    FILTER (!BOUND(?statedCode) || !BOUND(?statedSystem) || !REGEX(?statedKey, "^[0-2](\\.(0|[1-9][0-9]*))+$") || REPLACE(?statedCode, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") = "")
     BIND (COALESCE(?statedSystem, ?statedCode) AS ?value)
     BIND (ccda:codeNotCarried AS ?gap)
+  }
+  UNION
+  {
+    {
+      SELECT ?statement (MIN(?ranked) AS ?firstCpt) WHERE {
+        { ?statement ?cS ?cpt . ?cpt a v3:code . BIND ("0" AS ?tier) BIND (STRAFTER(STR(?cS), "#_") AS ?at) }
+        UNION
+        { ?statement ?cS ?own . ?own a v3:code ; ?trS ?cpt . ?cpt a v3:translation . BIND ("1" AS ?tier) BIND (STRAFTER(STR(?trS), "#_") AS ?at) }
+        ?cpt xyz:code ?stated ; xyz:codeSystem ?system .
+        FILTER (LCASE(REPLACE(REPLACE(?system, "^[ \t\r\n]+|[ \t\r\n]+$", ""), "^urn:oid:", "", "i")) = "2.16.840.1.113883.6.12")
+        BIND (REPLACE(?stated, "^[ \t\r\n]+|[ \t\r\n]+$", "") AS ?firstCode)
+        FILTER (?firstCode != "")
+        BIND (CONCAT(?tier, SUBSTR("0000000000", STRLEN(?at) + 1), ?at, "|", ?firstCode) AS ?ranked)
+      } GROUP BY ?statement
+    }
+    { ?statement ?cS ?coding . ?coding a v3:code }
+    UNION
+    { ?statement ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
+    ?coding xyz:code ?laterStated ; xyz:codeSystem ?laterSystem .
+    FILTER (LCASE(REPLACE(REPLACE(?laterSystem, "^[ \t\r\n]+|[ \t\r\n]+$", ""), "^urn:oid:", "", "i")) = "2.16.840.1.113883.6.12")
+    BIND (REPLACE(?laterStated, "^[ \t\r\n]+|[ \t\r\n]+$", "") AS ?value)
+    FILTER (?value != "" && ?value != STRAFTER(?firstCpt, "|"))
+    BIND ("Procedure" AS ?class)
+    BIND (ccda:onlyFirstCarried AS ?gap)
   }
   UNION
   {

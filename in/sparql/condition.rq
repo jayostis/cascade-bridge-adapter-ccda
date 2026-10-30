@@ -264,7 +264,9 @@ WHERE {
       ("http://snomed.info/sct"^^xsd:anyURI            cascade:snomedCode)
       ("http://hl7.org/fhir/sid/icd-10-cm"^^xsd:anyURI cascade:icd10Code)
     }
-    BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?codeValue))) AS ?o)
+    BIND (REPLACE(?codeValue, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?trimmedCode)
+    FILTER (?trimmedCode != "")
+    BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?trimmedCode))) AS ?o)
   }
   UNION
   {
@@ -272,7 +274,7 @@ WHERE {
     UNION
     { ?condition ?vS ?coded . ?coded a v3:value ; ?trS ?coding . ?coding a v3:translation }
     ?coding xyz:code ?codeValue ; xyz:codeSystem ?codeSystem .
-    BIND (LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")) AS ?systemKey)
+    BIND (COALESCE(LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")), "") AS ?systemKey)
     OPTIONAL { ?listed skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; cascade:codingSystemUri ?listedUri }
     BIND (COALESCE(STR(?listedUri), IF(REGEX(?systemKey, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?systemKey), 1/0)) AS ?datatype)
     FILTER (?datatype NOT IN ("http://snomed.info/sct", "http://hl7.org/fhir/sid/icd-10-cm"))

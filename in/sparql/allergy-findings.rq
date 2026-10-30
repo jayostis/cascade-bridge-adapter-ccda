@@ -97,7 +97,7 @@ WHERE {
     ?coding xyz:code ?codeValue ; xyz:codeSystem ?value .
     FILTER NOT EXISTS {
       ?system skos:inScheme ccda:codeSystems ; skos:notation ?systemKey .
-      FILTER (?systemKey = LCASE(REPLACE(?value, "^urn:oid:", "")) && ?systemKey != "2.16.840.1.113883.6.69")
+      FILTER (?systemKey = LCASE(REPLACE(?value, "^urn:oid:", "")) && ?systemKey IN ("2.16.840.1.113883.6.88", "2.16.840.1.113883.6.96", "2.16.840.1.113883.6.1", "2.16.840.1.113883.6.90", "2.16.840.1.113883.6.103", "2.16.840.1.113883.6.12", "2.16.840.1.113883.12.292", "2.16.840.1.113883.4.9"))
     }
     BIND (ccda:codeSystemNotMapped AS ?gap)
   }

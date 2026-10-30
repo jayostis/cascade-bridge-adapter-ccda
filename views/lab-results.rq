@@ -26,11 +26,11 @@ WHERE {
   OPTIONAL { ?version cascade:resultClinicallyRelevantTime ?d }
   BIND (STR(?id) AS ?sourceRecordId)
   BIND (STR(?n) AS ?testName)
-  BIND (REPLACE(STR(?c), "^http://loinc.org/rdf/", "") AS ?loincCode)
+  BIND (REPLACE(STR(?c), "^http://loinc\\.org/rdf/", "") AS ?loincCode)
   BIND (STR(COALESCE(CONCAT(COALESCE(?comparator, ""), ?written), ?text)) AS ?resultValue)
   BIND (STR(COALESCE(?unitText, ?ucumUnit, ?textUnit)) AS ?resultUnit)
   BIND (STR(?r) AS ?referenceRange)
-  BIND (REPLACE(STR(?i), "^https://ns.cascadeprotocol.org/codes/observationinterpretation/", "") AS ?resultInterpretationCode)
+  BIND (REPLACE(STR(?i), "^https://ns\\.cascadeprotocol\\.org/codes/observationinterpretation/", "") AS ?resultInterpretationCode)
   BIND (STR(?s) AS ?workflowStatus)
   BIND (STR(?d) AS ?resultClinicallyRelevantTime)
 }

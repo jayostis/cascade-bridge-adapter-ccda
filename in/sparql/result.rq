@@ -345,10 +345,12 @@ WHERE {
         { ?result ?cS ?coding . ?coding a v3:code }
         UNION
         { ?result ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
-        ?coding xyz:code ?testCode ; xyz:codeSystem ?codeSystem .
+        ?coding xyz:code ?statedTestCode ; xyz:codeSystem ?codeSystem .
         ?system skos:notation ?systemKey ; void:uriSpace ?stem .
         VALUES ?system { ccda:codeSystemLoinc ccda:codeSystemSnomedCt }
         FILTER (?systemKey = LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")))
+        BIND (REPLACE(?statedTestCode, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?testCode)
+        FILTER (?testCode != "")
         BIND (cascade:testCode AS ?p)
         BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?testCode))) AS ?o)
       }
@@ -358,7 +360,7 @@ WHERE {
         UNION
         { ?result ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
         ?coding xyz:code ?testCode ; xyz:codeSystem ?codeSystem .
-        BIND (LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")) AS ?systemKey)
+        BIND (COALESCE(LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")), "") AS ?systemKey)
         OPTIONAL { ?listed skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; cascade:codingSystemUri ?listedUri }
         BIND (COALESCE(STR(?listedUri), IF(REGEX(?systemKey, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?systemKey), 1/0)) AS ?datatype)
         FILTER (?datatype NOT IN ("http://loinc.org", "http://snomed.info/sct"))

@@ -240,6 +240,11 @@ other value: it is no code, and a finding. An NDC is a medication's code only:
 an allergen or a reaction coded by NDC is a finding, never a code, since an
 NDC names a packaged product and not the substance a person reacts to.
 
+An allergen or a reaction is carried only under the code systems it was before
+the table listed codes in other systems: RxNorm, SNOMED CT, LOINC, ICD-10-CM,
+ICD-9-CM (`2.16.840.1.113883.6.103`), CPT, CVX and UNII. A code in any other
+system, however the table lists it, is the finding `ccda:codeSystemNotMapped`.
+
 Epic writes a code system as `urn:oid:` and the OID, which CDA's schema refuses;
 the mappings read the OID after the prefix.
 
@@ -250,7 +255,7 @@ the RxNorm or LOINC code as a `translation`.
 An immunization's `vaccineCode` is written as the first CVX code it carries, the `code` before a `translation`, and no other.
 
 A test's, a drug's, a problem's and a procedure's code and each of its
-translations are carried, every one. A code in a system its kind has a term
+translations are carried, every one, except a procedure's CPT code, of which the vocabulary holds one: the first, the code's own before a translation's, is carried and each later CPT code that differs is a finding, `ccda:onlyFirstCarried`. A code in a system its kind has a term
 for is that term's IRI: LOINC and SNOMED CT for a test, RxNorm and NDC for a
 drug, SNOMED CT and ICD-10-CM for a problem, SNOMED CT and CPT for a procedure.
 Any other is a literal, the code trimmed of spaces, typed by its system's URI,
@@ -262,9 +267,10 @@ HCPCS code is typed `http://www.cms.gov/Medicare/Coding/HCPCSReleaseCodeSets`
 and an ICD-9-CM code `http://hl7.org/fhir/sid/icd-9-cm` under any of its four
 OIDs, and an OID the table does not hold is `urn:oid:` and the OID, read
 without regard to the prefix's case. A SNOMED CT code of a drug stays a
-literal: a SNOMED CT IRI would match two drugs whatever their dates. A code
+literal while M16, how a drug's codes are matched (unruled, jayostis/cascade-vocabulary#286),
+is open. A code
 stated with no code system, or with one that is no OID, or a code system with
-no code, is not carried and is a finding, `ccda:codeNotCarried`, as an
+no code, or a code of spaces only, is not carried and is a finding, `ccda:codeNotCarried`, as an
 immunization's code in a system other than CVX is.
 
 A result's every `interpretationCode`, and each translation of one, in HL7

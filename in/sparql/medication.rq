@@ -236,7 +236,9 @@ WHERE {
     { ?material ?cS ?coding . ?coding a v3:code }
     UNION
     { ?material ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
-    ?coding xyz:code ?codeValue ; xyz:codeSystem ?codeSystem .
+    ?coding xyz:code ?statedCode ; xyz:codeSystem ?codeSystem .
+    BIND (REPLACE(?statedCode, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?codeValue)
+    FILTER (?codeValue != "")
     VALUES (?systemKey ?p) {
       ("2.16.840.1.113883.6.88" cascade:rxNormCode)
       ("2.16.840.1.113883.6.69" cascade:ndcCode)
@@ -263,7 +265,7 @@ WHERE {
     UNION
     { ?material ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
     ?coding xyz:code ?codeValue ; xyz:codeSystem ?codeSystem .
-    BIND (LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")) AS ?systemKey)
+    BIND (COALESCE(LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")), "") AS ?systemKey)
     OPTIONAL { ?listed skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; cascade:codingSystemUri ?listedUri }
     BIND (COALESCE(STR(?listedUri), IF(REGEX(?systemKey, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?systemKey), 1/0)) AS ?datatype)
     FILTER (?datatype NOT IN ("http://www.nlm.nih.gov/research/umls/rxnorm", "http://hl7.org/fhir/sid/ndc"))

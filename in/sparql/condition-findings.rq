@@ -90,7 +90,7 @@ WHERE {
     OPTIONAL { ?coding xyz:codeSystem ?statedSystem }
     FILTER (BOUND(?statedCode) || BOUND(?statedSystem))
     BIND (LCASE(REPLACE(REPLACE(?statedSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")) AS ?statedKey)
-    FILTER (!BOUND(?statedCode) || !BOUND(?statedSystem) || !REGEX(?statedKey, "^[0-2](\\.(0|[1-9][0-9]*))+$"))
+    FILTER (!BOUND(?statedCode) || !BOUND(?statedSystem) || !REGEX(?statedKey, "^[0-2](\\.(0|[1-9][0-9]*))+$") || REPLACE(?statedCode, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") = "")
     BIND (COALESCE(?statedSystem, ?statedCode) AS ?value)
     BIND (ccda:codeNotCarried AS ?gap)
   }

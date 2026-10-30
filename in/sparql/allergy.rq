@@ -210,7 +210,7 @@ WHERE {
     { ?entity ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
     ?coding xyz:code ?codeValue ; xyz:codeSystem ?codeSystem .
     ?system skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; void:uriSpace ?stem .
-    FILTER (?systemKey = LCASE(REPLACE(?codeSystem, "^urn:oid:", "")) && ?systemKey != "2.16.840.1.113883.6.69")
+    FILTER (?systemKey = LCASE(REPLACE(?codeSystem, "^urn:oid:", "")) && ?systemKey IN ("2.16.840.1.113883.6.88", "2.16.840.1.113883.6.96", "2.16.840.1.113883.6.1", "2.16.840.1.113883.6.90", "2.16.840.1.113883.6.103", "2.16.840.1.113883.6.12", "2.16.840.1.113883.12.292", "2.16.840.1.113883.4.9"))
     BIND (cascade:allergenCode AS ?p)
     BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?codeValue))) AS ?o)
   }
@@ -228,7 +228,7 @@ WHERE {
     {
       ?coded xyz:code ?codeValue ; xyz:codeSystem ?codeSystem .
       ?system skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; void:uriSpace ?stem .
-      FILTER (?systemKey = LCASE(REPLACE(?codeSystem, "^urn:oid:", "")) && ?systemKey != "2.16.840.1.113883.6.69")
+      FILTER (?systemKey = LCASE(REPLACE(?codeSystem, "^urn:oid:", "")) && ?systemKey IN ("2.16.840.1.113883.6.88", "2.16.840.1.113883.6.96", "2.16.840.1.113883.6.1", "2.16.840.1.113883.6.90", "2.16.840.1.113883.6.103", "2.16.840.1.113883.6.12", "2.16.840.1.113883.12.292", "2.16.840.1.113883.4.9"))
       BIND (cascade:reactionManifestationCode AS ?p)
       BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?codeValue))) AS ?o)
     }
