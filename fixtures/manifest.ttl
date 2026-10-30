@@ -98,6 +98,7 @@
     <#narrative-reference-invisible>
     <#an-amended-unstructured-document-names-the-same-note>
     <#unstructured-document-reference-untyped>
+    <#narrative-breaks-in-blocks>
   ) .
 
 <#allergies-section> a bridge:IsomorphicConversionTest ;
@@ -1366,4 +1367,17 @@
   mf:result [
     bridge:expectedGraph <expected/unstructured-document-reference-untyped.ttl> ;
     bridge:expectedFindings <findings/unstructured-document-reference-untyped.ttl>
+  ] .
+
+<#narrative-breaks-in-blocks> a bridge:IsomorphicConversionTest ;
+  mf:name "narrative-breaks-in-blocks" ;
+  rdfs:comment "A note section whose narrative holds a line break in a paragraph, a list item, a header cell and a paragraph inside a cell: each break is accounted, and the note's text holds a line at each." ;
+  mf:action [
+    bridge:input <in/narrative-breaks-in-blocks.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/narrative-breaks-in-blocks.ttl> ;
+    bridge:expectedFindings <findings/narrative-breaks-in-blocks.ttl>
   ] .
