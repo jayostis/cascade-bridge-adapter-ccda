@@ -12,15 +12,17 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # source states several, the first in document order is carried: the name, read
 # in this order: the narrative its code's originalText references, the
 # originalText's own text, the code's displayName; and the SNOMED CT and CPT
-# codes, the code's own before a translation's: SNOMED CT as the IRI
-# ../../vocab/ccda-code-systems.ttl gives it, CPT as the code alone, as the
-# vocabulary's terms take them. The status is not-done where
+# codes, the code's own before a translation's, each as the IRI
+# ../../vocab/ccda-code-systems.ttl gives it. Every code in another code system,
+# of the code and its translations, is a cascade:procedureCodeInOtherSystem
+# literal, as result.rq writes a test's. The status is not-done where
 # negationInd is true, the procedure not performed, and otherwise the
 # statusCode, where it maps to a procedure status. A time is written as
 # allergy.rq writes it.
 
 CONSTRUCT {
   ?version ?p ?o .
+  ?version cascade:procedureCodeInOtherSystem ?otherSystemCode .
   ?version cascade:paddedDateTime ?paddedNode .
   ?paddedNode cascade:paddedDateTimeProperty ?p ;
     cascade:writtenDate ?writtenTime .
@@ -100,7 +102,7 @@ WHERE {
             ("2.16.840.1.113883.6.96" cascade:snomedCode)
             ("2.16.840.1.113883.6.12" cascade:cptCode)
           }
-          FILTER (?system = REPLACE(?codeSystem, "^urn:oid:", ""))
+          FILTER (?system = LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")))
         }
       }
       UNION
@@ -147,9 +149,28 @@ WHERE {
                    SUBSTR("00000000000000000000", STRLEN(?inner) + 1), ?inner, "|", ?value) AS ?ranked)
     } GROUP BY ?procedure ?p
   }
+  UNION
+  {
+    SELECT ?procedure ?otherSystemCode WHERE {
+      ?procedure a v3:procedure .
+      { ?procedure ?cS ?coding . ?coding a v3:code }
+      UNION
+      { ?procedure ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
+      ?coding xyz:code ?codeValue ; xyz:codeSystem ?codeSystem .
+      BIND (LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")) AS ?systemKey)
+      OPTIONAL { ?listed skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; cascade:codingSystemUri ?listedUri }
+      BIND (COALESCE(STR(?listedUri), IF(REGEX(?systemKey, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?systemKey), 1/0)) AS ?datatype)
+      FILTER (?datatype NOT IN ("http://snomed.info/sct", "http://www.ama-assn.org/go/cpt"))
+      BIND (REPLACE(?codeValue, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?otherCode)
+      FILTER (?otherCode != "")
+      BIND (STRDT(?otherCode, IRI(?datatype)) AS ?otherSystemCode)
+    }
+  }
   BIND (STRAFTER(?first, "|") AS ?value)
   ccda:codeSystemSnomedCt void:uriSpace ?snomedStem .
+  ccda:codeSystemCpt void:uriSpace ?cptStem .
   BIND (IF(?p = cascade:snomedCode, IRI(CONCAT(?snomedStem, ENCODE_FOR_URI(?value))),
+        IF(?p = cascade:cptCode, IRI(CONCAT(?cptStem, ENCODE_FOR_URI(?value))),
         IF(?p != cascade:procedureDate, ?value,
         IF(REGEX(?value, "^[0-9]{10}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?([+-][0-9]{4})?$"),
            STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), "-", SUBSTR(?value, 7, 2),
@@ -163,7 +184,7 @@ WHERE {
            STRDT(CONCAT(SUBSTR(?value, 1, 4), "-", SUBSTR(?value, 5, 2), IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")), xsd:gYearMonth),
         IF(REGEX(?value, "^[0-9]{4}([+-][0-9]{4})?$"),
            STRDT(CONCAT(SUBSTR(?value, 1, 4), IF(REGEX(?value, "[+-][0-9]{4}$"), REPLACE(?value, "^.*([+-][0-9]{2})([0-9]{2})$", "$1:$2"), "")), xsd:gYear),
-           1/0)))))) AS ?o)
+           1/0))))))) AS ?o)
   BIND (IF(?p IN (cascade:procedureDate) && REGEX(?value, "^[0-9]{10}([0-9]{2})?([+-][0-9]{4})?$"),
            CONCAT("#padded-", STRAFTER(STR(?p), "#")), 1/0) AS ?paddedFragment)
   BIND (IF(BOUND(?paddedFragment), ?value, 1/0) AS ?writtenTime)

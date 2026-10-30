@@ -10,8 +10,8 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # A status a problem states that the concept map condition.rq reads it through
 # does not hold: its Problem Status Observation's, or, where it has none, its
-# concern act's. And a code in a code system no predicate of a condition
-# carries, and a nullFlavor on its time or a bound of it that is no NullFlavor
+# concern act's. And a code of its value with no code system, or a code
+# system that is no OID, or no code, and a nullFlavor on its time or a bound of it that is no NullFlavor
 # code, so no reason for the absent date is carried.
 
 CONSTRUCT {
@@ -83,11 +83,15 @@ WHERE {
   }
   UNION
   {
-    ?condition ?vS ?coded . ?coded a v3:value .
-    { ?coded xyz:codeSystem ?value . }
+    { ?condition ?vS ?coding . ?coding a v3:value }
     UNION
-    { ?coded ?trS ?translation . ?translation a v3:translation ; xyz:codeSystem ?value . }
-    FILTER (REPLACE(?value, "^urn:oid:", "") NOT IN ("2.16.840.1.113883.6.96", "2.16.840.1.113883.6.90"))
+    { ?condition ?vS ?coded . ?coded a v3:value ; ?trS ?coding . ?coding a v3:translation }
+    OPTIONAL { ?coding xyz:code ?statedCode }
+    OPTIONAL { ?coding xyz:codeSystem ?statedSystem }
+    FILTER (BOUND(?statedCode) || BOUND(?statedSystem))
+    BIND (LCASE(REPLACE(REPLACE(?statedSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")) AS ?statedKey)
+    FILTER (!BOUND(?statedCode) || !BOUND(?statedSystem) || !REGEX(?statedKey, "^[0-2](\\.(0|[1-9][0-9]*))+$"))
+    BIND (COALESCE(?statedSystem, ?statedCode) AS ?value)
     BIND (ccda:codeNotCarried AS ?gap)
   }
   UNION

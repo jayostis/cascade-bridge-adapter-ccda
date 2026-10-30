@@ -1143,12 +1143,12 @@
       "@type": "File",
       "name": "Mapping: condition",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "13653",
-      "sha256": "4ab12dd361da0ba6d654b89dcb3fd0bf16960b106183f5b2d98fb9dee43cc938",
+      "contentSize": "14804",
+      "sha256": "909921d7ca066b07df8bdca53147e2588fa3d77e018834b5f0ef982daa5a264d",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "A Problem Observation's name, SNOMED CT and ICD-10-CM codes, status, category, onset and abatement."
+      "description": "A Problem Observation's name, SNOMED CT and ICD-10-CM codes, every code of its value in another system as a literal typed by its system, status, category, onset and abatement."
     },
     {
       "@id": "in/sparql/immunization.rq",
@@ -1167,60 +1167,60 @@
       "@type": "File",
       "name": "Mapping: procedure",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "8816",
-      "sha256": "aded5a908ba155e250d26838de221c05c178cd2c3a9a98cbc1c9c06929020a5d",
+      "contentSize": "10140",
+      "sha256": "7b83a4130c33544f92a3f11b91f076d3ac732bcaf7e8d07c34f43ed90e8b74ac",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "A Procedure Activity Procedure's name, SNOMED CT and CPT codes, date and status."
+      "description": "A Procedure Activity Procedure's name, SNOMED CT and CPT codes as code IRIs, every code in another system as a literal typed by its system, date and status."
     },
     {
       "@id": "in/sparql/condition-findings.rq",
       "@type": "File",
       "name": "Findings: problem codes not mapped",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "4661",
-      "sha256": "d1f83f0fd3cc4789ea3ce8421be864c1db80ce13e30030c5bdf4d7b4b2c6fb3e",
+      "contentSize": "4995",
+      "sha256": "0d9a900af14d194d784178c5b0e6e586d227387e5ceaff668a1a050668b0bd54",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "Each problem status outside the map condition.rq reads it through, and each code in a code system no predicate of a condition carries."
+      "description": "Each problem status outside the map condition.rq reads it through, and each code of its value with no code system, or one that is no OID, or no code."
     },
     {
       "@id": "in/sparql/entry-statement-findings.rq",
       "@type": "File",
       "name": "Findings: immunization and procedure codes not mapped",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "3888",
-      "sha256": "54ebfaac071213c58222f6873c5a3d0899736f67a0c83b71ce1b8991d807fc27",
+      "contentSize": "4662",
+      "sha256": "4a27ed454ae0c0d70b8714970f177aabe3321dc4007d56aef471dd348c805eba",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "Each immunization or procedure status outside the map its mapping reads it through, and each code in a code system no predicate of its kind carries; an NDC is a code a medication carries."
+      "description": "Each immunization, procedure or medication status outside the map its mapping reads it through, each vaccine code in a code system other than CVX, and each code of a drug or a procedure with no code system, or one that is no OID, or no code."
     },
     {
       "@id": "in/sparql/medication.rq",
       "@type": "File",
       "name": "Mapping: medication",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "13701",
-      "sha256": "5dde57ab90554143a45eb92cc34d1323f947c7b03c4095627f193a28287a616f",
+      "contentSize": "15050",
+      "sha256": "2fb6cf8c8c9fe19bc2fdb87afd718696b50d7a29c10b6036455ace73b55f74d4",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "A Medication Activity's intent from its mood, drug name, every RxNorm code and every NDC of its drug's code and translations, the NDC as an 11-digit code, start and end, free text sig and status."
+      "description": "A Medication Activity's intent from its mood, drug name, every RxNorm code and every NDC of its drug's code and translations, the NDC as an 11-digit code, every code in another system as a literal typed by its system, start and end, free text sig and status."
     },
     {
       "@id": "in/sparql/result.rq",
       "@type": "File",
       "name": "Mapping: result",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "29444",
-      "sha256": "b801526c943be55df3e612d2d3b1c81c8633353e6dd2db33122809d8ac06a1f1",
+      "contentSize": "31199",
+      "sha256": "996256c631a5fc386125fb3856db157c2747a99fce19020b127738fb918526f6",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "A Result Observation's test name, LOINC codes, the kind of its first value (quantity, ratio, range, coded or text), a coded value's SNOMED CT and LOINC codes and its name, a text value, its first reference range as text, interpretation, performed time and status; its numbers are result-quantities.rq's."
+      "description": "A Result Observation's test name, every code of its test, LOINC and SNOMED CT as code IRIs and any other as a literal typed by its system, the kind of its first value (quantity, ratio, range, coded or text), a coded value's SNOMED CT and LOINC codes and its name, a text value, its first reference range as text, every interpretation flag in HL7 ObservationInterpretation as a code IRI, performed time and status; its numbers are result-quantities.rq's."
     },
     {
       "@id": "in/sparql/result-quantities.rq",
@@ -1263,12 +1263,12 @@
       "@type": "File",
       "name": "Findings: results",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "10053",
-      "sha256": "e79115125db391fb407596c01a8599b04639eedb338c75413795f369f5415dcd",
+      "contentSize": "10792",
+      "sha256": "1d0deb821011ae8046c12996184438caf050c0df5db316faebe85d71b9942558",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "Each result status outside the map result.rq reads it through, each result value of a type no predicate carries, and each component of a result organizer that is no result observation."
+      "description": "Each result status outside the map result.rq reads it through, each result value of a type no predicate carries, each code of a test with no code system, or one that is no OID, or no code, each interpretation flag in a code system other than HL7 ObservationInterpretation, and each component of a result organizer that is no result observation."
     },
     {
       "@id": "in/sparql/name-findings.rq",
@@ -1311,8 +1311,8 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML gaps",
       "encodingFormat": "text/turtle",
-      "contentSize": "10989",
-      "sha256": "8ac86fc559d8591013f0aca77754e1c5f346ca3aba1dced16e0df2c74fea4ef7",
+      "contentSize": "11125",
+      "sha256": "d960806359f4d23050f08201052658032e12e5944a03917a7a25fba686f902bb",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1323,8 +1323,8 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML source accounting",
       "encodingFormat": "text/turtle",
-      "contentSize": "390773",
-      "sha256": "8ee32608edc6cf74e88abd536709dc7405df8f399412e2e2f5487dc1ad47a376",
+      "contentSize": "400010",
+      "sha256": "6fc1d5693b70964222b71614e72c96389da5f6dd0891143d3d5fcac8a85be349",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1335,8 +1335,8 @@
       "@type": "File",
       "name": "Concept map: code systems",
       "encodingFormat": "text/turtle",
-      "contentSize": "4090",
-      "sha256": "1ed549ea4819e055ad5067a8961b32e7ad58a8b1957a9295fdbcec94d4103293",
+      "contentSize": "7089",
+      "sha256": "b7105766070ff28634fe2a027dc2876c2d5841bd0d533cdd009d3a331f3dcdd2",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1361,9 +1361,15 @@
         },
         {
           "@id": "https://github.com/jayostis/cascade-vocabulary/issues/104"
+        },
+        {
+          "@id": "https://github.com/jayostis/cascade-vocabulary/issues/290"
+        },
+        {
+          "@id": "https://github.com/jayostis/cascade-vocabulary/issues/298"
         }
       ],
-      "description": "HL7 code system OIDs to the URI FHIR names each code system by, from HL7 Terminology's naming systems, read on 2026-10-07; the OIDs are those cascade-cli's src/lib/ccda-converter/code-systems.ts lists. Each concept also carries void:uriSpace, the stem of its codes' IRIs, which is never that URI: a code's IRI is the stem and the code percent-encoded. The stems are cascade-vocabulary's registry (https://github.com/jayostis/cascade-vocabulary/issues/111), transcribed on 2026-10-10 and HL7 Terminology's where it states one (SNOMED CT's from SNOMEDCT.html, LOINC's iri-stem from v3-loinc.xml); NDC's is the 11-digit space cascade-vocabulary registers, the code normalised into it, since a C-CDA writes the 10-digit label code (https://hl7.org/fhir/R4/ndc.html, https://github.com/jayostis/cascade-vocabulary/issues/104). LOINC's source is pinned to HL7/UTG at 18bfa06."
+      "description": "HL7 code system OIDs to the URI FHIR names each code system by, from HL7 Terminology's naming systems, read on 2026-10-07; the OIDs are those cascade-cli's src/lib/ccda-converter/code-systems.ts lists, and, added on 2026-10-29, the rows of cascade-vocabulary's system table (https://github.com/jayostis/cascade-vocabulary/issues/290: ICD-9-CM's other three OIDs, HCPCS Level II, ICD-10-PCS and CDT, read in HL7/UTG at 777bba6 and on terminology.hl7.org) and HL7 ObservationInterpretation (https://github.com/jayostis/cascade-vocabulary/issues/298); a code in a system the table does not list is typed urn:oid: and its OID. Each concept of a system cascade-vocabulary lists also carries void:uriSpace, the stem of its codes' IRIs, which is never that URI: a code's IRI is the stem and the code percent-encoded. The stems are cascade-vocabulary's registry (https://github.com/jayostis/cascade-vocabulary/issues/111), transcribed on 2026-10-10 and HL7 Terminology's where it states one (SNOMED CT's from SNOMEDCT.html, LOINC's iri-stem from v3-loinc.xml); NDC's is the 11-digit space cascade-vocabulary registers, the code normalised into it, since a C-CDA writes the 10-digit label code (https://hl7.org/fhir/R4/ndc.html, https://github.com/jayostis/cascade-vocabulary/issues/104). LOINC's source is pinned to HL7/UTG at 18bfa06."
     },
     {
       "@id": "vocab/ccda-problem-statuses.ttl",
@@ -3940,15 +3946,15 @@
       "@type": "File",
       "name": "View: lab-results",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "1791",
-      "sha256": "084fd659843e46dd8b0070d5cae87596809b90d00f53b8bab83e61a7fa670f07",
+      "contentSize": "1939",
+      "sha256": "41a7b6e5ea90401473f37c4e2d1b1d0ce70bde9f644fb59cc8953799fe476ecd",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
         "@id": "https://github.com/jayostis/cascade-bridge-adapter-fhir-r4/blob/b124be5f352634ab6d69e94807cce62ef7fdd30b/views/lab-results.rq"
       },
-      "description": "A SELECT over a Bridge's graph: one row per LaboratoryTestResult record at its current version, else at each version, with its source id and test name, LOINC code, value, unit, reference range, interpretation, status and performed date, each a plain string. Copied on 2026-10-23 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer, its terms and code stems since moved as cascade-vocabulary's term map and decisions/code-iris.md say. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
+      "description": "A SELECT over a Bridge's graph: one row per LaboratoryTestResult record at its current version, else at each version, with its source id and test name, LOINC code, value, unit, reference range, interpretation code, status and performed date, each a plain string; a record flagged twice is two rows, one per code. Copied on 2026-10-23 from the FHIR R4 adapter's views/ at the commit isBasedOn names, the same records layer, its terms and code stems since moved as cascade-vocabulary's term map and decisions/code-iris.md say. Not run by a Bridge: #view-comparison-with-cascade-cli names what it is compared with."
     },
     {
       "@id": "#view-comparison-with-cascade-cli",

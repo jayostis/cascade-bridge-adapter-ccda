@@ -14,9 +14,11 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 #     references, the originalText's own text, the value's displayName;
 #   - the status, from its Problem Status Observation, else from its concern
 #     act's statusCode where that maps to a clinical status.
-# The category is the section's, by its code. A coded value is carried only
-# through the concept map its rows were transcribed into; a code outside it is
-# a finding of condition-findings.rq. Times are written as allergy.rq writes
+# The category is the section's, by its code. Every code of the value and its
+# translations is carried: one in SNOMED CT or ICD-10-CM as the IRI
+# ../../vocab/ccda-code-systems.ttl gives it, one in another code system as a
+# cascade:conditionCodeInOtherSystem literal, as result.rq writes a test's.
+# A code with no code system is a finding of condition-findings.rq. Times are written as allergy.rq writes
 # them: effectiveTime's value, else its low, is the onset, its high the
 # abatement. A problem whose negationInd is true is refuted: the source states
 # it is absent.
@@ -257,12 +259,27 @@ WHERE {
       }
     }
     ?system skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; cascade:codingSystemUri ?systemUri ; void:uriSpace ?stem .
-    FILTER (?systemKey = LCASE(REPLACE(?codeSystem, "^urn:oid:", "")))
+    FILTER (?systemKey = LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")))
     VALUES (?systemUri ?p) {
       ("http://snomed.info/sct"^^xsd:anyURI            cascade:snomedCode)
       ("http://hl7.org/fhir/sid/icd-10-cm"^^xsd:anyURI cascade:icd10Code)
     }
     BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?codeValue))) AS ?o)
+  }
+  UNION
+  {
+    { ?condition ?vS ?coding . ?coding a v3:value }
+    UNION
+    { ?condition ?vS ?coded . ?coded a v3:value ; ?trS ?coding . ?coding a v3:translation }
+    ?coding xyz:code ?codeValue ; xyz:codeSystem ?codeSystem .
+    BIND (LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")) AS ?systemKey)
+    OPTIONAL { ?listed skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; cascade:codingSystemUri ?listedUri }
+    BIND (COALESCE(STR(?listedUri), IF(REGEX(?systemKey, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?systemKey), 1/0)) AS ?datatype)
+    FILTER (?datatype NOT IN ("http://snomed.info/sct", "http://hl7.org/fhir/sid/icd-10-cm"))
+    BIND (REPLACE(?codeValue, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?otherCode)
+    FILTER (?otherCode != "")
+    BIND (cascade:conditionCodeInOtherSystem AS ?p)
+    BIND (STRDT(?otherCode, IRI(?datatype)) AS ?o)
   }
   BIND (IF(BOUND(?paddedFragment), IRI(CONCAT(STR(?version), ?paddedFragment)), 1/0) AS ?paddedNode)
   BIND (IF(BOUND(?absentFragment), IRI(CONCAT(STR(?version), ?absentFragment)), 1/0) AS ?absentNode)

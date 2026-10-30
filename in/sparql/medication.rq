@@ -24,8 +24,9 @@ PREFIX ccda:    <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # Cascade's 11-digit code: a C-CDA writes the 10-digit label code with its
 # hyphens, in one of three segmentings the missing digit tells apart, or 11
 # digits. Ten digits with no hyphens, or any other value, are no code, and
-# medication-findings.rq reports them. A code in another system is not
-# carried; a C-CDA never marks one of the codes as the one a user chose. A time
+# medication-findings.rq reports them. A code in another system, SNOMED CT
+# among them, is a cascade:medicationCodeInOtherSystem literal, as result.rq
+# writes a test's; a C-CDA never marks one of the codes as the one a user chose. A time
 # is read as allergy.rq reads an onset.
 
 CONSTRUCT {
@@ -241,7 +242,7 @@ WHERE {
       ("2.16.840.1.113883.6.69" cascade:ndcCode)
     }
     ?system skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; void:uriSpace ?stem .
-    FILTER (?systemKey = REPLACE(?codeSystem, "^urn:oid:", ""))
+    FILTER (?systemKey = LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")))
     BIND (IF(?p = cascade:rxNormCode, ?codeValue,
           IF(REGEX(?codeValue, "^[0-9]{11}$"), ?codeValue,
           IF(REGEX(?codeValue, "^[0-9]{5}-[0-9]{4}-[0-9]{2}$"), REPLACE(?codeValue, "-", ""),
@@ -252,6 +253,24 @@ WHERE {
              CONCAT(SUBSTR(?codeValue, 1, 5), SUBSTR(?codeValue, 7, 4), "0", SUBSTR(?codeValue, 12, 1)),
              1/0)))))) AS ?digits)
     BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?digits))) AS ?o)
+  }
+  UNION
+  {
+    ?medication ?tS ?t . ?t a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.16" .
+    ?medication ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
+    ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial .
+    { ?material ?cS ?coding . ?coding a v3:code }
+    UNION
+    { ?material ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
+    ?coding xyz:code ?codeValue ; xyz:codeSystem ?codeSystem .
+    BIND (LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")) AS ?systemKey)
+    OPTIONAL { ?listed skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; cascade:codingSystemUri ?listedUri }
+    BIND (COALESCE(STR(?listedUri), IF(REGEX(?systemKey, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?systemKey), 1/0)) AS ?datatype)
+    FILTER (?datatype NOT IN ("http://www.nlm.nih.gov/research/umls/rxnorm", "http://hl7.org/fhir/sid/ndc"))
+    BIND (REPLACE(?codeValue, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?otherCode)
+    FILTER (?otherCode != "")
+    BIND (cascade:medicationCodeInOtherSystem AS ?p)
+    BIND (STRDT(?otherCode, IRI(?datatype)) AS ?o)
   }
   BIND (IF(BOUND(?paddedFragment), IRI(CONCAT(STR(?version), ?paddedFragment)), 1/0) AS ?paddedNode)
   BIND (IF(BOUND(?absentFragment), IRI(CONCAT(STR(?version), ?absentFragment)), 1/0) AS ?absentNode)

@@ -34,9 +34,15 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # A narrative element is read only where its text is one run; one holding
 # markup falls through to the next of these, as does a reference to an ID two
 # elements hold or one with no '#' (docs/format.md, "Narrative references").
-# A LOINC code is written in the IRI space the vocabulary names, one for the
-# code and each translation in LOINC. A time is read as allergy.rq reads an
-# onset.
+# The test's code and each translation is carried, every one: one in LOINC or
+# SNOMED CT as a cascade:testCode IRI, in the IRI space the vocabulary names;
+# one in another code system as a cascade:testCodeInOtherSystem literal typed by
+# the system's FHIR URI where ../../vocab/ccda-code-systems.ttl lists its OID,
+# else by urn:oid: and the OID (docs/format.md, "Codes"). Every interpretation
+# flag, and each translation of one, in HL7 ObservationInterpretation is a
+# cascade:resultInterpretationCode IRI, its code as written; one in another
+# code system is a finding of result-findings.rq. A time is read as allergy.rq
+# reads an onset.
 #
 # Each template test, each narrative, each first value and range, and each set
 # of fields is a subquery joined to the rows, never a FILTER [NOT] EXISTS, a
@@ -262,13 +268,6 @@ WHERE {
             }
             UNION
             {
-              ?result ?iS ?interpretationCode . ?interpretationCode a v3:interpretationCode ; xyz:code ?value .
-              BIND (cascade:resultInterpretation AS ?p)
-              BIND (STRAFTER(STR(?iS), "#_") AS ?at)
-              BIND ("1" AS ?tier)
-            }
-            UNION
-            {
               ?result ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?value .
               FILTER (REGEX(?value, "^[0-9]{4}([0-9]{2}([0-9]{2}([0-9]{2}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?)?)?)?([+-][0-9]{4})?$"))
               BIND (cascade:resultClinicallyRelevantTime AS ?p)
@@ -343,19 +342,43 @@ WHERE {
   {
     SELECT ?result ?p ?o WHERE {
       {
-        ?result ?cS ?coding . ?coding a v3:code ; xyz:code ?loinc ; xyz:codeSystem ?codeSystem .
-        FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.1")
-        ccda:codeSystemLoinc void:uriSpace ?stem .
+        { ?result ?cS ?coding . ?coding a v3:code }
+        UNION
+        { ?result ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
+        ?coding xyz:code ?testCode ; xyz:codeSystem ?codeSystem .
+        ?system skos:notation ?systemKey ; void:uriSpace ?stem .
+        VALUES ?system { ccda:codeSystemLoinc ccda:codeSystemSnomedCt }
+        FILTER (?systemKey = LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")))
         BIND (cascade:testCode AS ?p)
-        BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?loinc))) AS ?o)
+        BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?testCode))) AS ?o)
       }
       UNION
       {
-        ?result ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation ; xyz:code ?loinc ; xyz:codeSystem ?codeSystem .
-        FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.1")
-        ccda:codeSystemLoinc void:uriSpace ?stem .
-        BIND (cascade:testCode AS ?p)
-        BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?loinc))) AS ?o)
+        { ?result ?cS ?coding . ?coding a v3:code }
+        UNION
+        { ?result ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
+        ?coding xyz:code ?testCode ; xyz:codeSystem ?codeSystem .
+        BIND (LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")) AS ?systemKey)
+        OPTIONAL { ?listed skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; cascade:codingSystemUri ?listedUri }
+        BIND (COALESCE(STR(?listedUri), IF(REGEX(?systemKey, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?systemKey), 1/0)) AS ?datatype)
+        FILTER (?datatype NOT IN ("http://loinc.org", "http://snomed.info/sct"))
+        BIND (REPLACE(?testCode, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?otherCode)
+        FILTER (?otherCode != "")
+        BIND (cascade:testCodeInOtherSystem AS ?p)
+        BIND (STRDT(?otherCode, IRI(?datatype)) AS ?o)
+      }
+      UNION
+      {
+        { ?result ?iS ?flagCoding . ?flagCoding a v3:interpretationCode }
+        UNION
+        { ?result ?iS ?flagged . ?flagged a v3:interpretationCode ; ?ftS ?flagCoding . ?flagCoding a v3:translation }
+        ?flagCoding xyz:code ?flag ; xyz:codeSystem ?flagSystem .
+        ccda:codeSystemObservationInterpretation skos:notation ?flagKey ; void:uriSpace ?flagStem .
+        FILTER (?flagKey = LCASE(REPLACE(REPLACE(?flagSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")))
+        BIND (REPLACE(?flag, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?flagCode)
+        FILTER (?flagCode != "")
+        BIND (cascade:resultInterpretationCode AS ?p)
+        BIND (IRI(CONCAT(?flagStem, ENCODE_FOR_URI(?flagCode))) AS ?o)
       }
       UNION
       {

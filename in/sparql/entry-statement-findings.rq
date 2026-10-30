@@ -9,8 +9,10 @@ PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # A status an immunization, a procedure or a medication states that the
-# concept map its mapping reads it through does not hold, and a code in a code
-# system no predicate of its kind carries, and a nullFlavor on its time or a
+# concept map its mapping reads it through does not hold; a vaccine's code in a
+# code system no predicate of an immunization carries; a code of a drug or a
+# procedure with no code system, or a code system that is no OID, or no code;
+# and a nullFlavor on its time or a
 # bound of it that is no NullFlavor code. A statement whose negationInd is true is
 # not-done whatever its statusCode says.
 
@@ -51,30 +53,39 @@ WHERE {
   }
   UNION
   {
-    {
-      ?statement ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
-      ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial ; ?cS ?code .
-      VALUES ?class { "Immunization" "MedicationRequest" }
-    }
-    UNION
-    {
-      ?statement ?cS ?code .
-      BIND ("Procedure" AS ?class)
-    }
+    ?statement ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
+    ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial ; ?cS ?code .
     ?code a v3:code .
+    VALUES ?class { "Immunization" }
     { ?code xyz:codeSystem ?value . }
     UNION
     { ?code ?trS ?translation . ?translation a v3:translation ; xyz:codeSystem ?value . }
-    FILTER NOT EXISTS {
-      VALUES (?class ?anyCarried) {
-        ("Immunization" "2.16.840.1.113883.12.292")
-        ("Procedure"    "2.16.840.1.113883.6.96")
-        ("Procedure"    "2.16.840.1.113883.6.12")
-        ("MedicationRequest" "2.16.840.1.113883.6.88")
-        ("MedicationRequest" "2.16.840.1.113883.6.69")
-      }
-      FILTER (REPLACE(?value, "^urn:oid:", "") = ?anyCarried)
+    FILTER (REPLACE(?value, "^urn:oid:", "") != "2.16.840.1.113883.12.292")
+    BIND (ccda:codeNotCarried AS ?gap)
+  }
+  UNION
+  {
+    {
+      ?statement ?cnS ?consumable . ?consumable a v3:consumable ; ?mpS ?product .
+      ?product a v3:manufacturedProduct ; ?mmS ?material . ?material a v3:manufacturedMaterial .
+      { ?material ?cS ?coding . ?coding a v3:code }
+      UNION
+      { ?material ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
+      BIND ("MedicationRequest" AS ?class)
     }
+    UNION
+    {
+      { ?statement ?cS ?coding . ?coding a v3:code }
+      UNION
+      { ?statement ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
+      BIND ("Procedure" AS ?class)
+    }
+    OPTIONAL { ?coding xyz:code ?statedCode }
+    OPTIONAL { ?coding xyz:codeSystem ?statedSystem }
+    FILTER (BOUND(?statedCode) || BOUND(?statedSystem))
+    BIND (LCASE(REPLACE(REPLACE(?statedSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")) AS ?statedKey)
+    FILTER (!BOUND(?statedCode) || !BOUND(?statedSystem) || !REGEX(?statedKey, "^[0-2](\\.(0|[1-9][0-9]*))+$"))
+    BIND (COALESCE(?statedSystem, ?statedCode) AS ?value)
     BIND (ccda:codeNotCarried AS ?gap)
   }
   UNION

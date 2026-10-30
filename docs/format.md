@@ -249,6 +249,30 @@ the RxNorm or LOINC code as a `translation`.
 
 An immunization's `vaccineCode` is written as the first CVX code it carries, the `code` before a `translation`, and no other.
 
+A test's, a drug's, a problem's and a procedure's code and each of its
+translations are carried, every one. A code in a system its kind has a term
+for is that term's IRI: LOINC and SNOMED CT for a test, RxNorm and NDC for a
+drug, SNOMED CT and ICD-10-CM for a problem, SNOMED CT and CPT for a procedure.
+Any other is a literal, the code trimmed of spaces, typed by its system's URI,
+on the kind's `cascade:testCodeInOtherSystem`, `medicationCodeInOtherSystem`,
+`conditionCodeInOtherSystem` or `procedureCodeInOtherSystem` (cascade-vocabulary's
+`decisions/code-iris.md`, the row "a code in a system the vocabulary lists no form
+for"). The URI is the `cascade:codingSystemUri` the table gives the OID, so an
+HCPCS code is typed `http://www.cms.gov/Medicare/Coding/HCPCSReleaseCodeSets`
+and an ICD-9-CM code `http://hl7.org/fhir/sid/icd-9-cm` under any of its four
+OIDs, and an OID the table does not hold is `urn:oid:` and the OID, read
+without regard to the prefix's case. A SNOMED CT code of a drug stays a
+literal: a SNOMED CT IRI would match two drugs whatever their dates. A code
+stated with no code system, or with one that is no OID, or a code system with
+no code, is not carried and is a finding, `ccda:codeNotCarried`, as an
+immunization's code in a system other than CVX is.
+
+A result's every `interpretationCode`, and each translation of one, in HL7
+ObservationInterpretation (`2.16.840.1.113883.5.83`) is a
+`cascade:resultInterpretationCode` IRI, its code as written, case kept,
+percent-encoded; a flag in another system is not carried and is a finding,
+`ccda:codeNotCarried`.
+
 ## Values
 
 An observation's `value` is typed by its `xsi:type`. A `PQ` is a number as
