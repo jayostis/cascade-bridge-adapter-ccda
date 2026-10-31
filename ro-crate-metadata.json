@@ -208,6 +208,9 @@
           "@id": "vocab/ccda-allergy-statuses.ttl"
         },
         {
+          "@id": "vocab/ccda-allergy-concern-statuses.ttl"
+        },
+        {
           "@id": "vocab/ccda-allergy-intolerance-types.ttl"
         },
         {
@@ -381,6 +384,9 @@
           "@id": "vocab/ccda-allergy-statuses.ttl"
         },
         {
+          "@id": "vocab/ccda-allergy-concern-statuses.ttl"
+        },
+        {
           "@id": "vocab/ccda-allergy-intolerance-types.ttl"
         },
         {
@@ -445,6 +451,12 @@
         },
         {
           "@id": "fixtures/in/allergy-unii-allergen.xml"
+        },
+        {
+          "@id": "fixtures/in/allergy-status-observation-beside-concern-act.xml"
+        },
+        {
+          "@id": "fixtures/in/allergy-status-from-concern-act.xml"
         },
         {
           "@id": "fixtures/in/medications-ndc-translations.xml"
@@ -600,6 +612,9 @@
           "@id": "fixtures/in/concern-status-beside-a-problem-status.xml"
         },
         {
+          "@id": "fixtures/in/problem-status-from-concern-act.xml"
+        },
+        {
           "@id": "fixtures/in/download-c.xml"
         },
         {
@@ -712,6 +727,18 @@
         },
         {
           "@id": "fixtures/findings/allergy-unii-allergen.ttl"
+        },
+        {
+          "@id": "fixtures/expected/allergy-status-observation-beside-concern-act.ttl"
+        },
+        {
+          "@id": "fixtures/findings/allergy-status-observation-beside-concern-act.ttl"
+        },
+        {
+          "@id": "fixtures/expected/allergy-status-from-concern-act.ttl"
+        },
+        {
+          "@id": "fixtures/findings/allergy-status-from-concern-act.ttl"
         },
         {
           "@id": "fixtures/expected/medications-ndc-translations.ttl"
@@ -984,10 +1011,16 @@
           "@id": "fixtures/expected/concern-status-beside-a-problem-status.ttl"
         },
         {
+          "@id": "fixtures/expected/problem-status-from-concern-act.ttl"
+        },
+        {
           "@id": "fixtures/findings/negations.ttl"
         },
         {
           "@id": "fixtures/findings/concern-status-beside-a-problem-status.ttl"
+        },
+        {
+          "@id": "fixtures/findings/problem-status-from-concern-act.ttl"
         },
         {
           "@id": "fixtures/expected/download-c.ttl"
@@ -1331,12 +1364,12 @@
       "@type": "File",
       "name": "Mapping: allergy",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "13759",
-      "sha256": "9cc71cd231eabe4761e1bae9585781f259dd2c9a64c30075c6fcfb3fa62a5bb1",
+      "contentSize": "15062",
+      "sha256": "b81b064981c0688bd1e77956181a554f3e9a78ff6a427ad57c0e62f25652db51",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "An Allergy Intolerance Observation's allergen, allergen codes, type, category, status, criticality, severity, reaction, manifestation codes and onset; only RxNorm, SNOMED CT, LOINC, ICD-10-CM, ICD-9-CM, CPT, CVX and UNII codes are carried, and an NDC is no allergen code and no manifestation code."
+      "description": "An Allergy Intolerance Observation's allergen, allergen codes, type, category, status (its Allergy Status Observation's, else its Allergy Concern Act's statusCode), criticality, severity, reaction, manifestation codes and onset; only RxNorm, SNOMED CT, LOINC, ICD-10-CM, ICD-9-CM, CPT, CVX and UNII codes are carried, and an NDC is no allergen code and no manifestation code."
     },
     {
       "@id": "in/sparql/document-organizations.rq",
@@ -1379,20 +1412,20 @@
       "@type": "File",
       "name": "Findings: allergy codes not mapped",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "5428",
-      "sha256": "dacb2d3fb566f20ad33d02970ad00bbd7dfb7b339cee7148a7516e150ddf0337",
+      "contentSize": "6375",
+      "sha256": "a3ba5ca411c3561fca11d4b0d6c81a2e9f3901581546db4aecb79553a2bd066c",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "Each code an allergy states outside the concept map that reads it: its type, status, criticality and severity, and the code system of its allergen's codes and its reactions' values where it is none of those allergy.rq carries."
+      "description": "Each code an allergy states outside the concept map that reads it: its type, status, criticality and severity, the status of its concern act where it states no status of its own, and the code system of its allergen's codes and its reactions' values where it is none of those allergy.rq carries."
     },
     {
       "@id": "in/sparql/condition.rq",
       "@type": "File",
       "name": "Mapping: condition",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "15198",
-      "sha256": "6bac81e4747f2216e0d3487038b0979add2da3ca91fc118a07500bb244e649ae",
+      "contentSize": "15714",
+      "sha256": "3a771c0eaceeec617cf74bd0687be5ccd7001f787a61ffd5df14e640b11ff204",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1583,8 +1616,8 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML gaps",
       "encodingFormat": "text/turtle",
-      "contentSize": "12315",
-      "sha256": "b3f30d3e6538d94cbbd6d32bddf642bdaa94c44f599e7f09331006aaf9878800",
+      "contentSize": "12606",
+      "sha256": "a32878872ff9e438c8786de334ba6f520583d61b9203610bd43ac1b96bbb1575",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1663,15 +1696,30 @@
       "@type": "File",
       "name": "Concept map: concern statuses",
       "encodingFormat": "text/turtle",
-      "contentSize": "494",
-      "sha256": "eb6caaab7562388bf5f6ae65f96ceab94f1dfb86d20368dfe3731e5a70dce528",
+      "contentSize": "1207",
+      "sha256": "3fb4f5461ec3a85d90be11742f67d8e2180ea36d6a4b3bad55f3507caae4b188",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
       "isBasedOn": {
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ConditionClinicalStatus.xml"
       },
-      "description": "A problem concern act's status to a FHIR Condition clinical status code; HL7 marks every other row wider, and none is taken. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
+      "description": "A problem concern act's status to a FHIR Condition clinical status code. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL: active is a skos:exactMatch of active, as read on 2026-10-07, and completed, aborted and suspended, which HL7 marks wider, a skos:broadMatch of inactive, as read on 2026-10-31."
+    },
+    {
+      "@id": "vocab/ccda-allergy-concern-statuses.ttl",
+      "@type": "File",
+      "name": "Concept map: allergy concern statuses",
+      "encodingFormat": "text/turtle",
+      "contentSize": "1315",
+      "sha256": "6a869452c9ef0fdf3d745303e14d67a8a771b5be200a5bb91b179ef30bb33fd9",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ConditionClinicalStatus.xml"
+      },
+      "description": "An allergy concern act's status to a FHIR AllergyIntolerance clinical status code. C-CDA on FHIR's Allergies page (https://hl7.org/fhir/us/ccda/en/CF-allergies.html, read 2026-10-31) says the act's statusCode is the clinical status where the Allergy Status Observation is missing, and publishes no map for it; the rows are the map it publishes for a problem concern act, at the isBasedOn URL, whose target codes active and inactive AllergyIntolerance clinical status also holds: active is a skos:exactMatch of active, and completed, aborted and suspended, which HL7 marks wider, a skos:broadMatch of inactive."
     },
     {
       "@id": "vocab/ccda-problem-categories.ttl",
@@ -2736,8 +2784,8 @@
       "@type": "File",
       "name": "Expected graph for concern-status-beside-a-problem-status",
       "encodingFormat": "text/turtle",
-      "contentSize": "8106",
-      "sha256": "4fd166e60a6fa929f151c61f7e9cbc1db5c4a3d40a45547e6bc597d8075b684f",
+      "contentSize": "8145",
+      "sha256": "93d8123bf1a52d1fef7c965fd8030722821651071675ea1d62ac9eb832c4c4eb",
       "about": {
         "@id": "fixtures/in/concern-status-beside-a-problem-status.xml"
       },
@@ -2752,12 +2800,57 @@
       "@type": "File",
       "name": "Expected findings for concern-status-beside-a-problem-status",
       "encodingFormat": "text/turtle",
-      "contentSize": "8551",
-      "sha256": "16ed26a79eea5abf817ec3d33e65e66dd1d626f917f14bdb2c6808ccb11c8271",
+      "contentSize": "7284",
+      "sha256": "f1f785d70b8a598dde2e8a274180414e5c041aef3c5bec45646f72c45728680a",
       "about": {
         "@id": "fixtures/in/concern-status-beside-a-problem-status.xml"
       },
       "dateCreated": "2026-10-25",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/in/problem-status-from-concern-act.xml",
+      "@type": "File",
+      "name": "C-CDA: problem-status-from-concern-act",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "8164",
+      "sha256": "9e57f2e63cd728ec651c552766c12bcbb0c532f26e0b18412db471213abe2e20",
+      "dateCreated": "2026-10-31",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Five problems, each in a concern act of its own, with no Problem Status Observation and a concern act statusCode of active, aborted, suspended and nullified, and one with a Problem Status Observation of On hold, a code outside the map, beside an active concern act: the first is the clinical status active, the next two are inactive, HL7's wider row for each, the fourth is a status outside the map, carried as nothing and a finding, and the last carries no status, its concern act not consulted. Authored here on 2026-10-31, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/expected/problem-status-from-concern-act.ttl",
+      "@type": "File",
+      "name": "Expected graph for problem-status-from-concern-act",
+      "encodingFormat": "text/turtle",
+      "contentSize": "13513",
+      "sha256": "0acb756d35bc6f2e696d1404c8ee17f03417087d22d9bc88627a64d2def42d58",
+      "about": {
+        "@id": "fixtures/in/problem-status-from-concern-act.xml"
+      },
+      "dateCreated": "2026-10-31",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/findings/problem-status-from-concern-act.ttl",
+      "@type": "File",
+      "name": "Expected findings for problem-status-from-concern-act",
+      "encodingFormat": "text/turtle",
+      "contentSize": "9894",
+      "sha256": "085b4e4e6afc39dd8d1df093569b99415490ce8e9b0106526a53369460f2ac02",
+      "about": {
+        "@id": "fixtures/in/problem-status-from-concern-act.xml"
+      },
+      "dateCreated": "2026-10-31",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -2948,7 +3041,7 @@
       "@type": "File",
       "name": "C-CDA benchmark input: medications-and-results-a, entries repeated 10 times",
       "encodingFormat": "application/gzip",
-      "contentSize": "4624",
+      "contentSize": "1715",
       "sha256": "c59ea02dfec6bd7919e2e60cbae377590725627cb6df073320ca4241e45c94a3",
       "isBasedOn": [
         {
@@ -3026,8 +3119,8 @@
       "@type": "File",
       "name": "Expected graph for allergies-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "4604",
-      "sha256": "36f3350795acb7cd6b38d05b58b17a484ada66db65ca37ba3e442c4d3871637f",
+      "contentSize": "4673",
+      "sha256": "a32910b21897cc98875f296d40dc065dcffd260ffa59a46a5341f2857be73064",
       "about": {
         "@id": "fixtures/in/allergies-section.xml"
       },
@@ -3058,8 +3151,8 @@
       "@type": "File",
       "name": "Expected graph for cerner-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "6422",
-      "sha256": "35c6184a504712afa1997fd5b1da3bbf6e9cb36bec9b7c1a9cc7990cc68c1a7e",
+      "contentSize": "6461",
+      "sha256": "f33d2d083526da0c1f24613a74b1c7f77f3e590f78c932aba8757b8486d123b4",
       "about": {
         "@id": "fixtures/in/cerner-summarization.xml"
       },
@@ -3090,8 +3183,8 @@
       "@type": "File",
       "name": "Expected graph for epic-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "13683",
-      "sha256": "85e17e7987ad9663c55a89c873548c6939719c10a30d0c475081cedfd022d504",
+      "contentSize": "13718",
+      "sha256": "8a7e7b98a16045e8b2159f447d266d534792fc75c4b3d7b69c18a8d167774be4",
       "about": {
         "@id": "fixtures/in/epic-summarization.xml"
       },
@@ -3122,8 +3215,8 @@
       "@type": "File",
       "name": "Expected graph for full-summarization",
       "encodingFormat": "text/turtle",
-      "contentSize": "13659",
-      "sha256": "8c8ec77044d77a94f102df3d2f6468b34de4253f086d691cc773cdeb771b0091",
+      "contentSize": "13694",
+      "sha256": "a52a01c99ac27c851a7451346b18ca9608b43e510ccc2bd3fa73290b222281d1",
       "about": {
         "@id": "fixtures/in/full-summarization.xml"
       },
@@ -3218,8 +3311,8 @@
       "@type": "File",
       "name": "Expected graph for narrative-only-section",
       "encodingFormat": "text/turtle",
-      "contentSize": "6178",
-      "sha256": "db15c9d6c51ead900600870243d70b8c2b16604c9dce06ab290b8ef9184ca558",
+      "contentSize": "6211",
+      "sha256": "6697f43c2553fa89c2c3ff7b673dffbf4951f698a8119e1f009013deee4ea4c6",
       "about": {
         "@id": "fixtures/in/narrative-only-section.xml"
       },
@@ -3355,6 +3448,32 @@
       "description": "A document naming its custodian and its author, with one amoxicillin allergy whose allergen is coded in UNII (2.16.840.1.113883.4.9) and nothing else: it shows a code system outside RxNorm, SNOMED CT and LOINC still written as an IRI, under the stem vocab/ccda-code-systems.ttl gives it. Authored here on 2026-10-10, for a case the conformance corpus does not hold; it validates against the CDA schema."
     },
     {
+      "@id": "fixtures/in/allergy-status-from-concern-act.xml",
+      "@type": "File",
+      "name": "C-CDA: allergy-status-from-concern-act",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "9896",
+      "sha256": "4201d9f910650672b2f76ff403153fb9338bf4780a1357d688c716ed13f5fd3f",
+      "dateCreated": "2026-10-31",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Five allergies with no Allergy Status Observation, each in an Allergy Concern Act of its own whose statusCode is active, completed, aborted, suspended and nullified: the first is the clinical status active and the next three are inactive, HL7's wider row for each, and the last is a status outside the map, carried as nothing and a finding. Authored here on 2026-10-31, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/allergy-status-observation-beside-concern-act.xml",
+      "@type": "File",
+      "name": "C-CDA: allergy-status-observation-beside-concern-act",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "10696",
+      "sha256": "e197d7579f7bdbba2e7bb66f87b1ab9b0a15e68f24c5601e5a79d2f1cfe86905",
+      "dateCreated": "2026-10-31",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "Three allergies, each with an Allergy Status Observation that disagrees with its concern act: Resolved beside active, Active beside completed and Inactive beside nullified. Authored here on 2026-10-31, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
       "@id": "fixtures/in/medications-ndc-translations.xml",
       "@type": "File",
       "name": "C-CDA: medications-ndc-translations",
@@ -3372,8 +3491,8 @@
       "@type": "File",
       "name": "Expected graph for allergy-unii-allergen",
       "encodingFormat": "text/turtle",
-      "contentSize": "6558",
-      "sha256": "d9e3e76d323f8e7050ef22c66c2b8f3bd63bdca7389d2c301a844cb0f811c3a1",
+      "contentSize": "6652",
+      "sha256": "cbc1042702371b3d38503b10e68afc4928a44c6b6246fb1dc4274215bedbe31a",
       "about": {
         "@id": "fixtures/in/allergy-unii-allergen.xml"
       },
@@ -3394,6 +3513,70 @@
         "@id": "fixtures/in/allergy-unii-allergen.xml"
       },
       "dateCreated": "2026-10-10",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/allergy-status-from-concern-act.ttl",
+      "@type": "File",
+      "name": "Expected graph for allergy-status-from-concern-act",
+      "encodingFormat": "text/turtle",
+      "contentSize": "14509",
+      "sha256": "713e0d0c331e14433c1d9e292d602c2b30d94e46a24c2826fb05a4a33175c88e",
+      "about": {
+        "@id": "fixtures/in/allergy-status-from-concern-act.xml"
+      },
+      "dateCreated": "2026-10-31",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/findings/allergy-status-from-concern-act.ttl",
+      "@type": "File",
+      "name": "Expected findings for allergy-status-from-concern-act",
+      "encodingFormat": "text/turtle",
+      "contentSize": "8477",
+      "sha256": "113c0d20cc48199d7262856f0d6a77029d9c9d53d5b83d1da3c82219dc7b1de9",
+      "about": {
+        "@id": "fixtures/in/allergy-status-from-concern-act.xml"
+      },
+      "dateCreated": "2026-10-31",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/expected/allergy-status-observation-beside-concern-act.ttl",
+      "@type": "File",
+      "name": "Expected graph for allergy-status-observation-beside-concern-act",
+      "encodingFormat": "text/turtle",
+      "contentSize": "11704",
+      "sha256": "4f7f4b5adf1dbd2a8fad96f54cc6bb84fc09710abc72cacf4eee5c602ac808d1",
+      "about": {
+        "@id": "fixtures/in/allergy-status-observation-beside-concern-act.xml"
+      },
+      "dateCreated": "2026-10-31",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/findings/allergy-status-observation-beside-concern-act.ttl",
+      "@type": "File",
+      "name": "Expected findings for allergy-status-observation-beside-concern-act",
+      "encodingFormat": "text/turtle",
+      "contentSize": "8602",
+      "sha256": "82a8f22b611c81a07fb88e2f89422e17545e89fd6ebb4f636885682b7c510d20",
+      "about": {
+        "@id": "fixtures/in/allergy-status-observation-beside-concern-act.xml"
+      },
+      "dateCreated": "2026-10-31",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -3708,8 +3891,8 @@
       "@type": "File",
       "name": "Expected graph for allergy-codes-in-other-systems",
       "encodingFormat": "text/turtle",
-      "contentSize": "4604",
-      "sha256": "8e2a81cc42f17cc96a98a1ffa1875edd08f567acef2ec94a287f98a957a95c01",
+      "contentSize": "4673",
+      "sha256": "a4e1248628603d80bb62ebe53cee7cef87bb2aa5e25cb460f878e2500b1fbfac",
       "about": {
         "@id": "fixtures/in/allergy-codes-in-other-systems.xml"
       },
@@ -4076,8 +4259,8 @@
       "@type": "File",
       "name": "Expected graph for no-record-target",
       "encodingFormat": "text/turtle",
-      "contentSize": "4911",
-      "sha256": "0c9f2dcdc8205c49708d8e4dbb9b7c8b01adae8d7e1814159c53d02e81e3f79d",
+      "contentSize": "4944",
+      "sha256": "e61aed1c3deca61f6d2be3908f851be4a59714abdb98cbbd779ce39268c013d7",
       "about": {
         "@id": "fixtures/in/no-record-target.xml"
       },
@@ -4748,8 +4931,8 @@
       "@type": "File",
       "name": "Expected graph for shared-id",
       "encodingFormat": "text/turtle",
-      "contentSize": "7990",
-      "sha256": "579c52df22327cfaad7604615fe202623996c96cfdddfd3b15e15367f1adadef",
+      "contentSize": "8086",
+      "sha256": "2e03cb1ddbba2298cc600b7ba0716844534431675205ad1d9287ac74b4b0f6a3",
       "about": {
         "@id": "fixtures/in/shared-id.xml"
       },
@@ -4780,8 +4963,8 @@
       "@type": "File",
       "name": "Expected graph for negations",
       "encodingFormat": "text/turtle",
-      "contentSize": "7987",
-      "sha256": "3b65a2317465ba1e2ae7dcfe8b15cf6db0c4580717fa5fb9e7fe205ed1c9f285",
+      "contentSize": "8024",
+      "sha256": "20840232a53e4cd1152b732e1932033a550f8bea7c29376eab522b90e2a8c2c3",
       "about": {
         "@id": "fixtures/in/negations.xml"
       },
@@ -4796,8 +4979,8 @@
       "@type": "File",
       "name": "Expected findings for negations",
       "encodingFormat": "text/turtle",
-      "contentSize": "8347",
-      "sha256": "d291a9ab02327cee300b832dbfae1d1f006679a33054b60eb5c7c87a95f74cee",
+      "contentSize": "7104",
+      "sha256": "b184dc70a15e3b7c629733231feb7bfb2b0ccf7dc31470e34b80d67828f67fd9",
       "about": {
         "@id": "fixtures/in/negations.xml"
       },
@@ -4956,8 +5139,8 @@
       "@type": "File",
       "name": "Expected graph for null-flavors",
       "encodingFormat": "text/turtle",
-      "contentSize": "21711",
-      "sha256": "97ba302b377ee0918fc1c9569e65dbdf5e48532e04998e709ca993c241b3b41a",
+      "contentSize": "21752",
+      "sha256": "2f5c9578c00022d384bb3b0d4cdf8720dc0f91b3d1ed7a03887db96f8e9678e8",
       "about": {
         "@id": "fixtures/in/null-flavors.xml"
       },
@@ -4972,8 +5155,8 @@
       "@type": "File",
       "name": "Expected graph for null-flavors-not-listed",
       "encodingFormat": "text/turtle",
-      "contentSize": "17615",
-      "sha256": "d47cb9a90b8411fe1485da42ef57758270f1fdbcb5405ee01862b03e9f363874",
+      "contentSize": "17654",
+      "sha256": "cc3e0a02ed7d44991ef819fb0485ece5dda5e58d8aa956d310602f9b5bcf1fd7",
       "about": {
         "@id": "fixtures/in/null-flavors-not-listed.xml"
       },
@@ -4988,8 +5171,8 @@
       "@type": "File",
       "name": "Expected graph for times-by-precision",
       "encodingFormat": "text/turtle",
-      "contentSize": "14768",
-      "sha256": "9267f615af334874a09c0c37a8f5ee464abf481236cc11cc516ab9baa0438767",
+      "contentSize": "14805",
+      "sha256": "1db529d24c1450bc8d84d9796edb08a3171ebb9761a0ac4e744ec54a090d7929",
       "about": {
         "@id": "fixtures/in/times-by-precision.xml"
       },
@@ -5052,8 +5235,8 @@
       "@type": "File",
       "name": "Expected findings for null-flavors",
       "encodingFormat": "text/turtle",
-      "contentSize": "24150",
-      "sha256": "e16e3adc40d6774c4173a31d437406c7bf5be18eaaab3841a241c6fb09357c62",
+      "contentSize": "22910",
+      "sha256": "9c137a97a2d83e84d8c743e9d681e51fafd8c2a2650ef713de369c7c7936bf96",
       "about": {
         "@id": "fixtures/in/null-flavors.xml"
       },
@@ -5068,8 +5251,8 @@
       "@type": "File",
       "name": "Expected findings for null-flavors-not-listed",
       "encodingFormat": "text/turtle",
-      "contentSize": "32573",
-      "sha256": "c7a633ee20c9129bf0d859034f98a84c3591f1566b5cf81dedb267a15143246b",
+      "contentSize": "31192",
+      "sha256": "911e82f27fd54f8b34824900ca0eeb2042ce7c6a6cea448e99995e6ff1936163",
       "about": {
         "@id": "fixtures/in/null-flavors-not-listed.xml"
       },
@@ -5084,8 +5267,8 @@
       "@type": "File",
       "name": "Expected findings for times-by-precision",
       "encodingFormat": "text/turtle",
-      "contentSize": "17906",
-      "sha256": "68419a100d9028631c0bb7a6ea165d99062320ec443eab136991778a984845c4",
+      "contentSize": "16653",
+      "sha256": "7700dd60eb3f7d72341363e923cad902b56a9c874ae27a4f62f045c518f3b09c",
       "about": {
         "@id": "fixtures/in/times-by-precision.xml"
       },
@@ -5255,7 +5438,7 @@
       "@type": "File",
       "name": "View: allergies",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "1136",
+      "contentSize": "1823",
       "sha256": "16802a08a744d2ade3abad0334106ffda29781e981030014db8e23f0f8a2a99e",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"

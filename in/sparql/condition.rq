@@ -13,8 +13,8 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # states several, the first in document order is carried:
 #   - the name, read in this order: the narrative its value's originalText
 #     references, the originalText's own text, the value's displayName;
-#   - the status, from its Problem Status Observation, else from its concern
-#     act's statusCode where that maps to a clinical status.
+#   - the status, from its Problem Status Observation, else, where it states
+#     none, from its concern act's statusCode where that maps to a clinical status.
 # The category is the section's, by its code. Every code of the value and its
 # translations is carried: one in SNOMED CT or ICD-10-CM as the IRI
 # ../../vocab/ccda-code-systems.ttl gives it, one in another code system as a
@@ -145,6 +145,13 @@ WHERE {
             UNION
             {
               ?act ?sS ?status . ?status a v3:statusCode ; xyz:code ?code .
+              { ?act ?cers ?cer . ?cer a v3:entryRelationship ; ?cos ?condition } UNION { ?act ?cos ?condition }
+              ?condition a v3:observation .
+              FILTER NOT EXISTS {
+                ?condition ?statedS ?statedRelationship . ?statedRelationship a v3:entryRelationship ; ?statedO ?stated .
+                ?stated a v3:observation ; ?statedT ?statedTemplate .
+                ?statedTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.6" .
+              }
               ?concept skos:inScheme ccda:concernStatuses ; skos:notation ?key ; skos:exactMatch|skos:broadMatch ?match .
               ?match skos:notation ?value .
               FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))

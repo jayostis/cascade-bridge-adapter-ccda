@@ -17,6 +17,8 @@
     <#organizations-root-and-extension>
     <#organization-ids-in-one-order>
     <#allergy-unii-allergen>
+    <#allergy-status-from-concern-act>
+    <#allergy-status-observation-beside-concern-act>
     <#medications-ndc-translations>
     <#several-ids>
     <#repeated-ids>
@@ -27,6 +29,7 @@
     <#shared-id>
     <#negations>
     <#concern-status-beside-a-problem-status>
+    <#problem-status-from-concern-act>
     <#narrative-reference-without-hash>
     <#narrative-id-twice>
     <#download-c>
@@ -948,7 +951,7 @@
 
 <#concern-status-beside-a-problem-status> a bridge:IsomorphicConversionTest ;
   mf:name "concern-status-beside-a-problem-status" ;
-  rdfs:comment "One problem states its status in a Problem Status Observation and another does not: the other's concern act status, completed, maps to no clinical status and is a finding, whatever the first problem states." ;
+  rdfs:comment "One problem states its status in a Problem Status Observation and another does not: the other's concern act status, completed, is the clinical status inactive, whatever the first problem states." ;
   mf:action [
     bridge:input <in/concern-status-beside-a-problem-status.xml> ;
     bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
@@ -1380,4 +1383,43 @@
   mf:result [
     bridge:expectedGraph <expected/narrative-breaks-in-blocks.ttl> ;
     bridge:expectedFindings <findings/narrative-breaks-in-blocks.ttl>
+  ] .
+
+<#allergy-status-from-concern-act> a bridge:IsomorphicConversionTest ;
+  mf:name "allergy-status-from-concern-act" ;
+  rdfs:comment "Five allergies with no Allergy Status Observation, each in a concern act of its own: active is the clinical status active, and completed, aborted and suspended are inactive, HL7's wider row for each. A status outside the map, nullified, is carried as nothing and is a finding, ccda:allergyConcernStatusNotMapped." ;
+  mf:action [
+    bridge:input <in/allergy-status-from-concern-act.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/allergy-status-from-concern-act.ttl> ;
+    bridge:expectedFindings <findings/allergy-status-from-concern-act.ttl>
+  ] .
+
+<#allergy-status-observation-beside-concern-act> a bridge:IsomorphicConversionTest ;
+  mf:name "allergy-status-observation-beside-concern-act" ;
+  rdfs:comment "Four allergies whose Allergy Status Observation disagrees with their concern act: resolved beside active is resolved, active beside completed is active, and inactive beside nullified is inactive, with no finding for the concern act, since the allergy states a status of its own. A fourth states a status outside the map, recurrence, beside an active concern act: it carries no status, the act is not consulted, and the finding is ccda:allergyStatusNotMapped." ;
+  mf:action [
+    bridge:input <in/allergy-status-observation-beside-concern-act.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/allergy-status-observation-beside-concern-act.ttl> ;
+    bridge:expectedFindings <findings/allergy-status-observation-beside-concern-act.ttl>
+  ] .
+
+<#problem-status-from-concern-act> a bridge:IsomorphicConversionTest ;
+  mf:name "problem-status-from-concern-act" ;
+  rdfs:comment "Five problems in concern acts of their own. Without a Problem Status Observation, active is the clinical status active, aborted and suspended are inactive, HL7's wider row for each, and nullified, outside the map, is carried as nothing and is a finding, ccda:concernStatusNotMapped. A problem whose Problem Status Observation is outside the map, on hold, beside an active concern act carries no status, the act is not consulted, and the finding is ccda:problemStatusNotMapped." ;
+  mf:action [
+    bridge:input <in/problem-status-from-concern-act.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/problem-status-from-concern-act.ttl> ;
+    bridge:expectedFindings <findings/problem-status-from-concern-act.ttl>
   ] .

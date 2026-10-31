@@ -1,0 +1,25 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
+
+ccda:allergyConcernStatuses a skos:ConceptScheme ;
+  skos:prefLabel "C-CDA allergy concern act status to FHIR AllergyIntolerance clinical status"@en .
+
+ccda:allergyConcernStatusActive a skos:Concept ;
+  skos:inScheme ccda:allergyConcernStatuses ;
+  skos:notation "active" ;
+  skos:exactMatch [ skos:notation "active" ; skos:inScheme <http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical> ] .
+
+ccda:allergyConcernStatusCompleted a skos:Concept ;
+  skos:inScheme ccda:allergyConcernStatuses ;
+  skos:notation "completed" ;
+  skos:broadMatch [ skos:notation "inactive" ; skos:inScheme <http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical> ] .
+
+ccda:allergyConcernStatusAborted a skos:Concept ;
+  skos:inScheme ccda:allergyConcernStatuses ;
+  skos:notation "aborted" ;
+  skos:broadMatch [ skos:notation "inactive" ; skos:inScheme <http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical> ] .
+
+ccda:allergyConcernStatusSuspended a skos:Concept ;
+  skos:inScheme ccda:allergyConcernStatuses ;
+  skos:notation "suspended" ;
+  skos:broadMatch [ skos:notation "inactive" ; skos:inScheme <http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical> ] .
