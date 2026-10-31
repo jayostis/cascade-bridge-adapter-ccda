@@ -208,6 +208,9 @@
           "@id": "vocab/ccda-allergy-statuses.ttl"
         },
         {
+          "@id": "vocab/ccda-allergy-concern-statuses.ttl"
+        },
+        {
           "@id": "vocab/ccda-allergy-intolerance-types.ttl"
         },
         {
@@ -379,6 +382,9 @@
         },
         {
           "@id": "vocab/ccda-allergy-statuses.ttl"
+        },
+        {
+          "@id": "vocab/ccda-allergy-concern-statuses.ttl"
         },
         {
           "@id": "vocab/ccda-allergy-intolerance-types.ttl"
@@ -1349,12 +1355,12 @@
       "@type": "File",
       "name": "Mapping: allergy",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "13759",
-      "sha256": "9cc71cd231eabe4761e1bae9585781f259dd2c9a64c30075c6fcfb3fa62a5bb1",
+      "contentSize": "14718",
+      "sha256": "6d955e31be4fac933d9eb2313702036c8e53987265707d0e6f1e6c0d4242d20a",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "An Allergy Intolerance Observation's allergen, allergen codes, type, category, status, criticality, severity, reaction, manifestation codes and onset; only RxNorm, SNOMED CT, LOINC, ICD-10-CM, ICD-9-CM, CPT, CVX and UNII codes are carried, and an NDC is no allergen code and no manifestation code."
+      "description": "An Allergy Intolerance Observation's allergen, allergen codes, type, category, status (its Allergy Status Observation's, else its Allergy Concern Act's statusCode), criticality, severity, reaction, manifestation codes and onset; only RxNorm, SNOMED CT, LOINC, ICD-10-CM, ICD-9-CM, CPT, CVX and UNII codes are carried, and an NDC is no allergen code and no manifestation code."
     },
     {
       "@id": "in/sparql/document-organizations.rq",
@@ -1397,12 +1403,12 @@
       "@type": "File",
       "name": "Findings: allergy codes not mapped",
       "encodingFormat": "application/sparql-query",
-      "contentSize": "5428",
-      "sha256": "dacb2d3fb566f20ad33d02970ad00bbd7dfb7b339cee7148a7516e150ddf0337",
+      "contentSize": "6375",
+      "sha256": "a3ba5ca411c3561fca11d4b0d6c81a2e9f3901581546db4aecb79553a2bd066c",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "Each code an allergy states outside the concept map that reads it: its type, status, criticality and severity, and the code system of its allergen's codes and its reactions' values where it is none of those allergy.rq carries."
+      "description": "Each code an allergy states outside the concept map that reads it: its type, status, criticality and severity, the status of its concern act where it states no status of its own, and the code system of its allergen's codes and its reactions' values where it is none of those allergy.rq carries."
     },
     {
       "@id": "in/sparql/condition.rq",
@@ -1601,8 +1607,8 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML gaps",
       "encodingFormat": "text/turtle",
-      "contentSize": "12315",
-      "sha256": "b3f30d3e6538d94cbbd6d32bddf642bdaa94c44f599e7f09331006aaf9878800",
+      "contentSize": "12606",
+      "sha256": "a32878872ff9e438c8786de334ba6f520583d61b9203610bd43ac1b96bbb1575",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -1690,6 +1696,21 @@
         "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ConditionClinicalStatus.xml"
       },
       "description": "A problem concern act's status to a FHIR Condition clinical status code; HL7 marks every other row wider, and none is taken. Transcribed from HL7's C-CDA on FHIR concept map at the isBasedOn URL, read on 2026-10-07: each row HL7 marks equivalent, as a skos:exactMatch of the FHIR code and its system, or a skos:broadMatch where several rows lead to one code."
+    },
+    {
+      "@id": "vocab/ccda-allergy-concern-statuses.ttl",
+      "@type": "File",
+      "name": "Concept map: allergy concern statuses",
+      "encodingFormat": "text/turtle",
+      "contentSize": "1315",
+      "sha256": "6a869452c9ef0fdf3d745303e14d67a8a771b5be200a5bb91b179ef30bb33fd9",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "isBasedOn": {
+        "@id": "https://github.com/HL7/ccda-on-fhir/blob/2ecc324bb9225a76f321b2df01e6515dec9bcc3a/input/maps/ConceptMap-CF-ConditionClinicalStatus.xml"
+      },
+      "description": "An allergy concern act's status to a FHIR AllergyIntolerance clinical status code. C-CDA on FHIR's Allergies page (https://hl7.org/fhir/us/ccda/en/CF-allergies.html, read 2026-10-31) says the act's statusCode is the clinical status where the Allergy Status Observation is missing, and publishes no map for it; the rows are the map it publishes for a problem concern act, at the isBasedOn URL, whose target codes active and inactive AllergyIntolerance clinical status also holds: active is a skos:exactMatch of active, and completed, aborted and suspended, which HL7 marks wider, a skos:broadMatch of inactive."
     },
     {
       "@id": "vocab/ccda-problem-categories.ttl",

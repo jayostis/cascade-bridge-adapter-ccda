@@ -15,7 +15,9 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 #     originalText references, the originalText's own text, the playing
 #     entity's name, the code's displayName;
 #   - the severity, from a Severity Observation on the allergy itself, else on
-#     its first reaction, where C-CDA R2.1 puts it.
+#     its first reaction, where C-CDA R2.1 puts it;
+#   - the clinical status, from its Allergy Status Observation, else from its
+#     Allergy Concern Act's statusCode where that maps to a clinical status.
 # A coded value is carried only through the concept map its rows were
 # transcribed into, and only in the code system that map reads; a code outside it is a finding of allergy-findings.rq. An
 # NDC names a packaged product, not the substance a person is allergic to, so it
@@ -140,6 +142,21 @@ WHERE {
           FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
           BIND (STRAFTER(STR(?rS), "#_") AS ?at)
           BIND ("1" AS ?tier)
+        }
+        UNION
+        {
+          ?concern a v3:act ; ?cnTS ?concernTemplate ; ?cnSS ?concernStatus .
+          ?concernTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.30" .
+          ?concernStatus a v3:statusCode ; xyz:code ?code .
+          { ?concern ?cnS ?allergy }
+          UNION
+          { ?concern ?cnS ?concernRelationship . ?concernRelationship a v3:entryRelationship ; ?cnrS ?allergy }
+          ?concept skos:inScheme ccda:allergyConcernStatuses ; skos:notation ?key ; skos:exactMatch|skos:broadMatch ?match .
+          ?match skos:notation ?value .
+          FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+          BIND (cascade:clinicalStatus AS ?p)
+          BIND (STRAFTER(STR(?cnSS), "#_") AS ?at)
+          BIND ("2" AS ?tier)
         }
         UNION
         {

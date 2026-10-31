@@ -83,6 +83,17 @@ where that is `active`; its category is its section's, by the section's code. An
 immunization whose `negationInd` is true was not done, whatever its
 `statusCode` says.
 
+An allergy's status is its Allergy Status Observation's, else its Allergy Concern
+Act's `statusCode`, as C-CDA on FHIR has it: "`/statusCode` → `.clinicalStatus` is to be
+used only if the C-CDA Allergy Status Observation (see below) is missing"
+([Allergies](https://hl7.org/fhir/us/ccda/en/CF-allergies.html), read 2026-10-31).
+That page publishes no map for the act's code, so the rows are the map HL7 publishes
+for a problem's concern act ([ConditionClinicalStatus](https://hl7.org/fhir/us/ccda/en/ConceptMap-CF-ConditionClinicalStatus.html),
+read 2026-10-31), `../vocab/ccda-allergy-concern-statuses.ttl`: `active` is
+`active`, and `completed`, `aborted` and `suspended`, which HL7 marks wider, are
+`inactive`. Any other code is the finding `ccda:allergyConcernStatusNotMapped`
+where the allergy states no status observation of its own.
+
 A Medication Activity's mood says what it is: `INT`, a medication intended, is
 a prescription, and `EVN`, one taken, an entry on a list of what the person
 takes. Both are one kind of record, told apart by their intent. One whose

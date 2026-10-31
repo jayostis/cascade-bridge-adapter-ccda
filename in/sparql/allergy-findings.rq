@@ -12,7 +12,9 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # does not hold, or holds in another code system, and an NDC, which the map
 # holds for medications and allergy.rq never writes. A path holds the values of every observation an allergy nests,
 # so the accounting cannot name the map; this does, by template. And a nullFlavor
-# on its time or a bound of it that is no NullFlavor code.
+# on its time or a bound of it that is no NullFlavor code. And a status its Allergy Concern Act states
+# that the concept map allergy.rq falls back on does not hold, where the allergy
+# states no Allergy Status Observation.
 
 CONSTRUCT {
   [] a oa:Annotation ;
@@ -77,6 +79,25 @@ WHERE {
       ?concept skos:inScheme ?scheme ; skos:notation ?key .
       FILTER (?key = LCASE(REPLACE(?value, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
     })
+  }
+  UNION
+  {
+    ?act ?cnSS ?concernStatus .
+    ?concernStatus a v3:statusCode ; xyz:code ?value .
+    FILTER EXISTS {
+      ?act ?cnTS ?concernTemplate .
+      ?concernTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.30" .
+    }
+    FILTER NOT EXISTS {
+      ?concept skos:inScheme ccda:allergyConcernStatuses ; skos:notation ?key .
+      FILTER (?key = LCASE(REPLACE(?value, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+    }
+    FILTER NOT EXISTS {
+      ?allergy ?statedS ?statedRelationship . ?statedRelationship a v3:entryRelationship ; ?statedO ?stated .
+      ?stated a v3:observation ; ?statedT ?statedTemplate .
+      ?statedTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.28" .
+    }
+    BIND (ccda:allergyConcernStatusNotMapped AS ?gap)
   }
   UNION
   {
