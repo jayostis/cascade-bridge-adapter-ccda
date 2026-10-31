@@ -157,8 +157,9 @@ WHERE {
           FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
           FILTER NOT EXISTS {
             ?allergy ?statedS ?statedRelationship . ?statedRelationship a v3:entryRelationship ; ?statedO ?stated .
-            ?stated a v3:observation ; ?statedT ?statedTemplate .
+            ?stated a v3:observation ; ?statedT ?statedTemplate ; ?statedVS ?statedValue .
             ?statedTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.28" .
+            ?statedValue a v3:value ; xyz:code ?statedCode .
           }
           BIND (cascade:clinicalStatus AS ?p)
           BIND (STRAFTER(STR(?cnSS), "#_") AS ?at)

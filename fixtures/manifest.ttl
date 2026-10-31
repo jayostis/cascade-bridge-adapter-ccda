@@ -30,6 +30,7 @@
     <#negations>
     <#concern-status-beside-a-problem-status>
     <#problem-status-from-concern-act>
+    <#status-observation-without-code>
     <#narrative-reference-without-hash>
     <#narrative-id-twice>
     <#download-c>
@@ -1422,4 +1423,17 @@
   mf:result [
     bridge:expectedGraph <expected/problem-status-from-concern-act.ttl> ;
     bridge:expectedFindings <findings/problem-status-from-concern-act.ttl>
+  ] .
+
+<#status-observation-without-code> a bridge:IsomorphicConversionTest ;
+  mf:name "status-observation-without-code" ;
+  rdfs:comment "Three allergies and two problems whose status observation states no code: its value is a nullFlavor, or it has no value at all. Such an observation states no status, so the concern act is consulted: an active act is the clinical status active, a completed act is inactive, and an act outside the map, nullified, is carried as nothing and is a finding, ccda:allergyConcernStatusNotMapped or ccda:concernStatusNotMapped." ;
+  mf:action [
+    bridge:input <in/status-observation-without-code.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/status-observation-without-code.ttl> ;
+    bridge:expectedFindings <findings/status-observation-without-code.ttl>
   ] .
