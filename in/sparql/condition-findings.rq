@@ -57,8 +57,9 @@ WHERE {
   ?row ccda:statementAt ?slots ; ccda:refinement ?refinement .
   BIND (EXISTS {
           ?condition ?anyS ?anyRelationship . ?anyRelationship a v3:entryRelationship ; ?anyO ?anyStatus .
-          ?anyStatus a v3:observation ; ?anyT ?anyTemplate .
+          ?anyStatus a v3:observation ; ?anyT ?anyTemplate ; ?anyVS ?anyValue .
           ?anyTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.6" .
+          ?anyValue a v3:value ; xyz:code ?anyCode .
         } AS ?statedStatus)
   {
     ?condition ?rS ?statusRelationship . ?statusRelationship a v3:entryRelationship ; ?oS ?observation .

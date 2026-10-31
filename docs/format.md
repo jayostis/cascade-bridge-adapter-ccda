@@ -80,7 +80,9 @@ release does not read, a Procedure Activity Act or Observation among them, is a 
 
 A problem's status is its Problem Status Observation's, else, where it states none, its concern act's, by the map of
 `../vocab/ccda-concern-statuses.ttl`, the same rows as an allergy's below, and never when it states
-a Problem Status Observation, whatever the observation's code; its category is its section's, by the section's code. An
+a Problem Status Observation with a code, whatever that code. An observation with none, a value with a
+`nullFlavor` or no value at all, states no status. A closed concern act is `inactive` even where the problem
+is still real, so a problem a source closes by its act alone is absent from a view of the active ones. Its category is its section's, by the section's code. An
 immunization whose `negationInd` is true was not done, whatever its
 `statusCode` says.
 
@@ -93,7 +95,8 @@ for a problem's concern act ([ConditionClinicalStatus](https://hl7.org/fhir/us/c
 read 2026-10-31), `../vocab/ccda-allergy-concern-statuses.ttl`: `active` is
 `active`, and `completed`, `aborted` and `suspended`, which HL7 marks wider, are
 `inactive`. Any other code is the finding `ccda:allergyConcernStatusNotMapped`
-where the allergy states no status observation of its own. An allergy that states one is
+where the allergy states no status observation with a code of its own; one with none, a value with a
+`nullFlavor` or no value at all, states no status. An allergy that states a code is
 never read through its act: an observation outside the map is the finding
 `ccda:allergyStatusNotMapped` and no status. A closed concern act is `inactive` even where the
 allergy is still real, so an allergy a source closes by its act alone is absent from a view
