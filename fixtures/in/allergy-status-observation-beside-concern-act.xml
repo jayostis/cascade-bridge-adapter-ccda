@@ -52,6 +52,7 @@
               <item>Aspirin</item>
               <item>Penicillin G</item>
               <item>Codeine</item>
+              <item>Ibuprofen</item>
             </list>
           </text>
           <entry typeCode="DRIV">
@@ -147,6 +148,39 @@
                       <code code="33999-4" displayName="Status" codeSystem="2.16.840.1.113883.6.1"/>
                       <statusCode code="completed"/>
                       <value xsi:type="CD" code="73425007" displayName="Inactive" codeSystem="2.16.840.1.113883.6.96"/>
+                    </observation>
+                  </entryRelationship>
+                </observation>
+              </entryRelationship>
+            </act>
+          </entry>
+          <entry typeCode="DRIV">
+            <act classCode="ACT" moodCode="EVN">
+              <templateId root="2.16.840.1.113883.10.20.22.4.30"/>
+              <templateId root="2.16.840.1.113883.10.20.22.4.30" extension="2015-08-01"/>
+              <id root="2.16.840.1.113883.19.5.99999.4" extension="ACT-4"/>
+              <code code="CONC" codeSystem="2.16.840.1.113883.5.6"/>
+              <statusCode code="active"/>
+              <entryRelationship typeCode="SUBJ">
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.7" extension="2014-06-09"/>
+                  <id root="2.16.840.1.113883.19.5.99999.4" extension="ALG-4"/>
+                  <code code="ASSERTION" codeSystem="2.16.840.1.113883.5.4"/>
+                  <statusCode code="completed"/>
+                  <value xsi:type="CD" code="416098002" displayName="Drug allergy" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT"/>
+                  <participant typeCode="CSM">
+                    <participantRole classCode="MANU">
+                      <playingEntity classCode="MMAT">
+                        <code code="5640" displayName="ibuprofen" codeSystem="2.16.840.1.113883.6.88" codeSystemName="RxNorm"/>
+                      </playingEntity>
+                    </participantRole>
+                  </participant>
+                  <entryRelationship typeCode="REFR" inversionInd="true">
+                    <observation classCode="OBS" moodCode="EVN">
+                      <templateId root="2.16.840.1.113883.10.20.22.4.28" extension="2014-06-09"/>
+                      <code code="33999-4" displayName="Status" codeSystem="2.16.840.1.113883.6.1"/>
+                      <statusCode code="completed"/>
+                      <value xsi:type="CD" code="246455001" displayName="Recurrence" codeSystem="2.16.840.1.113883.6.96"/>
                     </observation>
                   </entryRelationship>
                 </observation>
