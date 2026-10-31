@@ -17,6 +17,8 @@
     <#organizations-root-and-extension>
     <#organization-ids-in-one-order>
     <#allergy-unii-allergen>
+    <#allergy-status-from-concern-act>
+    <#allergy-status-observation-beside-concern-act>
     <#medications-ndc-translations>
     <#several-ids>
     <#repeated-ids>
@@ -1380,4 +1382,30 @@
   mf:result [
     bridge:expectedGraph <expected/narrative-breaks-in-blocks.ttl> ;
     bridge:expectedFindings <findings/narrative-breaks-in-blocks.ttl>
+  ] .
+
+<#allergy-status-from-concern-act> a bridge:IsomorphicConversionTest ;
+  mf:name "allergy-status-from-concern-act" ;
+  rdfs:comment "Five allergies with no Allergy Status Observation, each in a concern act of its own: active is the clinical status active, and completed, aborted and suspended are inactive, HL7's wider row for each. A status outside the map, nullified, is carried as nothing and is a finding, ccda:allergyConcernStatusNotMapped." ;
+  mf:action [
+    bridge:input <in/allergy-status-from-concern-act.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/allergy-status-from-concern-act.ttl> ;
+    bridge:expectedFindings <findings/allergy-status-from-concern-act.ttl>
+  ] .
+
+<#allergy-status-observation-beside-concern-act> a bridge:IsomorphicConversionTest ;
+  mf:name "allergy-status-observation-beside-concern-act" ;
+  rdfs:comment "Three allergies whose Allergy Status Observation disagrees with their concern act: resolved beside active is resolved, active beside completed is active, and inactive beside nullified is inactive, with no finding for the concern act, since the allergy states a status of its own." ;
+  mf:action [
+    bridge:input <in/allergy-status-observation-beside-concern-act.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/allergy-status-observation-beside-concern-act.ttl> ;
+    bridge:expectedFindings <findings/allergy-status-observation-beside-concern-act.ttl>
   ] .
