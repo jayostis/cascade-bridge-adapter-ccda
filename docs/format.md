@@ -78,12 +78,13 @@ is itself a note, and a section holding a Note Activity is carried for it. Every
 signs among them, and so is a note section holding entries, null-flavoured or empty, until a release maps it. An entry of a mapped section or of a Notes section (`2.16.840.1.113883.10.20.22.2.65`) holding a statement this
 release does not read, a Procedure Activity Act or Observation among them, is a finding too.
 
-A problem's status is its Problem Status Observation's, else its concern act's
-where that is `active`; its category is its section's, by the section's code. An
+A problem's status is its Problem Status Observation's, else, where it states none, its concern act's, by the map of
+`../vocab/ccda-concern-statuses.ttl`, the same rows as an allergy's below, and never when it states
+a Problem Status Observation, whatever the observation's code; its category is its section's, by the section's code. An
 immunization whose `negationInd` is true was not done, whatever its
 `statusCode` says.
 
-An allergy's status is its Allergy Status Observation's, else its Allergy Concern
+An allergy's status is its Allergy Status Observation's, else, where it states none, its Allergy Concern
 Act's `statusCode`, as C-CDA on FHIR has it: "`/statusCode` → `.clinicalStatus` is to be
 used only if the C-CDA Allergy Status Observation (see below) is missing"
 ([Allergies](https://hl7.org/fhir/us/ccda/en/CF-allergies.html), read 2026-10-31).
@@ -92,7 +93,11 @@ for a problem's concern act ([ConditionClinicalStatus](https://hl7.org/fhir/us/c
 read 2026-10-31), `../vocab/ccda-allergy-concern-statuses.ttl`: `active` is
 `active`, and `completed`, `aborted` and `suspended`, which HL7 marks wider, are
 `inactive`. Any other code is the finding `ccda:allergyConcernStatusNotMapped`
-where the allergy states no status observation of its own.
+where the allergy states no status observation of its own. An allergy that states one is
+never read through its act: an observation outside the map is the finding
+`ccda:allergyStatusNotMapped` and no status. A closed concern act is `inactive` even where the
+allergy is still real, so an allergy a source closes by its act alone is absent from a view
+of the active ones.
 
 A Medication Activity's mood says what it is: `INT`, a medication intended, is
 a prescription, and `EVN`, one taken, an entry on a list of what the person
