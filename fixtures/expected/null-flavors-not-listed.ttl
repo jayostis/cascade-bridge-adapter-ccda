@@ -2,6 +2,7 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix cascade: <https://ns.cascadeprotocol.org/cascade#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix dct: <http://purl.org/dc/terms/> .
@@ -9,83 +10,97 @@
 <ni:///sha-256;3KAFPOKy3dZwJQ8_W6C6nmG5tuZl-UsWspJAopfKopQ> cascade:conditionName "Essential (primary) hypertension" ;
 	cascade:conditionCategory "problem-list-item" ;
 	cascade:icd10Code <https://ns.cascadeprotocol.org/codes/icd10cm/I10> .
-<ni:///sha-256;OCufSic6eYeKD7fvV9-B7HtQ9fqFMNg7PBXnNxuPCWo> cascade:vaccineName "Influenza, seasonal, injectable, preservative free" ;
-	cascade:vaccineCode <https://ns.cascadeprotocol.org/codes/cvx/140> ;
-	cascade:workflowStatus "completed" .
+<ni:///sha-256;OCufSic6eYeKD7fvV9-B7HtQ9fqFMNg7PBXnNxuPCWo> cascade:workflowStatus "completed" ;
+	cascade:vaccineName "Influenza, seasonal, injectable, preservative free" ;
+	cascade:vaccineCode <https://ns.cascadeprotocol.org/codes/cvx/140> .
 <ni:///sha-256;Py6-IfBMy4HY4Bhl0l86itcMEv1cCIWvvvv40gzv7fI> cascade:prescribedOrReported "reportedUse" ;
-	cascade:workflowStatus "active" ;
-	cascade:drugName "Lisinopril 10 MG Oral Tablet" ;
 	cascade:medicationUseStartDate "2021-06-01"^^xsd:date ;
+	cascade:drugName "Lisinopril 10 MG Oral Tablet" ;
+	cascade:workflowStatus "active" ;
 	cascade:rxNormCode <https://ns.cascadeprotocol.org/codes/rxnorm/29046> .
-<ni:///sha-256;LHFQuEnHzGGTrDet3zvca0rj9iyiX4Cyd6mR2Iur-Q0> foaf:givenName "Jane" ;
-	foaf:familyName "Doe" ;
+<ni:///sha-256;LHFQuEnHzGGTrDet3zvca0rj9iyiX4Cyd6mR2Iur-Q0> foaf:familyName "Doe" ;
+	foaf:givenName "Jane" ;
 	cascade:administrativeGender "female" .
-<ni:///sha-256;DiRLylEWyCTc1AKZqdHokSNo99BHoS3XKZFq79UapfU> cascade:snomedCode <http://snomed.info/id/73761001> ;
-	cascade:workflowStatus "completed" ;
-	cascade:procedureName "Colonoscopy" .
+<ni:///sha-256;DiRLylEWyCTc1AKZqdHokSNo99BHoS3XKZFq79UapfU> cascade:workflowStatus "completed" ;
+	cascade:procedureName "Colonoscopy" ;
+	cascade:snomedCode <http://snomed.info/id/73761001> .
 <urn:uuid:12dbc9fe-ad40-8c53-a15d-51567d4442ae> a cascade:PatientProfile ;
 	cascade:sourceRecordId "2.16.840.1.113883.4.1:000-00-0000" .
 <ni:///sha-256;LHFQuEnHzGGTrDet3zvca0rj9iyiX4Cyd6mR2Iur-Q0> prov:specializationOf <urn:uuid:12dbc9fe-ad40-8c53-a15d-51567d4442ae> .
-_:c5fd774034a95ee4f8809b70fb27ea39 a oa:XPathSelector ;
+_:e8e44e61b06c56098451a4f0b8b1638d a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:afab0875021f7b718e4b577c1274ab8c bridge:arrivedAs <ni:///sha-256;LHFQuEnHzGGTrDet3zvca0rj9iyiX4Cyd6mR2Iur-Q0> ;
-	oa:hasSelector _:c5fd774034a95ee4f8809b70fb27ea39 .
+	oa:hasSelector _:e8e44e61b06c56098451a4f0b8b1638d .
 <urn:uuid:c10d58d1-79bf-8178-9402-fc973ede09bb> a cascade:ProblemOrDiagnosis ;
 	cascade:sourceRecordId "2.16.840.1.113883.3.88.11.32.1:NOT-LISTED-COND-OBS" .
 <ni:///sha-256;3KAFPOKy3dZwJQ8_W6C6nmG5tuZl-UsWspJAopfKopQ> prov:specializationOf <urn:uuid:c10d58d1-79bf-8178-9402-fc973ede09bb> ;
 	cascade:patient <urn:uuid:12dbc9fe-ad40-8c53-a15d-51567d4442ae> .
-_:dad46fb82f1456926f94366a9b6d6e68 a oa:XPathSelector ;
+_:b9b3abb4fca184dd751c91735019412c a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][3]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='act' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entryRelationship' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:f1f79aa3c7da0f2c81b02361aa4c0dfc bridge:arrivedAs <ni:///sha-256;3KAFPOKy3dZwJQ8_W6C6nmG5tuZl-UsWspJAopfKopQ> ;
-	oa:hasSelector _:dad46fb82f1456926f94366a9b6d6e68 .
+	oa:hasSelector _:b9b3abb4fca184dd751c91735019412c .
 <urn:uuid:5afdb257-352f-8137-a161-08464d564c42> a cascade:MedicalProcedure ;
 	cascade:sourceRecordId "2.16.840.1.113883.3.88.11.32.1:NOT-LISTED-PROC" .
 <ni:///sha-256;DiRLylEWyCTc1AKZqdHokSNo99BHoS3XKZFq79UapfU> prov:specializationOf <urn:uuid:5afdb257-352f-8137-a161-08464d564c42> ;
 	cascade:patient <urn:uuid:12dbc9fe-ad40-8c53-a15d-51567d4442ae> .
-_:d4588fc88c2c4411be57426f593e47d3 a oa:XPathSelector ;
+_:dd467b4ee52dbf73b32b32a11d059fc1 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][4]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='procedure' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:3bf7b1ccc8de00cedbf136e33aba7e5e bridge:arrivedAs <ni:///sha-256;DiRLylEWyCTc1AKZqdHokSNo99BHoS3XKZFq79UapfU> ;
-	oa:hasSelector _:d4588fc88c2c4411be57426f593e47d3 .
+	oa:hasSelector _:dd467b4ee52dbf73b32b32a11d059fc1 .
 <urn:uuid:f49d5c6e-d83b-8103-a06b-d8e1e0795346> a cascade:PrescribedOrReportedMedication ;
 	cascade:sourceRecordId "2.16.840.1.113883.3.88.11.32.1:NOT-LISTED-MED" .
 <ni:///sha-256;Py6-IfBMy4HY4Bhl0l86itcMEv1cCIWvvvv40gzv7fI> prov:specializationOf <urn:uuid:f49d5c6e-d83b-8103-a06b-d8e1e0795346> ;
 	cascade:patient <urn:uuid:12dbc9fe-ad40-8c53-a15d-51567d4442ae> .
-_:ef6a8434cf99353e8ec9a6ba67f373ac a oa:XPathSelector ;
+_:c5ace00da30495ac4fd1a2e5743a3136 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][2]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='substanceAdministration' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:a0a902eab6a6f0f2dfc3b74d45762b0d bridge:arrivedAs <ni:///sha-256;Py6-IfBMy4HY4Bhl0l86itcMEv1cCIWvvvv40gzv7fI> ;
-	oa:hasSelector _:ef6a8434cf99353e8ec9a6ba67f373ac .
+	oa:hasSelector _:c5ace00da30495ac4fd1a2e5743a3136 .
 <urn:uuid:3a9ef7b5-c2f1-8875-99a0-14daf26e4b85> a cascade:Vaccination ;
 	cascade:sourceRecordId "2.16.840.1.113883.3.88.11.32.1:NOT-LISTED-IMMUN" .
 <ni:///sha-256;OCufSic6eYeKD7fvV9-B7HtQ9fqFMNg7PBXnNxuPCWo> prov:specializationOf <urn:uuid:3a9ef7b5-c2f1-8875-99a0-14daf26e4b85> ;
 	cascade:patient <urn:uuid:12dbc9fe-ad40-8c53-a15d-51567d4442ae> .
-_:a7d9bdb92ccfe7600354a306ac9c42b5 a oa:XPathSelector ;
+_:c9776a4fd3c0766f78fc15186c264ee9 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='substanceAdministration' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:4691ad586a8544f5b3db0b28a103f563 bridge:arrivedAs <ni:///sha-256;OCufSic6eYeKD7fvV9-B7HtQ9fqFMNg7PBXnNxuPCWo> ;
-	oa:hasSelector _:a7d9bdb92ccfe7600354a306ac9c42b5 .
+	oa:hasSelector _:c9776a4fd3c0766f78fc15186c264ee9 .
 <urn:uuid:925decf0-c734-8199-b054-e755cb828968> a cascade:LaboratoryTestResult ;
 	cascade:sourceRecordId "2.16.840.1.113883.3.88.11.32.1:NULL-LAB-UNLISTED" .
 <ni:///sha-256;ePdCoEVaXWlEgyfzQ5c78bY-gRlghFFTYMK2RZ4gMxo> prov:specializationOf <urn:uuid:925decf0-c734-8199-b054-e755cb828968> ;
 	cascade:patient <urn:uuid:12dbc9fe-ad40-8c53-a15d-51567d4442ae> .
-_:fd772c4f07b57758b0df5f846a69930b a oa:XPathSelector ;
+<ni:///sha-256;2Rc-K9pMpkuNwzxaWOFMantP5uKCULHAHLhK-wh7w24> obo:RO_0002351 <urn:uuid:925decf0-c734-8199-b054-e755cb828968> .
+_:bc8cb8a4b9890935090227e257b9d a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][5]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='organizer' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][3]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:8550a9a62b519c61ae4bf86c38aa7a60 bridge:arrivedAs <ni:///sha-256;ePdCoEVaXWlEgyfzQ5c78bY-gRlghFFTYMK2RZ4gMxo> ;
-	oa:hasSelector _:fd772c4f07b57758b0df5f846a69930b .
+	oa:hasSelector _:bc8cb8a4b9890935090227e257b9d .
 <urn:uuid:d197b7f5-e227-8228-99e4-da0c96582576> a cascade:LaboratoryTestResult ;
 	cascade:sourceRecordId "2.16.840.1.113883.3.88.11.32.1:NULL-LAB-TIME" .
 <ni:///sha-256;YZcZjcPsZw_hLVcmAu9J4-Ni7rtECtmZ2HAGxHynl9Q> prov:specializationOf <urn:uuid:d197b7f5-e227-8228-99e4-da0c96582576> ;
 	cascade:patient <urn:uuid:12dbc9fe-ad40-8c53-a15d-51567d4442ae> .
-_:edc0a7af0f69c66a445d08a07b47b18e a oa:XPathSelector ;
+<ni:///sha-256;2Rc-K9pMpkuNwzxaWOFMantP5uKCULHAHLhK-wh7w24> obo:RO_0002351 <urn:uuid:d197b7f5-e227-8228-99e4-da0c96582576> .
+_:ec0f0e23676f0956dfd04eb2aa5d031f a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][5]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='organizer' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][2]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:2f76419b9430a1b1972f1767f95bdaeb bridge:arrivedAs <ni:///sha-256;YZcZjcPsZw_hLVcmAu9J4-Ni7rtECtmZ2HAGxHynl9Q> ;
-	oa:hasSelector _:edc0a7af0f69c66a445d08a07b47b18e .
+	oa:hasSelector _:ec0f0e23676f0956dfd04eb2aa5d031f .
 <urn:uuid:97f0cf76-7af6-8fb7-943a-66afc920ef60> a cascade:LaboratoryTestResult ;
 	cascade:sourceRecordId "2.16.840.1.113883.3.88.11.32.1:NULL-LAB-VALUE" .
 <ni:///sha-256;hNLKXo0Id04nZYZVq5evH7O8s19VW-cPnbPe5yc74gg> prov:specializationOf <urn:uuid:97f0cf76-7af6-8fb7-943a-66afc920ef60> ;
 	cascade:patient <urn:uuid:12dbc9fe-ad40-8c53-a15d-51567d4442ae> .
-_:ff1c5b54930eefd1309a2cacd177295c a oa:XPathSelector ;
+<ni:///sha-256;2Rc-K9pMpkuNwzxaWOFMantP5uKCULHAHLhK-wh7w24> obo:RO_0002351 <urn:uuid:97f0cf76-7af6-8fb7-943a-66afc920ef60> .
+_:a750142654504610c73fb25cf16f7180 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][5]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='organizer' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:ecceed02bedb4425980180ae149c4098 bridge:arrivedAs <ni:///sha-256;hNLKXo0Id04nZYZVq5evH7O8s19VW-cPnbPe5yc74gg> ;
-	oa:hasSelector _:ff1c5b54930eefd1309a2cacd177295c .
+	oa:hasSelector _:a750142654504610c73fb25cf16f7180 .
+<urn:uuid:9fb09a5b-18ee-8dc7-966c-99c685d14e1a> a cascade:DiagnosticReport ;
+	cascade:sourceRecordId "2.16.840.1.113883.3.88.11.32.1:NOT-LISTED-LAB" .
+<ni:///sha-256;2Rc-K9pMpkuNwzxaWOFMantP5uKCULHAHLhK-wh7w24> prov:specializationOf <urn:uuid:9fb09a5b-18ee-8dc7-966c-99c685d14e1a> ;
+	cascade:patient <urn:uuid:12dbc9fe-ad40-8c53-a15d-51567d4442ae> .
+_:dad9ebb1874dfa9bf2b9beecfa43d2e8 a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][5]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='organizer' and namespace-uri()='urn:hl7-org:v3'][1]" .
+_:cff8b342b8958509742e624937eec59a bridge:arrivedAs <ni:///sha-256;2Rc-K9pMpkuNwzxaWOFMantP5uKCULHAHLhK-wh7w24> ;
+	oa:hasSelector _:dad9ebb1874dfa9bf2b9beecfa43d2e8 .
+<ni:///sha-256;2Rc-K9pMpkuNwzxaWOFMantP5uKCULHAHLhK-wh7w24> cascade:workflowStatus "final" ;
+	cascade:reportName "Glucose [Mass/volume] in Serum or Plasma" ;
+	cascade:reportCode <http://loinc.org/rdf/2345-7> .
 <ni:///sha-256;ePdCoEVaXWlEgyfzQ5c78bY-gRlghFFTYMK2RZ4gMxo> dct:identifier "NULL-LAB-UNLISTED"^^<urn:oid:2.16.840.1.113883.3.88.11.32.1> .
 <ni:///sha-256;YZcZjcPsZw_hLVcmAu9J4-Ni7rtECtmZ2HAGxHynl9Q> dct:identifier "NULL-LAB-TIME"^^<urn:oid:2.16.840.1.113883.3.88.11.32.1> .
 <ni:///sha-256;hNLKXo0Id04nZYZVq5evH7O8s19VW-cPnbPe5yc74gg> dct:identifier "NULL-LAB-VALUE"^^<urn:oid:2.16.840.1.113883.3.88.11.32.1> .
@@ -93,17 +108,17 @@ _:ecceed02bedb4425980180ae149c4098 bridge:arrivedAs <ni:///sha-256;hNLKXo0Id04nZ
 <ni:///sha-256;YZcZjcPsZw_hLVcmAu9J4-Ni7rtECtmZ2HAGxHynl9Q#value> cascade:decimalValue "95"^^xsd:decimal ;
 	cascade:writtenValue "95" ;
 	cascade:ucumUnit "mg/dL" .
-<ni:///sha-256;ePdCoEVaXWlEgyfzQ5c78bY-gRlghFFTYMK2RZ4gMxo> cascade:resultClinicallyRelevantTime "2026-01-02"^^xsd:date ;
-	cascade:workflowStatus "final" ;
+<ni:///sha-256;ePdCoEVaXWlEgyfzQ5c78bY-gRlghFFTYMK2RZ4gMxo> cascade:workflowStatus "final" ;
+	cascade:resultClinicallyRelevantTime "2026-01-02"^^xsd:date ;
 	cascade:testName "Glucose [Mass/volume] in Serum or Plasma" ;
 	cascade:testCode <http://loinc.org/rdf/2345-7> .
 <ni:///sha-256;YZcZjcPsZw_hLVcmAu9J4-Ni7rtECtmZ2HAGxHynl9Q> cascade:testName "Glucose [Mass/volume] in Serum or Plasma" ;
 	cascade:workflowStatus "final" ;
 	cascade:testCode <http://loinc.org/rdf/2345-7> ;
 	cascade:resultValueKind cascade:QuantityResultValue .
-<ni:///sha-256;hNLKXo0Id04nZYZVq5evH7O8s19VW-cPnbPe5yc74gg> cascade:resultClinicallyRelevantTime "2026-01-01"^^xsd:date ;
-	cascade:workflowStatus "final" ;
+<ni:///sha-256;hNLKXo0Id04nZYZVq5evH7O8s19VW-cPnbPe5yc74gg> cascade:workflowStatus "final" ;
 	cascade:testName "Glucose [Mass/volume] in Serum or Plasma" ;
+	cascade:resultClinicallyRelevantTime "2026-01-01"^^xsd:date ;
 	cascade:testCode <http://loinc.org/rdf/2345-7> ;
 	cascade:valueAbsentForReason <ni:///sha-256;hNLKXo0Id04nZYZVq5evH7O8s19VW-cPnbPe5yc74gg#absent-resultValueKind> .
 <ni:///sha-256;hNLKXo0Id04nZYZVq5evH7O8s19VW-cPnbPe5yc74gg#absent-resultValueKind> cascade:absentValueProperty cascade:resultValueKind ;
@@ -121,6 +136,9 @@ _:8550a9a62b519c61ae4bf86c38aa7a60 oa:hasSource <ni:///sha-256;tibNCGe_nOU7lLHcD
 	prov:wasDerivedFrom <ni:///sha-256;tibNCGe_nOU7lLHcDzUZc1KD4IvnFDT9w1Ycvc_wigo> ;
 	prov:wasGeneratedBy _:e9843896ec641787f5458921a92b3412 .
 _:ecceed02bedb4425980180ae149c4098 oa:hasSource <ni:///sha-256;tibNCGe_nOU7lLHcDzUZc1KD4IvnFDT9w1Ycvc_wigo> ;
+	prov:wasDerivedFrom <ni:///sha-256;tibNCGe_nOU7lLHcDzUZc1KD4IvnFDT9w1Ycvc_wigo> ;
+	prov:wasGeneratedBy _:e9843896ec641787f5458921a92b3412 .
+_:cff8b342b8958509742e624937eec59a oa:hasSource <ni:///sha-256;tibNCGe_nOU7lLHcDzUZc1KD4IvnFDT9w1Ycvc_wigo> ;
 	prov:wasDerivedFrom <ni:///sha-256;tibNCGe_nOU7lLHcDzUZc1KD4IvnFDT9w1Ycvc_wigo> ;
 	prov:wasGeneratedBy _:e9843896ec641787f5458921a92b3412 .
 _:f1f79aa3c7da0f2c81b02361aa4c0dfc oa:hasSource <ni:///sha-256;tibNCGe_nOU7lLHcDzUZc1KD4IvnFDT9w1Ycvc_wigo> ;

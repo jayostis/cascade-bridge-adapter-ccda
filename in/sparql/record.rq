@@ -1,6 +1,7 @@
 PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX prov:    <http://www.w3.org/ns/prov#>
 PREFIX oa:      <http://www.w3.org/ns/oa#>
+PREFIX obo:     <http://purl.obolibrary.org/obo/>
 PREFIX fx:      <http://sparql.xyz/facade-x/ns/>
 PREFIX xyz:     <http://sparql.xyz/facade-x/data/>
 PREFIX v3:      <urn:hl7-org:v3>
@@ -35,6 +36,7 @@ CONSTRUCT {
     cascade:sourceRecordId ?identifier .
   ?version prov:specializationOf ?name ;
     cascade:patient ?patient .
+  ?reportVersion obo:RO_0002351 ?name .
   [] bridge:arrivedAs ?version ;
     oa:hasSelector [ a oa:XPathSelector ; rdf:value ?selector ] .
 }
@@ -54,6 +56,8 @@ WHERE {
         ("Procedure"          cascade:MedicalProcedure)
         ("MedicationRequest"  cascade:PrescribedOrReportedMedication)
         ("Observation"        cascade:LaboratoryTestResult)
+        ("DiagnosticReport"   cascade:DiagnosticReport)
+        ("DocumentReference"  cascade:ClinicalNoteOrDocument)
       }
       OPTIONAL { ?row ccda:identifier ?identifier ; ccda:identifierRoot ?identifierRoot ; ccda:identifierExtension ?identifierExtension }
       OPTIONAL { ?row ccda:keyFingerprint ?key }
@@ -143,6 +147,11 @@ WHERE {
   ?row ccda:statementAt ?slots ;
     ccda:recordClass ?class .
   BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(?slots))) AS ?version)
+  OPTIONAL {
+    ?reportRow ccda:recordClass "DiagnosticReport" ; ccda:statementAt ?reportSlots .
+    FILTER (?class = "Observation" && STRSTARTS(?slots, CONCAT(?reportSlots, ".")))
+    BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(?reportSlots))) AS ?reportVersion)
+  }
   BIND (IF(!?scoped || !BOUND(?identifier), 1/0,
         IF(?identifierExtension != "",
            IRI(CONCAT("urn:hl7ii:", ENCODE_FOR_URI(?identifierRoot), ":", ENCODE_FOR_URI(?identifierExtension))),

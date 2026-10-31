@@ -37,6 +37,10 @@ wraps it:
 | a procedure | a Procedure Activity Procedure (`4.14`), the entry's own statement | `Procedure` |
 | a medication | a Medication Activity (`4.16`), the entry's own statement in a Medications section, in mood `INT` or `EVN` | `MedicationRequest` |
 | a lab result | a Result Observation (`4.2`) in a Result Organizer (`4.1`), the entry's own statement in a Results section | `Observation` |
+| a report | a Result Organizer (`4.1`), the entry's own statement in a Results section | `DiagnosticReport` |
+| a note | a Note Activity (`4.202`), the entry's own statement in any section | `DocumentReference` |
+| a note | an unstructured document's body, its `nonXMLBody` | `DocumentReference` |
+| a note | a note section holding no entry: Assessment (`2.16.840.1.113883.10.20.22.2.8`), Assessment and Plan (`2.9`), Plan of Treatment (`2.10`), History of Present Illness (`1.3.6.1.4.1.19376.1.5.3.1.3.4`), Hospital Course (`1.3.6.1.4.1.19376.1.5.3.1.3.5`) | `DocumentReference` |
 
 The organizations the header names are records too, outside the table's classes:
 the custodian's `representedCustodianOrganization` and each author's
@@ -69,10 +73,10 @@ is a finding, `ccda:duplicateOrganizationNotCarried`.
 A section is mapped by its `templateId`: Allergies (`2.16.840.1.113883.10.20.22.2.6.1`),
 Problems (`2.5.1`), Immunizations (`2.2.1`), Procedures (`2.7.1`), Medications
 (`2.1.1`) and Results (`2.3.1`), each also by the root without `.1`, where its
-entries are optional. Every other section is a finding: vital signs and
-narrative-only sections alike, until a release maps it. An entry of a mapped
-section holding a statement this release does not read, a Procedure Activity
-Act or Observation among them, is a finding too.
+entries are optional. A note section holding no entry, with no `nullFlavor` and a text holding more than whitespace,
+is itself a note, and a section holding a Note Activity is carried for it. Every other section is a finding, vital
+signs among them, and so is a note section holding entries, null-flavoured or empty, until a release maps it. An entry of a mapped section or of a Notes section (`2.16.840.1.113883.10.20.22.2.65`) holding a statement this
+release does not read, a Procedure Activity Act or Observation among them, is a finding too.
 
 A problem's status is its Problem Status Observation's, else its concern act's
 where that is `active`; its category is its section's, by the section's code. An
@@ -84,10 +88,53 @@ a prescription, and `EVN`, one taken, an entry on a list of what the person
 takes. Both are one kind of record, told apart by their intent. One whose
 `negationInd` is true says the medication is not taken, and is no record. Every
 RxNorm and NDC code of its drug, the `code` and each `translation`, is carried;
-a C-CDA marks none as the one a user chose, so none is the selected code. A Result
-Organizer is a panel, and no record; each Result Observation in it is one, and
-any other statement in it, a Vital Sign Observation (`4.27`) among them, is a
-finding.
+a C-CDA marks none as the one a user chose, so none is the selected code.
+
+A Result Organizer is a report, as C-CDA on FHIR maps it to a DiagnosticReport
+([Results](https://hl7.org/fhir/us/ccda/en/CF-results.html), read 2026-10-30), and each Result Observation in it is
+a lab result, which the report's version names by its record's IRI (`obo:RO_0002351`, "has member"); any other
+statement in it, a Vital Sign Observation (`4.27`) among them, is a finding. Its code and translations are carried as
+a test's are, its name is its code's `displayName`, its time its `effectiveTime`, else the period's `low` (FHIR's
+`effectivePeriod.start`; the end is not carried), and its status is C-CDA on FHIR's report status map,
+`../vocab/ccda-report-statuses.ttl`. A C-CDA states no time a report was issued and no category, so neither is
+carried.
+
+An Unstructured Document (`2.16.840.1.113883.10.20.22.1.10`,
+[C-CDA 5.0.0](https://hl7.org/cda/us/ccda/StructureDefinition-UnstructuredDocument.html), read 2026-10-30) has a
+`nonXMLBody` in place of sections: one `text`, either base64 data with its `mediaType`, or a `reference` to a file. Any
+document with a `nonXMLBody` makes one note of it, whatever templates it claims. C-CDA on FHIR maps no unstructured
+document, so the note borrows its Note Activity mapping: its type is the document's `code`, its type name that code's
+`displayName`, its date the document's `effectiveTime`, its text the body's base64 decoded where it is plain text, and
+the body is its one attachment, with its media type and the address of a file it only references. A PDF, any other
+media type, and a referenced file are not read as text, and are the finding `ccda:noteDataNotRead`. The note is named
+by the document's `setId` where it states one, else by its `id`: an amended document keeps its `setId` under a
+new `id` and a higher `versionNumber`, so each amendment is a new version of the same note, and one document
+imported twice is one note. Its version carries the document's `id` as its `cascade:noteOrDocumentMasterIdentifier`, mapped as a result's
+ids are, as FHIR's `DocumentReference.masterIdentifier` holds it, so one document arriving through both adapters can
+be joined. A section's note and a Note Activity carry no document id: each is a part of its document, not the
+document itself. The `versionNumber` itself is not carried; the versions are ordered as the documents
+arrive.
+
+A Note Activity is a note, as C-CDA on FHIR maps it to a DocumentReference
+([Notes](https://hl7.org/fhir/us/ccda/en/CF-notes.html), read 2026-10-30): its type is its code's translations
+where it has one, else its code, the root code being always 34109-9, Note; its type name the first translation's
+`displayName`, else the code's; its date its first author's `time`; its text the narrative its `text` references,
+else its `text`'s own, else its `text`'s base64 decoded where it is plain text (no `mediaType`, or `text/plain`).
+A base64 `text` is also the note's one attachment, with its media type. Base64 in any other media type, a PDF, RTF
+or HTML among them, is not read as the note's text, since decoded HTML or RTF is markup, not the note's words: the
+note carries the attachment's media type and no text, its bytes stay in the kept document, and it is the finding
+`ccda:noteDataNotRead`, as is base64 the Bridge cannot decode. A note section's type is
+its `code`, its type name the code's `displayName`, its title its `title`, its date the document's `effectiveTime`
+and its text its `text`. A text is the Bridge's text of the element with a line for each block of the narrative
+(each element the crate's `bridge:elementNameBreakingText` lists: NarrativeBlock's elements that are not inline,
+its paragraphs, lists and items, tables and their parts, captions, footnotes and line breaks). A C-CDA note's
+status is `current`: C-CDA states none other, and no document status, so none is carried. A note section's key
+is its code and its text ([Names](#names)), so a source that sends one section again, unchanged, in a later document
+sends the same note, a version for each document's date. One whose text has changed at all, grown by a visit or
+only a typo fixed, is another note, and the earlier one stays its own record: the adapter joins no two texts, and
+whether a later note of one type from one source supersedes an earlier one is the vocabulary's matcher's to rule.
+Two identical note sections in one document are one note: the Bridge keeps one version (`bridge:versionNotKept`),
+and the other's title is not carried.
 
 The class is the FHIR resource type a record of its kind is mapped from; a
 record is typed by the Cascade class it is written as, and a statement with no
@@ -196,6 +243,8 @@ dozen strings, past which a double-precision float rounds.
     that namespace's IRI and its local name, again with no separator:
     `xsi:type` is `http://www.w3.org/2001/XMLSchema-instancetype`. Its value is
     as the XML specification normalises an attribute's.
+  - The text values the Bridge writes of an element (its text content, its text with element breaks, a base64
+    attachment's decoded text) are not members: they restate the runs.
   - A text is each run of text between two tags, as written, entities
     replaced and line endings made line feeds, never trimmed; CDATA content
     counts as text; a comment or a processing instruction neither splits a run
@@ -309,18 +358,20 @@ A section's `text` is its narrative, the human-readable copy of its entries,
 whose elements may carry an `ID`. An entry points into it with a `reference`
 whose `value` is `#` and that `ID`, from a statement's `text` or a code's
 `originalText`. An allergen's, a drug's and a test's name, a coded result and a
-reference range's text are each read through such a reference first, where
-the element it points to holds one run of text. One holding markup, a
-`content` inside a `td` among them, is passed over for the next place the name
-is stated, so a name is never cut short. A reference names an element only as
+reference range's text are each read through such a reference first: the
+whole text of the element it points to, every text under it in document order,
+as the Bridge's text with element breaks gives it, each break and each run of spaces of any kind (a no-break space
+included) or controls one space, and trimmed of those and of format characters (a zero-width space among them):
+`lisinopril <content>10 mg</content> tablet` is `lisinopril 10 mg tablet`, `Lisinopril<br/>10 mg tablet` is
+`Lisinopril 10 mg tablet`, and a row `<td>Amlodipine</td><td>5 mg</td>` is `Amlodipine 5 mg`. A reference names an element only as
 `#` and that element's `ID`, whitespace around the value aside: one with no
 `#`, or with nothing after it, names none. An `ID` that two elements hold names neither: the CDA schema makes an
 `ID` unique within a document, so a document that repeats one gives no ground
 for choosing, and the name is read from the next place it is stated. A
 portal's next download of one document may number the `ID`s afresh, so neither
 an `ID` nor a reference is part of a key or a member. A reference through which
-nothing can be read, one naming no element or naming one that does not hold
-exactly one run of text and nothing else, is a finding on its entry,
+nothing can be read, one naming no element or naming one that holds no visible
+character, is a finding on its entry,
 `ccda:referenceReadsNothing`.
 
 ## The schema

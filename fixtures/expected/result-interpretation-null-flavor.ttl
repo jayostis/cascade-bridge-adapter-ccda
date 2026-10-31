@@ -2,19 +2,20 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix cascade: <https://ns.cascadeprotocol.org/cascade#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix org: <http://www.w3.org/ns/org#> .
 @prefix oa: <http://www.w3.org/ns/oa#> .
 <urn:uuid:5769da63-d46b-8c66-b381-d00b2f7ccadb> a cascade:Organization .
-<ni:///sha-256;j6MCDqsWHEuxSvgmIVOU6o1QY3LsvMlVnJM6m8Aws8w> prov:qualifiedAttribution _:d9bfc51e7daf35af08381bcd555370f6 .
-_:d9bfc51e7daf35af08381bcd555370f6 prov:agent <urn:uuid:5769da63-d46b-8c66-b381-d00b2f7ccadb> ;
+<ni:///sha-256;j6MCDqsWHEuxSvgmIVOU6o1QY3LsvMlVnJM6m8Aws8w> prov:qualifiedAttribution _:a3c93ccc10b7470e43061215981d1c73 .
+_:a3c93ccc10b7470e43061215981d1c73 prov:agent <urn:uuid:5769da63-d46b-8c66-b381-d00b2f7ccadb> ;
 	prov:hadRole cascade:CustodianRole .
 <ni:///sha-256;grKi0ms_W2WGoIJBSajj9WqQqFYdSHTIaehKWGv5yRg> prov:specializationOf <urn:uuid:5769da63-d46b-8c66-b381-d00b2f7ccadb> .
 _:36acbf68b794064915090ac3dcabb533 bridge:arrivedAs <ni:///sha-256;grKi0ms_W2WGoIJBSajj9WqQqFYdSHTIaehKWGv5yRg> ;
-	oa:hasSelector _:fec6b1ba5a47da608748ad8f4e06da2a .
-_:fec6b1ba5a47da608748ad8f4e06da2a a oa:XPathSelector ;
+	oa:hasSelector _:b3ac496b3ec3187d16d26cec5399145a .
+_:b3ac496b3ec3187d16d26cec5399145a a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='custodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='assignedCustodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='representedCustodianOrganization' and namespace-uri()='urn:hl7-org:v3'][1]" .
 <ni:///sha-256;grKi0ms_W2WGoIJBSajj9WqQqFYdSHTIaehKWGv5yRg> foaf:name "Riverside Community Hospital" ;
 	org:identifier "urn:oid:2.16.840.1.113883.19.5.99999.3"^^<urn:ietf:rfc:3986> .
@@ -26,29 +27,46 @@ _:fec6b1ba5a47da608748ad8f4e06da2a a oa:XPathSelector ;
 	cascade:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.99999.2:MRN-552012> ;
 	cascade:sourceRecordId "2.16.840.1.113883.19.5.99999.2:MRN-552012" .
 <ni:///sha-256;EVwdxLuG51G60_9c_XpCwjPNK7H2ZQcLTj262S_EZA8> prov:specializationOf <urn:uuid:794d1263-7742-8a95-850e-663e9a08ffe7> .
-_:e0706578fff18a88abf4660f535eb97d a oa:XPathSelector ;
+_:c4dd99170a9a474d1535a4db01595543 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:54d8616de40e117b6b4d08f3aac2f2d1 bridge:arrivedAs <ni:///sha-256;EVwdxLuG51G60_9c_XpCwjPNK7H2ZQcLTj262S_EZA8> ;
-	oa:hasSelector _:e0706578fff18a88abf4660f535eb97d .
+	oa:hasSelector _:c4dd99170a9a474d1535a4db01595543 .
 <urn:uuid:951538c3-60b7-8fb7-9834-88183deb95d6> a cascade:LaboratoryTestResult ;
 	cascade:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.99999.6:LAB-9601> ;
 	cascade:sourceRecordId "2.16.840.1.113883.19.5.99999.6:LAB-9601" .
 <ni:///sha-256;1jArI5rVltcPIOTwrNHcVMnTg_xTevmlmbJgjIRc-bU> prov:specializationOf <urn:uuid:951538c3-60b7-8fb7-9834-88183deb95d6> ;
 	cascade:patient <urn:uuid:794d1263-7742-8a95-850e-663e9a08ffe7> .
-_:a984a8e8a666a0dede6d317f594accc3 a oa:XPathSelector ;
+<ni:///sha-256;b7RIPGK2TbMn1-n7tD60QDgnsMRGYZbg_rRzx0Gkp-Q> obo:RO_0002351 <urn:uuid:951538c3-60b7-8fb7-9834-88183deb95d6> .
+_:d22479c815024fcf31938653e5857b35 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='organizer' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:b7a33b694dfb82f7569496a8e28d0154 bridge:arrivedAs <ni:///sha-256;1jArI5rVltcPIOTwrNHcVMnTg_xTevmlmbJgjIRc-bU> ;
-	oa:hasSelector _:a984a8e8a666a0dede6d317f594accc3 .
+	oa:hasSelector _:d22479c815024fcf31938653e5857b35 .
+<urn:uuid:3eff9245-1fe6-8d07-af4f-0a215a353707> a cascade:DiagnosticReport ;
+	cascade:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.99999.6:LABP-9600> ;
+	cascade:sourceRecordId "2.16.840.1.113883.19.5.99999.6:LABP-9600" .
+<ni:///sha-256;b7RIPGK2TbMn1-n7tD60QDgnsMRGYZbg_rRzx0Gkp-Q> prov:specializationOf <urn:uuid:3eff9245-1fe6-8d07-af4f-0a215a353707> ;
+	cascade:patient <urn:uuid:794d1263-7742-8a95-850e-663e9a08ffe7> .
+_:a96ee61b6c9e259e1ed296fe99206ff2 a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='organizer' and namespace-uri()='urn:hl7-org:v3'][1]" .
+_:aa8b8b7c04613d3c5a81d6ba53fc6427 bridge:arrivedAs <ni:///sha-256;b7RIPGK2TbMn1-n7tD60QDgnsMRGYZbg_rRzx0Gkp-Q> ;
+	oa:hasSelector _:a96ee61b6c9e259e1ed296fe99206ff2 .
+<ni:///sha-256;b7RIPGK2TbMn1-n7tD60QDgnsMRGYZbg_rRzx0Gkp-Q> cascade:reportName "Cobalamin (Vitamin B12) [Mass/volume] in Serum or Plasma" ;
+	cascade:reportEffectiveTime "2025-09-01T08:30:00-05:00"^^xsd:dateTime ;
+	cascade:workflowStatus "final" ;
+	cascade:reportCode <http://loinc.org/rdf/2132-9> .
 <ni:///sha-256;1jArI5rVltcPIOTwrNHcVMnTg_xTevmlmbJgjIRc-bU> dct:identifier "LAB-9601"^^<urn:oid:2.16.840.1.113883.19.5.99999.6> ;
 	cascade:resultQuantity <ni:///sha-256;1jArI5rVltcPIOTwrNHcVMnTg_xTevmlmbJgjIRc-bU#value> .
 <ni:///sha-256;1jArI5rVltcPIOTwrNHcVMnTg_xTevmlmbJgjIRc-bU#value> cascade:decimalValue "150"^^xsd:decimal ;
 	cascade:writtenValue "150" ;
 	cascade:ucumUnit "pg/mL" .
-<ni:///sha-256;1jArI5rVltcPIOTwrNHcVMnTg_xTevmlmbJgjIRc-bU> cascade:resultClinicallyRelevantTime "2025-09-01T08:30:00-05:00"^^xsd:dateTime ;
-	cascade:testName "Cobalamin (Vitamin B12) [Mass/volume] in Serum or Plasma" ;
+<ni:///sha-256;1jArI5rVltcPIOTwrNHcVMnTg_xTevmlmbJgjIRc-bU> cascade:testName "Cobalamin (Vitamin B12) [Mass/volume] in Serum or Plasma" ;
+	cascade:resultClinicallyRelevantTime "2025-09-01T08:30:00-05:00"^^xsd:dateTime ;
 	cascade:workflowStatus "final" ;
 	cascade:testCode <http://loinc.org/rdf/2132-9> ;
 	cascade:resultValueKind cascade:QuantityResultValue .
+_:aa8b8b7c04613d3c5a81d6ba53fc6427 oa:hasSource <ni:///sha-256;j6MCDqsWHEuxSvgmIVOU6o1QY3LsvMlVnJM6m8Aws8w> ;
+	prov:wasDerivedFrom <ni:///sha-256;j6MCDqsWHEuxSvgmIVOU6o1QY3LsvMlVnJM6m8Aws8w> ;
+	prov:wasGeneratedBy _:2280588aff34f87a824a2a245c396c3b .
 _:36acbf68b794064915090ac3dcabb533 oa:hasSource <ni:///sha-256;j6MCDqsWHEuxSvgmIVOU6o1QY3LsvMlVnJM6m8Aws8w> ;
 	prov:wasDerivedFrom <ni:///sha-256;j6MCDqsWHEuxSvgmIVOU6o1QY3LsvMlVnJM6m8Aws8w> ;
 	prov:wasGeneratedBy _:2280588aff34f87a824a2a245c396c3b .

@@ -2,7 +2,9 @@ PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#>
 PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
 PREFIX xyz:    <http://sparql.xyz/facade-x/data/>
+PREFIX dom:    <https://dom.spec.whatwg.org/#dom-node->
 PREFIX v3:     <urn:hl7-org:v3>
+PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # One row per clinical statement this release maps, holding what its name is
@@ -32,6 +34,15 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 #   Observation        a result's code and code system; its effectiveTime's
 #                      value, low and high; its value's value, unit, code and
 #                      text; statusCode.
+#   DiagnosticReport   a Result Organizer's code and code system; its
+#   DocumentReference  effectiveTime's value, low and high; statusCode; and a
+#                      Note Activity's translations' codes and code systems and
+#                      its author's time. A note section's code, code system and
+#                      text with element breaks, never its document's time. An
+#                      unstructured document's body: its document's id, else its
+#                      code, code system and effectiveTime.
+#   Excluded members, every class, also: the text values the lift writes of an
+#   element, which restate its runs.
 #   Excluded members, every class: each ID attribute and each reference's
 #   value, which point into the narrative and move when nothing else does.
 #
@@ -183,6 +194,7 @@ WHERE {
               ("2.16.840.1.113883.10.20.22.4.52" v3:substanceAdministration "substanceAdministration" "Immunization")
               ("2.16.840.1.113883.10.20.22.4.14" v3:procedure               "procedure"               "Procedure")
               ("2.16.840.1.113883.10.20.22.4.16" v3:substanceAdministration "substanceAdministration" "MedicationRequest")
+              ("2.16.840.1.113883.10.20.22.4.202" v3:act                    "act"                     "DocumentReference")
             }
           }
         }
@@ -306,13 +318,152 @@ WHERE {
           "/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?memberAt), "]",
           "/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]") AS ?refinement)
       }
+      UNION
+      {
+        # A Result Organizer of a Results section, a report whose results are
+        # the Result Observations in it.
+        ?root ?outerSlot ?outer . ?outer a v3:component .
+        ?outer ?bodySlot ?body . ?body a v3:structuredBody .
+        ?body ?componentSlot ?component . ?component a v3:component .
+        ?component ?sectionSlot ?section . ?section a v3:section .
+        ?section ?entrySlot ?entry . ?entry a v3:entry .
+        ?entry ?statementSlot ?statement . ?statement a v3:organizer .
+        {
+          SELECT DISTINCT ?statement WHERE {
+            ?statement ?organizerTemplateSlot ?organizerTemplate .
+            ?organizerTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.1" .
+          }
+        }
+        {
+          SELECT DISTINCT ?section WHERE {
+            ?section ?sectionTemplateSlot ?sectionTemplate .
+            ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot .
+            VALUES ?sectionRoot { "2.16.840.1.113883.10.20.22.2.3" "2.16.840.1.113883.10.20.22.2.3.1" }
+          }
+        }
+        {
+          SELECT ?outer (COUNT(?earlierOuter) AS ?outerAt) WHERE {
+            ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
+            ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
+            FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) <= xsd:integer(STRAFTER(STR(?outerS), "#_")))
+          } GROUP BY ?outer
+        }
+        {
+          SELECT ?component (COUNT(?earlierComponent) AS ?componentAt) WHERE {
+            ?componentParent ?componentS ?component . ?componentParent a v3:structuredBody . ?component a v3:component .
+            ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
+            FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) <= xsd:integer(STRAFTER(STR(?componentS), "#_")))
+          } GROUP BY ?component
+        }
+        {
+          SELECT ?entry (COUNT(?earlierEntry) AS ?entryAt) WHERE {
+            ?entryParent ?entryS ?entry . ?entry a v3:entry .
+            ?entryParent ?entryE ?earlierEntry . ?earlierEntry a v3:entry .
+            FILTER (xsd:integer(STRAFTER(STR(?entryE), "#_")) <= xsd:integer(STRAFTER(STR(?entryS), "#_")))
+          } GROUP BY ?entry
+        }
+        BIND ("DiagnosticReport" AS ?class)
+        BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
+                     STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
+                     STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?statementSlot), "#_")) AS ?slots)
+        BIND (CONCAT(
+          "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?outerAt), "]",
+          "/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]",
+          "/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?componentAt), "]",
+          "/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]",
+          "/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][", STR(?entryAt), "]",
+          "/*[local-name()='organizer' and namespace-uri()='urn:hl7-org:v3'][1]") AS ?refinement)
+      }
+      UNION
+      {
+        # An unstructured document's body, its nonXMLBody: one note.
+        ?root ?outerSlot ?outer . ?outer a v3:component .
+        ?outer ?bodySlot ?statement . ?statement a v3:nonXMLBody .
+        {
+          SELECT ?outer (COUNT(?earlierOuter) AS ?outerAt) WHERE {
+            ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
+            ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
+            FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) <= xsd:integer(STRAFTER(STR(?outerS), "#_")))
+          } GROUP BY ?outer
+        }
+        BIND ("DocumentReference" AS ?class)
+        BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_")) AS ?slots)
+        BIND (CONCAT(
+          "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?outerAt), "]",
+          "/*[local-name()='nonXMLBody' and namespace-uri()='urn:hl7-org:v3'][1]") AS ?refinement)
+      }
+      UNION
+      {
+        # A section whose template is a note's and which holds no entry: one
+        # note, the section itself (docs/format.md, "What a record is").
+        ?root ?outerSlot ?outer . ?outer a v3:component .
+        ?outer ?bodySlot ?body . ?body a v3:structuredBody .
+        ?body ?componentSlot ?component . ?component a v3:component .
+        ?component ?sectionSlot ?statement . ?statement a v3:section .
+        {
+          SELECT DISTINCT ?statement WHERE {
+            ?statement a v3:section ; ?sectionTemplateSlot ?sectionTemplate .
+            ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot .
+            VALUES ?sectionRoot {
+              "2.16.840.1.113883.10.20.22.2.8" "2.16.840.1.113883.10.20.22.2.9" "2.16.840.1.113883.10.20.22.2.10"
+              "1.3.6.1.4.1.19376.1.5.3.1.3.4" "1.3.6.1.4.1.19376.1.5.3.1.3.5"
+            }
+          }
+        }
+        OPTIONAL {
+          SELECT DISTINCT ?statement (true AS ?holdsEntry) WHERE {
+            ?statement a v3:section ; ?anyEntrySlot ?anyEntry . ?anyEntry a v3:entry .
+          }
+        }
+        FILTER (!BOUND(?holdsEntry))
+        # A section with a null flavour, or whose text holds nothing, is no note.
+        FILTER NOT EXISTS { ?statement xyz:nullFlavor ?sectionNullFlavor }
+        {
+          SELECT DISTINCT ?statement WHERE {
+            ?statement a v3:section ; ?sectionTextSlot ?sectionText .
+            ?sectionText a v3:text ; bridge:textWithElementBreaks ?sectionPassage .
+          }
+        }
+        {
+          SELECT ?outer (COUNT(?earlierOuter) AS ?outerAt) WHERE {
+            ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
+            ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
+            FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) <= xsd:integer(STRAFTER(STR(?outerS), "#_")))
+          } GROUP BY ?outer
+        }
+        {
+          SELECT ?component (COUNT(?earlierComponent) AS ?componentAt) WHERE {
+            ?componentParent ?componentS ?component . ?componentParent a v3:structuredBody . ?component a v3:component .
+            ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
+            FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) <= xsd:integer(STRAFTER(STR(?componentS), "#_")))
+          } GROUP BY ?component
+        }
+        BIND ("DocumentReference" AS ?class)
+        BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
+                     STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_")) AS ?slots)
+        BIND (CONCAT(
+          "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?outerAt), "]",
+          "/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]",
+          "/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?componentAt), "]",
+          "/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]") AS ?refinement)
+      }
     }
   }
 
   OPTIONAL {
     {
       SELECT ?statement (MIN(?ranked) AS ?firstIdentifier) WHERE {
-        ?statement ?idSlot ?id . ?id a v3:id ; xyz:root ?idRoot .
+        # An unstructured document's body is named by its document's setId, which
+        # its amendments keep, else by its document's id.
+        { ?statement ?idSlot ?id . ?id a v3:id . }
+        UNION
+        { ?statement a v3:nonXMLBody . ?idRootElement a fx:root, v3:ClinicalDocument ; ?idSlot ?id . ?id a v3:setId . }
+        UNION
+        {
+          ?statement a v3:nonXMLBody . ?idRootElement a fx:root, v3:ClinicalDocument ; ?idSlot ?id . ?id a v3:id .
+          FILTER NOT EXISTS { ?idRootElement ?setIdSlot ?setId . ?setId a v3:setId ; xyz:root ?setIdRoot . }
+        }
+        ?id xyz:root ?idRoot .
         FILTER (STRLEN(?idRoot) > 0)
         FILTER NOT EXISTS { ?id xyz:nullFlavor ?idNullFlavor }
         OPTIONAL { ?id xyz:extension ?idExtension FILTER (STRLEN(?idExtension) > 0) }
@@ -563,6 +714,87 @@ WHERE {
                 }
               }
             }
+            UNION
+            {
+              ?statement a ?tplElement ; ?tplS ?tpl . ?tpl a v3:templateId ; xyz:root ?tplRoot .
+              VALUES (?tplRoot ?tplElement) {
+                ("2.16.840.1.113883.10.20.22.4.1" v3:organizer)
+                ("2.16.840.1.113883.10.20.22.4.202" v3:act)
+              }
+              {
+                SELECT ?statement ?field WHERE {
+                  {
+                    ?statement ?cS ?code . ?code a v3:code ; ?attribute ?v .
+                    VALUES (?attribute ?name) { (xyz:code "code") (xyz:codeSystem "codeSystem") }
+                    BIND (CONCAT(?name, "=", ?v) AS ?field)
+                  }
+                  UNION
+                  {
+                    ?statement ?cS ?code . ?code a v3:code ; ?trS ?translation . ?translation a v3:translation ; ?attribute ?v .
+                    VALUES (?attribute ?name) { (xyz:code "translationCode") (xyz:codeSystem "translationCodeSystem") }
+                    BIND (CONCAT(?name, "=", ?v) AS ?field)
+                  }
+                  UNION
+                  { ?statement ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?v . BIND (CONCAT("effectiveTime=", ?v) AS ?field) }
+                  UNION
+                  {
+                    ?statement ?eS ?time . ?time a v3:effectiveTime ; ?bS ?bound . ?bound a ?boundType ; xyz:value ?v .
+                    FILTER (?boundType IN (v3:low, v3:high))
+                    BIND (CONCAT("effectiveTime", STRAFTER(STR(?boundType), "urn:hl7-org:v3"), "=", ?v) AS ?field)
+                  }
+                  UNION
+                  {
+                    ?statement ?aS ?author . ?author a v3:author ; ?atS ?authorTime . ?authorTime a v3:time ; xyz:value ?v .
+                    BIND (CONCAT("authorTime=", ?v) AS ?field)
+                  }
+                  UNION
+                  { ?statement ?sS ?status . ?status a v3:statusCode ; xyz:code ?v . BIND (CONCAT("statusCode=", ?v) AS ?field) }
+                }
+              }
+            }
+            UNION
+            {
+              # A note section's key is its code and its text, so the same
+              # section sent again in a later document of its source is the same
+              # note, and a section whose text has changed is another.
+              ?statement a v3:section ; ?tplS ?tpl . ?tpl a v3:templateId ; xyz:root ?tplRoot .
+              VALUES ?tplRoot {
+                "2.16.840.1.113883.10.20.22.2.8" "2.16.840.1.113883.10.20.22.2.9" "2.16.840.1.113883.10.20.22.2.10"
+                "1.3.6.1.4.1.19376.1.5.3.1.3.4" "1.3.6.1.4.1.19376.1.5.3.1.3.5"
+              }
+              {
+                SELECT ?statement ?field WHERE {
+                  {
+                    ?statement a v3:section ; ?cS ?code . ?code a v3:code ; ?attribute ?v .
+                    VALUES (?attribute ?name) { (xyz:code "code") (xyz:codeSystem "codeSystem") }
+                    BIND (CONCAT(?name, "=", ?v) AS ?field)
+                  }
+                  UNION
+                  {
+                    ?statement a v3:section ; ?txS ?text . ?text a v3:text ; bridge:textWithElementBreaks ?v .
+                    BIND (CONCAT("text=", ?v) AS ?field)
+                  }
+                }
+              }
+            }
+            UNION
+            {
+              # An unstructured document's key is its document's code and time.
+              ?statement a v3:nonXMLBody .
+              {
+                SELECT ?statement ?field WHERE {
+                  ?statement a v3:nonXMLBody .
+                  ?document a fx:root, v3:ClinicalDocument .
+                  {
+                    ?document ?cS ?code . ?code a v3:code ; ?attribute ?v .
+                    VALUES (?attribute ?name) { (xyz:code "code") (xyz:codeSystem "codeSystem") }
+                    BIND (CONCAT(?name, "=", ?v) AS ?field)
+                  }
+                  UNION
+                  { ?document ?eS ?time . ?time a v3:effectiveTime ; xyz:value ?v . BIND (CONCAT("effectiveTime=", ?v) AS ?field) }
+                }
+              }
+            }
           }
         }
         BIND (SUBSTR(SHA256(?field), 1, 12) AS ?h)
@@ -591,7 +823,8 @@ WHERE {
             {
               SELECT DISTINCT ?statement WHERE {
                 {
-                  ?statement a v3:patientRole .
+                  ?statement a ?bodyOrPatient .
+                  VALUES ?bodyOrPatient { v3:patientRole v3:nonXMLBody }
                 }
                 UNION
                 {
@@ -603,13 +836,16 @@ WHERE {
                   ?statement ?mT ?mTemplate .
                   ?mTemplate a v3:templateId ; xyz:root ?mRoot .
                   VALUES ?mRoot { "2.16.840.1.113883.10.20.22.4.4" "2.16.840.1.113883.10.20.22.4.52" "2.16.840.1.113883.10.20.22.4.14"
-                         "2.16.840.1.113883.10.20.22.4.16" "2.16.840.1.113883.10.20.22.4.2" }
+                         "2.16.840.1.113883.10.20.22.4.16" "2.16.840.1.113883.10.20.22.4.2" "2.16.840.1.113883.10.20.22.4.1"
+                         "2.16.840.1.113883.10.20.22.4.202" "2.16.840.1.113883.10.20.22.2.8" "2.16.840.1.113883.10.20.22.2.9"
+                         "2.16.840.1.113883.10.20.22.2.10" "1.3.6.1.4.1.19376.1.5.3.1.3.4" "1.3.6.1.4.1.19376.1.5.3.1.3.5" }
                 }
               }
             }
             ?statement (!rdf:type)* ?node .
             ?node a ?nodeType ; ?predicate ?held .
             FILTER (isLiteral(?held) && ?predicate != xyz:ID)
+            FILTER (?predicate NOT IN (dom:textcontent, bridge:textWithElementBreaks, bridge:textDecodedFromBase64))
             FILTER (!(?nodeType = v3:reference && ?predicate = xyz:value))
             BIND (IF(STRSTARTS(STR(?predicate), STR(rdf:_)),
                      CONCAT(STR(?nodeType), "=", ?held),
