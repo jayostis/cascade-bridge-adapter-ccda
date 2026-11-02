@@ -40,7 +40,7 @@ wraps it:
 | a report | a Result Organizer (`4.1`), the entry's own statement in a Results section | `DiagnosticReport` |
 | a note | a Note Activity (`4.202`), the entry's own statement in any section | `DocumentReference` |
 | a note | an unstructured document's body, its `nonXMLBody` | `DocumentReference` |
-| a note | a section whose text holds a block no entry references, whatever its template or entries ([Narrative references](#narrative-references)) | `DocumentReference` |
+| a note | a section whose text holds a block no record's statement references, whatever its template or entries ([Narrative references](#narrative-references)) | `DocumentReference` |
 
 The organizations the header names are records too, outside the table's classes:
 the custodian's `representedCustodianOrganization` and each author's
@@ -408,8 +408,12 @@ of its `text` at and under which no element is referenced, whose parent is the `
 `text`, `table`, `thead`, `tbody`, `tfoot` and `list` are containers, and every other element, a paragraph, an item, a
 row, a caption, is kept or dropped whole, so a row an entry references only for a name leaves with its other cells.
 A table's `thead`, `tfoot` and `caption`, and a list's `caption`, are kept only beside a row or item kept; a run of
-text directly in the `text` is a block, trimmed. An element is referenced when any `reference` of the document
-(every one is an entry's: the narrative has none) names the `ID` it alone holds. The blocks are joined by line
+text directly in the `text` is a block, trimmed. An element is referenced when a `reference` nested in a statement this
+release makes a record of (the narrative has none) names the `ID` it alone holds, or when an element above it up to the
+`text` is, so a table, a `tbody` or the `text` an entry references is its whole and a section is not also its note.
+A reference from an entry this release makes no record of, a vital sign, a social history observation, a planned order
+or a medication in the request mood, or from a concern act, names nothing here, so what it points at stays in the
+note. The blocks are joined by line
 feeds in document order, the order of their `rdf:_n` slots from the `text` down; a section into which nothing points
 is one block, its whole text, so its note is the note it was before entries were read at all. The query that
 computes it is `../in/sparql/document-table.rq`, whose `ORDER BY` under a `GROUP_CONCAT` the Bridge runs outside its
