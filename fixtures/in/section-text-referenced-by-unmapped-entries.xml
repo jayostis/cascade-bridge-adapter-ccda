@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sdtc="urn:hl7-org:sdtc">
+  <realmCode code="US"/>
+  <typeId root="2.16.840.1.113883.1.3" extension="POCD_HD000040"/>
+  <templateId root="2.16.840.1.113883.10.20.22.1.1"/>
+  <id root="2.16.840.1.113883.19.5.99999.1" extension="UNMAPPED-REFERENCES-001"/>
+  <code code="34133-9" displayName="Summarization of Episode Note" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+  <title>Health Summary - Text Referenced By Entries Not Mapped</title>
+  <effectiveTime value="20260415120000+0000"/>
+  <confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25"/>
+  <languageCode code="en-US"/>
+  <recordTarget>
+    <patientRole>
+      <id root="2.16.840.1.113883.19.5.99999.2" extension="PT-4411"/>
+      <patient>
+        <name use="L"><given>Ines</given><family>Delgado</family></name>
+        <administrativeGenderCode code="F" codeSystem="2.16.840.1.113883.5.1"/>
+        <birthTime value="19710923"/>
+      </patient>
+    </patientRole>
+  </recordTarget>
+  <author>
+    <time value="20260415120000+0000"/>
+    <assignedAuthor>
+      <id root="2.16.840.1.113883.19.5.99999.3" extension="AU-1"/>
+      <representedOrganization>
+        <id root="2.16.840.1.113883.19.5.99999"/>
+        <name>Harbourview Family Practice</name>
+      </representedOrganization>
+    </assignedAuthor>
+  </author>
+  <custodian>
+    <assignedCustodian>
+      <representedCustodianOrganization>
+        <id root="2.16.840.1.113883.19.5.99999"/>
+        <name>Harbourview Family Practice</name>
+      </representedCustodianOrganization>
+    </assignedCustodian>
+  </custodian>
+  <component>
+    <structuredBody>
+      <component>
+        <section>
+          <templateId root="2.16.840.1.113883.10.20.22.2.4.1"/>
+          <code code="8716-3" displayName="Vital signs" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+          <title>Vital Signs</title>
+          <text>
+            <table border="1" width="100%">
+              <thead>
+                <tr><th>Date</th><th>Blood pressure</th></tr>
+              </thead>
+              <tbody>
+                <tr ID="VS-1"><td>October 15, 2025</td><td>130/82 mm[Hg]</td></tr>
+              </tbody>
+            </table>
+          </text>
+          <entry typeCode="DRIV">
+            <organizer classCode="CLUSTER" moodCode="EVN">
+              <templateId root="2.16.840.1.113883.10.20.22.4.26"/>
+              <id root="2.16.840.1.113883.19.5.99999.4" extension="VS-ORG-1"/>
+              <code code="46680005" displayName="Vital signs" codeSystem="2.16.840.1.113883.6.96"/>
+              <statusCode code="completed"/>
+              <effectiveTime value="20251015"/>
+              <component>
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.27"/>
+                  <id root="2.16.840.1.113883.19.5.99999.4" extension="VS-1"/>
+                  <code code="8480-6" displayName="Systolic blood pressure" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+                  <text><reference value="#VS-1"/></text>
+                  <statusCode code="completed"/>
+                  <effectiveTime value="20251015"/>
+                  <value xsi:type="PQ" value="130" unit="mm[Hg]"/>
+                </observation>
+              </component>
+            </organizer>
+          </entry>
+        </section>
+      </component>
+      <component>
+        <section>
+          <templateId root="2.16.840.1.113883.10.20.22.2.17"/>
+          <code code="29762-2" displayName="Social history Narrative" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+          <title>Social History</title>
+          <text>
+            <list>
+              <item ID="SH-1">Never smoker; no alcohol.</item>
+            </list>
+          </text>
+          <entry typeCode="DRIV">
+            <observation classCode="OBS" moodCode="EVN">
+              <templateId root="2.16.840.1.113883.10.20.22.4.38"/>
+              <id root="2.16.840.1.113883.19.5.99999.5" extension="SH-1"/>
+              <code code="229819007" displayName="Tobacco use and exposure" codeSystem="2.16.840.1.113883.6.96"/>
+              <text><reference value="#SH-1"/></text>
+              <statusCode code="completed"/>
+              <effectiveTime><low value="20000101"/></effectiveTime>
+              <value xsi:type="CD" code="266919005" displayName="Never smoked tobacco" codeSystem="2.16.840.1.113883.6.96"/>
+            </observation>
+          </entry>
+        </section>
+      </component>
+      <component>
+        <section>
+          <templateId root="2.16.840.1.113883.10.20.22.2.10"/>
+          <code code="18776-5" displayName="Plan of care note" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+          <title>Plan of Treatment</title>
+          <text>
+            <table border="1" width="100%">
+              <thead>
+                <tr><th>Planned</th><th>Due</th></tr>
+              </thead>
+              <tbody>
+                <tr ID="PLAN-1"><td>Thyrotropin</td><td>April 14, 2026 - April 28, 2026</td></tr>
+              </tbody>
+            </table>
+            <paragraph>Return in six months.</paragraph>
+          </text>
+          <entry typeCode="DRIV">
+            <observation classCode="OBS" moodCode="RQO">
+              <templateId root="2.16.840.1.113883.10.20.22.4.44"/>
+              <id root="2.16.840.1.113883.19.5.99999.6" extension="PLAN-1"/>
+              <code code="3016-3" displayName="Thyrotropin [Units/volume] in Serum or Plasma" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+              <text><reference value="#PLAN-1"/></text>
+              <statusCode code="active"/>
+              <effectiveTime><low value="20260414"/><high value="20260428"/></effectiveTime>
+            </observation>
+          </entry>
+        </section>
+      </component>
+      <component>
+        <section>
+          <templateId root="2.16.840.1.113883.10.20.22.2.1.1"/>
+          <code code="10160-0" displayName="History of Medication use Narrative" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+          <title>Medications</title>
+          <text>
+            <table border="1" width="100%">
+              <thead>
+                <tr><th>Medication</th><th>Instructions</th></tr>
+              </thead>
+              <tbody>
+                <tr ID="MED-1"><td>Lisinopril 20 mg tablet</td><td>Prescription to be written at the next visit</td></tr>
+              </tbody>
+            </table>
+          </text>
+          <entry typeCode="DRIV">
+            <substanceAdministration classCode="SBADM" moodCode="RQO">
+              <templateId root="2.16.840.1.113883.10.20.22.4.16"/>
+              <id root="2.16.840.1.113883.19.5.99999.7" extension="MED-1"/>
+              <text><reference value="#MED-1"/></text>
+              <statusCode code="active"/>
+              <effectiveTime xsi:type="IVL_TS"><low value="20260415"/></effectiveTime>
+              <consumable>
+                <manufacturedProduct classCode="MANU">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.23"/>
+                  <manufacturedMaterial>
+                    <code code="314077" displayName="lisinopril 20 MG Oral Tablet" codeSystem="2.16.840.1.113883.6.88" codeSystemName="RxNorm"/>
+                  </manufacturedMaterial>
+                </manufacturedProduct>
+              </consumable>
+            </substanceAdministration>
+          </entry>
+        </section>
+      </component>
+      <component>
+        <section>
+          <templateId root="2.16.840.1.113883.10.20.22.2.6.1"/>
+          <code code="48765-2" displayName="Allergies and Adverse Reactions" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+          <title>Allergies</title>
+          <text>
+            <table border="1" width="100%">
+              <thead>
+                <tr><th>Allergen</th><th>Reaction</th></tr>
+              </thead>
+              <tbody>
+                <tr ID="ALG-1"><td>Penicillin</td><td>Hives, 2008</td></tr>
+              </tbody>
+            </table>
+          </text>
+          <entry typeCode="DRIV">
+            <act classCode="ACT" moodCode="EVN">
+              <templateId root="2.16.840.1.113883.10.20.22.4.30"/>
+              <id root="2.16.840.1.113883.19.5.99999.8" extension="ALG-ACT-1"/>
+              <code code="CONC" codeSystem="2.16.840.1.113883.5.6"/>
+              <statusCode code="active"/>
+              <entryRelationship typeCode="SUBJ">
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.7"/>
+                  <id root="2.16.840.1.113883.19.5.99999.8" extension="ALG-1"/>
+                  <code code="ASSERTION" codeSystem="2.16.840.1.113883.5.4"/>
+                  <text><reference value="#ALG-1"/></text>
+                  <statusCode code="completed"/>
+                  <value xsi:type="CD" code="416098002" displayName="Allergy to drug" codeSystem="2.16.840.1.113883.6.96"/>
+                  <participant typeCode="CSM">
+                    <participantRole classCode="MANU">
+                      <playingEntity classCode="MMAT">
+                        <code code="7980" displayName="Penicillin G" codeSystem="2.16.840.1.113883.6.88"/>
+                      </playingEntity>
+                    </participantRole>
+                  </participant>
+                </observation>
+              </entryRelationship>
+            </act>
+          </entry>
+        </section>
+      </component>
+    </structuredBody>
+  </component>
+</ClinicalDocument>

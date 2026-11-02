@@ -106,6 +106,8 @@
     <#results-report-beside-referenced-rows>
     <#statement-texts-referenced>
     <#section-text-partly-referenced>
+    <#section-text-referenced-by-unmapped-entries>
+    <#section-text-container-referenced>
   ) .
 
 <#allergies-section> a bridge:IsomorphicConversionTest ;
@@ -1469,7 +1471,7 @@
 
 <#section-text-partly-referenced> a bridge:IsomorphicConversionTest ;
   mf:name "section-text-partly-referenced" ;
-  rdfs:comment "Four sections whose text entries reference in part. Immunizations: a run of text directly in the text, a table whose first row is referenced only by its vaccine's name, so the whole row goes with its other cells, and whose second row no entry references, so it stays with the table's caption and header; a list whose one item an immunization's text references, so the item is that immunization's narrative text and the list's caption goes; and ten paragraphs, two with the same text, kept in document order past the ninth slot. Allergies, Problems and Results: an allergy, a problem and a report each carry the element their text references, a problem's concern act's own text is not read, and the one unreferenced paragraph is the Results section's note." ;
+  rdfs:comment "Four sections whose text entries reference in part. Immunizations: a run of text directly in the text, a table whose first row is referenced only by its vaccine's name, so the whole row goes with its other cells, and whose second row no entry references, so it stays with the table's caption and header; a list whose one item an immunization's text references, so the item is that immunization's narrative text and the list's caption goes; and ten paragraphs, two with the same text, kept in document order past the ninth slot. Allergies, Problems and Results: an allergy, a problem and a report each carry the element their text references, a problem's concern act's own text is read by no record, so the item it references stays in the Problems section's note, and the one unreferenced paragraph is the Results section's note." ;
   mf:action [
     bridge:input <in/section-text-partly-referenced.xml> ;
     bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
@@ -1478,4 +1480,30 @@
   mf:result [
     bridge:expectedGraph <expected/section-text-partly-referenced.ttl> ;
     bridge:expectedFindings <findings/section-text-partly-referenced.ttl>
+  ] .
+
+<#section-text-referenced-by-unmapped-entries> a bridge:IsomorphicConversionTest ;
+  mf:name "section-text-referenced-by-unmapped-entries" ;
+  rdfs:comment "Five sections whose text a reference points into from an entry this release makes no record of. Vital Signs: a vital sign's observation references its row. Social History: an observation references its list item. Plan of Treatment: a planned observation, in the request mood, references its row beside an unreferenced paragraph. Medications: a medication activity in the request mood references its row. Each of these four sections is a note of its whole text, the references holding it for no record. Allergies: an allergy references its row, so it carries the row as its narrative text and the section makes no note." ;
+  mf:action [
+    bridge:input <in/section-text-referenced-by-unmapped-entries.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/section-text-referenced-by-unmapped-entries.ttl> ;
+    bridge:expectedFindings <findings/section-text-referenced-by-unmapped-entries.ttl>
+  ] .
+
+<#section-text-container-referenced> a bridge:IsomorphicConversionTest ;
+  mf:name "section-text-container-referenced" ;
+  rdfs:comment "Three sections whose entry references a container, not something in it. Allergies: an allergy references its table, so it carries the table's text as its narrative text and the section's note is the one paragraph beside the table. Procedures: a procedure references the text element itself, so it carries the whole text and the section makes no note. Immunizations: an immunization references a tbody, so the table's caption and header, which belong beside a row kept, go with it and the section makes no note." ;
+  mf:action [
+    bridge:input <in/section-text-container-referenced.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/section-text-container-referenced.ttl> ;
+    bridge:expectedFindings <findings/section-text-container-referenced.ttl>
   ] .
