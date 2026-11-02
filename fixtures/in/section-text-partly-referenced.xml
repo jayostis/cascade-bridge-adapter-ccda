@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sdtc="urn:hl7-org:sdtc">
+  <realmCode code="US"/>
+  <typeId root="2.16.840.1.113883.1.3" extension="POCD_HD000040"/>
+  <templateId root="2.16.840.1.113883.10.20.22.1.1"/>
+  <id root="2.16.840.1.113883.19.5.99999.1" extension="PARTLY-REFERENCED-001"/>
+  <code code="34133-9" displayName="Summarization of Episode Note" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+  <title>Health Summary - Text Partly Referenced</title>
+  <effectiveTime value="20260415120000+0000"/>
+  <confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25"/>
+  <languageCode code="en-US"/>
+  <recordTarget>
+    <patientRole>
+      <id root="2.16.840.1.113883.19.5.99999.2" extension="PT-4410"/>
+      <patient>
+        <name use="L"><given>Ines</given><family>Delgado</family></name>
+        <administrativeGenderCode code="F" codeSystem="2.16.840.1.113883.5.1"/>
+        <birthTime value="19710923"/>
+      </patient>
+    </patientRole>
+  </recordTarget>
+  <author>
+    <time value="20260415120000+0000"/>
+    <assignedAuthor>
+      <id root="2.16.840.1.113883.19.5.99999.3" extension="AU-1"/>
+      <representedOrganization>
+        <id root="2.16.840.1.113883.19.5.99999"/>
+        <name>Harbourview Family Practice</name>
+      </representedOrganization>
+    </assignedAuthor>
+  </author>
+  <custodian>
+    <assignedCustodian>
+      <representedCustodianOrganization>
+        <id root="2.16.840.1.113883.19.5.99999"/>
+        <name>Harbourview Family Practice</name>
+      </representedCustodianOrganization>
+    </assignedCustodian>
+  </custodian>
+  <component>
+    <structuredBody>
+      <component>
+        <section>
+          <templateId root="2.16.840.1.113883.10.20.22.2.2.1"/>
+          <code code="11369-6" displayName="History of Immunization Narrative" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+          <title>Immunizations</title>
+          <text>
+            Given at the clinic.
+            <table border="1" width="100%">
+              <caption>Immunizations given</caption>
+              <thead>
+                <tr><th>Vaccine</th><th>Date</th><th>Note</th></tr>
+              </thead>
+              <tbody>
+                <tr ID="IMM-1">
+                  <td ID="IMM-1-NAME">Influenza vaccine</td>
+                  <td>October 1, 2025</td>
+                  <td>Left deltoid</td>
+                </tr>
+                <tr>
+                  <td>Tetanus booster</td>
+                  <td>Declined</td>
+                  <td>To decide at the next visit</td>
+                </tr>
+              </tbody>
+            </table>
+            <list>
+              <caption>Reactions</caption>
+              <item ID="IMM-2">Pneumococcal vaccine given; no reaction.</item>
+            </list>
+            <paragraph>Reminder 1: bring the vaccination card.</paragraph>
+            <paragraph>Reminder 2: check the shingles series.</paragraph>
+            <paragraph>Reminder 1: bring the vaccination card.</paragraph>
+            <paragraph>Reminder 3: wait 15 minutes after each dose.</paragraph>
+            <paragraph>Reminder 4: report any fever.</paragraph>
+            <paragraph>Reminder 5: keep the injection site clean.</paragraph>
+            <paragraph>Reminder 6: next influenza dose in autumn.</paragraph>
+            <paragraph>Reminder 7: hepatitis B status unknown.</paragraph>
+            <paragraph>Reminder 8: ask about travel vaccines.</paragraph>
+            <paragraph>Reminder 9: review at the annual visit.</paragraph>
+          </text>
+          <entry typeCode="DRIV">
+            <substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+              <templateId root="2.16.840.1.113883.10.20.22.4.52"/>
+              <id root="2.16.840.1.113883.19.5.99999.4" extension="IMM-1"/>
+              <statusCode code="completed"/>
+              <effectiveTime value="20251001"/>
+              <consumable>
+                <manufacturedProduct classCode="MANU">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.54"/>
+                  <manufacturedMaterial>
+                    <code code="141" displayName="Influenza, seasonal, injectable" codeSystem="2.16.840.1.113883.12.292" codeSystemName="CVX">
+                      <originalText><reference value="#IMM-1-NAME"/></originalText>
+                    </code>
+                  </manufacturedMaterial>
+                </manufacturedProduct>
+              </consumable>
+            </substanceAdministration>
+          </entry>
+          <entry typeCode="DRIV">
+            <substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+              <templateId root="2.16.840.1.113883.10.20.22.4.52"/>
+              <id root="2.16.840.1.113883.19.5.99999.4" extension="IMM-2"/>
+              <text><reference value="#IMM-2"/></text>
+              <statusCode code="completed"/>
+              <effectiveTime value="20250312"/>
+              <consumable>
+                <manufacturedProduct classCode="MANU">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.54"/>
+                  <manufacturedMaterial>
+                    <code code="133" displayName="Pneumococcal conjugate PCV 13" codeSystem="2.16.840.1.113883.12.292" codeSystemName="CVX"/>
+                  </manufacturedMaterial>
+                </manufacturedProduct>
+              </consumable>
+            </substanceAdministration>
+          </entry>
+        </section>
+      </component>
+      <component>
+        <section>
+          <templateId root="2.16.840.1.113883.10.20.22.2.6.1"/>
+          <code code="48765-2" displayName="Allergies and Adverse Reactions" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+          <title>Allergies</title>
+          <text>
+            <table border="1" width="100%">
+              <thead>
+                <tr><th>Allergen</th><th>Reaction</th></tr>
+              </thead>
+              <tbody>
+                <tr ID="ALG-1">
+                  <td>Penicillin</td>
+                  <td>Hives, 2008</td>
+                </tr>
+              </tbody>
+            </table>
+          </text>
+          <entry typeCode="DRIV">
+            <act classCode="ACT" moodCode="EVN">
+              <templateId root="2.16.840.1.113883.10.20.22.4.30"/>
+              <id root="2.16.840.1.113883.19.5.99999.5" extension="ALG-ACT-1"/>
+              <code code="CONC" codeSystem="2.16.840.1.113883.5.6"/>
+              <statusCode code="active"/>
+              <entryRelationship typeCode="SUBJ">
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.7"/>
+                  <id root="2.16.840.1.113883.19.5.99999.5" extension="ALG-1"/>
+                  <code code="ASSERTION" codeSystem="2.16.840.1.113883.5.4"/>
+                  <text><reference value="#ALG-1"/></text>
+                  <statusCode code="completed"/>
+                  <value xsi:type="CD" code="416098002" displayName="Allergy to drug" codeSystem="2.16.840.1.113883.6.96"/>
+                  <participant typeCode="CSM">
+                    <participantRole classCode="MANU">
+                      <playingEntity classCode="MMAT">
+                        <code code="7980" displayName="Penicillin G" codeSystem="2.16.840.1.113883.6.88"/>
+                      </playingEntity>
+                    </participantRole>
+                  </participant>
+                </observation>
+              </entryRelationship>
+            </act>
+          </entry>
+        </section>
+      </component>
+      <component>
+        <section>
+          <templateId root="2.16.840.1.113883.10.20.22.2.5.1"/>
+          <code code="11450-4" displayName="Problem list - Reported" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+          <title>Problems</title>
+          <text>
+            <list>
+              <item ID="PROB-ACT">Concern: blood pressure</item>
+              <item ID="PROB-1">Essential hypertension, since 2019</item>
+            </list>
+          </text>
+          <entry typeCode="DRIV">
+            <act classCode="ACT" moodCode="EVN">
+              <templateId root="2.16.840.1.113883.10.20.22.4.3"/>
+              <id root="2.16.840.1.113883.19.5.99999.6" extension="PROB-ACT-1"/>
+              <code code="CONC" codeSystem="2.16.840.1.113883.5.6"/>
+              <text><reference value="#PROB-ACT"/></text>
+              <statusCode code="active"/>
+              <entryRelationship typeCode="SUBJ">
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.4"/>
+                  <id root="2.16.840.1.113883.19.5.99999.6" extension="PROB-1"/>
+                  <code code="55607006" displayName="Problem" codeSystem="2.16.840.1.113883.6.96"/>
+                  <text><reference value="#PROB-1"/></text>
+                  <statusCode code="completed"/>
+                  <effectiveTime><low value="2019"/></effectiveTime>
+                  <value xsi:type="CD" code="59621000" displayName="Essential hypertension" codeSystem="2.16.840.1.113883.6.96"/>
+                </observation>
+              </entryRelationship>
+            </act>
+          </entry>
+        </section>
+      </component>
+      <component>
+        <section>
+          <templateId root="2.16.840.1.113883.10.20.22.2.3.1"/>
+          <code code="30954-2" displayName="Relevant diagnostic tests/laboratory data Narrative" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+          <title>Results</title>
+          <text>
+            <paragraph ID="RPT-1">Lipid panel drawn fasting.</paragraph>
+            <paragraph>Fasting confirmed by the patient.</paragraph>
+          </text>
+          <entry typeCode="DRIV">
+            <organizer classCode="BATTERY" moodCode="EVN">
+              <templateId root="2.16.840.1.113883.10.20.22.4.1"/>
+              <id root="2.16.840.1.113883.19.5.99999.7" extension="RPT-1"/>
+              <code code="57698-3" displayName="Lipid panel with direct LDL - Serum or Plasma" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+              <sdtc:text><reference value="#RPT-1"/></sdtc:text>
+              <statusCode code="completed"/>
+              <effectiveTime value="20260410"/>
+              <component>
+                <observation classCode="OBS" moodCode="EVN">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.2"/>
+                  <id root="2.16.840.1.113883.19.5.99999.7" extension="RPT-1-1"/>
+                  <code code="2093-3" displayName="Cholesterol [Mass/volume] in Serum or Plasma" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+                  <statusCode code="completed"/>
+                  <effectiveTime value="20260410"/>
+                  <value xsi:type="PQ" value="182" unit="mg/dL"/>
+                </observation>
+              </component>
+            </organizer>
+          </entry>
+        </section>
+      </component>
+    </structuredBody>
+  </component>
+</ClinicalDocument>
