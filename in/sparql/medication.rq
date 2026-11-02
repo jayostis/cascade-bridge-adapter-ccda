@@ -210,6 +210,25 @@ WHERE {
           BIND (STRAFTER(STR(?sS), "#_") AS ?at)
           BIND ("1" AS ?tier)
         }
+        UNION
+        {
+          ?medication ?xS ?text . ?text a v3:text ; ?rfS ?reference . ?reference a v3:reference ; xyz:value ?pointer .
+          BIND (REPLACE(?pointer, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?textPointer)
+          FILTER (STRSTARTS(?textPointer, "#") && STRLEN(?textPointer) > 1)
+          BIND (STRAFTER(?textPointer, "#") AS ?textAnchor)
+          {
+            SELECT ?textAnchor (SAMPLE(?passage) AS ?value) WHERE {
+              ?narrative xyz:ID ?textAnchor .
+              OPTIONAL {
+                ?narrative bridge:textWithElementBreaks ?passage .
+                FILTER (REGEX(?passage, "[^\\p{Z}\\p{Cc}\\p{Cf}]"))
+              }
+            } GROUP BY ?textAnchor HAVING (COUNT(DISTINCT ?narrative) = 1 && COUNT(?passage) = 1)
+          }
+          BIND (cascade:narrativeText AS ?p)
+          BIND ("1" AS ?tier)
+          BIND (STRAFTER(STR(?xS), "#_") AS ?at)
+        }
         BIND (COALESCE(?within, "") AS ?inner)
         BIND (CONCAT(?tier, SUBSTR("0000000000", STRLEN(?at) + 1), ?at,
                      SUBSTR("00000000000000000000", STRLEN(?inner) + 1), ?inner, "|", ?value) AS ?ranked)

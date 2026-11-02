@@ -11,8 +11,8 @@ PREFIX cascade:  <https://ns.cascadeprotocol.org/cascade#>
 PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # A note the document table makes a record of: a Note Activity, an entry's own
-# act, as C-CDA on FHIR maps it to a DocumentReference, or a note section that
-# holds no entry (docs/format.md, "What a record is").
+# act, as C-CDA on FHIR maps it to a DocumentReference, or a section whose text
+# holds what no entry references (docs/format.md, "What a record is").
 #
 # A Note Activity's type is its code's translations where it has one, else its
 # code, as C-CDA on FHIR's notes page maps the root code 34109-9 and a more
@@ -28,8 +28,8 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # its one attachment, with its media type and the address of a file it only
 # references. A
 # section's type is its code, its type name the code's displayName, its title
-# its title's text, its date the document's effectiveTime and its text its
-# text's. A text is the lift's text with element breaks, a line for each block
+# its title's text, its date the document's effectiveTime and its text the kept
+# text document-table.rq gives its row. A text is the lift's text with element breaks, a line for each block
 # of the narrative. A note's status is current: a C-CDA states no other. A LOINC
 # type is a cascade:noteOrDocumentType IRI, any other a
 # cascade:noteOrDocumentTypeInOtherSystem literal typed by its system's URI. A
@@ -81,14 +81,12 @@ WHERE {
           SELECT DISTINCT ?statement WHERE {
             {
               ?statement ?tS ?t . ?t a v3:templateId ; xyz:root ?templateRoot .
-              VALUES ?templateRoot {
-                "2.16.840.1.113883.10.20.22.4.202"
-                "2.16.840.1.113883.10.20.22.2.8" "2.16.840.1.113883.10.20.22.2.9" "2.16.840.1.113883.10.20.22.2.10"
-                "1.3.6.1.4.1.19376.1.5.3.1.3.4" "1.3.6.1.4.1.19376.1.5.3.1.3.5"
-              }
+              VALUES ?templateRoot { "2.16.840.1.113883.10.20.22.4.202" }
             }
             UNION
             { ?statement a v3:nonXMLBody }
+            UNION
+            { ?statement a v3:section }
           }
         }
         {
@@ -160,7 +158,8 @@ WHERE {
         }
         UNION
         {
-          ?statement ?xS ?text . ?text a v3:text ; bridge:textWithElementBreaks ?value .
+          ?statement a ?textHolder ; ?xS ?text . ?text a v3:text ; bridge:textWithElementBreaks ?value .
+          VALUES ?textHolder { v3:act v3:nonXMLBody }
           OPTIONAL { ?text xyz:representation ?representation }
           FILTER (COALESCE(UCASE(?representation), "") != "B64")
           BIND (cascade:narrativeText AS ?p)
@@ -240,6 +239,11 @@ WHERE {
       BIND (IF(BOUND(?loincStem), cascade:noteOrDocumentType, cascade:noteOrDocumentTypeInOtherSystem) AS ?p)
       BIND (IF(BOUND(?loincStem), IRI(CONCAT(STR(?loincStem), ENCODE_FOR_URI(?typeCode))), STRDT(?typeCode, IRI(?datatype))) AS ?o)
     }
+  }
+  UNION
+  {
+    ?row ccda:keptText ?o .
+    BIND (cascade:narrativeText AS ?p)
   }
   UNION
   {

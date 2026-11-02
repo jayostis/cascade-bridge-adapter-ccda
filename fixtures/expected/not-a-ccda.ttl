@@ -7,16 +7,22 @@
 @prefix org: <http://www.w3.org/ns/org#> .
 @prefix oa: <http://www.w3.org/ns/oa#> .
 <urn:uuid:5769da63-d46b-8c66-b381-d00b2f7ccadb> a cascade:Organization .
-<ni:///sha-256;6z1zr7DOJzqc34TB-FP1PJVX2RllsNfNt0I9bPa0pXQ> prov:qualifiedAttribution _:d96f0ad92ade1dd87fa7f39a6a66e814 .
-_:d96f0ad92ade1dd87fa7f39a6a66e814 prov:agent <urn:uuid:5769da63-d46b-8c66-b381-d00b2f7ccadb> ;
+<ni:///sha-256;6z1zr7DOJzqc34TB-FP1PJVX2RllsNfNt0I9bPa0pXQ> prov:qualifiedAttribution _:b5db90e299eb2d07890293eb2651e980 .
+_:b5db90e299eb2d07890293eb2651e980 prov:agent <urn:uuid:5769da63-d46b-8c66-b381-d00b2f7ccadb> ;
 	prov:hadRole cascade:CustodianRole .
 <ni:///sha-256;grKi0ms_W2WGoIJBSajj9WqQqFYdSHTIaehKWGv5yRg> prov:specializationOf <urn:uuid:5769da63-d46b-8c66-b381-d00b2f7ccadb> .
 _:62fd0fec69bf423b5dcd9b7a1061e327 bridge:arrivedAs <ni:///sha-256;grKi0ms_W2WGoIJBSajj9WqQqFYdSHTIaehKWGv5yRg> ;
-	oa:hasSelector _:cf48eaca3f12c9c9ec33d21bacebe59a .
-_:cf48eaca3f12c9c9ec33d21bacebe59a a oa:XPathSelector ;
+	oa:hasSelector _:c3522df558dcde0f1b4227aefb17c90c .
+_:c3522df558dcde0f1b4227aefb17c90c a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='custodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='assignedCustodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='representedCustodianOrganization' and namespace-uri()='urn:hl7-org:v3'][1]" .
 <ni:///sha-256;grKi0ms_W2WGoIJBSajj9WqQqFYdSHTIaehKWGv5yRg> foaf:name "Riverside Community Hospital" ;
 	org:identifier "urn:oid:2.16.840.1.113883.19.5.99999.3"^^<urn:ietf:rfc:3986> .
+<ni:///sha-256;spwGw0QefiM-NFjB3om5qlohydZZEZRXZhLMXDt8d80> cascade:noteOrDocumentTitle "History of Present Illness" ;
+	cascade:noteOrDocumentDate "2025-08-01T14:00:00-05:00"^^xsd:dateTime ;
+	cascade:noteOrDocumentTypeName "History of present illness" ;
+	cascade:workflowStatus "current" ;
+	cascade:noteOrDocumentType <http://loinc.org/rdf/10164-2> ;
+	cascade:narrativeText "Seen for a follow-up of seasonal allergic rhinitis." .
 <ni:///sha-256;8OhFhApPXbNaEpnniPsDDmUOh7GZ3tQ3brvo1CVgP0c> foaf:familyName "Ahmadi" ;
 	foaf:givenName "Robin" ;
 	cascade:dateOfBirth "1978-02-14"^^xsd:date ;
@@ -25,10 +31,20 @@ _:cf48eaca3f12c9c9ec33d21bacebe59a a oa:XPathSelector ;
 	cascade:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.99999.2:MRN-448120> ;
 	cascade:sourceRecordId "2.16.840.1.113883.19.5.99999.2:MRN-448120" .
 <ni:///sha-256;8OhFhApPXbNaEpnniPsDDmUOh7GZ3tQ3brvo1CVgP0c> prov:specializationOf <urn:uuid:ed62f5a3-7994-8c3c-9b4a-9f1f41a1aba4> .
-_:ef074a09c297054ed72adca47d71cce5 a oa:XPathSelector ;
+_:f5417b645e50fc9955dc8c2024e9c731 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:fe9d7ea5d9679f341c6380268a10c3c8 bridge:arrivedAs <ni:///sha-256;8OhFhApPXbNaEpnniPsDDmUOh7GZ3tQ3brvo1CVgP0c> ;
-	oa:hasSelector _:ef074a09c297054ed72adca47d71cce5 .
+	oa:hasSelector _:f5417b645e50fc9955dc8c2024e9c731 .
+<urn:uuid:485953f5-8129-830a-960c-a24ba2e06dfb> a cascade:ClinicalNoteOrDocument .
+<ni:///sha-256;spwGw0QefiM-NFjB3om5qlohydZZEZRXZhLMXDt8d80> prov:specializationOf <urn:uuid:485953f5-8129-830a-960c-a24ba2e06dfb> ;
+	cascade:patient <urn:uuid:ed62f5a3-7994-8c3c-9b4a-9f1f41a1aba4> .
+_:e6cdbf407fab91baf8daaeac6e12b0e7 a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]" .
+_:207caf7701d54f07ea01a2f8784010d3 bridge:arrivedAs <ni:///sha-256;spwGw0QefiM-NFjB3om5qlohydZZEZRXZhLMXDt8d80> ;
+	oa:hasSelector _:e6cdbf407fab91baf8daaeac6e12b0e7 ;
+	oa:hasSource <ni:///sha-256;6z1zr7DOJzqc34TB-FP1PJVX2RllsNfNt0I9bPa0pXQ> ;
+	prov:wasDerivedFrom <ni:///sha-256;6z1zr7DOJzqc34TB-FP1PJVX2RllsNfNt0I9bPa0pXQ> ;
+	prov:wasGeneratedBy _:8574673059ff9a3ef1df3850471fe4c .
 _:62fd0fec69bf423b5dcd9b7a1061e327 oa:hasSource <ni:///sha-256;6z1zr7DOJzqc34TB-FP1PJVX2RllsNfNt0I9bPa0pXQ> ;
 	prov:wasDerivedFrom <ni:///sha-256;6z1zr7DOJzqc34TB-FP1PJVX2RllsNfNt0I9bPa0pXQ> ;
 	prov:wasGeneratedBy _:8574673059ff9a3ef1df3850471fe4c .
