@@ -858,8 +858,7 @@ WHERE {
                                   }
                                 }
                                 ?target xyz:ID ?anchor .
-                                OPTIONAL { SELECT ?anchor (true AS ?heldTwice) WHERE { ?holder xyz:ID ?anchor } GROUP BY ?anchor HAVING (COUNT(?holder) > 1) }
-                                FILTER (!BOUND(?heldTwice))
+                                FILTER NOT EXISTS { ?other xyz:ID ?anchor . FILTER (?other != ?target) }
                                 ?node (!rdf:type)* ?target .
                               }
                             }
@@ -908,8 +907,7 @@ WHERE {
                                   }
                                 }
                                 ?target xyz:ID ?anchor .
-                                OPTIONAL { SELECT ?anchor (true AS ?heldTwice) WHERE { ?holder xyz:ID ?anchor } GROUP BY ?anchor HAVING (COUNT(?holder) > 1) }
-                                FILTER (!BOUND(?heldTwice))
+                                FILTER NOT EXISTS { ?other xyz:ID ?anchor . FILTER (?other != ?target) }
                                 ?target ((!rdf:type)*|^(!rdf:type)*) ?node .
                               }
                             }
@@ -963,8 +961,7 @@ WHERE {
                                       }
                                     }
                                     ?target xyz:ID ?anchor .
-                                    OPTIONAL { SELECT ?anchor (true AS ?heldTwice) WHERE { ?holder xyz:ID ?anchor } GROUP BY ?anchor HAVING (COUNT(?holder) > 1) }
-                                    FILTER (!BOUND(?heldTwice))
+                                    FILTER NOT EXISTS { ?other xyz:ID ?anchor . FILTER (?other != ?target) }
                                     ?target ((!rdf:type)*|^(!rdf:type)*) ?node .
                                   }
                                 }
