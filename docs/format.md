@@ -40,7 +40,7 @@ wraps it:
 | a report | a Result Organizer (`4.1`), the entry's own statement in a Results section | `DiagnosticReport` |
 | a note | a Note Activity (`4.202`), the entry's own statement in any section | `DocumentReference` |
 | a note | an unstructured document's body, its `nonXMLBody` | `DocumentReference` |
-| a note | a note section holding no entry: Assessment (`2.16.840.1.113883.10.20.22.2.8`), Assessment and Plan (`2.9`), Plan of Treatment (`2.10`), History of Present Illness (`1.3.6.1.4.1.19376.1.5.3.1.3.4`), Hospital Course (`1.3.6.1.4.1.19376.1.5.3.1.3.5`) | `DocumentReference` |
+| a note | a section whose text holds a block no entry references, whatever its template or entries ([Narrative references](#narrative-references)) | `DocumentReference` |
 
 The organizations the header names are records too, outside the table's classes:
 the custodian's `representedCustodianOrganization` and each author's
@@ -144,11 +144,11 @@ or HTML among them, is not read as the note's text, since decoded HTML or RTF is
 note carries the attachment's media type and no text, its bytes stay in the kept document, and it is the finding
 `ccda:noteDataNotRead`, as is base64 the Bridge cannot decode. A note section's type is
 its `code`, its type name the code's `displayName`, its title its `title`, its date the document's `effectiveTime`
-and its text its `text`. A text is the Bridge's text of the element with a line for each block of the narrative
+and its text its kept text ([Narrative references](#narrative-references)). A text is the Bridge's text of the element with a line for each block of the narrative
 (each element the crate's `bridge:elementNameBreakingText` lists: NarrativeBlock's elements that are not inline,
 its paragraphs, lists and items, tables and their parts, captions, footnotes and line breaks). A C-CDA note's
 status is `current`: C-CDA states none other, and no document status, so none is carried. A note section's key
-is its code and its text ([Names](#names)), so a source that sends one section again, unchanged, in a later document
+is its code and its kept text ([Names](#names)), so a source that sends one section again, unchanged, in a later document
 sends the same note, a version for each document's date. One whose text has changed at all, grown by a visit or
 only a typo fixed, is another note, and the earlier one stays its own record: the adapter joins no two texts, and
 whether a later note of one type from one source supersedes an earlier one is the vocabulary's matcher's to rule.
@@ -373,8 +373,9 @@ its precision.
 
 ## Narrative references
 
-A section's `text` is its narrative, the human-readable copy of its entries,
-whose elements may carry an `ID`. An entry points into it with a `reference`
+A section's `text` is its narrative, whose elements may carry an `ID`. It is not only the human-readable copy of
+its entries: real downloads put text there no entry holds (a CT report beside the result rows, an Encounters table,
+a pharmacy's fill history), and an entry's typeCode `DRIV` is no promise that it does not. An entry points into it with a `reference`
 whose `value` is `#` and that `ID`, from a statement's `text` or a code's
 `originalText`. An allergen's, a drug's and a test's name, a coded result and a
 reference range's text are each read through such a reference first: the
@@ -392,6 +393,27 @@ an `ID` nor a reference is part of a key or a member. A reference through which
 nothing can be read, one naming no element or naming one that holds no visible
 character, is a finding on its entry,
 `ccda:referenceReadsNothing`.
+
+A statement's own `text` references the narrative that is its human-readable form, and every record's version
+carries that element's text with element breaks, untrimmed, as its `cascade:narrativeText`: an allergy's, a
+problem's, an immunization's, a medication's, a procedure's, a result's and a report's (a Result Organizer's, whose text is CDA's extension `sdtc:text`), as
+[C-CDA on FHIR's mapping guidance](https://hl7.org/fhir/us/ccda/en/mappingGuidance.html) (read 2026-11-02) maps an
+entry's `text/reference` to its resource's `text`. Only the statement's own: a concern act wraps the record and is
+none, so its text is not read, nor is a nested observation's. The referenced element is the row or item, not its
+table's header. A text with no visible character is none.
+
+What no entry references is a section's **kept text**, its note's text, so a section makes a note whatever its
+template and entries, and none only when its kept text is empty or it has a `nullFlavor`. Its blocks are the nodes
+of its `text` at and under which no element is referenced, whose parent is the `text` or a referenced container:
+`text`, `table`, `thead`, `tbody`, `tfoot` and `list` are containers, and every other element, a paragraph, an item, a
+row, a caption, is kept or dropped whole, so a row an entry references only for a name leaves with its other cells.
+A table's `thead`, `tfoot` and `caption`, and a list's `caption`, are kept only beside a row or item kept; a run of
+text directly in the `text` is a block, trimmed. An element is referenced when any `reference` of the document
+(every one is an entry's: the narrative has none) names the `ID` it alone holds. The blocks are joined by line
+feeds in document order, the order of their `rdf:_n` slots from the `text` down; a section into which nothing points
+is one block, its whole text, so its note is the note it was before entries were read at all. The query that
+computes it is `../in/sparql/document-table.rq`, whose `ORDER BY` under a `GROUP_CONCAT` the Bridge runs outside its
+fast path.
 
 ## The schema
 
