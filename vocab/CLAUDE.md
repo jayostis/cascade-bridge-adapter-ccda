@@ -54,16 +54,13 @@ no section: one path holds an allergy's value and a problem's alike, so a
 verdict is settled against `../in/sparql/`, and a section this release does not
 map is a finding of `section-findings.rq`, not of the accounting.
 
-- **A loss is reported once.** An element whose content no predicate carries
-  (`/author`, a section's `text`, an `addr`) is `bridge:noHome` and names its
-  gap; every path under it is `bridge:ignored`, held under it, unless a mapping
-  reads it for some record. The document's `id`, `code` and `effectiveTime` are
-  `bridge:noHome` for the document and their attributes `bridge:carried` for the
-  note an unstructured document or a section makes: `bridge:carriedInPart` cannot
-  name a `bridge:noPredicate` gap, so the element reports the loss and the
-  attributes name what is carried. A section's `text` has no attribute to name
-  it: its kept text is its note's `narrativeText`, and the entry says `noHome`
-  all the same.
+- **A loss is reported where it happened.** An element whose content no predicate carries
+  (`/author`, an `addr`, a `telecom`) is `bridge:noHome` and names its gap, and every path under it is
+  `bridge:ignored`, held under it, unless a mapping reads it for some record. An element a note carries in
+  part (the document's `id`, `code` and `effectiveTime`, a section's `text`) is `bridge:carriedInPart`; it
+  names a `bridge:carriedWithLoss` gap, which an entry cannot report, so a findings query does, only where a
+  loss happened. Only `effectiveTime/@value` reaches a section's note; `id` and `code` reach only the
+  unstructured document's note.
 - **A path a later release maps is left to it**, not given a verdict ahead of the mapping.
 - **The narrative is open-ended.** A section's `text` holds any tree of
   NarrativeBlock elements, and only those the inputs carry have an entry; a

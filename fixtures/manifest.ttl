@@ -112,6 +112,14 @@
     <#procedure-time-low-only>
     <#report-code-translation>
     <#medication-name-in-material>
+    <#unstructured-document-header-not-stated>
+    <#section-text-referenced-by-nested-observation>
+    <#section-text-referenced-by-reaction-original-text>
+    <#section-text-referenced-by-comment-activity>
+    <#section-text-referenced-beside-a-mapped-observation>
+    <#unstructured-document-header-partly-stated>
+    <#section-text-referenced-by-untemplated-result>
+    <#section-text-referenced-in-a-header-row>
   ) .
 
 <#allergies-section> a bridge:IsomorphicConversionTest ;
@@ -1562,4 +1570,108 @@
   mf:result [
     bridge:expectedGraph <expected/medication-name-in-material.ttl> ;
     bridge:expectedFindings <findings/medication-name-in-material.ttl>
+  ] .
+
+<#unstructured-document-header-not-stated> a bridge:IsomorphicConversionTest ;
+  mf:name "unstructured-document-header-not-stated" ;
+  rdfs:comment "An Unstructured Document whose id, code and effectiveTime state only a nullFlavor: its note takes none of them, so the document's id, type and time are each a finding valued by the flavour, where a stated id, code and time of an unstructured document are findings of none." ;
+  mf:action [
+    bridge:input <in/unstructured-document-header-not-stated.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/unstructured-document-header-not-stated.ttl> ;
+    bridge:expectedFindings <findings/unstructured-document-header-not-stated.ttl>
+  ] .
+
+<#section-text-referenced-by-nested-observation> a bridge:IsomorphicConversionTest ;
+  mf:name "section-text-referenced-by-nested-observation" ;
+  rdfs:comment "An allergy section whose table has two rows, the allergy's, referenced by its observation's text, and the reaction's, referenced only by the Reaction Observation nested in it: no record reads a nested observation's text, so the reaction's row leaves the section's note and is carried nowhere, and so is the table's header, every row of it being referenced. The one finding of the section's text names both." ;
+  mf:action [
+    bridge:input <in/section-text-referenced-by-nested-observation.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/section-text-referenced-by-nested-observation.ttl> ;
+    bridge:expectedFindings <findings/section-text-referenced-by-nested-observation.ttl>
+  ] .
+
+<#section-text-referenced-by-reaction-original-text> a bridge:IsomorphicConversionTest ;
+  mf:name "section-text-referenced-by-reaction-original-text" ;
+  rdfs:comment "An allergy section whose table has a row for the allergy, referenced by its observation's text, and a row for the reaction, referenced only by the originalText of the Reaction Observation's value: allergy.rq reads that observation's displayName and code and no originalText, so the reaction's row leaves the section's note and its words are carried nowhere, and so is the table's header, every row of it being referenced. The one finding of the section's text names both." ;
+  mf:action [
+    bridge:input <in/section-text-referenced-by-reaction-original-text.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/section-text-referenced-by-reaction-original-text.ttl> ;
+    bridge:expectedFindings <findings/section-text-referenced-by-reaction-original-text.ttl>
+  ] .
+
+<#section-text-referenced-by-comment-activity> a bridge:IsomorphicConversionTest ;
+  mf:name "section-text-referenced-by-comment-activity" ;
+  rdfs:comment "An allergy whose observation holds a Comment Activity referencing a paragraph of the section's text, beside the table row its own text references: no record reads a nested act's text, so the paragraph leaves the section's note and is carried nowhere, and so is the table's header, every row of it being referenced. The one finding of the section's text names both." ;
+  mf:action [
+    bridge:input <in/section-text-referenced-by-comment-activity.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/section-text-referenced-by-comment-activity.ttl> ;
+    bridge:expectedFindings <findings/section-text-referenced-by-comment-activity.ttl>
+  ] .
+
+<#section-text-referenced-beside-a-mapped-observation> a bridge:IsomorphicConversionTest ;
+  mf:name "section-text-referenced-beside-a-mapped-observation" ;
+  rdfs:comment "A concern act holding an allergy observation and, beside it, a vital sign observation that references the name cell of a row of the section's table: no record is made of the vital sign, so document-table.rq keeps its row, with the other cell, and the table's header, in the section's note, and the section's text has no finding." ;
+  mf:action [
+    bridge:input <in/section-text-referenced-beside-a-mapped-observation.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/section-text-referenced-beside-a-mapped-observation.ttl> ;
+    bridge:expectedFindings <findings/section-text-referenced-beside-a-mapped-observation.ttl>
+  ] .
+
+<#unstructured-document-header-partly-stated> a bridge:IsomorphicConversionTest ;
+  mf:name "unstructured-document-header-partly-stated" ;
+  rdfs:comment "An Unstructured Document whose id states only an extension, whose code states only an originalText and whose effectiveTime states nothing: none is carried by its note, so the document's id and type are findings valued by what the document wrote, the extension and the originalText's text, and its time is a finding with no value, the document having written none." ;
+  mf:action [
+    bridge:input <in/unstructured-document-header-partly-stated.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/unstructured-document-header-partly-stated.ttl> ;
+    bridge:expectedFindings <findings/unstructured-document-header-partly-stated.ttl>
+  ] .
+
+<#section-text-referenced-by-untemplated-result> a bridge:IsomorphicConversionTest ;
+  mf:name "section-text-referenced-by-untemplated-result" ;
+  rdfs:comment "A results section whose organizer holds a Result Observation and, beside it, a component with no templateId referencing the next row of the section's table: result.rq maps only the first, so no record reads the second's text, yet document-table.rq drops its row from the note, being under a mapped organizer. The one finding of the section's text names the untemplated row and the table's header, every row of it being dropped." ;
+  mf:action [
+    bridge:input <in/section-text-referenced-by-untemplated-result.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/section-text-referenced-by-untemplated-result.ttl> ;
+    bridge:expectedFindings <findings/section-text-referenced-by-untemplated-result.ttl>
+  ] .
+
+<#section-text-referenced-in-a-header-row> a bridge:IsomorphicConversionTest ;
+  mf:name "section-text-referenced-in-a-header-row" ;
+  rdfs:comment "A procedures section whose table header has two rows, the first referenced by the originalText of the procedure's code: procedure.rq reads that text, and document-table.rq keeps the header's other row, as it keeps the body's, so the section's text has no finding." ;
+  mf:action [
+    bridge:input <in/section-text-referenced-in-a-header-row.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/section-text-referenced-in-a-header-row.ttl> ;
+    bridge:expectedFindings <findings/section-text-referenced-in-a-header-row.ttl>
   ] .

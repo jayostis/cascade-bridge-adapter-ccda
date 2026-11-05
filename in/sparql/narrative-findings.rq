@@ -1,0 +1,174 @@
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#>
+PREFIX sh:     <http://www.w3.org/ns/shacl#>
+PREFIX oa:     <http://www.w3.org/ns/oa#>
+PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:    <http://sparql.xyz/facade-x/data/>
+PREFIX v3:     <urn:hl7-org:v3>
+PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
+PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# What of a section's text reaches neither its note nor a record. A block is
+# dropped from the note when a reference in a mapped statement points to it,
+# into it, or from above it (document-table.rq, which states the IDs those
+# references point to as ccda:referencedAnchor). What a record carries of it is
+# only what a mapping reads through a reference: the element a reference points
+# to, and all under it, when the mapping reads that reference (document-table.rq
+# lists the references a mapping reads, as ccda:readAnchor). What a dropped
+# block holds beside that, a row's other cells for one cell, is carried by no
+# record; so is the text a mapped statement's other references point to (a
+# reaction's or a comment's, a nested observation's own text, an untemplated
+# component's of an organizer), a table's or list's header, footer and caption
+# when every row or item is dropped, and, for a section with a nullFlavor, which
+# is no note, all its text but what a record reads. A header or footer row is a
+# block of its own, as document-table.rq keeps it, when one of its rows has a
+# reference in it. Valued by those words, a line for each run of text, in the
+# order of their blocks.
+
+CONSTRUCT {
+  [] a oa:Annotation ;
+    oa:hasTarget [
+      oa:hasSource bridge:thisRecord ;
+      oa:hasSelector [ a oa:XPathSelector ; rdf:value ?refinement ]
+    ] ;
+    oa:hasBody ccda:narrative ;
+    oa:motivatedBy oa:classifying ;
+    sh:value ?value .
+}
+WHERE {
+  {
+    SELECT ?section (GROUP_CONCAT(?words; separator="\n") AS ?value) WHERE {
+      {
+        SELECT ?section ?words ?key ?inKey WHERE {
+          ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
+          ?outer a v3:component ; ?bodySlot ?body .
+          ?body a v3:structuredBody ; ?componentSlot ?component .
+          ?component a v3:component ; ?sectionSlot ?section .
+          ?section a v3:section ; ?textSlot ?text . ?text a v3:text .
+          OPTIONAL { ?section xyz:nullFlavor ?sectionFlavor }
+          {
+            ?text ?s1 ?unit . ?unit a ?unitType .
+            FILTER (?unitType NOT IN (v3:table, v3:list))
+            BIND (?unit AS ?holder) BIND (?unit AS ?container) BIND ("other" AS ?role)
+            BIND (CONCAT(SUBSTR("00000", STRLEN(STRAFTER(STR(?s1), "#_")) + 1), STRAFTER(STR(?s1), "#_")) AS ?key)
+          }
+          UNION
+          {
+            ?text ?s1 ?holder . ?holder a ?holderType ; ?s2 ?unit . ?unit a ?unitType .
+            FILTER (?holderType IN (v3:table, v3:list) && !(?holderType = v3:table && ?unitType = v3:tbody))
+            BIND (?unit AS ?container)
+            BIND (IF(?unitType IN (v3:caption, v3:thead, v3:tfoot), "furniture",
+                  IF(?holderType = v3:list && ?unitType = v3:item, "member", "other")) AS ?role)
+            BIND (CONCAT(SUBSTR("00000", STRLEN(STRAFTER(STR(?s1), "#_")) + 1), STRAFTER(STR(?s1), "#_"),
+                         SUBSTR("00000", STRLEN(STRAFTER(STR(?s2), "#_")) + 1), STRAFTER(STR(?s2), "#_")) AS ?key)
+          }
+          UNION
+          {
+            ?text ?s1 ?table . ?table a v3:table ; ?s2 ?tbody . ?tbody a v3:tbody ; ?s3 ?unit . ?unit a ?unitType .
+            BIND (?table AS ?holder) BIND (?unit AS ?container) BIND ("member" AS ?role)
+            BIND (CONCAT(SUBSTR("00000", STRLEN(STRAFTER(STR(?s1), "#_")) + 1), STRAFTER(STR(?s1), "#_"),
+                         SUBSTR("00000", STRLEN(STRAFTER(STR(?s2), "#_")) + 1), STRAFTER(STR(?s2), "#_"),
+                         SUBSTR("00000", STRLEN(STRAFTER(STR(?s3), "#_")) + 1), STRAFTER(STR(?s3), "#_")) AS ?key)
+          }
+          UNION
+          {
+            ?text ?s1 ?table . ?table a v3:table ; ?s2 ?container . ?container a ?containerType ; ?s3 ?unit . ?unit a v3:tr .
+            FILTER (?containerType IN (v3:thead, v3:tfoot))
+            BIND (?table AS ?holder) BIND ("headerRow" AS ?role)
+            BIND (CONCAT(SUBSTR("00000", STRLEN(STRAFTER(STR(?s1), "#_")) + 1), STRAFTER(STR(?s1), "#_"),
+                         SUBSTR("00000", STRLEN(STRAFTER(STR(?s2), "#_")) + 1), STRAFTER(STR(?s2), "#_"),
+                         SUBSTR("00000", STRLEN(STRAFTER(STR(?s3), "#_")) + 1), STRAFTER(STR(?s3), "#_")) AS ?key)
+          }
+          UNION
+          {
+            ?section ?sectionTextSlot ?unit . ?unit a v3:text .
+            BIND (?unit AS ?holder) BIND (?unit AS ?container) BIND ("nullFlavored" AS ?role) BIND ("00000" AS ?key)
+          }
+          FILTER (BOUND(?sectionFlavor) = (?role = "nullFlavored"))
+          ?unit (!rdf:type)* ?element . ?element ?runSlot ?run .
+          FILTER (isLiteral(?run) && STRSTARTS(STR(?runSlot), STR(rdf:_)) && REGEX(?run, "[^\\p{Z}\\p{Cc}\\p{Cf}]"))
+          OPTIONAL {
+            ?parent ?elementSlot ?element . ?unit (!rdf:type)* ?parent .
+            OPTIONAL { ?grandparent ?parentSlot ?parent . ?unit (!rdf:type)* ?grandparent }
+          }
+          BIND (CONCAT(COALESCE(CONCAT(SUBSTR("00000", STRLEN(STRAFTER(STR(?parentSlot), "#_")) + 1), STRAFTER(STR(?parentSlot), "#_")), "00000"),
+                       COALESCE(CONCAT(SUBSTR("00000", STRLEN(STRAFTER(STR(?elementSlot), "#_")) + 1), STRAFTER(STR(?elementSlot), "#_")), "00000"),
+                       SUBSTR("00000", STRLEN(STRAFTER(STR(?runSlot), "#_")) + 1), STRAFTER(STR(?runSlot), "#_")) AS ?inKey)
+          OPTIONAL {
+            SELECT DISTINCT (?node AS ?unit) (true AS ?related) WHERE {
+              [] ccda:referencedAnchor ?anchor .
+              ?target xyz:ID ?anchor .
+              FILTER NOT EXISTS { ?other xyz:ID ?anchor . FILTER (?other != ?target) }
+              ?target ((!rdf:type)*|^(!rdf:type)*) ?node .
+            }
+          }
+          OPTIONAL {
+            SELECT DISTINCT (?node AS ?container) (true AS ?holdsReferenced) WHERE {
+              [] ccda:referencedAnchor ?anchor .
+              ?target xyz:ID ?anchor .
+              FILTER NOT EXISTS { ?other xyz:ID ?anchor . FILTER (?other != ?target) }
+              ?target ^(!rdf:type)+ ?node .
+            }
+          }
+          OPTIONAL {
+            SELECT DISTINCT (?node AS ?element) (true AS ?readBelow) WHERE {
+              [] ccda:readAnchor ?anchor .
+              ?target xyz:ID ?anchor .
+              FILTER NOT EXISTS { ?other xyz:ID ?anchor . FILTER (?other != ?target) }
+              ?target (!rdf:type)* ?node .
+            }
+          }
+          OPTIONAL {
+            SELECT ?holder (COUNT(?member) AS ?members) (SUM(IF(BOUND(?memberRelated), 0, 1)) AS ?keptMembers) WHERE {
+              {
+                { ?listText a v3:text ; ?ls1 ?holder . ?holder a v3:list ; ?ls2 ?member . ?member a v3:item }
+                UNION
+                { ?tableText a v3:text ; ?ts1 ?holder . ?holder a v3:table ; ?ts2 ?tbody . ?tbody a v3:tbody ; ?ts3 ?member . ?member a v3:tr }
+              }
+              OPTIONAL {
+                SELECT DISTINCT (?node AS ?member) (true AS ?memberRelated) WHERE {
+                  [] ccda:referencedAnchor ?anchor .
+                  ?target xyz:ID ?anchor .
+                  FILTER NOT EXISTS { ?other xyz:ID ?anchor . FILTER (?other != ?target) }
+                  ?target ((!rdf:type)*|^(!rdf:type)*) ?node .
+                }
+              }
+            } GROUP BY ?holder
+          }
+          FILTER (!BOUND(?readBelow))
+          FILTER (?role != "headerRow" || BOUND(?holdsReferenced))
+          FILTER (!(?role = "furniture" && ?unitType IN (v3:thead, v3:tfoot) && BOUND(?holdsReferenced)))
+          FILTER (BOUND(?related) || ?role = "nullFlavored" || (?role = "furniture" && COALESCE(?members, 0) > 0 && COALESCE(?keptMembers, 0) = 0))
+          BIND (REPLACE(REPLACE(?run, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "[ \\t\\r\\n]+", " ") AS ?words)
+        } ORDER BY ?section ?key ?inKey ?words
+      }
+    } GROUP BY ?section
+  }
+  ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
+  ?outer a v3:component ; ?bodySlot ?body .
+  ?body a v3:structuredBody ; ?componentSlot ?component .
+  ?component a v3:component ; ?sectionSlot ?section .
+  {
+    SELECT ?outer (COUNT(?earlierOuter) + 1 AS ?outerAt) WHERE {
+      ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
+      OPTIONAL {
+        ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
+        FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) < xsd:integer(STRAFTER(STR(?outerS), "#_")))
+      }
+    } GROUP BY ?outer
+  }
+  {
+    SELECT ?component (COUNT(?earlierComponent) + 1 AS ?componentAt) WHERE {
+      ?componentParent ?componentS ?component . ?componentParent a v3:structuredBody . ?component a v3:component .
+      OPTIONAL {
+        ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
+        FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) < xsd:integer(STRAFTER(STR(?componentS), "#_")))
+      }
+    } GROUP BY ?component
+  }
+  BIND (CONCAT(
+    "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?outerAt), "]",
+    "/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]",
+    "/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?componentAt), "]",
+    "/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]") AS ?refinement)
+}
