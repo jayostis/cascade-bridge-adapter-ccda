@@ -112,6 +112,8 @@
     <#procedure-time-low-only>
     <#report-code-translation>
     <#medication-name-in-material>
+    <#unstructured-document-header-not-stated>
+    <#section-text-referenced-by-nested-observation>
   ) .
 
 <#allergies-section> a bridge:IsomorphicConversionTest ;
@@ -1562,4 +1564,30 @@
   mf:result [
     bridge:expectedGraph <expected/medication-name-in-material.ttl> ;
     bridge:expectedFindings <findings/medication-name-in-material.ttl>
+  ] .
+
+<#unstructured-document-header-not-stated> a bridge:IsomorphicConversionTest ;
+  mf:name "unstructured-document-header-not-stated" ;
+  rdfs:comment "An Unstructured Document whose id, code and effectiveTime state only a nullFlavor: its note takes none of them, so the document's id, type and time are each a finding valued by the flavour, where a stated id, code and time of an unstructured document are findings of none." ;
+  mf:action [
+    bridge:input <in/unstructured-document-header-not-stated.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/unstructured-document-header-not-stated.ttl> ;
+    bridge:expectedFindings <findings/unstructured-document-header-not-stated.ttl>
+  ] .
+
+<#section-text-referenced-by-nested-observation> a bridge:IsomorphicConversionTest ;
+  mf:name "section-text-referenced-by-nested-observation" ;
+  rdfs:comment "An allergy section whose table has two rows, the allergy's, referenced by its observation's text, and the reaction's, referenced only by the Reaction Observation nested in it: no record reads a nested observation's text, so the reaction's row leaves the section's note and is carried nowhere, and so is the table's header, every row of it being referenced. The one finding of the section's text names both." ;
+  mf:action [
+    bridge:input <in/section-text-referenced-by-nested-observation.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/section-text-referenced-by-nested-observation.ttl> ;
+    bridge:expectedFindings <findings/section-text-referenced-by-nested-observation.ttl>
   ] .
