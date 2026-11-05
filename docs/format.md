@@ -422,8 +422,7 @@ footer row is a block of its own when one of its rows is referenced. The IDs ref
 of the document table, `ccda:referencedAnchor` and `ccda:readAnchor`, which the finding reads. The blocks are joined by line
 feeds in document order, the order of their `rdf:_n` slots from the `text` down; a section into which nothing points
 is one block, its whole text, so its note is the note it was before entries were read at all. The query that
-computes it is `../in/sparql/document-table.rq`, whose `ORDER BY` under a `GROUP_CONCAT` the Bridge runs outside its
-fast path.
+computes it is `../in/sparql/document-table.rq`.
 
 ## The schema
 

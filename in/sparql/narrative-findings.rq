@@ -88,15 +88,15 @@ WHERE {
           ?unit (!rdf:type)* ?element . ?element ?runSlot ?run .
           FILTER (isLiteral(?run) && STRSTARTS(STR(?runSlot), STR(rdf:_)) && REGEX(?run, "[^\\p{Z}\\p{Cc}\\p{Cf}]"))
           OPTIONAL {
-            ?parent ?elementSlot ?element . ?unit (!rdf:type)* ?parent .
-            OPTIONAL { ?grandparent ?parentSlot ?parent . ?unit (!rdf:type)* ?grandparent }
+            ?parent ?elementSlot ?element .
+            OPTIONAL { ?grandparent ?parentSlot ?parent }
           }
-          BIND (CONCAT(COALESCE(CONCAT(SUBSTR("00000", STRLEN(STRAFTER(STR(?parentSlot), "#_")) + 1), STRAFTER(STR(?parentSlot), "#_")), "00000"),
-                       COALESCE(CONCAT(SUBSTR("00000", STRLEN(STRAFTER(STR(?elementSlot), "#_")) + 1), STRAFTER(STR(?elementSlot), "#_")), "00000"),
+          BIND (CONCAT(COALESCE(IF(?element != ?unit && ?parent != ?unit, CONCAT(SUBSTR("00000", STRLEN(STRAFTER(STR(?parentSlot), "#_")) + 1), STRAFTER(STR(?parentSlot), "#_")), 1/0), "00000"),
+                       COALESCE(IF(?element != ?unit, CONCAT(SUBSTR("00000", STRLEN(STRAFTER(STR(?elementSlot), "#_")) + 1), STRAFTER(STR(?elementSlot), "#_")), 1/0), "00000"),
                        SUBSTR("00000", STRLEN(STRAFTER(STR(?runSlot), "#_")) + 1), STRAFTER(STR(?runSlot), "#_")) AS ?inKey)
           OPTIONAL {
             SELECT DISTINCT (?node AS ?unit) (true AS ?related) WHERE {
-              [] ccda:referencedAnchor ?anchor .
+              ?referrer ccda:referencedAnchor ?anchor .
               ?target xyz:ID ?anchor .
               FILTER NOT EXISTS { ?other xyz:ID ?anchor . FILTER (?other != ?target) }
               ?target ((!rdf:type)*|^(!rdf:type)*) ?node .
@@ -104,7 +104,7 @@ WHERE {
           }
           OPTIONAL {
             SELECT DISTINCT (?node AS ?container) (true AS ?holdsReferenced) WHERE {
-              [] ccda:referencedAnchor ?anchor .
+              ?referrer ccda:referencedAnchor ?anchor .
               ?target xyz:ID ?anchor .
               FILTER NOT EXISTS { ?other xyz:ID ?anchor . FILTER (?other != ?target) }
               ?target ^(!rdf:type)+ ?node .
@@ -112,7 +112,7 @@ WHERE {
           }
           OPTIONAL {
             SELECT DISTINCT (?node AS ?element) (true AS ?readBelow) WHERE {
-              [] ccda:readAnchor ?anchor .
+              ?referrer ccda:readAnchor ?anchor .
               ?target xyz:ID ?anchor .
               FILTER NOT EXISTS { ?other xyz:ID ?anchor . FILTER (?other != ?target) }
               ?target (!rdf:type)* ?node .
@@ -127,7 +127,7 @@ WHERE {
               }
               OPTIONAL {
                 SELECT DISTINCT (?node AS ?member) (true AS ?memberRelated) WHERE {
-                  [] ccda:referencedAnchor ?anchor .
+                  ?referrer ccda:referencedAnchor ?anchor .
                   ?target xyz:ID ?anchor .
                   FILTER NOT EXISTS { ?other xyz:ID ?anchor . FILTER (?other != ?target) }
                   ?target ((!rdf:type)*|^(!rdf:type)*) ?node .
