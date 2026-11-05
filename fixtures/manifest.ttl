@@ -118,6 +118,8 @@
     <#section-text-referenced-by-comment-activity>
     <#section-text-referenced-beside-a-mapped-observation>
     <#unstructured-document-header-partly-stated>
+    <#section-text-referenced-by-untemplated-result>
+    <#section-text-referenced-in-a-header-row>
   ) .
 
 <#allergies-section> a bridge:IsomorphicConversionTest ;
@@ -1646,4 +1648,30 @@
   mf:result [
     bridge:expectedGraph <expected/unstructured-document-header-partly-stated.ttl> ;
     bridge:expectedFindings <findings/unstructured-document-header-partly-stated.ttl>
+  ] .
+
+<#section-text-referenced-by-untemplated-result> a bridge:IsomorphicConversionTest ;
+  mf:name "section-text-referenced-by-untemplated-result" ;
+  rdfs:comment "A results section whose organizer holds a Result Observation and, beside it, a component with no templateId referencing the next row of the section's table: result.rq maps only the first, so no record reads the second's text, yet document-table.rq drops its row from the note, being under a mapped organizer. The one finding of the section's text names the untemplated row and the table's header, every row of it being dropped." ;
+  mf:action [
+    bridge:input <in/section-text-referenced-by-untemplated-result.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/section-text-referenced-by-untemplated-result.ttl> ;
+    bridge:expectedFindings <findings/section-text-referenced-by-untemplated-result.ttl>
+  ] .
+
+<#section-text-referenced-in-a-header-row> a bridge:IsomorphicConversionTest ;
+  mf:name "section-text-referenced-in-a-header-row" ;
+  rdfs:comment "A procedures section whose table header has two rows, the first referenced by the originalText of the procedure's code: procedure.rq reads that text, and document-table.rq keeps the header's other row, as it keeps the body's, so the section's text has no finding." ;
+  mf:action [
+    bridge:input <in/section-text-referenced-in-a-header-row.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/section-text-referenced-in-a-header-row.ttl> ;
+    bridge:expectedFindings <findings/section-text-referenced-in-a-header-row.ttl>
   ] .
