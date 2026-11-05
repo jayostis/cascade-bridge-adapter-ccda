@@ -1,0 +1,240 @@
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#>
+PREFIX sh:     <http://www.w3.org/ns/shacl#>
+PREFIX oa:     <http://www.w3.org/ns/oa#>
+PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:    <http://sparql.xyz/facade-x/data/>
+PREFIX v3:     <urn:hl7-org:v3>
+PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
+PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# What of a section's text reaches neither its note nor a record. The words of
+# the blocks no entry references are the note's text (document-table.rq), and
+# an element an entry references is that record's: its own text, or a name read
+# through it. What a block holds beside the element referenced, a row's other
+# cells for one cell, is taken from the note with it and carried by no record;
+# so is a table's or list's header, footer and caption when every row or item
+# is taken, and the text a nested observation references, which no record
+# reads. A section with a nullFlavor is no note, so all its text is
+# lost. Valued by those words, a line for each run of text, in the order of
+# their blocks.
+#
+# A reference counts as a record's when it sits in an entry some row is made
+# from, as reference-findings.rq reads it, bar a concern act's own text.
+# Blocks are those document-table.rq's kept text names.
+
+CONSTRUCT {
+  [] a oa:Annotation ;
+    oa:hasTarget [
+      oa:hasSource bridge:thisRecord ;
+      oa:hasSelector [ a oa:XPathSelector ; rdf:value ?refinement ]
+    ] ;
+    oa:hasBody ccda:narrative ;
+    oa:motivatedBy oa:classifying ;
+    sh:value ?value .
+}
+WHERE {
+  {
+    SELECT ?section (GROUP_CONCAT(?words; separator="\n") AS ?value) WHERE {
+      {
+        SELECT ?section ?words ?key ?inKey WHERE {
+          ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
+          ?outer a v3:component ; ?bodySlot ?body .
+          ?body a v3:structuredBody ; ?componentSlot ?component .
+          ?component a v3:component ; ?sectionSlot ?section .
+          ?section a v3:section ; ?textSlot ?text . ?text a v3:text .
+          OPTIONAL { ?section xyz:nullFlavor ?sectionFlavor }
+          {
+            ?text ?s1 ?unit . ?unit a ?unitType .
+            FILTER (?unitType NOT IN (v3:table, v3:list))
+            BIND (?unit AS ?holder) BIND ("other" AS ?role)
+            BIND (CONCAT(SUBSTR("00000", STRLEN(STRAFTER(STR(?s1), "#_")) + 1), STRAFTER(STR(?s1), "#_")) AS ?key)
+          }
+          UNION
+          {
+            ?text ?s1 ?holder . ?holder a ?holderType ; ?s2 ?unit . ?unit a ?unitType .
+            FILTER (?holderType IN (v3:table, v3:list) && !(?holderType = v3:table && ?unitType = v3:tbody))
+            BIND (IF(?unitType IN (v3:caption, v3:thead, v3:tfoot), "furniture",
+                  IF(?holderType = v3:list && ?unitType = v3:item, "member", "other")) AS ?role)
+            BIND (CONCAT(SUBSTR("00000", STRLEN(STRAFTER(STR(?s1), "#_")) + 1), STRAFTER(STR(?s1), "#_"),
+                         SUBSTR("00000", STRLEN(STRAFTER(STR(?s2), "#_")) + 1), STRAFTER(STR(?s2), "#_")) AS ?key)
+          }
+          UNION
+          {
+            ?text ?s1 ?holder . ?holder a v3:table ; ?s2 ?tbody . ?tbody a v3:tbody ; ?s3 ?unit . ?unit a ?unitType .
+            BIND ("member" AS ?role)
+            BIND (CONCAT(SUBSTR("00000", STRLEN(STRAFTER(STR(?s1), "#_")) + 1), STRAFTER(STR(?s1), "#_"),
+                         SUBSTR("00000", STRLEN(STRAFTER(STR(?s2), "#_")) + 1), STRAFTER(STR(?s2), "#_"),
+                         SUBSTR("00000", STRLEN(STRAFTER(STR(?s3), "#_")) + 1), STRAFTER(STR(?s3), "#_")) AS ?key)
+          }
+          UNION
+          {
+            ?section ?sectionTextSlot ?unit . ?unit a v3:text .
+            BIND (?unit AS ?holder) BIND ("nullFlavored" AS ?role) BIND ("00000" AS ?key)
+          }
+          FILTER (BOUND(?sectionFlavor) = (?role = "nullFlavored"))
+          ?unit (!rdf:type)* ?element . ?element ?runSlot ?run .
+          FILTER (isLiteral(?run) && STRSTARTS(STR(?runSlot), STR(rdf:_)) && REGEX(?run, "[^\\p{Z}\\p{Cc}\\p{Cf}]"))
+          OPTIONAL {
+            ?parent ?elementSlot ?element . ?unit (!rdf:type)* ?parent .
+            OPTIONAL { ?grandparent ?parentSlot ?parent . ?unit (!rdf:type)* ?grandparent }
+          }
+          BIND (CONCAT(COALESCE(CONCAT(SUBSTR("00000", STRLEN(STRAFTER(STR(?parentSlot), "#_")) + 1), STRAFTER(STR(?parentSlot), "#_")), "00000"),
+                       COALESCE(CONCAT(SUBSTR("00000", STRLEN(STRAFTER(STR(?elementSlot), "#_")) + 1), STRAFTER(STR(?elementSlot), "#_")), "00000"),
+                       SUBSTR("00000", STRLEN(STRAFTER(STR(?runSlot), "#_")) + 1), STRAFTER(STR(?runSlot), "#_")) AS ?inKey)
+          OPTIONAL {
+            SELECT DISTINCT (?node AS ?unit) (true AS ?related) WHERE {
+              {
+                SELECT ?target (MAX(?read) AS ?carriedMax) WHERE {
+                  {
+                    SELECT DISTINCT ?prefix WHERE {
+                      ?row ccda:statementAt ?rowSlots .
+                      BIND (REPLACE(?rowSlots, "^(([0-9]+\\.){5}).*$", "$1") AS ?prefix)
+                    }
+                  }
+                  ?entryRoot a fx:root, v3:ClinicalDocument ; ?eOuterSlot ?eOuter .
+                  ?eOuter a v3:component ; ?eBodySlot ?eBody .
+                  ?eBody a v3:structuredBody ; ?eComponentSlot ?eComponent .
+                  ?eComponent a v3:component ; ?eSectionSlot ?eSection .
+                  ?eSection a v3:section ; ?eEntrySlot ?entry . ?entry a v3:entry .
+                  FILTER (?prefix = CONCAT(STRAFTER(STR(?eOuterSlot), "#_"), ".", STRAFTER(STR(?eBodySlot), "#_"), ".",
+                                           STRAFTER(STR(?eComponentSlot), "#_"), ".", STRAFTER(STR(?eSectionSlot), "#_"), ".",
+                                           STRAFTER(STR(?eEntrySlot), "#_"), "."))
+                  ?entry (!rdf:type)+ ?reference .
+                  ?reference a v3:reference ; xyz:value ?pointer .
+                  BIND (REPLACE(?pointer, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?trimmed)
+                  FILTER (STRSTARTS(?trimmed, "#") && STRLEN(?trimmed) > 1)
+                  OPTIONAL { ?holderText a v3:text ; ?holderSlot ?reference . ?referrer ?referrerSlot ?holderText . ?referrer a ?referrerType }
+                  FILTER (!BOUND(?referrerType) || ?referrerType != v3:act || EXISTS {
+                    ?referrer ?templateSlot ?template . ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.202"
+                  })
+                  BIND (IF(BOUND(?referrerType) && ?referrerType = v3:observation && EXISTS {
+                    ?outerObservation a v3:observation ; (!rdf:type)+ ?referrer
+                  }, 0, 1) AS ?read)
+                  ?target xyz:ID ?anchor .
+                  FILTER (?anchor = STRAFTER(?trimmed, "#"))
+                  FILTER NOT EXISTS { ?other xyz:ID ?anchor . FILTER (?other != ?target) }
+                } GROUP BY ?target
+              }
+              ?target ((!rdf:type)*|^(!rdf:type)*) ?node .
+            }
+          }
+          OPTIONAL {
+            SELECT DISTINCT (?node AS ?element) (true AS ?readBelow) WHERE {
+              {
+                SELECT ?target (MAX(?read) AS ?carriedMax) WHERE {
+                  {
+                    SELECT DISTINCT ?prefix WHERE {
+                      ?row ccda:statementAt ?rowSlots .
+                      BIND (REPLACE(?rowSlots, "^(([0-9]+\\.){5}).*$", "$1") AS ?prefix)
+                    }
+                  }
+                  ?entryRoot a fx:root, v3:ClinicalDocument ; ?eOuterSlot ?eOuter .
+                  ?eOuter a v3:component ; ?eBodySlot ?eBody .
+                  ?eBody a v3:structuredBody ; ?eComponentSlot ?eComponent .
+                  ?eComponent a v3:component ; ?eSectionSlot ?eSection .
+                  ?eSection a v3:section ; ?eEntrySlot ?entry . ?entry a v3:entry .
+                  FILTER (?prefix = CONCAT(STRAFTER(STR(?eOuterSlot), "#_"), ".", STRAFTER(STR(?eBodySlot), "#_"), ".",
+                                           STRAFTER(STR(?eComponentSlot), "#_"), ".", STRAFTER(STR(?eSectionSlot), "#_"), ".",
+                                           STRAFTER(STR(?eEntrySlot), "#_"), "."))
+                  ?entry (!rdf:type)+ ?reference .
+                  ?reference a v3:reference ; xyz:value ?pointer .
+                  BIND (REPLACE(?pointer, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?trimmed)
+                  FILTER (STRSTARTS(?trimmed, "#") && STRLEN(?trimmed) > 1)
+                  OPTIONAL { ?holderText a v3:text ; ?holderSlot ?reference . ?referrer ?referrerSlot ?holderText . ?referrer a ?referrerType }
+                  FILTER (!BOUND(?referrerType) || ?referrerType != v3:act || EXISTS {
+                    ?referrer ?templateSlot ?template . ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.202"
+                  })
+                  BIND (IF(BOUND(?referrerType) && ?referrerType = v3:observation && EXISTS {
+                    ?outerObservation a v3:observation ; (!rdf:type)+ ?referrer
+                  }, 0, 1) AS ?read)
+                  ?target xyz:ID ?anchor .
+                  FILTER (?anchor = STRAFTER(?trimmed, "#"))
+                  FILTER NOT EXISTS { ?other xyz:ID ?anchor . FILTER (?other != ?target) }
+                } GROUP BY ?target
+              }
+              FILTER (?carriedMax = 1)
+              ?target (!rdf:type)* ?node .
+            }
+          }
+          OPTIONAL {
+            SELECT ?holder (COUNT(?member) AS ?members) (SUM(IF(BOUND(?memberRelated), 0, 1)) AS ?keptMembers) WHERE {
+              {
+                { ?listText a v3:text ; ?ls1 ?holder . ?holder a v3:list ; ?ls2 ?member . ?member a v3:item }
+                UNION
+                { ?tableText a v3:text ; ?ts1 ?holder . ?holder a v3:table ; ?ts2 ?tbody . ?tbody a v3:tbody ; ?ts3 ?member . ?member a v3:tr }
+              }
+              OPTIONAL {
+                SELECT DISTINCT (?node AS ?member) (true AS ?memberRelated) WHERE {
+                  {
+                    SELECT ?target (MAX(?read) AS ?carriedMax) WHERE {
+                      {
+                        SELECT DISTINCT ?prefix WHERE {
+                          ?row ccda:statementAt ?rowSlots .
+                          BIND (REPLACE(?rowSlots, "^(([0-9]+\\.){5}).*$", "$1") AS ?prefix)
+                        }
+                      }
+                      ?entryRoot a fx:root, v3:ClinicalDocument ; ?eOuterSlot ?eOuter .
+                      ?eOuter a v3:component ; ?eBodySlot ?eBody .
+                      ?eBody a v3:structuredBody ; ?eComponentSlot ?eComponent .
+                      ?eComponent a v3:component ; ?eSectionSlot ?eSection .
+                      ?eSection a v3:section ; ?eEntrySlot ?entry . ?entry a v3:entry .
+                      FILTER (?prefix = CONCAT(STRAFTER(STR(?eOuterSlot), "#_"), ".", STRAFTER(STR(?eBodySlot), "#_"), ".",
+                                               STRAFTER(STR(?eComponentSlot), "#_"), ".", STRAFTER(STR(?eSectionSlot), "#_"), ".",
+                                               STRAFTER(STR(?eEntrySlot), "#_"), "."))
+                      ?entry (!rdf:type)+ ?reference .
+                      ?reference a v3:reference ; xyz:value ?pointer .
+                      BIND (REPLACE(?pointer, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?trimmed)
+                      FILTER (STRSTARTS(?trimmed, "#") && STRLEN(?trimmed) > 1)
+                      OPTIONAL { ?holderText a v3:text ; ?holderSlot ?reference . ?referrer ?referrerSlot ?holderText . ?referrer a ?referrerType }
+                      FILTER (!BOUND(?referrerType) || ?referrerType != v3:act || EXISTS {
+                        ?referrer ?templateSlot ?template . ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.202"
+                      })
+                      BIND (IF(BOUND(?referrerType) && ?referrerType = v3:observation && EXISTS {
+                        ?outerObservation a v3:observation ; (!rdf:type)+ ?referrer
+                      }, 0, 1) AS ?read)
+                      ?target xyz:ID ?anchor .
+                      FILTER (?anchor = STRAFTER(?trimmed, "#"))
+                      FILTER NOT EXISTS { ?other xyz:ID ?anchor . FILTER (?other != ?target) }
+                    } GROUP BY ?target
+                  }
+                  ?target ((!rdf:type)*|^(!rdf:type)*) ?node .
+                }
+              }
+            } GROUP BY ?holder
+          }
+          FILTER (!BOUND(?readBelow))
+          FILTER (BOUND(?related) || ?role = "nullFlavored" || (?role = "furniture" && COALESCE(?members, 0) > 0 && COALESCE(?keptMembers, 0) = 0))
+          BIND (REPLACE(REPLACE(?run, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "[ \\t\\r\\n]+", " ") AS ?words)
+        } ORDER BY ?section ?key ?inKey ?words
+      }
+    } GROUP BY ?section
+  }
+  ?root a fx:root, v3:ClinicalDocument ; ?outerSlot ?outer .
+  ?outer a v3:component ; ?bodySlot ?body .
+  ?body a v3:structuredBody ; ?componentSlot ?component .
+  ?component a v3:component ; ?sectionSlot ?section .
+  {
+    SELECT ?outer (COUNT(?earlierOuter) + 1 AS ?outerAt) WHERE {
+      ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
+      OPTIONAL {
+        ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
+        FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) < xsd:integer(STRAFTER(STR(?outerS), "#_")))
+      }
+    } GROUP BY ?outer
+  }
+  {
+    SELECT ?component (COUNT(?earlierComponent) + 1 AS ?componentAt) WHERE {
+      ?componentParent ?componentS ?component . ?componentParent a v3:structuredBody . ?component a v3:component .
+      OPTIONAL {
+        ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
+        FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) < xsd:integer(STRAFTER(STR(?componentS), "#_")))
+      }
+    } GROUP BY ?component
+  }
+  BIND (CONCAT(
+    "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?outerAt), "]",
+    "/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]",
+    "/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?componentAt), "]",
+    "/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]") AS ?refinement)
+}

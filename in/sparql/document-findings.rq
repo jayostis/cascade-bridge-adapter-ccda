@@ -1,0 +1,91 @@
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sh:     <http://www.w3.org/ns/shacl#>
+PREFIX oa:     <http://www.w3.org/ns/oa#>
+PREFIX skos:   <http://www.w3.org/2004/02/skos/core#>
+PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz:    <http://sparql.xyz/facade-x/data/>
+PREFIX v3:     <urn:hl7-org:v3>
+PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
+PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
+PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
+
+# The document's own id, type and time, where no note carries them. Only the
+# note an unstructured document makes of its body (note-or-document.rq) carries
+# the id and the type, and the date of that note and of each note a section
+# makes is the document's time. Each is valued as the document wrote it: an id
+# by its root and its extension, a type by its code, a time by its value, else
+# by its nullFlavor.
+#
+# The id is carried where the body's note is named by it, whose source record id
+# document-table.rq reads from the id, or where a master identifier can be made
+# of it; the type where its code has a code system an IRI or a datatype can be
+# made of; the time where it is a date and some note takes it.
+
+CONSTRUCT {
+  [] a oa:Annotation ;
+    oa:hasTarget [
+      oa:hasSource bridge:thisRecord ;
+      oa:hasSelector [ a oa:XPathSelector ; rdf:value ?refinement ]
+    ] ;
+    oa:hasBody ?gap ;
+    oa:motivatedBy oa:classifying ;
+    sh:value ?value .
+}
+WHERE {
+  ?root a fx:root, v3:ClinicalDocument .
+  {
+    ?root ?idSlot ?id . ?id a v3:id .
+    OPTIONAL { ?id xyz:root ?idRoot }
+    OPTIONAL { ?id xyz:extension ?idExtension }
+    OPTIONAL { ?id xyz:nullFlavor ?idNullFlavor }
+    OPTIONAL {
+      ?root ?outerSlot ?outer . ?outer a v3:component ; ?bodySlot ?body . ?body a v3:nonXMLBody .
+      BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_")) AS ?bodySlots)
+      ?bodyRow ccda:statementAt ?bodySlots ; ccda:recordClass "DocumentReference" .
+      OPTIONAL { ?bodyRow ccda:identifierRoot ?bodyIdRoot ; ccda:identifierExtension ?bodyIdExtension }
+    }
+    BIND (COALESCE(REGEX(?idRoot, "^[0-2](\\.(0|[1-9][0-9]*))+$")
+                   || REGEX(?idRoot, "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"), false) AS ?rootNamesAnIri)
+    BIND (!BOUND(?idNullFlavor) && ?rootNamesAnIri && (COALESCE(?idExtension, "") != "" || ?idRoot != "2.16.840.1.113883.4.6") AS ?masterIdentifier)
+    BIND (BOUND(?bodyIdRoot) && COALESCE(?bodyIdRoot = ?idRoot && ?bodyIdExtension = COALESCE(?idExtension, ""), false) AS ?namesTheNote)
+    FILTER (!BOUND(?bodyRow) || !(?masterIdentifier || ?namesTheNote))
+    BIND ("*[local-name()='id' and namespace-uri()='urn:hl7-org:v3'][1]" AS ?refinement)
+    BIND (COALESCE(?idNullFlavor, CONCAT(?idRoot, IF(COALESCE(?idExtension, "") != "", CONCAT("|", ?idExtension), ""))) AS ?value)
+    BIND (ccda:documentId AS ?gap)
+  }
+  UNION
+  {
+    ?root ?codeSlot ?code . ?code a v3:code .
+    OPTIONAL { ?code xyz:code ?statedCode }
+    OPTIONAL { ?code xyz:codeSystem ?statedSystem }
+    OPTIONAL { ?code xyz:nullFlavor ?codeNullFlavor }
+    BIND (LCASE(REPLACE(REPLACE(?statedSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")) AS ?systemKey)
+    BIND (EXISTS { ?root ?outerSlot ?outer . ?outer a v3:component ; ?bodySlot ?body . ?body a v3:nonXMLBody } AS ?unstructured)
+    BIND (BOUND(?systemKey) && COALESCE(REPLACE(?statedCode, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "") != ""
+          && (REGEX(?systemKey, "^[0-2](\\.(0|[1-9][0-9]*))+$")
+              || EXISTS { ?listed skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; cascade:codingSystemUri ?listedUri }) AS ?typed)
+    FILTER (!(?unstructured && ?typed))
+    BIND ("*[local-name()='code' and namespace-uri()='urn:hl7-org:v3'][1]" AS ?refinement)
+    BIND (COALESCE(?statedCode, ?codeNullFlavor) AS ?value)
+    BIND (ccda:documentType AS ?gap)
+  }
+  UNION
+  {
+    ?root ?timeSlot ?time . ?time a v3:effectiveTime .
+    OPTIONAL { ?time xyz:value ?statedTime }
+    OPTIONAL { ?time xyz:nullFlavor ?timeNullFlavor }
+    BIND (COALESCE(REGEX(?statedTime, "^[0-9]{4}([0-9]{2}([0-9]{2}([0-9]{2}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?)?)?)?([+-][0-9]{4})?$"), false) AS ?isDate)
+    BIND (EXISTS {
+            { ?root ?outerSlot ?outer . ?outer a v3:component ; ?bodySlot ?body . ?body a v3:nonXMLBody }
+            UNION
+            {
+              ?noteRow ccda:statementAt ?noteSlots ; ccda:recordClass "DocumentReference" .
+              FILTER (REGEX(?noteSlots, "^[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$"))
+            }
+          } AS ?aNoteTakesIt)
+    FILTER (!(?isDate && ?aNoteTakesIt))
+    BIND ("*[local-name()='effectiveTime' and namespace-uri()='urn:hl7-org:v3'][1]" AS ?refinement)
+    BIND (COALESCE(?statedTime, ?timeNullFlavor) AS ?value)
+    BIND (ccda:documentTime AS ?gap)
+  }
+}

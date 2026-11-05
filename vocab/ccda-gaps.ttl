@@ -102,22 +102,22 @@ ccda:concernStatusNotMapped a skos:Concept ;
   skos:broader bridge:valueNotMapped .
 
 ccda:documentId a skos:Concept ;
-  skos:prefLabel "A document carries its own id, and no Cascade predicate carries it but an unstructured document's, which names and identifies the note its body is."@en ;
+  skos:prefLabel "A document states an id that no note carries: an unstructured document's note takes it as its master identifier, and as its source record id where the document states no setId, from an id that has no nullFlavor and a root that is an OID or a UUID, and a structured document makes no note of the document."@en ;
   skos:inScheme ccda:gaps ;
-  skos:broader bridge:noPredicate .
+  skos:broader bridge:carriedWithLoss .
 
 ccda:documentType a skos:Concept ;
-  skos:prefLabel "A document states its type by a LOINC code, and no Cascade predicate carries it but an unstructured document's, which types the note its body is."@en ;
+  skos:prefLabel "A document states its type by a code that no note carries: an unstructured document's note takes it as its type from a code with a code system that is an OID or one the concept map of code systems lists, and a structured document makes no note of the document."@en ;
   skos:inScheme ccda:gaps ;
-  skos:broader bridge:noPredicate .
+  skos:broader bridge:carriedWithLoss .
 
 ccda:documentTime a skos:Concept ;
-  skos:prefLabel "A document states when it was made, and no Cascade predicate carries it but as the date of a note section's or an unstructured document's note."@en ;
+  skos:prefLabel "A document states when it was made, and no note carries it: it is the date of each note a section or an unstructured document makes, so a document none of whose sections makes a note, or whose time is no date, carries it nowhere."@en ;
   skos:inScheme ccda:gaps ;
-  skos:broader bridge:noPredicate .
+  skos:broader bridge:carriedWithLoss .
 
 ccda:documentAuthor a skos:Concept ;
-  skos:prefLabel "A document names the person, device or organisation that wrote it, and when, and no Cascade predicate carries them; the organization an author represents is carried as an organization record."@en ;
+  skos:prefLabel "A document names the person, device or organisation that wrote it, with their address and telecom, and when, and no Cascade predicate carries them; the organization an author represents is carried as an organization record, without its telecom."@en ;
   skos:inScheme ccda:gaps ;
   skos:broader bridge:noPredicate .
 
@@ -126,10 +126,35 @@ ccda:patientContact a skos:Concept ;
   skos:inScheme ccda:gaps ;
   skos:broader bridge:noPredicate .
 
-ccda:narrative a skos:Concept ;
-  skos:prefLabel "A section carries narrative text that no Cascade predicate carries: its blocks no statement this release makes a record of references are its note's text, the element a statement's or a Note Activity's text references is that record's, and a name read through a reference is its record's; the rest of a row an entry references only for a name, the header of a table whose rows are all referenced, and the text a nested observation references are carried nowhere."@en ;
+ccda:patientRace a skos:Concept ;
+  skos:prefLabel "A patient states a race, and no Cascade predicate carries it."@en ;
   skos:inScheme ccda:gaps ;
   skos:broader bridge:noPredicate .
+
+ccda:patientEthnicity a skos:Concept ;
+  skos:prefLabel "A patient states an ethnicity, and no Cascade predicate carries it."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:noPredicate .
+
+ccda:patientLanguage a skos:Concept ;
+  skos:prefLabel "A patient states a language they communicate in, and whether it is the one they prefer, and no Cascade predicate carries them."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:noPredicate .
+
+ccda:documentServiceEvent a skos:Concept ;
+  skos:prefLabel "A document names the service event it documents, with its kind and when it began and ended, and no Cascade predicate carries it."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:noPredicate .
+
+ccda:organizationTelecom a skos:Concept ;
+  skos:prefLabel "An organization states a telecom, and no Cascade predicate carries it."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:noPredicate .
+
+ccda:narrative a skos:Concept ;
+  skos:prefLabel "A section's text is its note's text, and a section with a nullFlavor makes no note, so its text is carried nowhere; bar that, the note leaves out the blocks an entry this release makes a record of references, which that record reads whole, as its own text or as a name; what a block holds beside the element referenced, a row's other cells for one cell, a table's or list's header, footer and caption when every row or item is referenced, and the text a nested observation references, is carried nowhere."@en ;
+  skos:inScheme ccda:gaps ;
+  skos:broader bridge:carriedWithLoss .
 
 ccda:concernTime a skos:Concept ;
   skos:prefLabel "A concern act states when the concern began or ended, or a Note Activity the time its note is about, and no Cascade predicate carries it; the statement's own times, and when a note was written, are carried."@en ;
