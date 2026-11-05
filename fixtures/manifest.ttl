@@ -108,6 +108,10 @@
     <#section-text-partly-referenced>
     <#section-text-referenced-by-unmapped-entries>
     <#section-text-container-referenced>
+    <#allergy-name-in-concern-act>
+    <#procedure-time-low-only>
+    <#report-code-translation>
+    <#medication-name-in-material>
   ) .
 
 <#allergies-section> a bridge:IsomorphicConversionTest ;
@@ -1506,4 +1510,56 @@
   mf:result [
     bridge:expectedGraph <expected/section-text-container-referenced.ttl> ;
     bridge:expectedFindings <findings/section-text-container-referenced.ttl>
+  ] .
+
+<#allergy-name-in-concern-act> a bridge:IsomorphicConversionTest ;
+  mf:name "allergy-name-in-concern-act" ;
+  rdfs:comment "An allergy in the nesting C-CDA R2.1 defines, an Allergy Intolerance Observation inside the concern act's entryRelationship, whose allergen is a UNII code and a name: the name is the allergen's text and no source path is left unaccounted." ;
+  mf:action [
+    bridge:input <in/allergy-name-in-concern-act.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/allergy-name-in-concern-act.ttl> ;
+    bridge:expectedFindings <findings/allergy-name-in-concern-act.ttl>
+  ] .
+
+<#procedure-time-low-only> a bridge:IsomorphicConversionTest ;
+  mf:name "procedure-time-low-only" ;
+  rdfs:comment "A procedure whose effectiveTime states only its low, no value: the low is the procedure's date and no source path is left unaccounted." ;
+  mf:action [
+    bridge:input <in/procedure-time-low-only.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/procedure-time-low-only.ttl> ;
+    bridge:expectedFindings <findings/procedure-time-low-only.ttl>
+  ] .
+
+<#report-code-translation> a bridge:IsomorphicConversionTest ;
+  mf:name "report-code-translation" ;
+  rdfs:comment "A Result Organizer whose LOINC code has a translation in a laboratory's own code system: the translation is the report's code in another system and no source path is left unaccounted." ;
+  mf:action [
+    bridge:input <in/report-code-translation.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/report-code-translation.ttl> ;
+    bridge:expectedFindings <findings/report-code-translation.ttl>
+  ] .
+
+<#medication-name-in-material> a bridge:IsomorphicConversionTest ;
+  mf:name "medication-name-in-material" ;
+  rdfs:comment "A prescribed medication whose manufactured material has an RxNorm code and a name, and no display name or original text: the material's name is the drug's name and no source path is left unaccounted." ;
+  mf:action [
+    bridge:input <in/medication-name-in-material.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/medication-name-in-material.ttl> ;
+    bridge:expectedFindings <findings/medication-name-in-material.ttl>
   ] .
