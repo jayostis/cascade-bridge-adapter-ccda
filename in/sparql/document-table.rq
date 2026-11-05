@@ -844,9 +844,9 @@ WHERE {
                                           UNION
                                           { ?act ?observationSlot ?mapped }
                                           ?mapped a v3:observation ; ?templateSlot ?template . ?template a v3:templateId ; xyz:root ?root .
-                                          VALUES (?root ?concernRequired) { ("2.16.840.1.113883.10.20.22.4.7" false) ("2.16.840.1.113883.10.20.22.4.4" true) }
+                                          VALUES (?root ?concernRequired) { ("2.16.840.1.113883.10.20.22.4.7" "false") ("2.16.840.1.113883.10.20.22.4.4" "true") }
                                           OPTIONAL { SELECT DISTINCT ?act (true AS ?inConcern) WHERE { ?act ?concernSlot ?concern . ?concern a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.3" } }
-                                          FILTER (!?concernRequired || BOUND(?inConcern))
+                                          FILTER (?concernRequired = "false" || BOUND(?inConcern))
                                         }
                                         UNION
                                         {
@@ -893,9 +893,9 @@ WHERE {
                                           UNION
                                           { ?act ?observationSlot ?mapped }
                                           ?mapped a v3:observation ; ?templateSlot ?template . ?template a v3:templateId ; xyz:root ?root .
-                                          VALUES (?root ?concernRequired) { ("2.16.840.1.113883.10.20.22.4.7" false) ("2.16.840.1.113883.10.20.22.4.4" true) }
+                                          VALUES (?root ?concernRequired) { ("2.16.840.1.113883.10.20.22.4.7" "false") ("2.16.840.1.113883.10.20.22.4.4" "true") }
                                           OPTIONAL { SELECT DISTINCT ?act (true AS ?inConcern) WHERE { ?act ?concernSlot ?concern . ?concern a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.3" } }
-                                          FILTER (!?concernRequired || BOUND(?inConcern))
+                                          FILTER (?concernRequired = "false" || BOUND(?inConcern))
                                         }
                                         UNION
                                         {
@@ -947,9 +947,9 @@ WHERE {
                                               UNION
                                               { ?act ?observationSlot ?mapped }
                                               ?mapped a v3:observation ; ?templateSlot ?template . ?template a v3:templateId ; xyz:root ?root .
-                                              VALUES (?root ?concernRequired) { ("2.16.840.1.113883.10.20.22.4.7" false) ("2.16.840.1.113883.10.20.22.4.4" true) }
+                                              VALUES (?root ?concernRequired) { ("2.16.840.1.113883.10.20.22.4.7" "false") ("2.16.840.1.113883.10.20.22.4.4" "true") }
                                               OPTIONAL { SELECT DISTINCT ?act (true AS ?inConcern) WHERE { ?act ?concernSlot ?concern . ?concern a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.3" } }
-                                              FILTER (!?concernRequired || BOUND(?inConcern))
+                                              FILTER (?concernRequired = "false" || BOUND(?inConcern))
                                             }
                                             UNION
                                             {
@@ -1104,9 +1104,9 @@ WHERE {
             UNION
             { ?act ?observationSlot ?mapped }
             ?mapped a v3:observation ; ?templateSlot ?template . ?template a v3:templateId ; xyz:root ?templateRoot .
-            VALUES (?templateRoot ?concernRequired) { ("2.16.840.1.113883.10.20.22.4.7" false) ("2.16.840.1.113883.10.20.22.4.4" true) }
+            VALUES (?templateRoot ?concernRequired) { ("2.16.840.1.113883.10.20.22.4.7" "false") ("2.16.840.1.113883.10.20.22.4.4" "true") }
             OPTIONAL { SELECT DISTINCT ?act (true AS ?inConcern) WHERE { ?act ?concernSlot ?concern . ?concern a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.3" } }
-            FILTER (!?concernRequired || BOUND(?inConcern))
+            FILTER (?concernRequired = "false" || BOUND(?inConcern))
           }
           UNION
           {
