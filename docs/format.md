@@ -416,7 +416,10 @@ or a medication in the request mood, or from a concern act, names nothing here, 
 note. A reference from a statement nested in one this release makes a record of, a reaction, an indication or a comment,
 takes what it points at from the note all the same, and no record reads it: only the references the mappings read are
 read (a statement's own `text`, a name's `originalText`, a medication's sig, a reference range's text, a report's
-`sdtc:text`), and the words of the rest are a `ccda:narrative` finding. The blocks are joined by line
+`sdtc:text`), and the words of the rest are a `ccda:narrative` finding. A result is read only where it carries the
+Result Observation template, so the text a component of an organizer with none points at is a finding too. A header or
+footer row is a block of its own when one of its rows is referenced. The IDs referenced, and those read, are triples
+of the document table, `ccda:referencedAnchor` and `ccda:readAnchor`, which the finding reads. The blocks are joined by line
 feeds in document order, the order of their `rdf:_n` slots from the `text` down; a section into which nothing points
 is one block, its whole text, so its note is the note it was before entries were read at all. The query that
 computes it is `../in/sparql/document-table.rq`, whose `ORDER BY` under a `GROUP_CONCAT` the Bridge runs outside its
