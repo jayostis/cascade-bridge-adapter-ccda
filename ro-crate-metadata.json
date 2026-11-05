@@ -621,6 +621,18 @@
           "@id": "fixtures/in/section-text-container-referenced.xml"
         },
         {
+          "@id": "fixtures/in/allergy-name-in-concern-act.xml"
+        },
+        {
+          "@id": "fixtures/in/procedure-time-low-only.xml"
+        },
+        {
+          "@id": "fixtures/in/report-code-translation.xml"
+        },
+        {
+          "@id": "fixtures/in/medication-name-in-material.xml"
+        },
+        {
           "@id": "fixtures/in/section-text-referenced-by-unmapped-entries.xml"
         },
         {
@@ -1038,6 +1050,18 @@
           "@id": "fixtures/expected/section-text-container-referenced.ttl"
         },
         {
+          "@id": "fixtures/expected/allergy-name-in-concern-act.ttl"
+        },
+        {
+          "@id": "fixtures/expected/procedure-time-low-only.ttl"
+        },
+        {
+          "@id": "fixtures/expected/report-code-translation.ttl"
+        },
+        {
+          "@id": "fixtures/expected/medication-name-in-material.ttl"
+        },
+        {
           "@id": "fixtures/expected/section-text-referenced-by-unmapped-entries.ttl"
         },
         {
@@ -1063,6 +1087,18 @@
         },
         {
           "@id": "fixtures/findings/section-text-container-referenced.ttl"
+        },
+        {
+          "@id": "fixtures/findings/allergy-name-in-concern-act.ttl"
+        },
+        {
+          "@id": "fixtures/findings/procedure-time-low-only.ttl"
+        },
+        {
+          "@id": "fixtures/findings/report-code-translation.ttl"
+        },
+        {
+          "@id": "fixtures/findings/medication-name-in-material.ttl"
         },
         {
           "@id": "fixtures/findings/section-text-referenced-by-unmapped-entries.ttl"
@@ -2905,6 +2941,58 @@
       "description": "Allergies, Procedures and Immunizations sections whose entries reference a table, the text element itself, and a tbody, each a container. Authored here on 2026-11-02, for a case the conformance corpus does not hold; it validates against the CDA schema."
     },
     {
+      "@id": "fixtures/in/allergy-name-in-concern-act.xml",
+      "@type": "File",
+      "name": "C-CDA: allergy-name-in-concern-act",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "3638",
+      "sha256": "55894681c3f465fe9a6dcc890a27838dce4abf53eb3ce38c32d58b40b8741103",
+      "dateCreated": "2026-11-04",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "An allergy in the nesting C-CDA R2.1 defines, an Allergy Intolerance Observation inside the concern act's entryRelationship, whose allergen is a UNII code and a name. Authored here on 2026-11-04, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/procedure-time-low-only.xml",
+      "@type": "File",
+      "name": "C-CDA: procedure-time-low-only",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "2765",
+      "sha256": "0df0ec5b7078439b153995b55b61d0e7e07e6ad7e93a3e738b5146bb6280beb7",
+      "dateCreated": "2026-11-04",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A procedure whose effectiveTime states only its low. Authored here on 2026-11-04, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/report-code-translation.xml",
+      "@type": "File",
+      "name": "C-CDA: report-code-translation",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "3572",
+      "sha256": "0772ca9cf1f80c4c062072bf101b5815b292a97962a89d17b6ab612eb3782ec4",
+      "dateCreated": "2026-11-04",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A Result Organizer whose LOINC code has a translation in a laboratory's own code system. Authored here on 2026-11-04, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
+      "@id": "fixtures/in/medication-name-in-material.xml",
+      "@type": "File",
+      "name": "C-CDA: medication-name-in-material",
+      "encodingFormat": "application/cda+xml",
+      "contentSize": "3168",
+      "sha256": "b92d63d7c1cd7991b4acebca547ca1a41734382a813604b9e6a54b4df78857ba",
+      "dateCreated": "2026-11-04",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "A prescribed medication whose manufactured material has an RxNorm code and a name, and no display name or original text. Authored here on 2026-11-04, for a case the conformance corpus does not hold; it validates against the CDA schema."
+    },
+    {
       "@id": "fixtures/in/section-text-referenced-by-unmapped-entries.xml",
       "@type": "File",
       "name": "C-CDA: section-text-referenced-by-unmapped-entries",
@@ -2999,6 +3087,70 @@
         "@id": "fixtures/in/section-text-container-referenced.xml"
       },
       "dateCreated": "2026-11-02",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/allergy-name-in-concern-act.ttl",
+      "@type": "File",
+      "name": "Expected graph for allergy-name-in-concern-act",
+      "encodingFormat": "text/turtle",
+      "contentSize": "7844",
+      "sha256": "e927fdd9dca3c50d03d4ef89f8428ec80dd9d6d30d59eb6b4fdb7f20f5b3b383",
+      "about": {
+        "@id": "fixtures/in/allergy-name-in-concern-act.xml"
+      },
+      "dateCreated": "2026-11-04",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/procedure-time-low-only.ttl",
+      "@type": "File",
+      "name": "Expected graph for procedure-time-low-only",
+      "encodingFormat": "text/turtle",
+      "contentSize": "7687",
+      "sha256": "8b4127944e9cb2c8105c3b1a1857b8d1f51078dbb8adacdb90fddf967da63232",
+      "about": {
+        "@id": "fixtures/in/procedure-time-low-only.xml"
+      },
+      "dateCreated": "2026-11-04",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/report-code-translation.ttl",
+      "@type": "File",
+      "name": "Expected graph for report-code-translation",
+      "encodingFormat": "text/turtle",
+      "contentSize": "10244",
+      "sha256": "fd8ac6ed785a377d6f8dbf8be6b3b37d1b3457fb839a6dbd80bea38ebab22b71",
+      "about": {
+        "@id": "fixtures/in/report-code-translation.xml"
+      },
+      "dateCreated": "2026-11-04",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "The records layer cascade-bridge-rs convert --out produces from the input it is about and the facts its test entry supplies, regenerated by the Bridge and committed unedited, never written by hand; its record names recomputed from each rule's inputs by cascade-vocabulary's tests/naming.py, and its version names checked against the hash of their own triples."
+    },
+    {
+      "@id": "fixtures/expected/medication-name-in-material.ttl",
+      "@type": "File",
+      "name": "Expected graph for medication-name-in-material",
+      "encodingFormat": "text/turtle",
+      "contentSize": "7791",
+      "sha256": "d2447abf819df17428305ffc244664c0c44ef631c3594eecd7047ca25687795b",
+      "about": {
+        "@id": "fixtures/in/medication-name-in-material.xml"
+      },
+      "dateCreated": "2026-11-04",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -3111,6 +3263,70 @@
         "@id": "fixtures/in/section-text-container-referenced.xml"
       },
       "dateCreated": "2026-11-02",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/findings/allergy-name-in-concern-act.ttl",
+      "@type": "File",
+      "name": "Expected findings for allergy-name-in-concern-act",
+      "encodingFormat": "text/turtle",
+      "contentSize": "7154",
+      "sha256": "7f83a58a65e1a1e03a782f86a12b849dc7120f418d7fac3af3dca5a780ae437c",
+      "about": {
+        "@id": "fixtures/in/allergy-name-in-concern-act.xml"
+      },
+      "dateCreated": "2026-11-04",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/findings/procedure-time-low-only.ttl",
+      "@type": "File",
+      "name": "Expected findings for procedure-time-low-only",
+      "encodingFormat": "text/turtle",
+      "contentSize": "5174",
+      "sha256": "9ebbf682aa239171e4bb1916c92967b9233498a9052747caf07d81ded9baf764",
+      "about": {
+        "@id": "fixtures/in/procedure-time-low-only.xml"
+      },
+      "dateCreated": "2026-11-04",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/findings/report-code-translation.ttl",
+      "@type": "File",
+      "name": "Expected findings for report-code-translation",
+      "encodingFormat": "text/turtle",
+      "contentSize": "5166",
+      "sha256": "35d68204aedd596ef0e08861d6faafbe4ff0eadfba1524f66cc1f2bd0d74035e",
+      "about": {
+        "@id": "fixtures/in/report-code-translation.xml"
+      },
+      "dateCreated": "2026-11-04",
+      "license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0"
+      },
+      "description": "cascade-bridge-rs convert --findings over the input it is about, with the facts its test entry supplies, committed unedited; each finding reviewed against in/sparql/ and the gap scheme."
+    },
+    {
+      "@id": "fixtures/findings/medication-name-in-material.ttl",
+      "@type": "File",
+      "name": "Expected findings for medication-name-in-material",
+      "encodingFormat": "text/turtle",
+      "contentSize": "5196",
+      "sha256": "6799782068bfe001db926f637cbbadeb5213b89bf9e015d4166e825a3f7f0e7f",
+      "about": {
+        "@id": "fixtures/in/medication-name-in-material.xml"
+      },
+      "dateCreated": "2026-11-04",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
@@ -4791,8 +5007,8 @@
       "@type": "File",
       "name": "Expected findings for allergy-codes-in-other-systems",
       "encodingFormat": "text/turtle",
-      "contentSize": "22731",
-      "sha256": "ff48afb02bc5dba2781fe67118470ba5447c72e37f5b2ed11fec413e35f80372",
+      "contentSize": "15282",
+      "sha256": "93b12c511d9bc2aaf83db42870629521d80c1d8a182bd33f44443ace24fa6a15",
       "about": {
         "@id": "fixtures/in/allergy-codes-in-other-systems.xml"
       },
