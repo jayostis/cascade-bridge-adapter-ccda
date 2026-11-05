@@ -14,7 +14,13 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # the id and the type, and the date of that note and of each note a section
 # makes is the document's time. Each is valued as the document wrote it: an id
 # by its root and its extension, a type by its code, a time by its value, else
-# by its nullFlavor.
+# by its nullFlavor; failing those, an id by its extension alone or its
+# assigning authority's name, and a type by its displayName, else the text of
+# its originalText, else the reference as written. An element that wrote none
+# of these, a time with neither a value nor a nullFlavor, an id or a code
+# stating nothing at all, has nothing to be valued by and its finding has no
+# value, as a referenced file stating no media type has none in
+# report-and-note-findings.rq.
 #
 # The id is carried where the body's note is named by it, whose source record id
 # document-table.rq reads from the id, or where a master identifier can be made
@@ -38,6 +44,7 @@ WHERE {
     OPTIONAL { ?id xyz:root ?idRoot }
     OPTIONAL { ?id xyz:extension ?idExtension }
     OPTIONAL { ?id xyz:nullFlavor ?idNullFlavor }
+    OPTIONAL { ?id xyz:assigningAuthorityName ?idAuthority }
     OPTIONAL {
       ?root ?outerSlot ?outer . ?outer a v3:component ; ?bodySlot ?body . ?body a v3:nonXMLBody .
       BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_")) AS ?bodySlots)
@@ -50,7 +57,8 @@ WHERE {
     BIND (BOUND(?bodyIdRoot) && COALESCE(?bodyIdRoot = ?idRoot && ?bodyIdExtension = COALESCE(?idExtension, ""), false) AS ?namesTheNote)
     FILTER (!BOUND(?bodyRow) || !(?masterIdentifier || ?namesTheNote))
     BIND ("*[local-name()='id' and namespace-uri()='urn:hl7-org:v3'][1]" AS ?refinement)
-    BIND (COALESCE(?idNullFlavor, CONCAT(?idRoot, IF(COALESCE(?idExtension, "") != "", CONCAT("|", ?idExtension), ""))) AS ?value)
+    BIND (COALESCE(?idNullFlavor, CONCAT(?idRoot, IF(COALESCE(?idExtension, "") != "", CONCAT("|", ?idExtension), "")),
+                   ?idExtension, ?idAuthority) AS ?value)
     BIND (ccda:documentId AS ?gap)
   }
   UNION
@@ -59,6 +67,21 @@ WHERE {
     OPTIONAL { ?code xyz:code ?statedCode }
     OPTIONAL { ?code xyz:codeSystem ?statedSystem }
     OPTIONAL { ?code xyz:nullFlavor ?codeNullFlavor }
+    OPTIONAL { ?code xyz:displayName ?codeDisplayName }
+    OPTIONAL {
+      SELECT ?code (MIN(?codeOriginalRun) AS ?codeOriginalText) (MIN(?codeOriginalPointer) AS ?codeOriginalReference) WHERE {
+        ?code a v3:code ; ?originalTextSlot ?originalText . ?originalText a v3:originalText .
+        {
+          ?originalText ?runSlot ?run .
+          FILTER (isLiteral(?run) && STRSTARTS(STR(?runSlot), STR(rdf:_)) && REGEX(?run, "[^\\p{Z}\\p{Cc}\\p{Cf}]"))
+          BIND (REPLACE(REPLACE(?run, "^[\\p{Z}\\p{Cc}\\p{Cf}]+|[\\p{Z}\\p{Cc}\\p{Cf}]+$", ""), "[\\p{Z}\\p{Cc}]+", " ") AS ?codeOriginalRun)
+        }
+        UNION
+        {
+          ?originalText ?referenceSlot ?reference . ?reference a v3:reference ; xyz:value ?codeOriginalPointer .
+        }
+      } GROUP BY ?code
+    }
     BIND (LCASE(REPLACE(REPLACE(?statedSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")) AS ?systemKey)
     BIND (EXISTS { ?root ?outerSlot ?outer . ?outer a v3:component ; ?bodySlot ?body . ?body a v3:nonXMLBody } AS ?unstructured)
     BIND (BOUND(?systemKey) && COALESCE(REPLACE(?statedCode, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "") != ""
@@ -66,7 +89,7 @@ WHERE {
               || EXISTS { ?listed skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; cascade:codingSystemUri ?listedUri }) AS ?typed)
     FILTER (!(?unstructured && ?typed))
     BIND ("*[local-name()='code' and namespace-uri()='urn:hl7-org:v3'][1]" AS ?refinement)
-    BIND (COALESCE(?statedCode, ?codeNullFlavor) AS ?value)
+    BIND (COALESCE(?statedCode, ?codeNullFlavor, ?codeDisplayName, ?codeOriginalText, ?codeOriginalReference) AS ?value)
     BIND (ccda:documentType AS ?gap)
   }
   UNION

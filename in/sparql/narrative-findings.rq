@@ -1,27 +1,40 @@
 PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#>
+PREFIX xsi:    <http://www.w3.org/2001/XMLSchema-instance>
 PREFIX sh:     <http://www.w3.org/ns/shacl#>
 PREFIX oa:     <http://www.w3.org/ns/oa#>
 PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
 PREFIX xyz:    <http://sparql.xyz/facade-x/data/>
 PREFIX v3:     <urn:hl7-org:v3>
+PREFIX sdtc:   <urn:hl7-org:sdtc>
 PREFIX bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#>
 PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
-# What of a section's text reaches neither its note nor a record. The words of
-# the blocks no entry references are the note's text (document-table.rq), and
-# an element an entry references is that record's: its own text, or a name read
-# through it. What a block holds beside the element referenced, a row's other
-# cells for one cell, is taken from the note with it and carried by no record;
-# so is a table's or list's header, footer and caption when every row or item
-# is taken, and the text a nested observation references, which no record
-# reads. A section with a nullFlavor is no note, so all its text is
-# lost. Valued by those words, a line for each run of text, in the order of
-# their blocks.
+# What of a section's text reaches neither its note nor a record. A block is
+# dropped from the note when a reference in a mapped statement points to it,
+# into it, or from above it (document-table.rq, whose referenced-block
+# subqueries hold the mapped statements this query repeats). What a record
+# carries of it is only what a mapping reads through a reference: the element a
+# reference points to, and all under it, when the mapping reads that reference.
+# What a dropped block holds beside that, a row's other cells for one cell, is
+# carried by no record; so is the text a mapped statement's other references
+# point to (a reaction's or a comment's, a nested observation's own text), a
+# table's or list's header, footer and caption when every row or item is
+# dropped, and, for a section with a nullFlavor, which is no note, all its text
+# but what a record reads. Valued by those words, a line for each run of text, in
+# the order of their blocks.
 #
-# A reference counts as a record's when it sits in an entry some row is made
-# from, as reference-findings.rq reads it, bar a concern act's own text.
-# Blocks are those document-table.rq's kept text names.
+# A reference is read when it is, of a mapped statement: its own text
+# (allergy.rq, condition.rq, immunization.rq, medication.rq, procedure.rq, a
+# result's in result.rq, a note activity's in note-or-document.rq); an organizer's
+# sdtc:text (report.rq); an allergen's code originalText (allergy.rq); a
+# condition's value originalText (condition.rq); a vaccine's or a drug's
+# material code originalText (immunization.rq, medication.rq); a procedure's code
+# originalText (procedure.rq); a medication's sig, the Medication Free Text Sig
+# nested in it (medication.rq); and of an organizer's result, in result.rq, its
+# code's originalText, its first value's originalText when that is coded, and
+# its first reference range's observation range text. A statement nested in a
+# mapped one, a reaction, an indication, a comment, is read by no mapping.
 
 CONSTRUCT {
   [] a oa:Annotation ;
@@ -85,36 +98,48 @@ WHERE {
           OPTIONAL {
             SELECT DISTINCT (?node AS ?unit) (true AS ?related) WHERE {
               {
-                SELECT ?target (MAX(?read) AS ?carriedMax) WHERE {
+                SELECT DISTINCT ?target WHERE {
                   {
-                    SELECT DISTINCT ?prefix WHERE {
-                      ?row ccda:statementAt ?rowSlots .
-                      BIND (REPLACE(?rowSlots, "^(([0-9]+\\.){5}).*$", "$1") AS ?prefix)
+                    SELECT DISTINCT ?mapped WHERE {
+                      ?entry a v3:entry .
+                      {
+                        ?entry ?actSlot ?act . ?act a v3:act .
+                        { ?act ?relationshipSlot ?relationship . ?relationship a v3:entryRelationship ; ?observationSlot ?mapped }
+                        UNION
+                        { ?act ?observationSlot ?mapped }
+                        ?mapped a v3:observation ; ?templateSlot ?template . ?template a v3:templateId ; xyz:root ?templateRoot .
+                        VALUES (?templateRoot ?concernRequired) { ("2.16.840.1.113883.10.20.22.4.7" false) ("2.16.840.1.113883.10.20.22.4.4" true) }
+                        OPTIONAL { SELECT DISTINCT ?act (true AS ?inConcern) WHERE { ?act ?concernSlot ?concern . ?concern a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.3" } }
+                        FILTER (!?concernRequired || BOUND(?inConcern))
+                      }
+                      UNION
+                      {
+                        ?entry ?statementSlot ?mapped . ?mapped a ?element ; ?templateSlot ?template . ?template a v3:templateId ; xyz:root ?templateRoot .
+                        VALUES (?templateRoot ?element) { ("2.16.840.1.113883.10.20.22.4.52" v3:substanceAdministration) ("2.16.840.1.113883.10.20.22.4.14" v3:procedure) ("2.16.840.1.113883.10.20.22.4.202" v3:act) }
+                      }
+                      UNION
+                      {
+                        ?section a v3:section ; ?entrySlot ?entry . ?section ?sectionTemplateSlot ?sectionTemplate . ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot .
+                        ?entry ?statementSlot ?mapped . ?mapped a ?element ; ?templateSlot ?template . ?template a v3:templateId ; xyz:root ?templateRoot .
+                        VALUES (?sectionRoot ?templateRoot ?element) {
+                          ("2.16.840.1.113883.10.20.22.2.1" "2.16.840.1.113883.10.20.22.4.16" v3:substanceAdministration)
+                          ("2.16.840.1.113883.10.20.22.2.1.1" "2.16.840.1.113883.10.20.22.4.16" v3:substanceAdministration)
+                          ("2.16.840.1.113883.10.20.22.2.3" "2.16.840.1.113883.10.20.22.4.1" v3:organizer)
+                          ("2.16.840.1.113883.10.20.22.2.3.1" "2.16.840.1.113883.10.20.22.4.1" v3:organizer)
+                        }
+                        FILTER (?element != v3:substanceAdministration
+                                || (EXISTS { ?mapped xyz:moodCode ?mood . FILTER (?mood IN ("INT", "EVN")) } && NOT EXISTS { ?mapped xyz:negationInd "true" }))
+                      }
                     }
                   }
-                  ?entryRoot a fx:root, v3:ClinicalDocument ; ?eOuterSlot ?eOuter .
-                  ?eOuter a v3:component ; ?eBodySlot ?eBody .
-                  ?eBody a v3:structuredBody ; ?eComponentSlot ?eComponent .
-                  ?eComponent a v3:component ; ?eSectionSlot ?eSection .
-                  ?eSection a v3:section ; ?eEntrySlot ?entry . ?entry a v3:entry .
-                  FILTER (?prefix = CONCAT(STRAFTER(STR(?eOuterSlot), "#_"), ".", STRAFTER(STR(?eBodySlot), "#_"), ".",
-                                           STRAFTER(STR(?eComponentSlot), "#_"), ".", STRAFTER(STR(?eSectionSlot), "#_"), ".",
-                                           STRAFTER(STR(?eEntrySlot), "#_"), "."))
-                  ?entry (!rdf:type)+ ?reference .
+                  ?mapped (!rdf:type)* ?reference .
                   ?reference a v3:reference ; xyz:value ?pointer .
                   BIND (REPLACE(?pointer, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?trimmed)
                   FILTER (STRSTARTS(?trimmed, "#") && STRLEN(?trimmed) > 1)
-                  OPTIONAL { ?holderText a v3:text ; ?holderSlot ?reference . ?referrer ?referrerSlot ?holderText . ?referrer a ?referrerType }
-                  FILTER (!BOUND(?referrerType) || ?referrerType != v3:act || EXISTS {
-                    ?referrer ?templateSlot ?template . ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.202"
-                  })
-                  BIND (IF(BOUND(?referrerType) && ?referrerType = v3:observation && EXISTS {
-                    ?outerObservation a v3:observation ; (!rdf:type)+ ?referrer
-                  }, 0, 1) AS ?read)
                   ?target xyz:ID ?anchor .
                   FILTER (?anchor = STRAFTER(?trimmed, "#"))
                   FILTER NOT EXISTS { ?other xyz:ID ?anchor . FILTER (?other != ?target) }
-                } GROUP BY ?target
+                }
               }
               ?target ((!rdf:type)*|^(!rdf:type)*) ?node .
             }
@@ -122,38 +147,135 @@ WHERE {
           OPTIONAL {
             SELECT DISTINCT (?node AS ?element) (true AS ?readBelow) WHERE {
               {
-                SELECT ?target (MAX(?read) AS ?carriedMax) WHERE {
+                SELECT DISTINCT ?target WHERE {
                   {
-                    SELECT DISTINCT ?prefix WHERE {
-                      ?row ccda:statementAt ?rowSlots .
-                      BIND (REPLACE(?rowSlots, "^(([0-9]+\\.){5}).*$", "$1") AS ?prefix)
+                    SELECT DISTINCT ?reference WHERE {
+                      {
+                        SELECT DISTINCT ?mapped ?templateRoot WHERE {
+                          ?entry a v3:entry .
+                          {
+                            ?entry ?actSlot ?act . ?act a v3:act .
+                            { ?act ?relationshipSlot ?relationship . ?relationship a v3:entryRelationship ; ?observationSlot ?mapped }
+                            UNION
+                            { ?act ?observationSlot ?mapped }
+                            ?mapped a v3:observation ; ?templateSlot ?template . ?template a v3:templateId ; xyz:root ?templateRoot .
+                            VALUES (?templateRoot ?concernRequired) { ("2.16.840.1.113883.10.20.22.4.7" false) ("2.16.840.1.113883.10.20.22.4.4" true) }
+                            OPTIONAL { SELECT DISTINCT ?act (true AS ?inConcern) WHERE { ?act ?concernSlot ?concern . ?concern a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.3" } }
+                            FILTER (!?concernRequired || BOUND(?inConcern))
+                          }
+                          UNION
+                          {
+                            ?entry ?statementSlot ?mapped . ?mapped a ?element ; ?templateSlot ?template . ?template a v3:templateId ; xyz:root ?templateRoot .
+                            VALUES (?templateRoot ?element) { ("2.16.840.1.113883.10.20.22.4.52" v3:substanceAdministration) ("2.16.840.1.113883.10.20.22.4.14" v3:procedure) ("2.16.840.1.113883.10.20.22.4.202" v3:act) }
+                          }
+                          UNION
+                          {
+                            ?section a v3:section ; ?entrySlot ?entry . ?section ?sectionTemplateSlot ?sectionTemplate . ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot .
+                            ?entry ?statementSlot ?mapped . ?mapped a ?element ; ?templateSlot ?template . ?template a v3:templateId ; xyz:root ?templateRoot .
+                            VALUES (?sectionRoot ?templateRoot ?element) {
+                              ("2.16.840.1.113883.10.20.22.2.1" "2.16.840.1.113883.10.20.22.4.16" v3:substanceAdministration)
+                              ("2.16.840.1.113883.10.20.22.2.1.1" "2.16.840.1.113883.10.20.22.4.16" v3:substanceAdministration)
+                              ("2.16.840.1.113883.10.20.22.2.3" "2.16.840.1.113883.10.20.22.4.1" v3:organizer)
+                              ("2.16.840.1.113883.10.20.22.2.3.1" "2.16.840.1.113883.10.20.22.4.1" v3:organizer)
+                            }
+                            FILTER (?element != v3:substanceAdministration
+                                    || (EXISTS { ?mapped xyz:moodCode ?mood . FILTER (?mood IN ("INT", "EVN")) } && NOT EXISTS { ?mapped xyz:negationInd "true" }))
+                          }
+                        }
+                      }
+                      {
+                        # The statement's own text, and an organizer's sdtc:text.
+                        ?mapped ?ownSlot ?ownText . ?ownText a v3:text ; ?ownReferenceSlot ?reference .
+                        VALUES ?templateRoot { "2.16.840.1.113883.10.20.22.4.7" "2.16.840.1.113883.10.20.22.4.4" "2.16.840.1.113883.10.20.22.4.52"
+                                               "2.16.840.1.113883.10.20.22.4.14" "2.16.840.1.113883.10.20.22.4.16" "2.16.840.1.113883.10.20.22.4.202" }
+                      }
+                      UNION
+                      {
+                        ?mapped ?reportTextSlot ?reportText . ?reportText a sdtc:text ; ?reportReferenceSlot ?reference .
+                        VALUES ?templateRoot { "2.16.840.1.113883.10.20.22.4.1" }
+                      }
+                      UNION
+                      {
+                        # An allergen's name.
+                        ?mapped ?participantSlot ?participant . ?participant a v3:participant ; ?roleSlot ?role .
+                        ?role a v3:participantRole ; ?entitySlot ?entity . ?entity a v3:playingEntity ; ?allergenCodeSlot ?allergenCode .
+                        ?allergenCode a v3:code ; ?allergenTextSlot ?allergenText . ?allergenText a v3:originalText ; ?allergenReferenceSlot ?reference .
+                        VALUES ?templateRoot { "2.16.840.1.113883.10.20.22.4.7" }
+                      }
+                      UNION
+                      {
+                        # A condition's name.
+                        ?mapped ?conditionValueSlot ?conditionValue . ?conditionValue a v3:value ; ?conditionTextSlot ?conditionText .
+                        ?conditionText a v3:originalText ; ?conditionReferenceSlot ?reference .
+                        VALUES ?templateRoot { "2.16.840.1.113883.10.20.22.4.4" }
+                      }
+                      UNION
+                      {
+                        # A vaccine's or a drug's name.
+                        ?mapped ?consumableSlot ?consumable . ?consumable a v3:consumable ; ?productSlot ?product .
+                        ?product a v3:manufacturedProduct ; ?materialSlot ?material . ?material a v3:manufacturedMaterial ; ?materialCodeSlot ?materialCode .
+                        ?materialCode a v3:code ; ?materialTextSlot ?materialText . ?materialText a v3:originalText ; ?materialReferenceSlot ?reference .
+                        VALUES ?templateRoot { "2.16.840.1.113883.10.20.22.4.52" "2.16.840.1.113883.10.20.22.4.16" }
+                      }
+                      UNION
+                      {
+                        # A procedure's name.
+                        ?mapped ?procedureCodeSlot ?procedureCode . ?procedureCode a v3:code ; ?procedureTextSlot ?procedureText .
+                        ?procedureText a v3:originalText ; ?procedureReferenceSlot ?reference .
+                        VALUES ?templateRoot { "2.16.840.1.113883.10.20.22.4.14" }
+                      }
+                      UNION
+                      {
+                        # A medication's sig.
+                        ?mapped ?sigRelationshipSlot ?sigRelationship . ?sigRelationship a v3:entryRelationship ; ?sigSlot ?sig .
+                        ?sig a v3:substanceAdministration ; ?sigTemplateSlot ?sigTemplate ; ?sigTextSlot ?sigText .
+                        ?sigTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.147" .
+                        ?sigText a v3:text ; ?sigReferenceSlot ?reference .
+                        VALUES ?templateRoot { "2.16.840.1.113883.10.20.22.4.16" }
+                      }
+                      UNION
+                      {
+                        # A result of an organizer.
+                        ?mapped ?memberSlot ?member . ?member a v3:component ; ?resultSlot ?result . ?result a v3:observation .
+                        VALUES ?templateRoot { "2.16.840.1.113883.10.20.22.4.1" }
+                        {
+                          ?result ?resultTextSlot ?resultText . ?resultText a v3:text ; ?resultReferenceSlot ?reference .
+                        }
+                        UNION
+                        {
+                          ?result ?resultCodeSlot ?resultCode . ?resultCode a v3:code ; ?resultCodeTextSlot ?resultCodeText .
+                          ?resultCodeText a v3:originalText ; ?resultCodeReferenceSlot ?reference .
+                        }
+                        UNION
+                        {
+                          ?result ?firstValueSlot ?firstValue . ?firstValue a v3:value ; xsi:type ?written ; ?firstValueTextSlot ?firstValueText .
+                          ?firstValueText a v3:originalText ; ?firstValueReferenceSlot ?reference .
+                          FILTER (REPLACE(?written, "^.*:", "") IN ("CD", "CE", "CV", "CO"))
+                          FILTER NOT EXISTS {
+                            ?result ?earlierValueSlot ?earlierValue . ?earlierValue a v3:value .
+                            FILTER (xsd:integer(STRAFTER(STR(?earlierValueSlot), "#_")) < xsd:integer(STRAFTER(STR(?firstValueSlot), "#_")))
+                          }
+                        }
+                        UNION
+                        {
+                          ?result ?firstRangeSlot ?firstRange . ?firstRange a v3:referenceRange ; ?observationRangeSlot ?observationRange .
+                          ?observationRange a v3:observationRange ; ?rangeTextSlot ?rangeText . ?rangeText a v3:text ; ?rangeReferenceSlot ?reference .
+                          FILTER NOT EXISTS {
+                            ?result ?earlierRangeSlot ?earlierRange . ?earlierRange a v3:referenceRange .
+                            FILTER (xsd:integer(STRAFTER(STR(?earlierRangeSlot), "#_")) < xsd:integer(STRAFTER(STR(?firstRangeSlot), "#_")))
+                          }
+                        }
+                      }
                     }
                   }
-                  ?entryRoot a fx:root, v3:ClinicalDocument ; ?eOuterSlot ?eOuter .
-                  ?eOuter a v3:component ; ?eBodySlot ?eBody .
-                  ?eBody a v3:structuredBody ; ?eComponentSlot ?eComponent .
-                  ?eComponent a v3:component ; ?eSectionSlot ?eSection .
-                  ?eSection a v3:section ; ?eEntrySlot ?entry . ?entry a v3:entry .
-                  FILTER (?prefix = CONCAT(STRAFTER(STR(?eOuterSlot), "#_"), ".", STRAFTER(STR(?eBodySlot), "#_"), ".",
-                                           STRAFTER(STR(?eComponentSlot), "#_"), ".", STRAFTER(STR(?eSectionSlot), "#_"), ".",
-                                           STRAFTER(STR(?eEntrySlot), "#_"), "."))
-                  ?entry (!rdf:type)+ ?reference .
                   ?reference a v3:reference ; xyz:value ?pointer .
                   BIND (REPLACE(?pointer, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?trimmed)
                   FILTER (STRSTARTS(?trimmed, "#") && STRLEN(?trimmed) > 1)
-                  OPTIONAL { ?holderText a v3:text ; ?holderSlot ?reference . ?referrer ?referrerSlot ?holderText . ?referrer a ?referrerType }
-                  FILTER (!BOUND(?referrerType) || ?referrerType != v3:act || EXISTS {
-                    ?referrer ?templateSlot ?template . ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.202"
-                  })
-                  BIND (IF(BOUND(?referrerType) && ?referrerType = v3:observation && EXISTS {
-                    ?outerObservation a v3:observation ; (!rdf:type)+ ?referrer
-                  }, 0, 1) AS ?read)
                   ?target xyz:ID ?anchor .
                   FILTER (?anchor = STRAFTER(?trimmed, "#"))
                   FILTER NOT EXISTS { ?other xyz:ID ?anchor . FILTER (?other != ?target) }
-                } GROUP BY ?target
+                }
               }
-              FILTER (?carriedMax = 1)
               ?target (!rdf:type)* ?node .
             }
           }
@@ -167,36 +289,48 @@ WHERE {
               OPTIONAL {
                 SELECT DISTINCT (?node AS ?member) (true AS ?memberRelated) WHERE {
                   {
-                    SELECT ?target (MAX(?read) AS ?carriedMax) WHERE {
+                    SELECT DISTINCT ?target WHERE {
                       {
-                        SELECT DISTINCT ?prefix WHERE {
-                          ?row ccda:statementAt ?rowSlots .
-                          BIND (REPLACE(?rowSlots, "^(([0-9]+\\.){5}).*$", "$1") AS ?prefix)
+                        SELECT DISTINCT ?mapped WHERE {
+                          ?entry a v3:entry .
+                          {
+                            ?entry ?actSlot ?act . ?act a v3:act .
+                            { ?act ?relationshipSlot ?relationship . ?relationship a v3:entryRelationship ; ?observationSlot ?mapped }
+                            UNION
+                            { ?act ?observationSlot ?mapped }
+                            ?mapped a v3:observation ; ?templateSlot ?template . ?template a v3:templateId ; xyz:root ?templateRoot .
+                            VALUES (?templateRoot ?concernRequired) { ("2.16.840.1.113883.10.20.22.4.7" false) ("2.16.840.1.113883.10.20.22.4.4" true) }
+                            OPTIONAL { SELECT DISTINCT ?act (true AS ?inConcern) WHERE { ?act ?concernSlot ?concern . ?concern a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.3" } }
+                            FILTER (!?concernRequired || BOUND(?inConcern))
+                          }
+                          UNION
+                          {
+                            ?entry ?statementSlot ?mapped . ?mapped a ?element ; ?templateSlot ?template . ?template a v3:templateId ; xyz:root ?templateRoot .
+                            VALUES (?templateRoot ?element) { ("2.16.840.1.113883.10.20.22.4.52" v3:substanceAdministration) ("2.16.840.1.113883.10.20.22.4.14" v3:procedure) ("2.16.840.1.113883.10.20.22.4.202" v3:act) }
+                          }
+                          UNION
+                          {
+                            ?section a v3:section ; ?entrySlot ?entry . ?section ?sectionTemplateSlot ?sectionTemplate . ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot .
+                            ?entry ?statementSlot ?mapped . ?mapped a ?element ; ?templateSlot ?template . ?template a v3:templateId ; xyz:root ?templateRoot .
+                            VALUES (?sectionRoot ?templateRoot ?element) {
+                              ("2.16.840.1.113883.10.20.22.2.1" "2.16.840.1.113883.10.20.22.4.16" v3:substanceAdministration)
+                              ("2.16.840.1.113883.10.20.22.2.1.1" "2.16.840.1.113883.10.20.22.4.16" v3:substanceAdministration)
+                              ("2.16.840.1.113883.10.20.22.2.3" "2.16.840.1.113883.10.20.22.4.1" v3:organizer)
+                              ("2.16.840.1.113883.10.20.22.2.3.1" "2.16.840.1.113883.10.20.22.4.1" v3:organizer)
+                            }
+                            FILTER (?element != v3:substanceAdministration
+                                    || (EXISTS { ?mapped xyz:moodCode ?mood . FILTER (?mood IN ("INT", "EVN")) } && NOT EXISTS { ?mapped xyz:negationInd "true" }))
+                          }
                         }
                       }
-                      ?entryRoot a fx:root, v3:ClinicalDocument ; ?eOuterSlot ?eOuter .
-                      ?eOuter a v3:component ; ?eBodySlot ?eBody .
-                      ?eBody a v3:structuredBody ; ?eComponentSlot ?eComponent .
-                      ?eComponent a v3:component ; ?eSectionSlot ?eSection .
-                      ?eSection a v3:section ; ?eEntrySlot ?entry . ?entry a v3:entry .
-                      FILTER (?prefix = CONCAT(STRAFTER(STR(?eOuterSlot), "#_"), ".", STRAFTER(STR(?eBodySlot), "#_"), ".",
-                                               STRAFTER(STR(?eComponentSlot), "#_"), ".", STRAFTER(STR(?eSectionSlot), "#_"), ".",
-                                               STRAFTER(STR(?eEntrySlot), "#_"), "."))
-                      ?entry (!rdf:type)+ ?reference .
+                      ?mapped (!rdf:type)* ?reference .
                       ?reference a v3:reference ; xyz:value ?pointer .
                       BIND (REPLACE(?pointer, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?trimmed)
                       FILTER (STRSTARTS(?trimmed, "#") && STRLEN(?trimmed) > 1)
-                      OPTIONAL { ?holderText a v3:text ; ?holderSlot ?reference . ?referrer ?referrerSlot ?holderText . ?referrer a ?referrerType }
-                      FILTER (!BOUND(?referrerType) || ?referrerType != v3:act || EXISTS {
-                        ?referrer ?templateSlot ?template . ?template a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.202"
-                      })
-                      BIND (IF(BOUND(?referrerType) && ?referrerType = v3:observation && EXISTS {
-                        ?outerObservation a v3:observation ; (!rdf:type)+ ?referrer
-                      }, 0, 1) AS ?read)
                       ?target xyz:ID ?anchor .
                       FILTER (?anchor = STRAFTER(?trimmed, "#"))
                       FILTER NOT EXISTS { ?other xyz:ID ?anchor . FILTER (?other != ?target) }
-                    } GROUP BY ?target
+                    }
                   }
                   ?target ((!rdf:type)*|^(!rdf:type)*) ?node .
                 }
