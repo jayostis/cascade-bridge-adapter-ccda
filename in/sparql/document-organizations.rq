@@ -21,7 +21,10 @@ PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 # UUID maps to none. Of the ids that map to one, the NPI names the record, else
 # the least by code point of type, then value, so the order the document lists
 # them in never changes the name; an element with none is no record. The
-# document names each record once in each role its elements play.
+# document names each record once in each role its elements play: as the
+# hadRole of an association of an act that generated the document, and, as
+# every role here is a custodian's or an author's, as what the document was
+# attributed to.
 #
 # One element's content is one version, read from the element that comes first
 # among those naming one record, the custodian before any author: two elements
@@ -39,8 +42,10 @@ PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 
 CONSTRUCT {
   ?organization a cascade:Organization .
-  ?attributing prov:qualifiedAttribution ?attribution .
-  ?attribution prov:agent ?organization ;
+  ?attributing prov:wasGeneratedBy ?writing ;
+    prov:wasAttributedTo ?organization .
+  ?writing prov:qualifiedAssociation ?association .
+  ?association prov:agent ?organization ;
     prov:hadRole ?role .
   ?version prov:specializationOf ?organization ;
     foaf:name ?name ;
@@ -260,7 +265,8 @@ WHERE {
   BIND (IF(STRSTARTS(?firstAmongAuthors, "0"), SUBSTR(?firstAmongAuthors, 2), "") AS ?firstAuthor)
   BIND (IF(?branch = "attribution" && ?rank = IF(STRSTARTS(?rank, "0"), ?first, ?firstAuthor), ?document, 1/0)
         AS ?attributing)
-  BIND (IF(BOUND(?attributing), BNODE(), 1/0) AS ?attribution)
+  BIND (IF(BOUND(?attributing), BNODE(), 1/0) AS ?writing)
+  BIND (IF(BOUND(?attributing), BNODE(), 1/0) AS ?association)
   BIND (IF(?rank = ?first && COALESCE(?branch, "") != "attribution", ?firstVersion, 1/0) AS ?version)
   BIND (IF(?rank = ?first && ?branch = "arrival", BNODE(), 1/0) AS ?arrival)
   BIND (IF(BOUND(?arrival), BNODE(), 1/0) AS ?selectorNode)
