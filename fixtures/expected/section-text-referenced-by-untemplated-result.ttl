@@ -9,13 +9,15 @@
 @prefix org: <http://www.w3.org/ns/org#> .
 @prefix oa: <http://www.w3.org/ns/oa#> .
 <urn:uuid:5769da63-d46b-8c66-b381-d00b2f7ccadb> a cascade:Organization .
-<ni:///sha-256;Vv_peQ_fxFcmqY0zmKFKVzlzs4cr5tAMdwRwuKpNeGA> prov:qualifiedAttribution _:ed3c0e87d5599cb1f035e9bdb03985ba .
-_:ed3c0e87d5599cb1f035e9bdb03985ba prov:agent <urn:uuid:5769da63-d46b-8c66-b381-d00b2f7ccadb> ;
+<ni:///sha-256;Vv_peQ_fxFcmqY0zmKFKVzlzs4cr5tAMdwRwuKpNeGA> prov:wasGeneratedBy _:eb2b8db35c243f9b77dcdb4a47da7401 ;
+	prov:wasAttributedTo <urn:uuid:5769da63-d46b-8c66-b381-d00b2f7ccadb> .
+_:eb2b8db35c243f9b77dcdb4a47da7401 prov:qualifiedAssociation _:f7ed115f9365c640df1af4bd648432fe .
+_:f7ed115f9365c640df1af4bd648432fe prov:agent <urn:uuid:5769da63-d46b-8c66-b381-d00b2f7ccadb> ;
 	prov:hadRole cascade:CustodianRole .
 <ni:///sha-256;grKi0ms_W2WGoIJBSajj9WqQqFYdSHTIaehKWGv5yRg> prov:specializationOf <urn:uuid:5769da63-d46b-8c66-b381-d00b2f7ccadb> .
 _:deb5747c6fff6803c123b983a9484e8e bridge:arrivedAs <ni:///sha-256;grKi0ms_W2WGoIJBSajj9WqQqFYdSHTIaehKWGv5yRg> ;
-	oa:hasSelector _:d5170f9c7bf390283434ef5f9a6946cc .
-_:d5170f9c7bf390283434ef5f9a6946cc a oa:XPathSelector ;
+	oa:hasSelector _:cd4fb722ef4298c7cc45e38d81fad95a .
+_:cd4fb722ef4298c7cc45e38d81fad95a a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='custodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='assignedCustodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='representedCustodianOrganization' and namespace-uri()='urn:hl7-org:v3'][1]" .
 <ni:///sha-256;grKi0ms_W2WGoIJBSajj9WqQqFYdSHTIaehKWGv5yRg> foaf:name "Riverside Community Hospital" ;
 	org:identifier "urn:oid:2.16.840.1.113883.19.5.99999.3"^^<urn:ietf:rfc:3986> .
@@ -27,29 +29,29 @@ _:d5170f9c7bf390283434ef5f9a6946cc a oa:XPathSelector ;
 	cascade:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.99999.2:MRN-448120> ;
 	cascade:sourceRecordId "2.16.840.1.113883.19.5.99999.2:MRN-448120" .
 <ni:///sha-256;8OhFhApPXbNaEpnniPsDDmUOh7GZ3tQ3brvo1CVgP0c> prov:specializationOf <urn:uuid:ed62f5a3-7994-8c3c-9b4a-9f1f41a1aba4> .
-_:ea5e77d3ee9d2bf725132595aa0fc09d a oa:XPathSelector ;
+_:e530da8bd3cc0d119134487d47c0b6c1 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:992210c859145a06f7516c44c3716cdd bridge:arrivedAs <ni:///sha-256;8OhFhApPXbNaEpnniPsDDmUOh7GZ3tQ3brvo1CVgP0c> ;
-	oa:hasSelector _:ea5e77d3ee9d2bf725132595aa0fc09d .
+	oa:hasSelector _:e530da8bd3cc0d119134487d47c0b6c1 .
 <urn:uuid:97aaabbd-afc1-8f3a-8aff-c4c42ca1c565> a cascade:LaboratoryTestResult ;
 	cascade:sourceUrl <urn:hl7ii:1.2.3:RES-1> ;
 	cascade:sourceRecordId "1.2.3:RES-1" .
 <ni:///sha-256;QuUKfNMMy1hL5it2JqtCoZPlcDIVmLUMQUjy1C5NzNA> prov:specializationOf <urn:uuid:97aaabbd-afc1-8f3a-8aff-c4c42ca1c565> ;
 	cascade:patient <urn:uuid:ed62f5a3-7994-8c3c-9b4a-9f1f41a1aba4> .
 <ni:///sha-256;qywtuZsQCpe-LJEOLyYxFV28Di1nu57zsvrwRf4guXQ> obo:RO_0002351 <urn:uuid:97aaabbd-afc1-8f3a-8aff-c4c42ca1c565> .
-_:f1a6615bb069c61c210fca19bfa453b5 a oa:XPathSelector ;
+_:b95e7cde5b3fdf06f9c2a42bfcac040d a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='organizer' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:94d97d4111d9d314a2aa21ff66411c74 bridge:arrivedAs <ni:///sha-256;QuUKfNMMy1hL5it2JqtCoZPlcDIVmLUMQUjy1C5NzNA> ;
-	oa:hasSelector _:f1a6615bb069c61c210fca19bfa453b5 .
+	oa:hasSelector _:b95e7cde5b3fdf06f9c2a42bfcac040d .
 <urn:uuid:bb99adb3-cbe7-8995-8384-023cb8a592bf> a cascade:DiagnosticReport ;
 	cascade:sourceUrl <urn:hl7ii:1.2.3:ORG-1> ;
 	cascade:sourceRecordId "1.2.3:ORG-1" .
 <ni:///sha-256;qywtuZsQCpe-LJEOLyYxFV28Di1nu57zsvrwRf4guXQ> prov:specializationOf <urn:uuid:bb99adb3-cbe7-8995-8384-023cb8a592bf> ;
 	cascade:patient <urn:uuid:ed62f5a3-7994-8c3c-9b4a-9f1f41a1aba4> .
-_:de56688c4fb110f0de0a9bf56a950660 a oa:XPathSelector ;
+_:dbefe08e2a944543c7d0e3258e9c8c60 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='organizer' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:266d0e222d5d693fc498fffbdb77e1bf bridge:arrivedAs <ni:///sha-256;qywtuZsQCpe-LJEOLyYxFV28Di1nu57zsvrwRf4guXQ> ;
-	oa:hasSelector _:de56688c4fb110f0de0a9bf56a950660 .
+	oa:hasSelector _:dbefe08e2a944543c7d0e3258e9c8c60 .
 <ni:///sha-256;qywtuZsQCpe-LJEOLyYxFV28Di1nu57zsvrwRf4guXQ> cascade:workflowStatus "final" ;
 	cascade:reportCode <http://loinc.org/rdf/24323-8> .
 <ni:///sha-256;QuUKfNMMy1hL5it2JqtCoZPlcDIVmLUMQUjy1C5NzNA> dct:identifier "RES-1"^^<urn:oid:1.2.3> ;
@@ -57,9 +59,9 @@ _:266d0e222d5d693fc498fffbdb77e1bf bridge:arrivedAs <ni:///sha-256;qywtuZsQCpe-L
 <ni:///sha-256;QuUKfNMMy1hL5it2JqtCoZPlcDIVmLUMQUjy1C5NzNA#value> cascade:decimalValue "140"^^xsd:decimal ;
 	cascade:writtenValue "140" ;
 	cascade:ucumUnit "mmol/L" .
-<ni:///sha-256;QuUKfNMMy1hL5it2JqtCoZPlcDIVmLUMQUjy1C5NzNA> cascade:resultClinicallyRelevantTime "2026-11-01"^^xsd:date ;
-	cascade:narrativeText "Sodium\n140 mmol/L" ;
+<ni:///sha-256;QuUKfNMMy1hL5it2JqtCoZPlcDIVmLUMQUjy1C5NzNA> cascade:narrativeText "Sodium\n140 mmol/L" ;
 	cascade:workflowStatus "final" ;
+	cascade:resultClinicallyRelevantTime "2026-11-01"^^xsd:date ;
 	cascade:testCode <http://loinc.org/rdf/2951-2> ;
 	cascade:resultValueKind cascade:QuantityResultValue .
 _:deb5747c6fff6803c123b983a9484e8e oa:hasSource <ni:///sha-256;Vv_peQ_fxFcmqY0zmKFKVzlzs4cr5tAMdwRwuKpNeGA> ;
@@ -74,11 +76,12 @@ _:266d0e222d5d693fc498fffbdb77e1bf oa:hasSource <ni:///sha-256;Vv_peQ_fxFcmqY0zm
 _:992210c859145a06f7516c44c3716cdd oa:hasSource <ni:///sha-256;Vv_peQ_fxFcmqY0zmKFKVzlzs4cr5tAMdwRwuKpNeGA> ;
 	prov:wasDerivedFrom <ni:///sha-256;Vv_peQ_fxFcmqY0zmKFKVzlzs4cr5tAMdwRwuKpNeGA> ;
 	prov:wasGeneratedBy _:ddb282b862b2d096dc6cef0909790913 .
-<ni:///sha-256;Vv_peQ_fxFcmqY0zmKFKVzlzs4cr5tAMdwRwuKpNeGA> <http://purl.org/pav/retrievedOn> "2025-07-02T09:00:00Z"^^xsd:dateTime .
-_:5c54f12fc379c07e9363468a9c68c079 prov:agent _:46ce17b9a1fbeb98c7f8c556feb0a3a8 .
-_:46ce17b9a1fbeb98c7f8c556feb0a3a8 <http://www.w3.org/2000/01/rdf-schema#label> "Riverside patient portal" .
-_:5c54f12fc379c07e9363468a9c68c079 prov:hadRole cascade:TransmitterRole .
-<ni:///sha-256;Vv_peQ_fxFcmqY0zmKFKVzlzs4cr5tAMdwRwuKpNeGA> prov:qualifiedAttribution _:5c54f12fc379c07e9363468a9c68c079 .
+<ni:///sha-256;Vv_peQ_fxFcmqY0zmKFKVzlzs4cr5tAMdwRwuKpNeGA> <http://purl.org/pav/retrievedOn> "2025-07-02T09:00:00Z"^^xsd:dateTime ;
+	prov:wasGeneratedBy _:5c54f12fc379c07e9363468a9c68c079 .
+_:46ce17b9a1fbeb98c7f8c556feb0a3a8 prov:agent _:37533be827dbbaa7552e9ff90efec300 ;
+	prov:hadRole cascade:TransmitterRole .
+_:5c54f12fc379c07e9363468a9c68c079 prov:qualifiedAssociation _:46ce17b9a1fbeb98c7f8c556feb0a3a8 .
+_:37533be827dbbaa7552e9ff90efec300 <http://www.w3.org/2000/01/rdf-schema#label> "Riverside patient portal" .
 _:ddb282b862b2d096dc6cef0909790913 <http://www.w3.org/2000/01/rdf-schema#label> "C-CDA download" ;
 	prov:startedAtTime "2025-07-02T09:00:04Z"^^xsd:dateTime .
 <ni:///sha-256;Vv_peQ_fxFcmqY0zmKFKVzlzs4cr5tAMdwRwuKpNeGA> a prov:Entity .
