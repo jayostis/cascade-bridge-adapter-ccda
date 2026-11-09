@@ -7,31 +7,34 @@
 @prefix org: <http://www.w3.org/ns/org#> .
 @prefix oa: <http://www.w3.org/ns/oa#> .
 <urn:uuid:1ca25bcf-7a1e-816b-9884-dda72bd0cac7> a cascade:Organization .
-<ni:///sha-256;H2ciHuCDpESnoQatwpgrqo7zpEy1X02qfUnZGr5hhjs> prov:qualifiedAttribution _:fa612e6e0cd57bd08148212681e34627 .
-_:fa612e6e0cd57bd08148212681e34627 prov:agent <urn:uuid:1ca25bcf-7a1e-816b-9884-dda72bd0cac7> ;
+<ni:///sha-256;H2ciHuCDpESnoQatwpgrqo7zpEy1X02qfUnZGr5hhjs> prov:wasGeneratedBy _:c8044e7bb0c98382cc3571075be15a32 ;
+	prov:wasAttributedTo <urn:uuid:1ca25bcf-7a1e-816b-9884-dda72bd0cac7> .
+_:c8044e7bb0c98382cc3571075be15a32 prov:qualifiedAssociation _:ca8e3eac60cb0713bb6a2d1ffa39cbd3 .
+_:ca8e3eac60cb0713bb6a2d1ffa39cbd3 prov:agent <urn:uuid:1ca25bcf-7a1e-816b-9884-dda72bd0cac7> ;
 	prov:hadRole cascade:CustodianRole .
 <ni:///sha-256;1kGjUc8o_Eb_48f9uPkk0Xo-K_UYnrtlYPPcnsWOEM8> prov:specializationOf <urn:uuid:1ca25bcf-7a1e-816b-9884-dda72bd0cac7> .
 _:e232614dfa308a30b9bdd5b82b22ae71 bridge:arrivedAs <ni:///sha-256;1kGjUc8o_Eb_48f9uPkk0Xo-K_UYnrtlYPPcnsWOEM8> ;
-	oa:hasSelector _:b7bfcc877ad5c461cb4b69bfc3b7bac3 .
-_:b7bfcc877ad5c461cb4b69bfc3b7bac3 a oa:XPathSelector ;
+	oa:hasSelector _:f9410f9088152992f7bb3cdf3ad46427 .
+_:f9410f9088152992f7bb3cdf3ad46427 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='custodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='assignedCustodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='representedCustodianOrganization' and namespace-uri()='urn:hl7-org:v3'][1]" .
 <ni:///sha-256;1kGjUc8o_Eb_48f9uPkk0Xo-K_UYnrtlYPPcnsWOEM8> foaf:name "Kestrel Harbor Hospital" ;
 	org:identifier "urn:oid:2.16.840.1.113883.19.5.1"^^<urn:ietf:rfc:3986> ;
 	cascade:organizationAddress "1200 Harbor Way\nKestrel Harbor\nWA\n98000\nUS" .
-<ni:///sha-256;H2ciHuCDpESnoQatwpgrqo7zpEy1X02qfUnZGr5hhjs> prov:qualifiedAttribution _:dcd209c84a99932773464ef38f503da8 .
-_:dcd209c84a99932773464ef38f503da8 prov:agent <urn:uuid:1ca25bcf-7a1e-816b-9884-dda72bd0cac7> ;
+<ni:///sha-256;H2ciHuCDpESnoQatwpgrqo7zpEy1X02qfUnZGr5hhjs> prov:wasGeneratedBy _:a08c891813ad63367d455b7f1d2dcb84 .
+_:a08c891813ad63367d455b7f1d2dcb84 prov:qualifiedAssociation _:ceca8b364f3177e25cafc796bbba0468 .
+_:ceca8b364f3177e25cafc796bbba0468 prov:agent <urn:uuid:1ca25bcf-7a1e-816b-9884-dda72bd0cac7> ;
 	prov:hadRole cascade:AuthorRole .
 <ni:///sha-256;P2l7iL4isDQSEVlb_--2RPAHVZ6IESIKjr53khb1MUY> cascade:prescribedOrReported "reportedUse" ;
 	cascade:medicationUseEndDate "2026-03-05"^^xsd:date ;
-	cascade:narrativeText "hydrochlorothiazide 12.5 MG Oral Capsule\nSTOP taking this medicine.\nDecember 9, 2025\nDiscontinued March 5, 2026 (hyponatremia)" ;
 	cascade:workflowStatus "stopped" ;
-	cascade:medicationUseStartDate "2025-12-09"^^xsd:date ;
 	cascade:drugName "hydrochlorothiazide 12.5 MG Oral Capsule" ;
+	cascade:medicationUseStartDate "2025-12-09"^^xsd:date ;
+	cascade:narrativeText "hydrochlorothiazide 12.5 MG Oral Capsule\nSTOP taking this medicine.\nDecember 9, 2025\nDiscontinued March 5, 2026 (hyponatremia)" ;
 	cascade:rxNormCode <https://ns.cascadeprotocol.org/codes/rxnorm/199903> .
-<ni:///sha-256;jHdgECsTIO66toWMKPqh8G8yJG9CvvbCum1BBE_mVMo> cascade:noteOrDocumentDate "2026-03-10T08:15:44Z"^^xsd:dateTime ;
-	cascade:workflowStatus "current" ;
+<ni:///sha-256;jHdgECsTIO66toWMKPqh8G8yJG9CvvbCum1BBE_mVMo> cascade:noteOrDocumentTitle "Encounters" ;
 	cascade:noteOrDocumentTypeName "History of Hospitalizations+Outpatient visits Narrative" ;
-	cascade:noteOrDocumentTitle "Encounters" ;
+	cascade:noteOrDocumentDate "2026-03-10T08:15:44Z"^^xsd:dateTime ;
+	cascade:workflowStatus "current" ;
 	cascade:noteOrDocumentType <http://loinc.org/rdf/46240-8> ;
 	cascade:narrativeText "Encounter\nDates\nDepartment\nAttending\nDischarge diagnosis\nInpatient admission\nMarch 2, 2026 - March 5, 2026\nKestrel Harbor Hospital, Internal Medicine\nRahul Venkat, MD\nHyponatremia, likely due to hydrochlorothiazide; dizziness with a fall at home, no injury" .
 <ni:///sha-256;atMpi56SZggc2yuwnSLFAerdQEolBwrnZyiEbitDchs> foaf:familyName "Natarajan" ;
@@ -39,43 +42,43 @@ _:dcd209c84a99932773464ef38f503da8 prov:agent <urn:uuid:1ca25bcf-7a1e-816b-9884-
 	cascade:dateOfBirth "1968-11-04"^^xsd:date ;
 	cascade:administrativeGender "female" .
 <ni:///sha-256;cXikiEduwLq_Z11qV_LYD6_iUpb3EBnvcDnHMsLVOQ4> cascade:procedureName "Colonoscopy" ;
-	cascade:procedureDate "2019-04-16"^^xsd:date ;
-	cascade:narrativeText "Colonoscopy\nApril 16, 2019\nKestrel Harbor Hospital Endoscopy\nScreening colonoscopy to the cecum, good preparation. Normal colon; no polyps. Repeat colonoscopy in 10 years." ;
 	cascade:workflowStatus "completed" ;
+	cascade:narrativeText "Colonoscopy\nApril 16, 2019\nKestrel Harbor Hospital Endoscopy\nScreening colonoscopy to the cecum, good preparation. Normal colon; no polyps. Repeat colonoscopy in 10 years." ;
+	cascade:procedureDate "2019-04-16"^^xsd:date ;
 	cascade:snomedCode <http://snomed.info/id/73761001> .
+<urn:uuid:2ac2622d-c327-8f8b-ad3b-c818bbda69f2> a cascade:PatientProfile ;
+	cascade:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.1.2:KH48213> ;
+	cascade:sourceRecordId "2.16.840.1.113883.19.5.1.2:KH48213" .
+<ni:///sha-256;atMpi56SZggc2yuwnSLFAerdQEolBwrnZyiEbitDchs> prov:specializationOf <urn:uuid:2ac2622d-c327-8f8b-ad3b-c818bbda69f2> .
+_:bf6b448e3771d1c7488774ad6febd890 a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][1]" .
+_:9731d0e7fdf9855aa9b96dc88f747179 bridge:arrivedAs <ni:///sha-256;atMpi56SZggc2yuwnSLFAerdQEolBwrnZyiEbitDchs> ;
+	oa:hasSelector _:bf6b448e3771d1c7488774ad6febd890 .
 <urn:uuid:483b7bc1-58d0-82d9-87cd-ccc7cd89f5a7> a cascade:MedicalProcedure ;
 	cascade:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.1.10:PROC-1907> ;
 	cascade:sourceRecordId "2.16.840.1.113883.19.5.1.10:PROC-1907" .
 <ni:///sha-256;cXikiEduwLq_Z11qV_LYD6_iUpb3EBnvcDnHMsLVOQ4> prov:specializationOf <urn:uuid:483b7bc1-58d0-82d9-87cd-ccc7cd89f5a7> ;
 	cascade:patient <urn:uuid:2ac2622d-c327-8f8b-ad3b-c818bbda69f2> .
-_:c3f8c3ad729c262477d8ada677a6cb3 a oa:XPathSelector ;
+_:a9cf7d0d15cb5623a48c0f8b4e517912 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][2]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='procedure' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:97710b58ddc045167f4129dbf2ac3e1a bridge:arrivedAs <ni:///sha-256;cXikiEduwLq_Z11qV_LYD6_iUpb3EBnvcDnHMsLVOQ4> ;
-	oa:hasSelector _:c3f8c3ad729c262477d8ada677a6cb3 .
+	oa:hasSelector _:a9cf7d0d15cb5623a48c0f8b4e517912 .
 <urn:uuid:f14fed65-ccbe-836a-9026-b0351ec40f00> a cascade:PrescribedOrReportedMedication ;
 	cascade:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.1.4:MED-2611> ;
 	cascade:sourceRecordId "2.16.840.1.113883.19.5.1.4:MED-2611" .
 <ni:///sha-256;P2l7iL4isDQSEVlb_--2RPAHVZ6IESIKjr53khb1MUY> prov:specializationOf <urn:uuid:f14fed65-ccbe-836a-9026-b0351ec40f00> ;
 	cascade:patient <urn:uuid:2ac2622d-c327-8f8b-ad3b-c818bbda69f2> .
-_:c089260599562d72bbf5b8b1161635a3 a oa:XPathSelector ;
+_:de45b302f1544894628dc0b17e6987b2 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='substanceAdministration' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:239d90c3e5f0a90373d31ff412172c23 bridge:arrivedAs <ni:///sha-256;P2l7iL4isDQSEVlb_--2RPAHVZ6IESIKjr53khb1MUY> ;
-	oa:hasSelector _:c089260599562d72bbf5b8b1161635a3 .
-<urn:uuid:2ac2622d-c327-8f8b-ad3b-c818bbda69f2> a cascade:PatientProfile ;
-	cascade:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.1.2:KH48213> ;
-	cascade:sourceRecordId "2.16.840.1.113883.19.5.1.2:KH48213" .
-<ni:///sha-256;atMpi56SZggc2yuwnSLFAerdQEolBwrnZyiEbitDchs> prov:specializationOf <urn:uuid:2ac2622d-c327-8f8b-ad3b-c818bbda69f2> .
-_:dc8b9c1a47a78455aa77d3479ea5af07 a oa:XPathSelector ;
-	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:9731d0e7fdf9855aa9b96dc88f747179 bridge:arrivedAs <ni:///sha-256;atMpi56SZggc2yuwnSLFAerdQEolBwrnZyiEbitDchs> ;
-	oa:hasSelector _:dc8b9c1a47a78455aa77d3479ea5af07 .
+	oa:hasSelector _:de45b302f1544894628dc0b17e6987b2 .
 <urn:uuid:9321c898-518c-8260-879d-a665fe053d70> a cascade:ClinicalNoteOrDocument .
 <ni:///sha-256;jHdgECsTIO66toWMKPqh8G8yJG9CvvbCum1BBE_mVMo> prov:specializationOf <urn:uuid:9321c898-518c-8260-879d-a665fe053d70> ;
 	cascade:patient <urn:uuid:2ac2622d-c327-8f8b-ad3b-c818bbda69f2> .
-_:dadab1676eb05f3dc7563e7a7feddd8a a oa:XPathSelector ;
+_:b5b51f5a392a3cef3e675affd3ab8467 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][3]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:5a86cc00cb13ff036cb4079832c9df7a bridge:arrivedAs <ni:///sha-256;jHdgECsTIO66toWMKPqh8G8yJG9CvvbCum1BBE_mVMo> ;
-	oa:hasSelector _:dadab1676eb05f3dc7563e7a7feddd8a .
+	oa:hasSelector _:b5b51f5a392a3cef3e675affd3ab8467 .
 _:e232614dfa308a30b9bdd5b82b22ae71 oa:hasSource <ni:///sha-256;H2ciHuCDpESnoQatwpgrqo7zpEy1X02qfUnZGr5hhjs> ;
 	prov:wasDerivedFrom <ni:///sha-256;H2ciHuCDpESnoQatwpgrqo7zpEy1X02qfUnZGr5hhjs> ;
 	prov:wasGeneratedBy _:a37b0f304f1a392aca180df9eb493ff7 .
@@ -91,11 +94,12 @@ _:5a86cc00cb13ff036cb4079832c9df7a oa:hasSource <ni:///sha-256;H2ciHuCDpESnoQatw
 _:239d90c3e5f0a90373d31ff412172c23 oa:hasSource <ni:///sha-256;H2ciHuCDpESnoQatwpgrqo7zpEy1X02qfUnZGr5hhjs> ;
 	prov:wasDerivedFrom <ni:///sha-256;H2ciHuCDpESnoQatwpgrqo7zpEy1X02qfUnZGr5hhjs> ;
 	prov:wasGeneratedBy _:a37b0f304f1a392aca180df9eb493ff7 .
-<ni:///sha-256;H2ciHuCDpESnoQatwpgrqo7zpEy1X02qfUnZGr5hhjs> <http://purl.org/pav/retrievedOn> "2025-07-02T09:00:00Z"^^xsd:dateTime .
-_:f1ee9fa1b4fb353d6690e965a8d52397 prov:agent _:fe21134f82ac4babf4502efe68f7458a .
-_:fe21134f82ac4babf4502efe68f7458a <http://www.w3.org/2000/01/rdf-schema#label> "Riverside patient portal" .
-_:f1ee9fa1b4fb353d6690e965a8d52397 prov:hadRole cascade:TransmitterRole .
-<ni:///sha-256;H2ciHuCDpESnoQatwpgrqo7zpEy1X02qfUnZGr5hhjs> prov:qualifiedAttribution _:f1ee9fa1b4fb353d6690e965a8d52397 .
+<ni:///sha-256;H2ciHuCDpESnoQatwpgrqo7zpEy1X02qfUnZGr5hhjs> <http://purl.org/pav/retrievedOn> "2025-07-02T09:00:00Z"^^xsd:dateTime ;
+	prov:wasGeneratedBy _:f1ee9fa1b4fb353d6690e965a8d52397 .
+_:fe21134f82ac4babf4502efe68f7458a prov:agent _:42d616b204ecabb40fdc0b9a31c7d384 ;
+	prov:hadRole cascade:TransmitterRole .
+_:f1ee9fa1b4fb353d6690e965a8d52397 prov:qualifiedAssociation _:fe21134f82ac4babf4502efe68f7458a .
+_:42d616b204ecabb40fdc0b9a31c7d384 <http://www.w3.org/2000/01/rdf-schema#label> "Riverside patient portal" .
 _:a37b0f304f1a392aca180df9eb493ff7 <http://www.w3.org/2000/01/rdf-schema#label> "C-CDA download" ;
 	prov:startedAtTime "2025-07-02T09:00:04Z"^^xsd:dateTime .
 <ni:///sha-256;H2ciHuCDpESnoQatwpgrqo7zpEy1X02qfUnZGr5hhjs> a prov:Entity .

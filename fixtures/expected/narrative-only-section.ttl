@@ -5,19 +5,19 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix oa: <http://www.w3.org/ns/oa#> .
-<ni:///sha-256;f783dJhJY83U64HVk4zSgm-XkQao5Jv43QhWjk6qML8> cascade:clinicalStatus "active" ;
-	cascade:allergen "No Known Drug Allergy" ;
+<ni:///sha-256;f783dJhJY83U64HVk4zSgm-XkQao5Jv43QhWjk6qML8> cascade:allergen "No Known Drug Allergy" ;
+	cascade:clinicalStatus "active" ;
 	cascade:allergenCode <https://ns.cascadeprotocol.org/codes/rxnorm/NKDA> .
 <ni:///sha-256;6ZnlHc-_K003vRJjuDulkvp7uLJBpJFtPwObSddTssY> cascade:noteOrDocumentTypeName "Plan of Treatment" ;
+	cascade:noteOrDocumentDate "2026-03-27T12:00:00Z"^^xsd:dateTime ;
 	cascade:noteOrDocumentTitle "Plan of Care" ;
 	cascade:workflowStatus "current" ;
-	cascade:noteOrDocumentDate "2026-03-27T12:00:00Z"^^xsd:dateTime ;
 	cascade:noteOrDocumentType <http://loinc.org/rdf/18776-5> ;
 	cascade:narrativeText "Continue current medications. Follow up in 3 months for blood pressure check. Patient instructed on low-sodium diet and regular exercise. Lab work ordered: BMP, CBC." .
-<ni:///sha-256;uHvCymrjBEth4eKFaIwjL2Ez3p5NTATiSjH2OsFvcrg> cascade:workflowStatus "current" ;
-	cascade:noteOrDocumentTitle "Allergies" ;
+<ni:///sha-256;uHvCymrjBEth4eKFaIwjL2Ez3p5NTATiSjH2OsFvcrg> cascade:noteOrDocumentDate "2026-03-27T12:00:00Z"^^xsd:dateTime ;
 	cascade:noteOrDocumentTypeName "Allergies and Adverse Reactions" ;
-	cascade:noteOrDocumentDate "2026-03-27T12:00:00Z"^^xsd:dateTime ;
+	cascade:workflowStatus "current" ;
+	cascade:noteOrDocumentTitle "Allergies" ;
 	cascade:noteOrDocumentType <http://loinc.org/rdf/48765-2> ;
 	cascade:narrativeText "No known drug allergies." .
 <ni:///sha-256;5ekn8n8MMJt9G8EN-3oQy0Hg2aVFPKIMRYacUy-IfKY> foaf:givenName "Jane" ;
@@ -27,32 +27,32 @@
 <urn:uuid:c1647692-4f37-8e2e-a7d2-f13c905165ca> a cascade:PatientProfile ;
 	cascade:sourceRecordId "2.16.840.1.113883.4.1:000-00-0000" .
 <ni:///sha-256;5ekn8n8MMJt9G8EN-3oQy0Hg2aVFPKIMRYacUy-IfKY> prov:specializationOf <urn:uuid:c1647692-4f37-8e2e-a7d2-f13c905165ca> .
-_:eb23b694cc452fe5cc37526117ff5740 a oa:XPathSelector ;
+_:ad5f3428f592b50ec463c54fa9ef2202 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:8291ef3dce97916037c0c85240f9b59f bridge:arrivedAs <ni:///sha-256;5ekn8n8MMJt9G8EN-3oQy0Hg2aVFPKIMRYacUy-IfKY> ;
-	oa:hasSelector _:eb23b694cc452fe5cc37526117ff5740 .
+	oa:hasSelector _:ad5f3428f592b50ec463c54fa9ef2202 .
 <urn:uuid:a5777a2d-5555-809c-980d-383e100553fa> a cascade:AllergyOrIntolerance ;
 	cascade:sourceRecordId "2.16.840.1.113883.3.88.11.32.1:NARR-ALLERGY-OBS-001" .
 <ni:///sha-256;f783dJhJY83U64HVk4zSgm-XkQao5Jv43QhWjk6qML8> prov:specializationOf <urn:uuid:a5777a2d-5555-809c-980d-383e100553fa> ;
 	cascade:patient <urn:uuid:c1647692-4f37-8e2e-a7d2-f13c905165ca> .
-_:bfaff3bb15ebb313430f9ba8496dfbaa a oa:XPathSelector ;
+_:f3d1fc02920587fbaf688aebcb1fecee a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='act' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:1c7aef57d3a35be4216a901d03b43f73 bridge:arrivedAs <ni:///sha-256;f783dJhJY83U64HVk4zSgm-XkQao5Jv43QhWjk6qML8> ;
-	oa:hasSelector _:bfaff3bb15ebb313430f9ba8496dfbaa .
+	oa:hasSelector _:f3d1fc02920587fbaf688aebcb1fecee .
 <urn:uuid:be62f2a1-05ba-8e14-9928-cc7e80ba03ce> a cascade:ClinicalNoteOrDocument .
 <ni:///sha-256;6ZnlHc-_K003vRJjuDulkvp7uLJBpJFtPwObSddTssY> prov:specializationOf <urn:uuid:be62f2a1-05ba-8e14-9928-cc7e80ba03ce> ;
 	cascade:patient <urn:uuid:c1647692-4f37-8e2e-a7d2-f13c905165ca> .
-_:ec30b2a35fb3ab5d61fedcae36005c25 a oa:XPathSelector ;
+_:c9f240952bc26166fbfbf5087cf998e6 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][2]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:f3fcff8c8a54f38d0a1228bb41eb0613 bridge:arrivedAs <ni:///sha-256;6ZnlHc-_K003vRJjuDulkvp7uLJBpJFtPwObSddTssY> ;
-	oa:hasSelector _:ec30b2a35fb3ab5d61fedcae36005c25 .
+	oa:hasSelector _:c9f240952bc26166fbfbf5087cf998e6 .
 <urn:uuid:0402f678-2004-8560-b238-aef54087f56a> a cascade:ClinicalNoteOrDocument .
 <ni:///sha-256;uHvCymrjBEth4eKFaIwjL2Ez3p5NTATiSjH2OsFvcrg> prov:specializationOf <urn:uuid:0402f678-2004-8560-b238-aef54087f56a> ;
 	cascade:patient <urn:uuid:c1647692-4f37-8e2e-a7d2-f13c905165ca> .
-_:c2c365d1d83451ccfee18c1a946390f4 a oa:XPathSelector ;
+_:cea03aebff8291ef81714233ee288117 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]" .
 _:313d0253337d385764dd967db914a1c6 bridge:arrivedAs <ni:///sha-256;uHvCymrjBEth4eKFaIwjL2Ez3p5NTATiSjH2OsFvcrg> ;
-	oa:hasSelector _:c2c365d1d83451ccfee18c1a946390f4 ;
+	oa:hasSelector _:cea03aebff8291ef81714233ee288117 ;
 	oa:hasSource <ni:///sha-256;wmwnenQfmELSQkZA_zGwHYtnG3q6mLRaae25NUIqhoE> ;
 	prov:wasDerivedFrom <ni:///sha-256;wmwnenQfmELSQkZA_zGwHYtnG3q6mLRaae25NUIqhoE> ;
 	prov:wasGeneratedBy _:3caaba0b20b63489ba552aacfb785f66 .
@@ -65,11 +65,12 @@ _:f3fcff8c8a54f38d0a1228bb41eb0613 oa:hasSource <ni:///sha-256;wmwnenQfmELSQkZA_
 _:8291ef3dce97916037c0c85240f9b59f oa:hasSource <ni:///sha-256;wmwnenQfmELSQkZA_zGwHYtnG3q6mLRaae25NUIqhoE> ;
 	prov:wasDerivedFrom <ni:///sha-256;wmwnenQfmELSQkZA_zGwHYtnG3q6mLRaae25NUIqhoE> ;
 	prov:wasGeneratedBy _:3caaba0b20b63489ba552aacfb785f66 .
-<ni:///sha-256;wmwnenQfmELSQkZA_zGwHYtnG3q6mLRaae25NUIqhoE> <http://purl.org/pav/retrievedOn> "2025-07-02T09:00:00Z"^^xsd:dateTime .
-_:667df15f4955faabe8b9810a213b5b62 prov:agent _:c64b183335652c19e8e4c7725a0c39bd .
-_:c64b183335652c19e8e4c7725a0c39bd <http://www.w3.org/2000/01/rdf-schema#label> "Riverside patient portal" .
-_:667df15f4955faabe8b9810a213b5b62 prov:hadRole cascade:TransmitterRole .
-<ni:///sha-256;wmwnenQfmELSQkZA_zGwHYtnG3q6mLRaae25NUIqhoE> prov:qualifiedAttribution _:667df15f4955faabe8b9810a213b5b62 .
+<ni:///sha-256;wmwnenQfmELSQkZA_zGwHYtnG3q6mLRaae25NUIqhoE> <http://purl.org/pav/retrievedOn> "2025-07-02T09:00:00Z"^^xsd:dateTime ;
+	prov:wasGeneratedBy _:667df15f4955faabe8b9810a213b5b62 .
+_:c64b183335652c19e8e4c7725a0c39bd prov:agent _:f43f7e6c19a2a4f408161a7a26e79264 ;
+	prov:hadRole cascade:TransmitterRole .
+_:667df15f4955faabe8b9810a213b5b62 prov:qualifiedAssociation _:c64b183335652c19e8e4c7725a0c39bd .
+_:f43f7e6c19a2a4f408161a7a26e79264 <http://www.w3.org/2000/01/rdf-schema#label> "Riverside patient portal" .
 _:3caaba0b20b63489ba552aacfb785f66 <http://www.w3.org/2000/01/rdf-schema#label> "C-CDA download" ;
 	prov:startedAtTime "2025-07-02T09:00:04Z"^^xsd:dateTime .
 <ni:///sha-256;wmwnenQfmELSQkZA_zGwHYtnG3q6mLRaae25NUIqhoE> a prov:Entity .
