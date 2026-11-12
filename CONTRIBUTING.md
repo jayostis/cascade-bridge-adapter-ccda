@@ -9,8 +9,7 @@ The contract is the [Cascade Bridge Specification](https://github.com/jayostis/c
 adapter writes are [cascade-vocabulary](https://github.com/jayostis/cascade-vocabulary)'s. Where either is silent or
 wrong, the fix is a pull request there, not a copy or a new term here.
 
-Please follow the organisation's code of conduct and security policy. Report a security problem privately, as that
-policy says, never in a public issue.
+Report a security problem privately, by email to contact@cascadeprotocol.org, never in a public issue.
 
 ## Set up
 
@@ -28,8 +27,8 @@ the command and says what it checks. Running a mapping over a fixture is a Bridg
 named in [`compatibility.json`](compatibility.json), and CI runs it.
 
 The naming rules in `in/sparql/` are copied from cascade-vocabulary, so some checks read it as a sibling folder: clone
-[cascade-vocabulary](https://github.com/jayostis/cascade-vocabulary) beside this repository, as the compatibility check
-does.
+[cascade-vocabulary](https://github.com/jayostis/cascade-vocabulary) beside this repository, as
+[`in/CLAUDE.md`](in/CLAUDE.md) says the compatibility check does.
 
 ## What a pull request must pass
 
@@ -70,7 +69,8 @@ Depends-On: https://github.com/jayostis/cascade-bridge-rs/pull/123
 The `adapter` check then runs the named pull requests together, and `ready-to-merge` holds each until the others can
 merge. A pull request that names none is tried against the other repository's branch of the same name as the branch it
 targets, and failing that its default branch. A change to a named pull request retests nothing: re-run the dependent
-pull request's workflow with `gh run rerun`.
+pull request's workflow with `gh run rerun`. Do the same after editing the description of your own pull request from a
+fork: a fork's token is read-only, so the edit re-runs nothing.
 
 A named pull request must be from a branch of its repository itself: one from a fork fails the check. A contributor
 without write access to the other repository asks a maintainer to open the counterpart.
