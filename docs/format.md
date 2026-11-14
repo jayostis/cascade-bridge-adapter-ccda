@@ -6,7 +6,9 @@ templates as HL7's C-CDA on FHIR guide cites them (HL7/ccda-on-fhir), and HL7's
 two example CCDs (HL7/C-CDA-Examples). C-CDA is HL7's, under its own licence;
 nothing of its text is copied here but the titles of the templates the accounting
 names, read on 2026-11-13 from HL7's C-CDA R2.1 guide
-(`build.fhir.org/ig/HL7/CDA-ccda-2.1-sd`), each concept naming its page.
+(`build.fhir.org/ig/HL7/CDA-ccda-2.1-sd`), each concept naming its page. That guide
+publishes a section only by its root ending `.1`; the bare root of the same section
+(entries optional) carries the guide's title with "(entries optional)" added.
 
 ## What a C-CDA is
 
