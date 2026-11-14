@@ -2,19 +2,6 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix oa: <http://www.w3.org/ns/oa#> .
-_:c8e89c436936befa99990779006cfd7f a oa:XPathSelector ;
-	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
-_:e3db2e5efbce531035afec80f5c87aa8 a oa:XPathSelector ;
-	rdf:value "*[local-name()='code' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='originalText' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:c8e89c436936befa99990779006cfd7f oa:refinedBy _:e3db2e5efbce531035afec80f5c87aa8 .
-_:fdf1e23c4db5df87596334d50638cb7a a oa:Annotation ;
-	oa:hasTarget _:f636d12754c1d6eb02d38b01162f621e .
-_:f636d12754c1d6eb02d38b01162f621e oa:hasSource <../in/unstructured-document-header-partly-stated.xml> ;
-	oa:hasSelector _:c8e89c436936befa99990779006cfd7f .
-_:fdf1e23c4db5df87596334d50638cb7a oa:hasBody <https://ns.cascadeprotocol.org/cascade#SourcePathNotAccounted> ;
-	oa:motivatedBy oa:classifying ;
-	sh:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='code' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='originalText' and namespace-uri()='urn:hl7-org:v3']" ;
-	sh:resultSeverity sh:Info .
 _:afe16315d472d0d5ebb347024aefcf0a a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
 _:f23c093c3dc8187ed39675d9e80639cd a oa:XPathSelector ;
