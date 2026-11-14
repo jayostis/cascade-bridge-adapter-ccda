@@ -4,6 +4,57 @@
 @prefix foaf:    <http://xmlns.com/foaf/0.1/> .
 @prefix org:     <http://www.w3.org/ns/org#> .
 @prefix dct:     <http://purl.org/dc/terms/> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+
+[] a skos:Concept ;
+  skos:notation "2.16.840.1.113883.10.20.22.1.1" ;
+  skos:prefLabel "US Realm Header"@en ;
+  dct:source <https://build.fhir.org/ig/HL7/CDA-ccda-2.1-sd/StructureDefinition-USRealmHeader.html> .
+
+[] a skos:Concept ;
+  skos:notation "2.16.840.1.113883.10.20.22.1.10" ;
+  skos:prefLabel "Unstructured Document"@en ;
+  dct:source <https://build.fhir.org/ig/HL7/CDA-ccda-2.1-sd/StructureDefinition-UnstructuredDocument.html> .
+
+[] a skos:Concept ;
+  skos:notation "2.16.840.1.113883.10.20.22.4.1" ;
+  skos:prefLabel "Result Organizer"@en ;
+  dct:source <https://build.fhir.org/ig/HL7/CDA-ccda-2.1-sd/StructureDefinition-ResultOrganizer.html> .
+
+[] a skos:Concept ;
+  skos:notation "2.16.840.1.113883.10.20.22.4.2" ;
+  skos:prefLabel "Result Observation"@en ;
+  dct:source <https://build.fhir.org/ig/HL7/CDA-ccda-2.1-sd/StructureDefinition-ResultObservation.html> .
+
+[] a skos:Concept ;
+  skos:notation "2.16.840.1.113883.10.20.22.4.4" ;
+  skos:prefLabel "Problem Observation"@en ;
+  dct:source <https://build.fhir.org/ig/HL7/CDA-ccda-2.1-sd/StructureDefinition-ProblemObservation.html> .
+
+[] a skos:Concept ;
+  skos:notation "2.16.840.1.113883.10.20.22.4.7" ;
+  skos:prefLabel "Allergy - Intolerance Observation"@en ;
+  dct:source <https://build.fhir.org/ig/HL7/CDA-ccda-2.1-sd/StructureDefinition-AllergyIntoleranceObservation.html> .
+
+[] a skos:Concept ;
+  skos:notation "2.16.840.1.113883.10.20.22.4.14" ;
+  skos:prefLabel "Procedure Activity Procedure"@en ;
+  dct:source <https://build.fhir.org/ig/HL7/CDA-ccda-2.1-sd/StructureDefinition-ProcedureActivityProcedure.html> .
+
+[] a skos:Concept ;
+  skos:notation "2.16.840.1.113883.10.20.22.4.16" ;
+  skos:prefLabel "Medication Activity"@en ;
+  dct:source <https://build.fhir.org/ig/HL7/CDA-ccda-2.1-sd/StructureDefinition-MedicationActivity.html> .
+
+[] a skos:Concept ;
+  skos:notation "2.16.840.1.113883.10.20.22.4.52" ;
+  skos:prefLabel "Immunization Activity"@en ;
+  dct:source <https://build.fhir.org/ig/HL7/CDA-ccda-2.1-sd/StructureDefinition-ImmunizationActivity.html> .
+
+[] a skos:Concept ;
+  skos:notation "2.16.840.1.113883.10.20.22.4.202" ;
+  skos:prefLabel "Note Activity"@en ;
+  dct:source <https://build.fhir.org/ig/HL7/CDA-ccda-2.1-sd/StructureDefinition-NoteActivity.html> .
 
 [] a bridge:PathEntry ;
   bridge:sourcePath "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='act' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='entryRelationship' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='value' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='originalText' and namespace-uri()='urn:hl7-org:v3']" ;
