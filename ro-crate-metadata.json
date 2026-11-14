@@ -21,7 +21,8 @@
       "bridge:findingsQuery": "bridge:findingsQuery",
       "bridge:documentTableQuery": "bridge:documentTableQuery",
       "bridge:table": "bridge:table",
-      "bridge:sourceAccounting": "bridge:sourceAccounting"
+      "bridge:sourceAccounting": "bridge:sourceAccounting",
+      "bridge:sourceRecordTypesAreIdentifiers": "bridge:sourceRecordTypesAreIdentifiers"
     }
   ],
   "@graph": [
@@ -253,6 +254,7 @@
       "bridge:sourceAccounting": {
         "@id": "vocab/ccda-accounting.ttl"
       },
+      "bridge:sourceRecordTypesAreIdentifiers": true,
       "bridge:testManifest": {
         "@id": "fixtures/manifest.ttl"
       },
@@ -1805,12 +1807,12 @@
       "@type": "File",
       "name": "C-CDA R2.1 XML source accounting",
       "encodingFormat": "text/turtle",
-      "contentSize": "591770",
-      "sha256": "5c1f3dc90da4c304676ab1fa104790a20715163e9fb77d328e2dd3fbe54244bc",
+      "contentSize": "597472",
+      "sha256": "c35fb63394ddc855c23cd91b7de3cc338dfb4e513ad70ef68c31fe510156796e",
       "license": {
         "@id": "https://spdx.org/licenses/Apache-2.0"
       },
-      "description": "The file the crate names as bridge:sourceAccounting: one bridge:PathEntry for each path a mapping in in/sparql/ reads, written from the ClinicalDocument down with each step in its namespace, with its verdict against in/sparql/."
+      "description": "The file the crate names as bridge:sourceAccounting: one bridge:PathEntry for each path a mapping in in/sparql/ reads, written from the ClinicalDocument down with each step in its namespace, with its verdict against in/sparql/, and one skos:Concept for each template a bridge:inSourceRecordType names and for each entry or section template in/sparql/ reads that HL7's guide publishes (a section's bare root, which the guide does not, has none), its skos:notation the templateId root and its skos:prefLabel HL7's title for the template."
     },
     {
       "@id": "vocab/ccda-code-systems.ttl",

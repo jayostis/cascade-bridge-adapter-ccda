@@ -4,7 +4,11 @@ Read on 2026-10-07 from HL7's publications: CDA R2's schema with the SDTC
 extensions (HL7/CDA-core-2.0, the commit the crate names), the C-CDA R2.1
 templates as HL7's C-CDA on FHIR guide cites them (HL7/ccda-on-fhir), and HL7's
 two example CCDs (HL7/C-CDA-Examples). C-CDA is HL7's, under its own licence;
-nothing of its text is copied here.
+nothing of its text is copied here but the titles of the templates the accounting
+names and of the entry and section templates the queries read, read on 2026-11-13
+from HL7's C-CDA R2.1 guide (`build.fhir.org/ig/HL7/CDA-ccda-2.1-sd`), each concept
+naming its page. That guide publishes a section only by its root ending `.1`; a
+section's bare root has no concept.
 
 ## What a C-CDA is
 
