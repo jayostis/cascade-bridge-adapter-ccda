@@ -1162,12 +1162,12 @@
 [] a bridge:PathEntry ;
   bridge:sourcePath "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='id' and namespace-uri()='urn:hl7-org:v3']" ;
   bridge:verdict bridge:consumed ;
-  bridge:concern bridge:concernIdentity .
+  bridge:concern bridge:concernReferences .
 
 [] a bridge:PathEntry ;
   bridge:sourcePath "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='id' and namespace-uri()='urn:hl7-org:v3']/@extension" ;
   bridge:verdict bridge:carried ;
-  bridge:concern bridge:concernIdentity ;
+  bridge:concern bridge:concernReferences ;
   bridge:carriedAs
     [ bridge:inSourceRecordType "2.16.840.1.113883.10.20.22.1.1" ; bridge:inRecordClass cascade:PatientProfile ; bridge:asProperty cascade:sourceRecordId ] ,
     [ bridge:inSourceRecordType "2.16.840.1.113883.10.20.22.1.1" ; bridge:inRecordClass cascade:PatientProfile ; bridge:asProperty cascade:sourceUrl ] .
@@ -1175,12 +1175,12 @@
 [] a bridge:PathEntry ;
   bridge:sourcePath "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='id' and namespace-uri()='urn:hl7-org:v3']/@nullFlavor" ;
   bridge:verdict bridge:consumed ;
-  bridge:concern bridge:concernIdentity .
+  bridge:concern bridge:concernReferences .
 
 [] a bridge:PathEntry ;
   bridge:sourcePath "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='id' and namespace-uri()='urn:hl7-org:v3']/@root" ;
   bridge:verdict bridge:carried ;
-  bridge:concern bridge:concernIdentity ;
+  bridge:concern bridge:concernReferences ;
   bridge:carriedAs
     [ bridge:inSourceRecordType "2.16.840.1.113883.10.20.22.1.1" ; bridge:inRecordClass cascade:PatientProfile ; bridge:asProperty cascade:sourceRecordId ] ,
     [ bridge:inSourceRecordType "2.16.840.1.113883.10.20.22.1.1" ; bridge:inRecordClass cascade:PatientProfile ; bridge:asProperty cascade:sourceUrl ] .
@@ -3994,19 +3994,16 @@
 [] a bridge:PathEntry ;
   bridge:sourcePath "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='nonXMLBody' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='text' and namespace-uri()='urn:hl7-org:v3']/@mediaType" ;
   bridge:verdict bridge:carried ;
-  bridge:concern bridge:concernText ;
   bridge:carriedAs
     [ bridge:inSourceRecordType "2.16.840.1.113883.10.20.22.1.10" ; bridge:inRecordClass cascade:ClinicalNoteOrDocument ; bridge:asProperty cascade:attachmentContentType ] .
 
 [] a bridge:PathEntry ;
   bridge:sourcePath "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='nonXMLBody' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='text' and namespace-uri()='urn:hl7-org:v3']/@representation" ;
-  bridge:verdict bridge:consumed ;
-  bridge:concern bridge:concernText .
+  bridge:verdict bridge:consumed .
 
 [] a bridge:PathEntry ;
   bridge:sourcePath "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='nonXMLBody' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='text' and namespace-uri()='urn:hl7-org:v3']/@compression" ;
-  bridge:verdict bridge:consumed ;
-  bridge:concern bridge:concernText .
+  bridge:verdict bridge:consumed .
 
 [] a bridge:PathEntry ;
   bridge:sourcePath "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='nonXMLBody' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='text' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='reference' and namespace-uri()='urn:hl7-org:v3']" ;
