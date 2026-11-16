@@ -10,7 +10,10 @@ WHERE {
   FILTER (!BOUND(?current) || ?current = ?version)
   OPTIONAL { { ?record cascade:sourceRecordId ?id } UNION { ?version cascade:sourceRecordId ?id } }
   OPTIONAL { ?version cascade:procedureName ?n }
-  OPTIONAL { ?version cascade:procedureCode ?c }
+  OPTIONAL {
+    ?version cascade:procedureCode ?c .
+    FILTER NOT EXISTS { ?version cascade:procedureCode ?earlier . FILTER (STR(?earlier) < STR(?c)) }
+  }
   OPTIONAL { ?version cascade:workflowStatus ?s }
   OPTIONAL { ?version cascade:procedureDate ?d }
   BIND (STR(?id) AS ?sourceRecordId)

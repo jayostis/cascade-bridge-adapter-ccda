@@ -83,6 +83,7 @@
     <#procedure-two-snomed-ct-codes>
     <#procedure-icd9-cm-procedure-oid>
     <#condition-icd9-cm-under-its-other-oids>
+    <#condition-codes-in-nullflavor-and-data-absent-reason-systems>
     <#result-codes-padded-with-spaces>
     <#result-code-system-urn-oid-capitals>
     <#result-code-blank>
@@ -1111,6 +1112,19 @@
     bridge:expectedFindings <findings/result-code-system-urn-oid-capitals.ttl>
   ] .
 
+<#condition-codes-in-nullflavor-and-data-absent-reason-systems> a bridge:IsomorphicConversionTest ;
+  mf:name "condition-codes-in-nullflavor-and-data-absent-reason-systems" ;
+  rdfs:comment "A problem valued UNK in v3 NullFlavor, 2.16.840.1.113883.5.1008, with a translation asked-unknown in FHIR's data-absent-reason, 2.16.840.1.113883.4.642.4.1048: both are cascade:conditionCode IRIs, as the same codings are from a FHIR Condition." ;
+  mf:action [
+    bridge:input <in/condition-codes-in-nullflavor-and-data-absent-reason-systems.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/condition-codes-in-nullflavor-and-data-absent-reason-systems.ttl> ;
+    bridge:expectedFindings <findings/condition-codes-in-nullflavor-and-data-absent-reason-systems.ttl>
+  ] .
+
 <#result-codes-padded-with-spaces> a bridge:IsomorphicConversionTest ;
   mf:name "result-codes-padded-with-spaces" ;
   rdfs:comment "A result coded with a LOINC code padded with spaces and a translation in a lab's own code system padded with spaces: the LOINC IRI and the literal on cascade:testCodeInOtherSystem are both of the code trimmed." ;
@@ -1152,7 +1166,7 @@
 
 <#procedure-two-snomed-ct-codes> a bridge:IsomorphicConversionTest ;
   mf:name "procedure-two-snomed-ct-codes" ;
-  rdfs:comment "A procedure with a SNOMED CT code and a SNOMED CT translation: both are carried, as cascade:snomedCode IRIs, and nothing is a finding." ;
+  rdfs:comment "A procedure with a SNOMED CT code and a SNOMED CT translation: both are carried, as cascade:procedureCode IRIs, and nothing is a finding." ;
   mf:action [
     bridge:input <in/procedure-two-snomed-ct-codes.xml> ;
     bridge:envelope <../ro-crate-metadata.json#envelope-document> ;

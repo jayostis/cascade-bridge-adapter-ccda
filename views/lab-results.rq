@@ -2,7 +2,7 @@ PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-SELECT DISTINCT ?record ?sourceRecordId ?testName ?loincCode ?resultValue ?resultUnit ?referenceRange ?resultInterpretationCode ?workflowStatus ?resultClinicallyRelevantTime
+SELECT DISTINCT ?record ?sourceRecordId ?testName ?loincCode ?resultValueText ?resultUnitText ?referenceRangeText ?resultInterpretationCode ?workflowStatus ?resultClinicallyRelevantTime
 WHERE {
   ?record a cascade:LaboratoryTestResult .
   ?version prov:specializationOf ?record .
@@ -27,9 +27,9 @@ WHERE {
   BIND (STR(?id) AS ?sourceRecordId)
   BIND (STR(?n) AS ?testName)
   BIND (REPLACE(STR(?c), "^http://loinc\\.org/rdf/", "") AS ?loincCode)
-  BIND (STR(COALESCE(CONCAT(COALESCE(?comparator, ""), ?written), ?text)) AS ?resultValue)
-  BIND (STR(COALESCE(?unitText, ?ucumUnit, ?textUnit)) AS ?resultUnit)
-  BIND (STR(?r) AS ?referenceRange)
+  BIND (STR(COALESCE(CONCAT(COALESCE(?comparator, ""), ?written), ?text)) AS ?resultValueText)
+  BIND (STR(COALESCE(?unitText, ?ucumUnit, ?textUnit)) AS ?resultUnitText)
+  BIND (STR(?r) AS ?referenceRangeText)
   BIND (REPLACE(STR(?i), "^https://ns\\.cascadeprotocol\\.org/codes/observationinterpretation/", "") AS ?resultInterpretationCode)
   BIND (STR(?s) AS ?workflowStatus)
   BIND (STR(?d) AS ?resultClinicallyRelevantTime)

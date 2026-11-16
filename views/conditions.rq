@@ -14,7 +14,10 @@ WHERE {
   OPTIONAL { ?version cascade:verificationStatus ?v }
   OPTIONAL { ?version cascade:onsetDate ?o }
   OPTIONAL { ?version cascade:abatementDate ?e }
-  OPTIONAL { ?version cascade:conditionCode ?c }
+  OPTIONAL {
+    ?version cascade:conditionCode ?c .
+    FILTER NOT EXISTS { ?version cascade:conditionCode ?earlier . FILTER (STR(?earlier) < STR(?c)) }
+  }
   BIND (STR(?id) AS ?sourceRecordId)
   BIND (STR(?n) AS ?conditionName)
   BIND (STR(?s) AS ?clinicalStatus)
