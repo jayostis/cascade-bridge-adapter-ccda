@@ -84,11 +84,15 @@
     <#procedure-real-code-beside-absent-reason-codings>
     <#procedure-code-nullflavor-attribute>
     <#procedure-code-in-nullflavor-and-data-absent-reason-systems>
+    <#procedure-code-in-an-undefined-absent-reason>
+    <#procedure-code-nullflavor-not-listed>
     <#procedure-icd9-cm-procedure-oid>
     <#condition-icd9-cm-under-its-other-oids>
     <#condition-codes-in-nullflavor-and-data-absent-reason-systems>
     <#condition-real-code-beside-absent-reason-codings>
     <#condition-code-nullflavor-attribute>
+    <#condition-code-in-an-undefined-absent-reason>
+    <#condition-code-nullflavor-not-listed>
     <#result-codes-padded-with-spaces>
     <#result-code-system-urn-oid-capitals>
     <#result-code-blank>
@@ -1156,6 +1160,32 @@
     bridge:expectedFindings <findings/condition-code-nullflavor-attribute.ttl>
   ] .
 
+<#condition-code-in-an-undefined-absent-reason> a bridge:IsomorphicConversionTest ;
+  mf:name "condition-code-in-an-undefined-absent-reason" ;
+  rdfs:comment "A problem valued unk, in lower case, in v3 NullFlavor with a translation FOO in FHIR's data-absent-reason, neither a code of its system: no cascade:conditionCode and no #absent-conditionCode node, since a coding that is no code of its system names no reason, and each is a finding, ccda:absentReasonNotCarried." ;
+  mf:action [
+    bridge:input <in/condition-code-in-an-undefined-absent-reason.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/condition-code-in-an-undefined-absent-reason.ttl> ;
+    bridge:expectedFindings <findings/condition-code-in-an-undefined-absent-reason.ttl>
+  ] .
+
+<#condition-code-nullflavor-not-listed> a bridge:IsomorphicConversionTest ;
+  mf:name "condition-code-nullflavor-not-listed" ;
+  rdfs:comment "A problem whose value states no code, only the nullFlavor XYZ, which is no code of v3 NullFlavor: no cascade:conditionCode and no #absent-conditionCode node, and a finding, ccda:nullFlavorNotListed." ;
+  mf:action [
+    bridge:input <in/condition-code-nullflavor-not-listed.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/condition-code-nullflavor-not-listed.ttl> ;
+    bridge:expectedFindings <findings/condition-code-nullflavor-not-listed.ttl>
+  ] .
+
 <#result-codes-padded-with-spaces> a bridge:IsomorphicConversionTest ;
   mf:name "result-codes-padded-with-spaces" ;
   rdfs:comment "A result coded with a LOINC code padded with spaces and a translation in a lab's own code system padded with spaces: the LOINC IRI and the literal on cascade:testCodeInOtherSystem are both of the code trimmed." ;
@@ -1245,6 +1275,32 @@
   mf:result [
     bridge:expectedGraph <expected/procedure-code-in-nullflavor-and-data-absent-reason-systems.ttl> ;
     bridge:expectedFindings <findings/procedure-code-in-nullflavor-and-data-absent-reason-systems.ttl>
+  ] .
+
+<#procedure-code-in-an-undefined-absent-reason> a bridge:IsomorphicConversionTest ;
+  mf:name "procedure-code-in-an-undefined-absent-reason" ;
+  rdfs:comment "A procedure coded unk, in lower case, in v3 NullFlavor with a translation FOO in FHIR's data-absent-reason, neither a code of its system: no cascade:procedureCode and no #absent-procedureCode node, since a coding that is no code of its system names no reason, and each is a finding, ccda:absentReasonNotCarried." ;
+  mf:action [
+    bridge:input <in/procedure-code-in-an-undefined-absent-reason.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/procedure-code-in-an-undefined-absent-reason.ttl> ;
+    bridge:expectedFindings <findings/procedure-code-in-an-undefined-absent-reason.ttl>
+  ] .
+
+<#procedure-code-nullflavor-not-listed> a bridge:IsomorphicConversionTest ;
+  mf:name "procedure-code-nullflavor-not-listed" ;
+  rdfs:comment "A procedure whose code states no code, only the nullFlavor XYZ, which is no code of v3 NullFlavor: no cascade:procedureCode and no #absent-procedureCode node, and a finding, ccda:nullFlavorNotListed." ;
+  mf:action [
+    bridge:input <in/procedure-code-nullflavor-not-listed.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/procedure-code-nullflavor-not-listed.ttl> ;
+    bridge:expectedFindings <findings/procedure-code-nullflavor-not-listed.ttl>
   ] .
 
 <#procedure-two-cpt-codes> a bridge:IsomorphicConversionTest ;

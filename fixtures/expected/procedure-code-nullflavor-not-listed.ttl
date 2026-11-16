@@ -1,0 +1,73 @@
+@prefix bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix cascade: <https://ns.cascadeprotocol.org/cascade#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix oa: <http://www.w3.org/ns/oa#> .
+<urn:uuid:5769da63-d46b-8c66-b381-d00b2f7ccadb> a cascade:Organization .
+<ni:///sha-256;t50BiAacHVi-kaBqiV2NtuNZrAWcgUby7aRGOgEZFkk> prov:wasGeneratedBy _:e97e8effbbadca19067f17e144c79386 ;
+	prov:wasAttributedTo <urn:uuid:5769da63-d46b-8c66-b381-d00b2f7ccadb> .
+_:e97e8effbbadca19067f17e144c79386 prov:qualifiedAssociation _:e1bd71cf592c7fb8f715c284af58e037 .
+_:e1bd71cf592c7fb8f715c284af58e037 prov:agent <urn:uuid:5769da63-d46b-8c66-b381-d00b2f7ccadb> ;
+	prov:hadRole cascade:CustodianRole .
+<ni:///sha-256;grKi0ms_W2WGoIJBSajj9WqQqFYdSHTIaehKWGv5yRg> prov:specializationOf <urn:uuid:5769da63-d46b-8c66-b381-d00b2f7ccadb> .
+_:b07f731cc35eb6417778e22498de6836 bridge:arrivedAs <ni:///sha-256;grKi0ms_W2WGoIJBSajj9WqQqFYdSHTIaehKWGv5yRg> ;
+	oa:hasSelector _:c18ef1cfe032c02a751a89c8525ce47d .
+_:c18ef1cfe032c02a751a89c8525ce47d a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='custodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='assignedCustodian' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='representedCustodianOrganization' and namespace-uri()='urn:hl7-org:v3'][1]" .
+<ni:///sha-256;grKi0ms_W2WGoIJBSajj9WqQqFYdSHTIaehKWGv5yRg> foaf:name "Riverside Community Hospital" ;
+	org:identifier "urn:oid:2.16.840.1.113883.19.5.99999.3"^^<urn:ietf:rfc:3986> .
+<ni:///sha-256;EVwdxLuG51G60_9c_XpCwjPNK7H2ZQcLTj262S_EZA8> foaf:givenName "Ada" ;
+	foaf:familyName "Okonjo" ;
+	cascade:dateOfBirth "1948-03-02"^^xsd:date ;
+	cascade:administrativeGender "female" .
+<ni:///sha-256;nVLWODHe8YWtoYuWgBcFs4LEFI8F3fstH8msIyGraCI> cascade:procedureDate "2024-02-14"^^xsd:date ;
+	cascade:workflowStatus "completed" .
+<urn:uuid:794d1263-7742-8a95-850e-663e9a08ffe7> a cascade:PatientProfile ;
+	cascade:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.99999.2:MRN-552012> ;
+	cascade:sourceRecordId "2.16.840.1.113883.19.5.99999.2:MRN-552012" .
+<ni:///sha-256;EVwdxLuG51G60_9c_XpCwjPNK7H2ZQcLTj262S_EZA8> prov:specializationOf <urn:uuid:794d1263-7742-8a95-850e-663e9a08ffe7> .
+_:f51f8c7081ba6bd6cd5ad8fc186eb8b4 a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='recordTarget' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='patientRole' and namespace-uri()='urn:hl7-org:v3'][1]" .
+_:5da6f7882da9fc3782311e3d4de1001f bridge:arrivedAs <ni:///sha-256;EVwdxLuG51G60_9c_XpCwjPNK7H2ZQcLTj262S_EZA8> ;
+	oa:hasSelector _:f51f8c7081ba6bd6cd5ad8fc186eb8b4 .
+<urn:uuid:fc383492-aa4c-886b-b0bb-b81b02cace16> a cascade:MedicalProcedure ;
+	cascade:sourceUrl <urn:hl7ii:2.16.840.1.113883.19.5.99999.5:PROC-2011> ;
+	cascade:sourceRecordId "2.16.840.1.113883.19.5.99999.5:PROC-2011" .
+<ni:///sha-256;nVLWODHe8YWtoYuWgBcFs4LEFI8F3fstH8msIyGraCI> prov:specializationOf <urn:uuid:fc383492-aa4c-886b-b0bb-b81b02cace16> ;
+	cascade:patient <urn:uuid:794d1263-7742-8a95-850e-663e9a08ffe7> .
+_:fe66c52ca6f9e1833f31f19d3992ae8 a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='procedure' and namespace-uri()='urn:hl7-org:v3'][1]" .
+_:4ef5e772f5656753e66f4604f22bc464 bridge:arrivedAs <ni:///sha-256;nVLWODHe8YWtoYuWgBcFs4LEFI8F3fstH8msIyGraCI> ;
+	oa:hasSelector _:fe66c52ca6f9e1833f31f19d3992ae8 .
+_:b07f731cc35eb6417778e22498de6836 oa:hasSource <ni:///sha-256;t50BiAacHVi-kaBqiV2NtuNZrAWcgUby7aRGOgEZFkk> ;
+	prov:wasDerivedFrom <ni:///sha-256;t50BiAacHVi-kaBqiV2NtuNZrAWcgUby7aRGOgEZFkk> ;
+	prov:wasGeneratedBy _:c2cf2df8425239d99fec6bcc7b0eb7df .
+_:5da6f7882da9fc3782311e3d4de1001f oa:hasSource <ni:///sha-256;t50BiAacHVi-kaBqiV2NtuNZrAWcgUby7aRGOgEZFkk> ;
+	prov:wasDerivedFrom <ni:///sha-256;t50BiAacHVi-kaBqiV2NtuNZrAWcgUby7aRGOgEZFkk> ;
+	prov:wasGeneratedBy _:c2cf2df8425239d99fec6bcc7b0eb7df .
+_:4ef5e772f5656753e66f4604f22bc464 oa:hasSource <ni:///sha-256;t50BiAacHVi-kaBqiV2NtuNZrAWcgUby7aRGOgEZFkk> ;
+	prov:wasDerivedFrom <ni:///sha-256;t50BiAacHVi-kaBqiV2NtuNZrAWcgUby7aRGOgEZFkk> ;
+	prov:wasGeneratedBy _:c2cf2df8425239d99fec6bcc7b0eb7df .
+<ni:///sha-256;t50BiAacHVi-kaBqiV2NtuNZrAWcgUby7aRGOgEZFkk> <http://purl.org/pav/retrievedOn> "2025-07-02T09:00:00Z"^^xsd:dateTime ;
+	prov:wasGeneratedBy _:257ab5dc3def9cc355ebce9bcb1a3c02 .
+_:55d4b972abbaf295ba6d1aef8b273172 prov:agent _:730dd98139f1abb5df0f543c539a905c ;
+	prov:hadRole cascade:TransmitterRole .
+_:257ab5dc3def9cc355ebce9bcb1a3c02 prov:qualifiedAssociation _:55d4b972abbaf295ba6d1aef8b273172 .
+_:730dd98139f1abb5df0f543c539a905c <http://www.w3.org/2000/01/rdf-schema#label> "Riverside patient portal" .
+_:c2cf2df8425239d99fec6bcc7b0eb7df <http://www.w3.org/2000/01/rdf-schema#label> "C-CDA download" ;
+	prov:startedAtTime "2025-07-02T09:00:04Z"^^xsd:dateTime .
+<ni:///sha-256;t50BiAacHVi-kaBqiV2NtuNZrAWcgUby7aRGOgEZFkk> a prov:Entity .
+_:c2cf2df8425239d99fec6bcc7b0eb7df a prov:Activity ;
+	prov:used <ni:///sha-256;t50BiAacHVi-kaBqiV2NtuNZrAWcgUby7aRGOgEZFkk> ;
+	prov:qualifiedAssociation _:2df8bcf9eb73328ed5d82c9772d3973c .
+_:2df8bcf9eb73328ed5d82c9772d3973c prov:hadPlan _:86387277a1a6352884abcd00d19c0aa3 .
+_:86387277a1a6352884abcd00d19c0aa3 a prov:Plan ;
+	<http://www.w3.org/2000/01/rdf-schema#label> "ccda" ;
+	<http://purl.org/pav/version> "0.1.0" .
+_:2df8bcf9eb73328ed5d82c9772d3973c prov:agent _:b461341e3ecc88d5b5d385908c830656 .
+_:b461341e3ecc88d5b5d385908c830656 a prov:SoftwareAgent ;
+	<http://www.w3.org/2000/01/rdf-schema#label> "Cascade Bridge for Rust" ;
+	<http://purl.org/pav/version> "0.1.0" .
