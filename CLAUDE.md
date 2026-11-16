@@ -16,7 +16,8 @@ the layout the README's. Do not re-derive them.
 - **No code.** Markdown, JSON, JSON-LD, YAML, Turtle, SPARQL, XML Schema.
   Nothing that executes, in any directory. An adapter is data; the thing that
   runs it is a Bridge. If something seems to need code, it is a finding for the
-  specification. The lint measures this rather than taking it on trust.
+  specification. The lint measures this rather than taking it on trust. The one script,
+  `.github/scripts/breaking_check.py`, reads a pull request's description in CI and is no part of the adapter.
 - **The manifest is the crate.** `ro-crate-metadata.json` is both the adapter's
   manifest and the provenance record for every file and dataset.
 - **No test code lives here; `compatibility.json` names the engines that must

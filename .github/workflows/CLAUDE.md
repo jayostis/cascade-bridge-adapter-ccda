@@ -1,6 +1,8 @@
 # workflows — Agent Context
 
-`validate.yml` and `ready.yml` have no logic on purpose and must not grow any.
+`validate.yml` and `ready.yml` have no logic on purpose and must not grow any; the one exception is `ready.yml`'s step that
+runs `.github/scripts/breaking_check.py`, a copy of cascade-vocabulary's, which refuses a pull request description with no
+`## Breaking` section.
 The checks live in the Cascade Bridge Specification and are published from it as
 the `start` action, which picks the version of each repository when the run
 starts and runs the specification's checks at it. A check that needs writing is
