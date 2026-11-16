@@ -198,7 +198,13 @@ another system (cascade-vocabulary's
 `../vocab/ccda-null-flavors.ttl`, read without regard to case; a flavour that is
 none of them carries nothing and is a finding, `ccda:nullFlavorNotListed`, on a
 result's value, on a time or a bound of it, and on the patient's. A medication
-whose whole `effectiveTime` is a flavour has its start of use absent for it. On
+whose whole `effectiveTime` is a flavour has its start of use absent for it. A
+problem's `value` or a procedure's `code` that is a `nullFlavor`, or whose only
+codings, the code and its translations, are in v3 NullFlavor or FHIR's
+data-absent-reason, has its `cascade:conditionCode` or `cascade:procedureCode` absent
+for them, each coding's IRI a `cascade:absentReasonCode`; beside a coding in any other
+system those codings are dropped, since a code of the condition is not a reason it has
+none. On
 an `id` or an address it says only that there is none, and elsewhere, where it
 stands alone, nothing is carried: on an `sdtc:deceasedInd`, or a death time
 with no true indicator, it states no death.
@@ -330,7 +336,7 @@ A test's, a drug's, a problem's and a procedure's code and each of its
 translations are carried, every one. A code in a system its kind has a term
 for is that term's IRI: LOINC and SNOMED CT for a test, RxNorm and NDC for a
 drug, and for a problem and for a procedure any system the table gives an IRI stem
-(`cascade:conditionCode`, `cascade:procedureCode`).
+but v3 NullFlavor and data-absent-reason (`cascade:conditionCode`, `cascade:procedureCode`).
 Any other is a literal, the code trimmed of spaces, typed by its system's URI,
 on the kind's `cascade:testCodeInOtherSystem`, `medicationCodeInOtherSystem`,
 `conditionCodeInOtherSystem` or `procedureCodeInOtherSystem` (cascade-vocabulary's

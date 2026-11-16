@@ -19,6 +19,10 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # translations is carried: one in a code system ../../vocab/ccda-code-systems.ttl
 # gives an IRI stem is a cascade:conditionCode IRI, one in another code system a
 # cascade:conditionCodeInOtherSystem literal, as result.rq writes a test's.
+# A code in v3 NullFlavor or FHIR's data-absent-reason, or a nullFlavor on the
+# value, is why the code is absent, not a code: with no other code it is a
+# cascade:absentReasonCode of the version's #absent-conditionCode node, and
+# beside another code it is dropped.
 # A code with no code system is a finding of condition-findings.rq. Times are written as allergy.rq writes
 # them: effectiveTime's value, else its low, is the onset, its high the
 # abatement. A problem whose negationInd is true is refuted: the source states
@@ -292,10 +296,51 @@ WHERE {
     }
     ?system skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; void:uriSpace ?stem .
     FILTER (?systemKey = LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")))
+    FILTER (?systemKey NOT IN ("2.16.840.1.113883.5.1008", "2.16.840.1.113883.4.642.4.1048"))
     BIND (cascade:conditionCode AS ?p)
     BIND (REPLACE(?codeValue, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?trimmedCode)
     FILTER (?trimmedCode != "")
     BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?trimmedCode))) AS ?o)
+  }
+  UNION
+  {
+    {
+      SELECT ?condition ?absentReason WHERE {
+        {
+          { ?condition ?vS ?coding . ?coding a v3:value }
+          UNION
+          { ?condition ?vS ?coded . ?coded a v3:value ; ?trS ?coding . ?coding a v3:translation }
+          ?coding xyz:code ?stated ; xyz:codeSystem ?codeSystem .
+          ?system skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; void:uriSpace ?stem .
+          FILTER (?systemKey IN ("2.16.840.1.113883.5.1008", "2.16.840.1.113883.4.642.4.1048"))
+          FILTER (?systemKey = LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")))
+          BIND (REPLACE(?stated, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?trimmed)
+          FILTER (?trimmed != "")
+          BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?trimmed))) AS ?absentReason)
+        }
+        UNION
+        {
+          ?condition ?vS ?coded . ?coded a v3:value ; xyz:nullFlavor ?flavour .
+          ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey ; skos:exactMatch ?absentReason .
+          FILTER (?flavourKey = LCASE(REPLACE(?flavour, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+        }
+      }
+    }
+    OPTIONAL {
+      SELECT DISTINCT ?condition ("real" AS ?realCode) WHERE {
+        { ?condition ?vS ?coding . ?coding a v3:value }
+        UNION
+        { ?condition ?vS ?coded . ?coded a v3:value ; ?trS ?coding . ?coding a v3:translation }
+        ?coding xyz:code ?stated ; xyz:codeSystem ?codeSystem .
+        BIND (LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")) AS ?realKey)
+        FILTER (?realKey NOT IN ("2.16.840.1.113883.5.1008", "2.16.840.1.113883.4.642.4.1048"))
+        FILTER (REGEX(?realKey, "^[0-2](\\.(0|[1-9][0-9]*))+$"))
+        FILTER (REPLACE(?stated, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") != "")
+      }
+    }
+    FILTER (!BOUND(?realCode))
+    BIND ("#absent-conditionCode" AS ?absentFragment)
+    BIND (cascade:conditionCode AS ?absentProperty)
   }
   UNION
   {

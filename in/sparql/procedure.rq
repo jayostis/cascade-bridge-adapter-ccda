@@ -16,7 +16,11 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # translations is carried: one in a code system
 # ../../vocab/ccda-code-systems.ttl gives an IRI stem is a cascade:procedureCode
 # IRI, one in another code system a cascade:procedureCodeInOtherSystem
-# literal, as result.rq writes a test's. The status is not-done where
+# literal, as result.rq writes a test's. A code in v3 NullFlavor or FHIR's
+# data-absent-reason, or a nullFlavor on the code, is why the code is absent,
+# not a code: with no other code it is a cascade:absentReasonCode of the
+# version's #absent-procedureCode node, and beside another code it is dropped.
+# The status is not-done where
 # negationInd is true, the procedure not performed, and otherwise the
 # statusCode, where it maps to a procedure status. A time is written as
 # allergy.rq writes it.
@@ -182,9 +186,50 @@ WHERE {
       ?coding xyz:code ?statedCode ; xyz:codeSystem ?codeSystem .
       ?system skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; void:uriSpace ?stem .
       FILTER (?systemKey = LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")))
+      FILTER (?systemKey NOT IN ("2.16.840.1.113883.5.1008", "2.16.840.1.113883.4.642.4.1048"))
       BIND (REPLACE(?statedCode, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?code_)
       FILTER (?code_ != "")
       BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?code_))) AS ?procedureIri)
+    }
+  }
+  UNION
+  {
+    SELECT ?procedure ?codeAbsentReason WHERE {
+      {
+        SELECT ?procedure ?codeAbsentReason WHERE {
+          {
+            { ?procedure ?cS ?coding . ?coding a v3:code }
+            UNION
+            { ?procedure ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
+            ?coding xyz:code ?stated ; xyz:codeSystem ?codeSystem .
+            ?system skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; void:uriSpace ?stem .
+            FILTER (?systemKey IN ("2.16.840.1.113883.5.1008", "2.16.840.1.113883.4.642.4.1048"))
+            FILTER (?systemKey = LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")))
+            BIND (REPLACE(?stated, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?trimmed)
+            FILTER (?trimmed != "")
+            BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?trimmed))) AS ?codeAbsentReason)
+          }
+          UNION
+          {
+            ?procedure ?cS ?coded . ?coded a v3:code ; xyz:nullFlavor ?flavour .
+            ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey ; skos:exactMatch ?codeAbsentReason .
+            FILTER (?flavourKey = LCASE(REPLACE(?flavour, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+          }
+        }
+      }
+      OPTIONAL {
+        SELECT DISTINCT ?procedure ("real" AS ?realCode) WHERE {
+          { ?procedure ?cS ?coding . ?coding a v3:code }
+          UNION
+          { ?procedure ?cS ?code . ?code a v3:code ; ?trS ?coding . ?coding a v3:translation }
+          ?coding xyz:code ?stated ; xyz:codeSystem ?codeSystem .
+          BIND (LCASE(REPLACE(REPLACE(?codeSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")) AS ?realKey)
+          FILTER (?realKey NOT IN ("2.16.840.1.113883.5.1008", "2.16.840.1.113883.4.642.4.1048"))
+          FILTER (REGEX(?realKey, "^[0-2](\\.(0|[1-9][0-9]*))+$"))
+          FILTER (REPLACE(?stated, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") != "")
+        }
+      }
+      FILTER (!BOUND(?realCode))
     }
   }
   BIND (STRAFTER(?first, "|") AS ?value)
@@ -205,9 +250,10 @@ WHERE {
   BIND (IF(?p IN (cascade:procedureDate) && REGEX(?value, "^[0-9]{10}([0-9]{2})?([+-][0-9]{4})?$"),
            CONCAT("#padded-", STRAFTER(STR(?p), "#")), 1/0) AS ?paddedFragment)
   BIND (IF(BOUND(?paddedFragment), ?value, 1/0) AS ?writtenTime)
-  BIND (IF(STRSTARTS(?value, "nullFlavor "), CONCAT("#absent-", STRAFTER(STR(?p), "#")), 1/0) AS ?absentFragment)
-  BIND (IF(BOUND(?absentFragment), ?p, 1/0) AS ?absentProperty)
-  BIND (IF(BOUND(?absentFragment), IRI(STRAFTER(?value, "nullFlavor ")), 1/0) AS ?absentReason)
+  BIND (COALESCE(IF(STRSTARTS(?value, "nullFlavor "), CONCAT("#absent-", STRAFTER(STR(?p), "#")), 1/0),
+                 IF(BOUND(?codeAbsentReason), "#absent-procedureCode", 1/0)) AS ?absentFragment)
+  BIND (IF(BOUND(?absentFragment), COALESCE(?p, cascade:procedureCode), 1/0) AS ?absentProperty)
+  BIND (IF(BOUND(?absentFragment), COALESCE(?codeAbsentReason, IRI(STRAFTER(?value, "nullFlavor "))), 1/0) AS ?absentReason)
   BIND (IF(BOUND(?paddedFragment), IRI(CONCAT(STR(?version), ?paddedFragment)), 1/0) AS ?paddedNode)
   BIND (IF(BOUND(?absentFragment), IRI(CONCAT(STR(?version), ?absentFragment)), 1/0) AS ?absentNode)
 }
