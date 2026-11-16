@@ -36,12 +36,10 @@ CI runs on every pull request. Both of these are required status checks on `main
 
 - **`adapter`**: lints the package, then runs each Bridge `compatibility.json` names over it and judges the report.
 - **`ready-to-merge`**: holds a pull request until every pull request it depends on can merge (see "A change that spans
-  two repositories"), and refuses a description with no `## Breaking` section or an empty one. The section lists each
-  term, query, record type, fixture name or file path the pull request renames or removes, one `old -> new` or
-  `old -> removed` line each, or says `None`; the notes of a runtime build copy the lines of every pull request it carries.
+  two repositories").
 
-The workflows hold no logic of their own, by design, except that check of the description. Any other check that needs
-writing is a change to the specification, made there.
+The workflows hold no logic of their own, by design. A check that needs writing is a change to the specification, made
+there.
 
 By hand, [`in/CLAUDE.md`](in/CLAUDE.md), [`fixtures/CLAUDE.md`](fixtures/CLAUDE.md) and
 [`schema/CLAUDE.md`](schema/CLAUDE.md) each list what CI cannot run for that directory, such as that every naming rule
