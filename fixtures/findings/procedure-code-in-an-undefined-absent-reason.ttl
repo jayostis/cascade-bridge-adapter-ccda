@@ -1,0 +1,82 @@
+@prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix oa: <http://www.w3.org/ns/oa#> .
+_:e755a407a67fee5ec36a27851058b156 a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
+_:ed09c21b40ad9a22d843eaf0f3f49aaa a oa:XPathSelector ;
+	rdf:value "*[local-name()='author' and namespace-uri()='urn:hl7-org:v3'][1]" .
+_:e755a407a67fee5ec36a27851058b156 oa:refinedBy _:ed09c21b40ad9a22d843eaf0f3f49aaa .
+_:c17fb2bb200431f80d174ed88ad5f000 a oa:Annotation ;
+	oa:hasTarget _:d0260f6bec082173e6c52850a9d5b14b .
+_:d0260f6bec082173e6c52850a9d5b14b oa:hasSource <../in/procedure-code-in-an-undefined-absent-reason.xml> ;
+	oa:hasSelector _:e755a407a67fee5ec36a27851058b156 .
+_:c17fb2bb200431f80d174ed88ad5f000 oa:hasBody ccda:documentAuthor ;
+	oa:motivatedBy oa:classifying ;
+	sh:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='author' and namespace-uri()='urn:hl7-org:v3']" ;
+	sh:resultSeverity sh:Info .
+_:be7d3c361a650f8613606a59e062fbad a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
+_:d6fae55d0342aa8a79be9f3a9ed7b1d oa:hasSource <../in/procedure-code-in-an-undefined-absent-reason.xml> .
+_:be7d3c361a650f8613606a59e062fbad oa:refinedBy _:aa11262b22eb4e3e99a9af416e089e67 .
+_:aa11262b22eb4e3e99a9af416e089e67 a oa:XPathSelector ;
+	rdf:value "*[local-name()='id' and namespace-uri()='urn:hl7-org:v3'][1]" .
+_:d6fae55d0342aa8a79be9f3a9ed7b1d oa:hasSelector _:be7d3c361a650f8613606a59e062fbad .
+_:c077c44974ec779df80069b1d6610bf3 oa:hasTarget _:d6fae55d0342aa8a79be9f3a9ed7b1d .
+_:f38e011009059a4910cf8dac8b90d3e9 a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
+_:a473ce96df2217029d5725a9649e05e2 oa:hasSource <../in/procedure-code-in-an-undefined-absent-reason.xml> .
+_:f38e011009059a4910cf8dac8b90d3e9 oa:refinedBy _:eae74d908630bfc184ae9a58c1c484a9 .
+_:eae74d908630bfc184ae9a58c1c484a9 a oa:XPathSelector ;
+	rdf:value "*[local-name()='code' and namespace-uri()='urn:hl7-org:v3'][1]" .
+_:a473ce96df2217029d5725a9649e05e2 oa:hasSelector _:f38e011009059a4910cf8dac8b90d3e9 .
+_:de990f86594f3a2c58c5b768b66cd7fd oa:hasTarget _:a473ce96df2217029d5725a9649e05e2 .
+_:b2ffeaaad0a82e28fe052aea7f8659d4 a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
+_:c027fc1dc6afd9eb8fa8ea80eab5bc61 oa:hasSource <../in/procedure-code-in-an-undefined-absent-reason.xml> .
+_:b2ffeaaad0a82e28fe052aea7f8659d4 oa:refinedBy _:b64d3085541f7907145136c040004dae .
+_:b64d3085541f7907145136c040004dae a oa:XPathSelector ;
+	rdf:value "*[local-name()='effectiveTime' and namespace-uri()='urn:hl7-org:v3'][1]" .
+_:c027fc1dc6afd9eb8fa8ea80eab5bc61 oa:hasSelector _:b2ffeaaad0a82e28fe052aea7f8659d4 .
+_:ad6e81284d846629c8eb2c6fe37e2512 oa:hasTarget _:c027fc1dc6afd9eb8fa8ea80eab5bc61 .
+_:c077c44974ec779df80069b1d6610bf3 sh:resultSeverity sh:Info .
+_:de990f86594f3a2c58c5b768b66cd7fd sh:resultSeverity sh:Info .
+_:ad6e81284d846629c8eb2c6fe37e2512 sh:resultSeverity sh:Info .
+_:c077c44974ec779df80069b1d6610bf3 a oa:Annotation ;
+	oa:hasBody ccda:documentId ;
+	oa:motivatedBy oa:classifying ;
+	sh:value "2.16.840.1.113883.19.5.99999.1|CCD-2026-1029-R" .
+_:de990f86594f3a2c58c5b768b66cd7fd a oa:Annotation ;
+	oa:hasBody ccda:documentType ;
+	oa:motivatedBy oa:classifying ;
+	sh:value "34133-9" .
+_:ad6e81284d846629c8eb2c6fe37e2512 a oa:Annotation ;
+	oa:hasBody ccda:documentTime ;
+	oa:motivatedBy oa:classifying ;
+	sh:value "20261029090000-0500" .
+_:dc9c7d334dc17660380c34e51f1e814e a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
+_:b3240a3f7ca1de15722e8ec20219538f oa:hasSource <../in/procedure-code-in-an-undefined-absent-reason.xml> .
+_:dc9c7d334dc17660380c34e51f1e814e oa:refinedBy _:fcf0bdfbdebd961905d569e460397758 .
+_:fcf0bdfbdebd961905d569e460397758 a oa:XPathSelector ;
+	rdf:value "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='procedure' and namespace-uri()='urn:hl7-org:v3'][1]" .
+_:b3240a3f7ca1de15722e8ec20219538f oa:hasSelector _:dc9c7d334dc17660380c34e51f1e814e .
+_:e60e4d0c45aeb196a7b816ac453aedad oa:hasTarget _:b3240a3f7ca1de15722e8ec20219538f .
+_:b110fdd5b7db1ceace3d5949b9cdb8cd a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
+_:fa2cfd5a19a20bbcb39706f6e2ced6bd oa:hasSource <../in/procedure-code-in-an-undefined-absent-reason.xml> .
+_:b110fdd5b7db1ceace3d5949b9cdb8cd oa:refinedBy _:d775686f7b5f9e2dad798e879778e03c .
+_:d775686f7b5f9e2dad798e879778e03c a oa:XPathSelector ;
+	rdf:value "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='procedure' and namespace-uri()='urn:hl7-org:v3'][1]" .
+_:fa2cfd5a19a20bbcb39706f6e2ced6bd oa:hasSelector _:b110fdd5b7db1ceace3d5949b9cdb8cd .
+_:d0a7089eda817ec200e722bc8348a52 oa:hasTarget _:fa2cfd5a19a20bbcb39706f6e2ced6bd .
+_:e60e4d0c45aeb196a7b816ac453aedad sh:resultSeverity sh:Info .
+_:d0a7089eda817ec200e722bc8348a52 sh:resultSeverity sh:Info .
+_:e60e4d0c45aeb196a7b816ac453aedad a oa:Annotation ;
+	oa:hasBody ccda:absentReasonNotCarried ;
+	oa:motivatedBy oa:classifying ;
+	sh:value "unk" .
+_:d0a7089eda817ec200e722bc8348a52 a oa:Annotation ;
+	oa:hasBody ccda:absentReasonNotCarried ;
+	oa:motivatedBy oa:classifying ;
+	sh:value "FOO" .

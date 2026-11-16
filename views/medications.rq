@@ -2,7 +2,7 @@ PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-SELECT DISTINCT ?record ?sourceRecordId ?drugName ?rxNormCode ?prescribedOrReported ?workflowStatus ?medicationUseStartDate ?medicationUseEndDate ?prescriptionWrittenDate ?dosage
+SELECT DISTINCT ?record ?sourceRecordId ?drugName ?rxNormCode ?prescribedOrReported ?workflowStatus ?medicationUseStartDate ?medicationUseEndDate ?prescriptionWrittenDate ?dosageInstructionText
 WHERE {
   ?record a cascade:PrescribedOrReportedMedication .
   ?version prov:specializationOf ?record .
@@ -16,7 +16,7 @@ WHERE {
   OPTIONAL { ?version cascade:medicationUseStartDate ?b }
   OPTIONAL { ?version cascade:medicationUseEndDate ?e }
   OPTIONAL { ?version cascade:prescriptionWrittenDate ?w }
-  OPTIONAL { ?version cascade:dosage ?g }
+  OPTIONAL { ?version cascade:dosageInstructionText ?g }
   BIND (STR(?id) AS ?sourceRecordId)
   BIND (STR(?n) AS ?drugName)
   BIND (REPLACE(STR(?c), "^https://ns.cascadeprotocol.org/codes/rxnorm/", "") AS ?rxNormCode)
@@ -25,5 +25,5 @@ WHERE {
   BIND (STR(?b) AS ?medicationUseStartDate)
   BIND (STR(?e) AS ?medicationUseEndDate)
   BIND (STR(?w) AS ?prescriptionWrittenDate)
-  BIND (STR(?g) AS ?dosage)
+  BIND (STR(?g) AS ?dosageInstructionText)
 }

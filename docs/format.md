@@ -197,8 +197,21 @@ another system (cascade-vocabulary's
 `decisions/partial-dates-and-absent-reasons.md`). The seventeen codes are in
 `../vocab/ccda-null-flavors.ttl`, read without regard to case; a flavour that is
 none of them carries nothing and is a finding, `ccda:nullFlavorNotListed`, on a
-result's value, on a time or a bound of it, and on the patient's. A medication
-whose whole `effectiveTime` is a flavour has its start of use absent for it. On
+result's value, on a problem's `value`, on a procedure's `code`, on a time or a
+bound of it, and on the patient's. A medication
+whose whole `effectiveTime` is a flavour has its start of use absent for it. A
+problem's `value` or a procedure's `code` that is a `nullFlavor`, or whose only
+codings, the code and its translations, are in v3 NullFlavor or FHIR's
+data-absent-reason, has its `cascade:conditionCode` or `cascade:procedureCode` absent
+for them, each coding's IRI a `cascade:absentReasonCode`, where the coding is a code
+its system defines, as written, case included: the NullFlavor codes of
+`../vocab/ccda-null-flavors.ttl` and the data-absent-reason codes of
+`../vocab/ccda-code-systems.ttl`. A coding that is none of them is no reason, so it is
+not carried and is a finding, `ccda:absentReasonNotCarried`, and with no other coding
+the version has no node. Beside a coding in any other
+system those codings are dropped, with no finding, since a code of the condition is not
+a reason it has none: the accounting's `carried` for such a coding's `@code` and
+`@codeSystem` (`../vocab/ccda-accounting.ttl`) is not true of it there. On
 an `id` or an address it says only that there is none, and elsewhere, where it
 stands alone, nothing is carried: on an `sdtc:deceasedInd`, or a death time
 with no true indicator, it states no death.
@@ -327,17 +340,17 @@ the RxNorm or LOINC code as a `translation`.
 An immunization's `vaccineCode` is written as the first CVX code it carries, the `code` before a `translation`, and no other.
 
 A test's, a drug's, a problem's and a procedure's code and each of its
-translations are carried, every one, except a procedure's CPT code, of which the vocabulary holds one: the first, the code's own before a translation's, is carried and each later CPT code that differs is a finding, `ccda:onlyFirstCarried`. A code in a system its kind has a term
+translations are carried, every one. A code in a system its kind has a term
 for is that term's IRI: LOINC and SNOMED CT for a test, RxNorm and NDC for a
-drug, SNOMED CT and ICD-10-CM for a problem, SNOMED CT and CPT for a procedure.
+drug, and for a problem and for a procedure any system the table gives an IRI stem
+but v3 NullFlavor and data-absent-reason (`cascade:conditionCode`, `cascade:procedureCode`).
 Any other is a literal, the code trimmed of spaces, typed by its system's URI,
 on the kind's `cascade:testCodeInOtherSystem`, `medicationCodeInOtherSystem`,
 `conditionCodeInOtherSystem` or `procedureCodeInOtherSystem` (cascade-vocabulary's
 `decisions/code-iris.md`, the row "a code in a system the vocabulary lists no form
 for"). The URI is the `cascade:codingSystemUri` the table gives the OID, so an
-HCPCS code is typed `http://www.cms.gov/Medicare/Coding/HCPCSReleaseCodeSets`
-and an ICD-9-CM code `http://hl7.org/fhir/sid/icd-9-cm` under any of its four
-OIDs, and an OID the table does not hold is `urn:oid:` and the OID, read
+HCPCS code is typed `http://www.cms.gov/Medicare/Coding/HCPCSReleaseCodeSets`,
+and an OID the table does not hold is `urn:oid:` and the OID, read
 without regard to the prefix's case. A SNOMED CT code of a drug stays a
 literal while M16, how a drug's codes are matched (unruled, jayostis/cascade-vocabulary#286),
 is open. A code
@@ -371,7 +384,7 @@ no second has no XSD form, so it is an `xsd:dateTime` padded with zeros to the
 second, again with no offset invented, and the version carries a node
 `<version>#padded-` and the property's local name, naming the property
 (`cascade:paddedDateTimeProperty`) and the time exactly as it is written
-(`cascade:writtenDate`), so its precision is never lost. Of the times a record's
+(`cascade:timeAsWritten`), so its precision is never lost. Of the times a record's
 date is read from, the first in the order its query says is carried, whatever
 its precision.
 

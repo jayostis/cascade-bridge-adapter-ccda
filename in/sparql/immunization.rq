@@ -25,7 +25,7 @@ CONSTRUCT {
   ?version ?p ?o .
   ?version cascade:paddedDateTime ?paddedNode .
   ?paddedNode cascade:paddedDateTimeProperty ?p ;
-    cascade:writtenDate ?writtenTime .
+    cascade:timeAsWritten ?writtenTime .
   ?version cascade:valueAbsentForReason ?absentNode .
   ?absentNode cascade:absentValueProperty ?absentProperty ;
     cascade:absentReasonCode ?absentReason .
@@ -104,7 +104,7 @@ WHERE {
         {
           ?material ?lS ?lot . ?lot a v3:lotNumberText ; ?vS ?value .
           FILTER (isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
-          BIND (cascade:lotNumber AS ?p)
+          BIND (cascade:vaccineLotNumber AS ?p)
           BIND ("1" AS ?tier)
           BIND (STRAFTER(STR(?vS), "#_") AS ?within)
         }
@@ -152,7 +152,7 @@ WHERE {
       {
         ?immunization ?dS ?dose . ?dose a v3:doseQuantity ; xyz:value ?amount .
         OPTIONAL { ?dose xyz:unit ?unit }
-        BIND (cascade:doseQuantity AS ?p)
+        BIND (cascade:vaccineDoseQuantityText AS ?p)
         BIND (IF(BOUND(?unit), CONCAT(?amount, " ", ?unit), ?amount) AS ?value)
         BIND (STRAFTER(STR(?dS), "#_") AS ?at)
         BIND ("1" AS ?tier)
@@ -160,7 +160,7 @@ WHERE {
       UNION
       {
         ?immunization ?rS ?coded . ?coded a ?codedType ; xyz:displayName ?value .
-        VALUES (?codedType ?p) { (v3:routeCode cascade:routeOfAdministration) (v3:approachSiteCode cascade:administrationSite) }
+        VALUES (?codedType ?p) { (v3:routeCode cascade:vaccinationRouteText) (v3:approachSiteCode cascade:vaccinationBodySiteText) }
         BIND (STRAFTER(STR(?rS), "#_") AS ?at)
         BIND ("1" AS ?tier)
       }

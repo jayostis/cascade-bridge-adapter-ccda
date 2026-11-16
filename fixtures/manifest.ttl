@@ -79,9 +79,20 @@
     <#result-interpretation-not-carried>
     <#result-interpretation-null-flavor>
     <#procedure-two-cpt-codes>
+    <#procedures-same-cpt-a-year-apart>
     <#procedure-two-snomed-ct-codes>
+    <#procedure-real-code-beside-absent-reason-codings>
+    <#procedure-code-nullflavor-attribute>
+    <#procedure-code-in-nullflavor-and-data-absent-reason-systems>
+    <#procedure-code-in-an-undefined-absent-reason>
+    <#procedure-code-nullflavor-not-listed>
     <#procedure-icd9-cm-procedure-oid>
     <#condition-icd9-cm-under-its-other-oids>
+    <#condition-codes-in-nullflavor-and-data-absent-reason-systems>
+    <#condition-real-code-beside-absent-reason-codings>
+    <#condition-code-nullflavor-attribute>
+    <#condition-code-in-an-undefined-absent-reason>
+    <#condition-code-nullflavor-not-listed>
     <#result-codes-padded-with-spaces>
     <#result-code-system-urn-oid-capitals>
     <#result-code-blank>
@@ -1008,7 +1019,7 @@
 
 <#codes-in-other-systems> a bridge:IsomorphicConversionTest ;
   mf:name "codes-in-other-systems" ;
-  rdfs:comment "A drug coded by a formulary's code with an RxNorm translation, a problem coded in ICD-9-CM with a SNOMED CT translation, a procedure coded in HCPCS with CPT and SNOMED CT translations, and a test coded by a lab's local code with a LOINC translation. Each code in a system its kind has a term for is that term's IRI, the CPT code under Cascade's CPT stem; every other is a literal on its kind's cascade:medicationCodeInOtherSystem, conditionCodeInOtherSystem, procedureCodeInOtherSystem or testCodeInOtherSystem, typed by the system's FHIR URI where the code system table lists its OID (ICD-9-CM, HCPCS Level II) and by urn:oid: and the OID where it does not, and none is a finding." ;
+  rdfs:comment "A drug coded by a formulary's code with an RxNorm translation, a problem coded in ICD-9-CM with a SNOMED CT translation, a procedure coded in HCPCS with CPT and SNOMED CT translations, and a test coded by a lab's local code with a LOINC translation. Each code in a system its kind has a term for, or for a problem and a procedure that the code system table gives an IRI stem (ICD-9-CM, CPT, SNOMED CT), is that term's IRI under the stem; every other is a literal on its kind's cascade:medicationCodeInOtherSystem, conditionCodeInOtherSystem, procedureCodeInOtherSystem or testCodeInOtherSystem, typed by the system's FHIR URI where the code system table lists its OID (HCPCS Level II) and by urn:oid: and the OID where it does not, and none is a finding." ;
   mf:action [
     bridge:input <in/codes-in-other-systems.xml> ;
     bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
@@ -1110,6 +1121,71 @@
     bridge:expectedFindings <findings/result-code-system-urn-oid-capitals.ttl>
   ] .
 
+<#condition-codes-in-nullflavor-and-data-absent-reason-systems> a bridge:IsomorphicConversionTest ;
+  mf:name "condition-codes-in-nullflavor-and-data-absent-reason-systems" ;
+  rdfs:comment "A problem valued UNK in v3 NullFlavor, 2.16.840.1.113883.5.1008, with a translation asked-unknown in FHIR's data-absent-reason, 2.16.840.1.113883.4.642.4.1048: neither is a cascade:conditionCode, since each is why the code is absent, so the version's #absent-conditionCode node names both as its cascade:absentReasonCode, as a FHIR Condition coded only so is written." ;
+  mf:action [
+    bridge:input <in/condition-codes-in-nullflavor-and-data-absent-reason-systems.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/condition-codes-in-nullflavor-and-data-absent-reason-systems.ttl> ;
+    bridge:expectedFindings <findings/condition-codes-in-nullflavor-and-data-absent-reason-systems.ttl>
+  ] .
+
+<#condition-real-code-beside-absent-reason-codings> a bridge:IsomorphicConversionTest ;
+  mf:name "condition-real-code-beside-absent-reason-codings" ;
+  rdfs:comment "A problem valued SNOMED CT 44054006 with translations in v3 NullFlavor and FHIR's data-absent-reason: the SNOMED CT code is the one cascade:conditionCode, and the version has no #absent-conditionCode node." ;
+  mf:action [
+    bridge:input <in/condition-real-code-beside-absent-reason-codings.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/condition-real-code-beside-absent-reason-codings.ttl> ;
+    bridge:expectedFindings <findings/condition-real-code-beside-absent-reason-codings.ttl>
+  ] .
+
+<#condition-code-nullflavor-attribute> a bridge:IsomorphicConversionTest ;
+  mf:name "condition-code-nullflavor-attribute" ;
+  rdfs:comment "A problem whose value states no code, only the nullFlavor UNK: no cascade:conditionCode, and the version's #absent-conditionCode node names the v3 NullFlavor code UNK as its cascade:absentReasonCode." ;
+  mf:action [
+    bridge:input <in/condition-code-nullflavor-attribute.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/condition-code-nullflavor-attribute.ttl> ;
+    bridge:expectedFindings <findings/condition-code-nullflavor-attribute.ttl>
+  ] .
+
+<#condition-code-in-an-undefined-absent-reason> a bridge:IsomorphicConversionTest ;
+  mf:name "condition-code-in-an-undefined-absent-reason" ;
+  rdfs:comment "A problem valued unk, in lower case, in v3 NullFlavor with a translation FOO in FHIR's data-absent-reason, neither a code of its system: no cascade:conditionCode and no #absent-conditionCode node, since a coding that is no code of its system names no reason, and each is a finding, ccda:absentReasonNotCarried." ;
+  mf:action [
+    bridge:input <in/condition-code-in-an-undefined-absent-reason.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/condition-code-in-an-undefined-absent-reason.ttl> ;
+    bridge:expectedFindings <findings/condition-code-in-an-undefined-absent-reason.ttl>
+  ] .
+
+<#condition-code-nullflavor-not-listed> a bridge:IsomorphicConversionTest ;
+  mf:name "condition-code-nullflavor-not-listed" ;
+  rdfs:comment "A problem whose value states no code, only the nullFlavor XYZ, which is no code of v3 NullFlavor: no cascade:conditionCode and no #absent-conditionCode node, and a finding, ccda:nullFlavorNotListed." ;
+  mf:action [
+    bridge:input <in/condition-code-nullflavor-not-listed.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/condition-code-nullflavor-not-listed.ttl> ;
+    bridge:expectedFindings <findings/condition-code-nullflavor-not-listed.ttl>
+  ] .
+
 <#result-codes-padded-with-spaces> a bridge:IsomorphicConversionTest ;
   mf:name "result-codes-padded-with-spaces" ;
   rdfs:comment "A result coded with a LOINC code padded with spaces and a translation in a lab's own code system padded with spaces: the LOINC IRI and the literal on cascade:testCodeInOtherSystem are both of the code trimmed." ;
@@ -1125,7 +1201,7 @@
 
 <#condition-icd9-cm-under-its-other-oids> a bridge:IsomorphicConversionTest ;
   mf:name "condition-icd9-cm-under-its-other-oids" ;
-  rdfs:comment "A problem coded in ICD-9-CM under the OID FHIR R4 gives it, 2.16.840.1.113883.6.42, with a translation under the retired OID 2.16.840.1.113883.6.2: both are literals on cascade:conditionCodeInOtherSystem typed by http://hl7.org/fhir/sid/icd-9-cm." ;
+  rdfs:comment "A problem coded in ICD-9-CM under the OID FHIR R4 gives it, 2.16.840.1.113883.6.42, with a translation under the retired OID 2.16.840.1.113883.6.2: both are cascade:conditionCode IRIs under the ICD-9-CM stem." ;
   mf:action [
     bridge:input <in/condition-icd9-cm-under-its-other-oids.xml> ;
     bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
@@ -1138,7 +1214,7 @@
 
 <#procedure-icd9-cm-procedure-oid> a bridge:IsomorphicConversionTest ;
   mf:name "procedure-icd9-cm-procedure-oid" ;
-  rdfs:comment "A procedure coded in ICD-9-CM procedure codes, OID 2.16.840.1.113883.6.104: a literal on cascade:procedureCodeInOtherSystem typed by http://hl7.org/fhir/sid/icd-9-cm." ;
+  rdfs:comment "A procedure coded in ICD-9-CM procedure codes, OID 2.16.840.1.113883.6.104: a cascade:procedureCode IRI under the ICD-9-CM stem." ;
   mf:action [
     bridge:input <in/procedure-icd9-cm-procedure-oid.xml> ;
     bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
@@ -1151,7 +1227,7 @@
 
 <#procedure-two-snomed-ct-codes> a bridge:IsomorphicConversionTest ;
   mf:name "procedure-two-snomed-ct-codes" ;
-  rdfs:comment "A procedure with a SNOMED CT code and a SNOMED CT translation: both are carried, as cascade:snomedCode IRIs, and nothing is a finding." ;
+  rdfs:comment "A procedure with a SNOMED CT code and a SNOMED CT translation: both are carried, as cascade:procedureCode IRIs, and nothing is a finding." ;
   mf:action [
     bridge:input <in/procedure-two-snomed-ct-codes.xml> ;
     bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
@@ -1162,9 +1238,74 @@
     bridge:expectedFindings <findings/procedure-two-snomed-ct-codes.ttl>
   ] .
 
+<#procedure-real-code-beside-absent-reason-codings> a bridge:IsomorphicConversionTest ;
+  mf:name "procedure-real-code-beside-absent-reason-codings" ;
+  rdfs:comment "A procedure coded SNOMED CT 73761001 with translations in v3 NullFlavor and FHIR's data-absent-reason: the SNOMED CT code is the one cascade:procedureCode, and the version has no #absent-procedureCode node." ;
+  mf:action [
+    bridge:input <in/procedure-real-code-beside-absent-reason-codings.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/procedure-real-code-beside-absent-reason-codings.ttl> ;
+    bridge:expectedFindings <findings/procedure-real-code-beside-absent-reason-codings.ttl>
+  ] .
+
+<#procedure-code-nullflavor-attribute> a bridge:IsomorphicConversionTest ;
+  mf:name "procedure-code-nullflavor-attribute" ;
+  rdfs:comment "A procedure whose code states no code, only the nullFlavor UNK: no cascade:procedureCode, and the version's #absent-procedureCode node names the v3 NullFlavor code UNK as its cascade:absentReasonCode." ;
+  mf:action [
+    bridge:input <in/procedure-code-nullflavor-attribute.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/procedure-code-nullflavor-attribute.ttl> ;
+    bridge:expectedFindings <findings/procedure-code-nullflavor-attribute.ttl>
+  ] .
+
+<#procedure-code-in-nullflavor-and-data-absent-reason-systems> a bridge:IsomorphicConversionTest ;
+  mf:name "procedure-code-in-nullflavor-and-data-absent-reason-systems" ;
+  rdfs:comment "A procedure coded UNK in v3 NullFlavor with a translation asked-unknown in FHIR's data-absent-reason: no cascade:procedureCode, and the version's #absent-procedureCode node has both as its cascade:absentReasonCode." ;
+  mf:action [
+    bridge:input <in/procedure-code-in-nullflavor-and-data-absent-reason-systems.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/procedure-code-in-nullflavor-and-data-absent-reason-systems.ttl> ;
+    bridge:expectedFindings <findings/procedure-code-in-nullflavor-and-data-absent-reason-systems.ttl>
+  ] .
+
+<#procedure-code-in-an-undefined-absent-reason> a bridge:IsomorphicConversionTest ;
+  mf:name "procedure-code-in-an-undefined-absent-reason" ;
+  rdfs:comment "A procedure coded unk, in lower case, in v3 NullFlavor with a translation FOO in FHIR's data-absent-reason, neither a code of its system: no cascade:procedureCode and no #absent-procedureCode node, since a coding that is no code of its system names no reason, and each is a finding, ccda:absentReasonNotCarried." ;
+  mf:action [
+    bridge:input <in/procedure-code-in-an-undefined-absent-reason.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/procedure-code-in-an-undefined-absent-reason.ttl> ;
+    bridge:expectedFindings <findings/procedure-code-in-an-undefined-absent-reason.ttl>
+  ] .
+
+<#procedure-code-nullflavor-not-listed> a bridge:IsomorphicConversionTest ;
+  mf:name "procedure-code-nullflavor-not-listed" ;
+  rdfs:comment "A procedure whose code states no code, only the nullFlavor XYZ, which is no code of v3 NullFlavor: no cascade:procedureCode and no #absent-procedureCode node, and a finding, ccda:nullFlavorNotListed." ;
+  mf:action [
+    bridge:input <in/procedure-code-nullflavor-not-listed.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/procedure-code-nullflavor-not-listed.ttl> ;
+    bridge:expectedFindings <findings/procedure-code-nullflavor-not-listed.ttl>
+  ] .
+
 <#procedure-two-cpt-codes> a bridge:IsomorphicConversionTest ;
   mf:name "procedure-two-cpt-codes" ;
-  rdfs:comment "A procedure with a CPT code and a different CPT translation: the code's own is carried, as cascade:cptCode, and the translation is not and is a finding, ccda:onlyFirstCarried." ;
+  rdfs:comment "A procedure with a CPT code and a different CPT translation: both are carried, as cascade:procedureCode IRIs." ;
   mf:action [
     bridge:input <in/procedure-two-cpt-codes.xml> ;
     bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
@@ -1173,6 +1314,19 @@
   mf:result [
     bridge:expectedGraph <expected/procedure-two-cpt-codes.ttl> ;
     bridge:expectedFindings <findings/procedure-two-cpt-codes.ttl>
+  ] .
+
+<#procedures-same-cpt-a-year-apart> a bridge:IsomorphicConversionTest ;
+  mf:name "procedures-same-cpt-a-year-apart" ;
+  rdfs:comment "Two procedures coded with the one CPT code 36415 a year apart: each is its own record, carrying cascade:procedureCode, the CPT code's IRI." ;
+  mf:action [
+    bridge:input <in/procedures-same-cpt-a-year-apart.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/procedures-same-cpt-a-year-apart.ttl> ;
+    bridge:expectedFindings <findings/procedures-same-cpt-a-year-apart.ttl>
   ] .
 
 <#result-interpretation-null-flavor> a bridge:IsomorphicConversionTest ;

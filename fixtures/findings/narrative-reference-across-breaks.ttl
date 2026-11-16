@@ -2,42 +2,42 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix oa: <http://www.w3.org/ns/oa#> .
-_:b331e3ebb9d5da80585c4648b3c44d2b a oa:XPathSelector ;
+_:a627ce4a7b5398dccf5add71bdde93a6 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
-_:e7ef3932a02f2e0130d134f34c0cef27 a oa:XPathSelector ;
+_:c140f84a21fdf0d21f72908db015803b a oa:XPathSelector ;
 	rdf:value "*[local-name()='author' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:b331e3ebb9d5da80585c4648b3c44d2b oa:refinedBy _:e7ef3932a02f2e0130d134f34c0cef27 .
-_:f946941f0e4886b9d5dcbb1009774cc a oa:Annotation ;
-	oa:hasTarget _:a3c62016bfe05a6ab28b9f730d7e5059 .
-_:a3c62016bfe05a6ab28b9f730d7e5059 oa:hasSource <../in/narrative-reference-across-breaks.xml> ;
-	oa:hasSelector _:b331e3ebb9d5da80585c4648b3c44d2b .
-_:f946941f0e4886b9d5dcbb1009774cc oa:hasBody ccda:documentAuthor ;
+_:a627ce4a7b5398dccf5add71bdde93a6 oa:refinedBy _:c140f84a21fdf0d21f72908db015803b .
+_:d21ac476a2dcfb91f97ce5836f4e30c5 a oa:Annotation ;
+	oa:hasTarget _:ec326b8eda70112284d8999431d9bd00 .
+_:ec326b8eda70112284d8999431d9bd00 oa:hasSource <../in/narrative-reference-across-breaks.xml> ;
+	oa:hasSelector _:a627ce4a7b5398dccf5add71bdde93a6 .
+_:d21ac476a2dcfb91f97ce5836f4e30c5 oa:hasBody ccda:documentAuthor ;
 	oa:motivatedBy oa:classifying ;
 	sh:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='author' and namespace-uri()='urn:hl7-org:v3']" ;
 	sh:resultSeverity sh:Info .
-_:d9b8c6b82a9e2acea9dd7cbb0451d6da a oa:XPathSelector ;
+_:d477b1d000281d3430744f8b936f361f a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
-_:abbd5e968e0f3ff9a80629efede45d24 oa:hasSource <../in/narrative-reference-across-breaks.xml> .
-_:d9b8c6b82a9e2acea9dd7cbb0451d6da oa:refinedBy _:f6ff68066765292feb9a3ef27760665 .
-_:f6ff68066765292feb9a3ef27760665 a oa:XPathSelector ;
+_:a9b20441842af5e6c0c3090aac3d22f8 oa:hasSource <../in/narrative-reference-across-breaks.xml> .
+_:d477b1d000281d3430744f8b936f361f oa:refinedBy _:d774c608fb8163619aedffc5b8c4ce31 .
+_:d774c608fb8163619aedffc5b8c4ce31 a oa:XPathSelector ;
 	rdf:value "*[local-name()='id' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:abbd5e968e0f3ff9a80629efede45d24 oa:hasSelector _:d9b8c6b82a9e2acea9dd7cbb0451d6da .
-_:db417c870d0d56424ac289a983dde72f oa:hasTarget _:abbd5e968e0f3ff9a80629efede45d24 .
-_:a7e6a8e6ce8330b869190540f5cf1f6a a oa:XPathSelector ;
+_:a9b20441842af5e6c0c3090aac3d22f8 oa:hasSelector _:d477b1d000281d3430744f8b936f361f .
+_:ce1c183edc392512a6ca0cd720efbd4f oa:hasTarget _:a9b20441842af5e6c0c3090aac3d22f8 .
+_:f9b1092106a5a3cbd3310abe415d0959 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
-_:e85a86923ff1d5704e6f6376c8bfa124 oa:hasSource <../in/narrative-reference-across-breaks.xml> .
-_:a7e6a8e6ce8330b869190540f5cf1f6a oa:refinedBy _:a6e20c7a9265405d7a761cae503c20e9 .
-_:a6e20c7a9265405d7a761cae503c20e9 a oa:XPathSelector ;
+_:a8a2318a3ae88cc345b6a0eb052d31cd oa:hasSource <../in/narrative-reference-across-breaks.xml> .
+_:f9b1092106a5a3cbd3310abe415d0959 oa:refinedBy _:d6826443d055c8a154907b9af178679d .
+_:d6826443d055c8a154907b9af178679d a oa:XPathSelector ;
 	rdf:value "*[local-name()='code' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:e85a86923ff1d5704e6f6376c8bfa124 oa:hasSelector _:a7e6a8e6ce8330b869190540f5cf1f6a .
-_:fd43b54a7d30e24d24c153b72e9e840d oa:hasTarget _:e85a86923ff1d5704e6f6376c8bfa124 .
-_:db417c870d0d56424ac289a983dde72f sh:resultSeverity sh:Info .
-_:fd43b54a7d30e24d24c153b72e9e840d sh:resultSeverity sh:Info .
-_:db417c870d0d56424ac289a983dde72f a oa:Annotation ;
+_:a8a2318a3ae88cc345b6a0eb052d31cd oa:hasSelector _:f9b1092106a5a3cbd3310abe415d0959 .
+_:d889ec5391d450bc24926d425cf35f53 oa:hasTarget _:a8a2318a3ae88cc345b6a0eb052d31cd .
+_:ce1c183edc392512a6ca0cd720efbd4f sh:resultSeverity sh:Info .
+_:d889ec5391d450bc24926d425cf35f53 sh:resultSeverity sh:Info .
+_:ce1c183edc392512a6ca0cd720efbd4f a oa:Annotation ;
 	oa:hasBody ccda:documentId ;
 	oa:motivatedBy oa:classifying ;
 	sh:value "2.16.840.1.113883.19.5.99999.1|CCD-2026-1030-B" .
-_:fd43b54a7d30e24d24c153b72e9e840d a oa:Annotation ;
+_:d889ec5391d450bc24926d425cf35f53 a oa:Annotation ;
 	oa:hasBody ccda:documentType ;
 	oa:motivatedBy oa:classifying ;
 	sh:value "34133-9" .

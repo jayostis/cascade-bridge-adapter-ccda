@@ -2,27 +2,27 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix oa: <http://www.w3.org/ns/oa#> .
-_:f42f9c99696426a299c7b0c985cd7829 a oa:XPathSelector ;
+_:b2b5c26141d14094014c95f3eeeb8539 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
-_:f55222821d2c88126c015f28fd2b3c3f a oa:XPathSelector ;
+_:b1570c964225ee0754fd511bac72406c a oa:XPathSelector ;
 	rdf:value "*[local-name()='author' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:f42f9c99696426a299c7b0c985cd7829 oa:refinedBy _:f55222821d2c88126c015f28fd2b3c3f .
-_:e09cb44fc1936ec4159167e1bffa5b26 a oa:Annotation ;
-	oa:hasTarget _:d3bdfad28b9987a46d4d9b9650bd69f2 .
-_:d3bdfad28b9987a46d4d9b9650bd69f2 oa:hasSource <../in/unstructured-document-reference-untyped.xml> ;
-	oa:hasSelector _:f42f9c99696426a299c7b0c985cd7829 .
-_:e09cb44fc1936ec4159167e1bffa5b26 oa:hasBody ccda:documentAuthor ;
+_:b2b5c26141d14094014c95f3eeeb8539 oa:refinedBy _:b1570c964225ee0754fd511bac72406c .
+_:bfb358f8e55b3d6c83df2f4b91a25c9d a oa:Annotation ;
+	oa:hasTarget _:d1fdd319aa09efb044aa140a44c8a0be .
+_:d1fdd319aa09efb044aa140a44c8a0be oa:hasSource <../in/unstructured-document-reference-untyped.xml> ;
+	oa:hasSelector _:b2b5c26141d14094014c95f3eeeb8539 .
+_:bfb358f8e55b3d6c83df2f4b91a25c9d oa:hasBody ccda:documentAuthor ;
 	oa:motivatedBy oa:classifying ;
 	sh:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='author' and namespace-uri()='urn:hl7-org:v3']" ;
 	sh:resultSeverity sh:Info .
-_:ee197877cb294ed8596a46d71924c00b a oa:XPathSelector ;
+_:b88270955dc963c3528c3fca694aa675 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
-_:ace7d9f92722621f9495ef34c6213be9 oa:hasSource <../in/unstructured-document-reference-untyped.xml> .
-_:ee197877cb294ed8596a46d71924c00b oa:refinedBy _:ef8720d4b41ff7c8f7cd680311bdefb1 .
-_:ef8720d4b41ff7c8f7cd680311bdefb1 a oa:XPathSelector ;
+_:a99d8b5e2de8fe7ab7f6a0f8f06f7d1a oa:hasSource <../in/unstructured-document-reference-untyped.xml> .
+_:b88270955dc963c3528c3fca694aa675 oa:refinedBy _:e1f9cb75de1f315075a7ec2d25d30c05 .
+_:e1f9cb75de1f315075a7ec2d25d30c05 a oa:XPathSelector ;
 	rdf:value "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='nonXMLBody' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:ace7d9f92722621f9495ef34c6213be9 oa:hasSelector _:ee197877cb294ed8596a46d71924c00b .
-_:da0fcf5949e056683c5a9bd8bc8c578 oa:hasTarget _:ace7d9f92722621f9495ef34c6213be9 ;
+_:a99d8b5e2de8fe7ab7f6a0f8f06f7d1a oa:hasSelector _:b88270955dc963c3528c3fca694aa675 .
+_:ce571f8a36b586579e28605fd19f9860 oa:hasTarget _:a99d8b5e2de8fe7ab7f6a0f8f06f7d1a ;
 	sh:resultSeverity sh:Warning ;
 	a oa:Annotation ;
 	oa:hasBody ccda:noteDataNotRead ;

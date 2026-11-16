@@ -31,15 +31,15 @@ PREFIX ccda:     <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # its title's text, its date the document's effectiveTime and its text the kept
 # text document-table.rq gives its row. A text is the lift's text with element breaks, a line for each block
 # of the narrative. A note's status is current: a C-CDA states no other. A LOINC
-# type is a cascade:noteOrDocumentType IRI, any other a
-# cascade:noteOrDocumentTypeInOtherSystem literal typed by its system's URI. A
+# type is a cascade:noteOrDocumentTypeCode IRI, any other a
+# cascade:noteOrDocumentTypeCodeInOtherSystem literal typed by its system's URI. A
 # time is typed by its precision, as result.rq types a result's.
 
 CONSTRUCT {
   ?version ?p ?o .
   ?version cascade:paddedDateTime ?paddedNode .
   ?paddedNode cascade:paddedDateTimeProperty ?p ;
-    cascade:writtenDate ?writtenTime .
+    cascade:timeAsWritten ?writtenTime .
   ?version cascade:attachment ?attachment .
   ?attachment cascade:attachmentContentType ?contentType ;
     cascade:attachmentUrl ?attachmentUrl .
@@ -236,7 +236,7 @@ WHERE {
       OPTIONAL { ccda:codeSystemLoinc skos:notation ?systemKey ; void:uriSpace ?loincStem }
       OPTIONAL { ?listed skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; cascade:codingSystemUri ?listedUri }
       BIND (COALESCE(STR(?listedUri), IF(REGEX(?systemKey, "^[0-2](\\.(0|[1-9][0-9]*))+$"), CONCAT("urn:oid:", ?systemKey), 1/0)) AS ?datatype)
-      BIND (IF(BOUND(?loincStem), cascade:noteOrDocumentType, cascade:noteOrDocumentTypeInOtherSystem) AS ?p)
+      BIND (IF(BOUND(?loincStem), cascade:noteOrDocumentTypeCode, cascade:noteOrDocumentTypeCodeInOtherSystem) AS ?p)
       BIND (IF(BOUND(?loincStem), IRI(CONCAT(STR(?loincStem), ENCODE_FOR_URI(?typeCode))), STRDT(?typeCode, IRI(?datatype))) AS ?o)
     }
   }
