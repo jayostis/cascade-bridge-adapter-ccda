@@ -208,6 +208,8 @@ WHERE {
             BIND (REPLACE(?stated, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?trimmed)
             FILTER (?trimmed != "")
             BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?trimmed))) AS ?codeAbsentReason)
+            FILTER (EXISTS { ?known skos:inScheme ccda:nullFlavors ; skos:exactMatch ?codeAbsentReason }
+                    || EXISTS { ?codeAbsentReason skos:inScheme ccda:dataAbsentReasons })
           }
           UNION
           {

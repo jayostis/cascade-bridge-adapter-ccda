@@ -2,6 +2,7 @@ PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX sh:     <http://www.w3.org/ns/shacl#>
 PREFIX oa:     <http://www.w3.org/ns/oa#>
 PREFIX skos:   <http://www.w3.org/2004/02/skos/core#>
+PREFIX void:   <http://rdfs.org/ns/void#>
 PREFIX fx:     <http://sparql.xyz/facade-x/ns/>
 PREFIX xyz:    <http://sparql.xyz/facade-x/data/>
 PREFIX v3:     <urn:hl7-org:v3>
@@ -100,5 +101,42 @@ WHERE {
       FILTER (?flavourKey = LCASE(REPLACE(?value, "^[ \t\r\n]+|[ \t\r\n]+$", "")))
     }
     BIND (ccda:nullFlavorNotListed AS ?gap)
+  }
+  UNION
+  {
+    ?statement ?flavourCodeSlot ?flavourCode . ?flavourCode a v3:code ; xyz:nullFlavor ?value .
+    VALUES ?class { "Procedure" }
+    FILTER NOT EXISTS {
+      ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey .
+      FILTER (?flavourKey = LCASE(REPLACE(?value, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+    }
+    BIND (ccda:nullFlavorNotListed AS ?gap)
+  }
+  UNION
+  {
+    { ?statement ?cS ?coding . ?coding a v3:code }
+    UNION
+    { ?statement ?cS ?coded . ?coded a v3:code ; ?trS ?coding . ?coding a v3:translation }
+    VALUES ?class { "Procedure" }
+    ?coding xyz:code ?statedAbsentReason ; xyz:codeSystem ?absentSystem .
+    ?system skos:inScheme ccda:codeSystems ; skos:notation ?systemKey ; void:uriSpace ?stem .
+    FILTER (?systemKey IN ("2.16.840.1.113883.5.1008", "2.16.840.1.113883.4.642.4.1048"))
+    FILTER (?systemKey = LCASE(REPLACE(REPLACE(?absentSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")))
+    BIND (REPLACE(?statedAbsentReason, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?value)
+    FILTER (?value != "")
+    BIND (IRI(CONCAT(?stem, ENCODE_FOR_URI(?value))) AS ?absentReason)
+    FILTER NOT EXISTS { ?known skos:inScheme ccda:nullFlavors ; skos:exactMatch ?absentReason }
+    FILTER NOT EXISTS { ?absentReason skos:inScheme ccda:dataAbsentReasons }
+    FILTER NOT EXISTS {
+      { ?statement ?otherS ?otherCoding . ?otherCoding a v3:code }
+      UNION
+      { ?statement ?otherS ?otherCoded . ?otherCoded a v3:code ; ?otherTrS ?otherCoding . ?otherCoding a v3:translation }
+      ?otherCoding xyz:code ?otherCode ; xyz:codeSystem ?otherSystem .
+      BIND (LCASE(REPLACE(REPLACE(?otherSystem, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", ""), "^urn:oid:", "", "i")) AS ?otherKey)
+      FILTER (?otherKey NOT IN ("2.16.840.1.113883.5.1008", "2.16.840.1.113883.4.642.4.1048"))
+      FILTER (REGEX(?otherKey, "^[0-2](\\.(0|[1-9][0-9]*))+$"))
+      FILTER (REPLACE(?otherCode, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") != "")
+    }
+    BIND (ccda:absentReasonNotCarried AS ?gap)
   }
 }
