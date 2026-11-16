@@ -1,17 +1,28 @@
 @prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
+@prefix bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix oa: <http://www.w3.org/ns/oa#> .
-_:c121eac6d97b64f4b19a46f172637d6c a oa:XPathSelector ;
+_:f8e2919436948b9db0545a30f7aca0f5 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
-_:f1afc353eddeda1befd408fca3f481dd a oa:XPathSelector ;
+_:ff8a888ca7724c73cb8091040c0267bd a oa:XPathSelector ;
 	rdf:value "*[local-name()='author' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:c121eac6d97b64f4b19a46f172637d6c oa:refinedBy _:f1afc353eddeda1befd408fca3f481dd .
-_:a02ad803507cca9c48ea767111e8d963 a oa:Annotation ;
-	oa:hasTarget _:e2294c73d37d7912a5c07ec25973c60c .
-_:e2294c73d37d7912a5c07ec25973c60c oa:hasSource <../in/unstructured-document-text.xml> ;
-	oa:hasSelector _:c121eac6d97b64f4b19a46f172637d6c .
-_:a02ad803507cca9c48ea767111e8d963 oa:hasBody ccda:documentAuthor ;
+_:f8e2919436948b9db0545a30f7aca0f5 oa:refinedBy _:ff8a888ca7724c73cb8091040c0267bd .
+_:f2de1e007a4ccc9746772dd600aad57d a oa:Annotation ;
+	oa:hasTarget _:af1fbc3f41309fbcdd23dfdac707c8cc .
+_:af1fbc3f41309fbcdd23dfdac707c8cc oa:hasSource <../in/unstructured-document-text.xml> ;
+	oa:hasSelector _:f8e2919436948b9db0545a30f7aca0f5 .
+_:f2de1e007a4ccc9746772dd600aad57d oa:hasBody ccda:documentAuthor ;
 	oa:motivatedBy oa:classifying ;
 	sh:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='author' and namespace-uri()='urn:hl7-org:v3']" ;
 	sh:resultSeverity sh:Info .
+_:d4c8fc97bc1f0e58ef92bd8eb3752ba a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
+_:babd40358edd92c1496d8a6978fe1a53 a oa:Annotation ;
+	oa:hasTarget _:d56cd7cbd791f284e02c74b6ec4d0edc .
+_:d56cd7cbd791f284e02c74b6ec4d0edc oa:hasSource <../in/unstructured-document-text.xml> ;
+	oa:hasSelector _:d4c8fc97bc1f0e58ef92bd8eb3752ba .
+_:babd40358edd92c1496d8a6978fe1a53 oa:hasBody bridge:predicateNotDeclared ;
+	oa:motivatedBy oa:classifying ;
+	sh:resultPath <https://ns.cascadeprotocol.org/cascade#noteOrDocumentTypeCode> ;
+	sh:resultSeverity sh:Violation .

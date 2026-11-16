@@ -1,83 +1,104 @@
 @prefix ccda: <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#> .
+@prefix bridge: <https://ns.cascadeprotocol.org/bridge/v1-draft#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix oa: <http://www.w3.org/ns/oa#> .
-_:b31b65cf28d6896ae68b2b19e5fbadac a oa:XPathSelector ;
+_:bc598559b25264d5b06bfaaa840fc7ca a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
-_:d2ac45af639c76d69708a54f3b133fa0 a oa:XPathSelector ;
+_:f0e5a01246d1542aa816f824edaf3090 a oa:XPathSelector ;
 	rdf:value "*[local-name()='author' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:b31b65cf28d6896ae68b2b19e5fbadac oa:refinedBy _:d2ac45af639c76d69708a54f3b133fa0 .
-_:c6cf0d4c101df54ed4442caaf1b25b9a a oa:Annotation ;
-	oa:hasTarget _:ab4bb7a276814ec119a7a187de2d65cf .
-_:ab4bb7a276814ec119a7a187de2d65cf oa:hasSource <../in/problem-status-from-concern-act.xml> ;
-	oa:hasSelector _:b31b65cf28d6896ae68b2b19e5fbadac .
-_:c6cf0d4c101df54ed4442caaf1b25b9a oa:hasBody ccda:documentAuthor ;
+_:bc598559b25264d5b06bfaaa840fc7ca oa:refinedBy _:f0e5a01246d1542aa816f824edaf3090 .
+_:b5bf1a9080de6d37138878c682970570 a oa:Annotation ;
+	oa:hasTarget _:f5543bc7f0eda2fc824eb4cd5407c47c .
+_:f5543bc7f0eda2fc824eb4cd5407c47c oa:hasSource <../in/problem-status-from-concern-act.xml> ;
+	oa:hasSelector _:bc598559b25264d5b06bfaaa840fc7ca .
+_:b5bf1a9080de6d37138878c682970570 oa:hasBody ccda:documentAuthor ;
 	oa:motivatedBy oa:classifying ;
 	sh:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='author' and namespace-uri()='urn:hl7-org:v3']" ;
 	sh:resultSeverity sh:Info .
-_:c588ade702a27296779d1fc1e666be02 a oa:XPathSelector ;
+_:e3a1618312db7eb906409c542fd72c10 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
-_:d4cbf903eb182fc043bfe4d4fad9446a a oa:XPathSelector ;
+_:d05fc5c57d76d7f01029e467173a1c37 a oa:XPathSelector ;
 	rdf:value "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='act' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entryRelationship' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='code' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:c588ade702a27296779d1fc1e666be02 oa:refinedBy _:d4cbf903eb182fc043bfe4d4fad9446a .
-_:cd2fb830837a2d0c2c076f83fa07d18 a oa:Annotation ;
-	oa:hasTarget _:c9fa4efcf38d34e7c17c910abecf8795 .
-_:c9fa4efcf38d34e7c17c910abecf8795 oa:hasSource <../in/problem-status-from-concern-act.xml> ;
-	oa:hasSelector _:c588ade702a27296779d1fc1e666be02 .
-_:cd2fb830837a2d0c2c076f83fa07d18 oa:hasBody ccda:statementCode ;
+_:e3a1618312db7eb906409c542fd72c10 oa:refinedBy _:d05fc5c57d76d7f01029e467173a1c37 .
+_:d37e1ac1e76898ee0ef39b4a84b20f3a a oa:Annotation ;
+	oa:hasTarget _:e81ca5eddb11ad24468342310829ab0f .
+_:e81ca5eddb11ad24468342310829ab0f oa:hasSource <../in/problem-status-from-concern-act.xml> ;
+	oa:hasSelector _:e3a1618312db7eb906409c542fd72c10 .
+_:d37e1ac1e76898ee0ef39b4a84b20f3a oa:hasBody ccda:statementCode ;
 	oa:motivatedBy oa:classifying ;
 	sh:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='act' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='entryRelationship' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='code' and namespace-uri()='urn:hl7-org:v3']/@code" ;
 	<https://ns.cascadeprotocol.org/cascade#occurrenceCount> 5 ;
 	sh:resultSeverity sh:Info .
-_:aea64f6619a0fdd977eaddfc71c06edb a oa:XPathSelector ;
+_:d6dada1a679220bb368b0e797236286a a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
-_:b5cd5e7876d6a940c48ad214d4661753 oa:hasSource <../in/problem-status-from-concern-act.xml> .
-_:aea64f6619a0fdd977eaddfc71c06edb oa:refinedBy _:e84403fda8342c4c45f90e6b5027f7c9 .
-_:e84403fda8342c4c45f90e6b5027f7c9 a oa:XPathSelector ;
+_:efed87d090223dead0e1f5a98e6c587e a oa:Annotation ;
+	oa:hasTarget _:d0e64f8687f499474424f6f18bfcc4 .
+_:d0e64f8687f499474424f6f18bfcc4 oa:hasSource <../in/problem-status-from-concern-act.xml> ;
+	oa:hasSelector _:d6dada1a679220bb368b0e797236286a .
+_:efed87d090223dead0e1f5a98e6c587e oa:hasBody bridge:predicateNotDeclared ;
+	oa:motivatedBy oa:classifying ;
+	sh:resultPath <https://ns.cascadeprotocol.org/cascade#conditionCode> ;
+	sh:resultSeverity sh:Violation .
+_:add9753d2ffe70f06f4f9c06cfdd0a07 a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
+_:fcd1cf99d8776888f70cc1f3bd59e94b a oa:Annotation ;
+	oa:hasTarget _:e11fc824ed1af1ab7b0279110c0607ea .
+_:e11fc824ed1af1ab7b0279110c0607ea oa:hasSource <../in/problem-status-from-concern-act.xml> ;
+	oa:hasSelector _:add9753d2ffe70f06f4f9c06cfdd0a07 .
+_:fcd1cf99d8776888f70cc1f3bd59e94b oa:hasBody bridge:predicateNotDeclared ;
+	oa:motivatedBy oa:classifying ;
+	sh:resultPath <https://ns.cascadeprotocol.org/cascade#noteOrDocumentTypeCode> ;
+	sh:resultSeverity sh:Violation .
+_:dde453557ef6af3d9ed06153f3594596 a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
+_:fce2947a523d06ad0e40155df87a6067 oa:hasSource <../in/problem-status-from-concern-act.xml> .
+_:dde453557ef6af3d9ed06153f3594596 oa:refinedBy _:aec39d010734e4feb1ca59a163a0995d .
+_:aec39d010734e4feb1ca59a163a0995d a oa:XPathSelector ;
 	rdf:value "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][5]/*[local-name()='act' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entryRelationship' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:b5cd5e7876d6a940c48ad214d4661753 oa:hasSelector _:aea64f6619a0fdd977eaddfc71c06edb .
-_:cdd9a35fcb05caaf3566342d4540380f oa:hasTarget _:b5cd5e7876d6a940c48ad214d4661753 .
-_:c374079d87396da57dd894eafbe9a88d a oa:XPathSelector ;
+_:fce2947a523d06ad0e40155df87a6067 oa:hasSelector _:dde453557ef6af3d9ed06153f3594596 .
+_:eb951fb416b48cddd87997fb3ef4e226 oa:hasTarget _:fce2947a523d06ad0e40155df87a6067 .
+_:e2556f71ab5e962d192035a35489dbbb a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
-_:d222876dfa9644e5cf93218088976f38 oa:hasSource <../in/problem-status-from-concern-act.xml> .
-_:c374079d87396da57dd894eafbe9a88d oa:refinedBy _:c6d5e037a2245b7993ef0f40f546318f .
-_:c6d5e037a2245b7993ef0f40f546318f a oa:XPathSelector ;
+_:d1a404f28b5abed68dffb9bd01bb6412 oa:hasSource <../in/problem-status-from-concern-act.xml> .
+_:e2556f71ab5e962d192035a35489dbbb oa:refinedBy _:dbfd6c48c0619e424d4c5c6dc498ad6a .
+_:dbfd6c48c0619e424d4c5c6dc498ad6a a oa:XPathSelector ;
 	rdf:value "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][4]/*[local-name()='act' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entryRelationship' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='observation' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:d222876dfa9644e5cf93218088976f38 oa:hasSelector _:c374079d87396da57dd894eafbe9a88d .
-_:b5e1acf074ab04ef3fbe57efe0ef74e4 oa:hasTarget _:d222876dfa9644e5cf93218088976f38 .
-_:cdd9a35fcb05caaf3566342d4540380f sh:resultSeverity sh:Info .
-_:b5e1acf074ab04ef3fbe57efe0ef74e4 sh:resultSeverity sh:Info .
-_:cdd9a35fcb05caaf3566342d4540380f a oa:Annotation ;
+_:d1a404f28b5abed68dffb9bd01bb6412 oa:hasSelector _:e2556f71ab5e962d192035a35489dbbb .
+_:fbc82d15a0e02f928f73b245eccd07e4 oa:hasTarget _:d1a404f28b5abed68dffb9bd01bb6412 .
+_:eb951fb416b48cddd87997fb3ef4e226 sh:resultSeverity sh:Info .
+_:fbc82d15a0e02f928f73b245eccd07e4 sh:resultSeverity sh:Info .
+_:eb951fb416b48cddd87997fb3ef4e226 a oa:Annotation ;
 	oa:hasBody ccda:problemStatusNotMapped ;
 	oa:motivatedBy oa:classifying ;
 	sh:value "421139008" .
-_:b5e1acf074ab04ef3fbe57efe0ef74e4 a oa:Annotation ;
+_:fbc82d15a0e02f928f73b245eccd07e4 a oa:Annotation ;
 	oa:hasBody ccda:concernStatusNotMapped ;
 	oa:motivatedBy oa:classifying ;
 	sh:value "nullified" .
-_:f531b39cbc315f2d988a214bf2edffb2 a oa:XPathSelector ;
+_:e75061b736485e5b9ff66132e5b48e9b a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
-_:fe546b091bda6b6f3883d12f764ddb4b oa:hasSource <../in/problem-status-from-concern-act.xml> .
-_:f531b39cbc315f2d988a214bf2edffb2 oa:refinedBy _:baa3a132fed093e9f3b48a7ff14fe898 .
-_:baa3a132fed093e9f3b48a7ff14fe898 a oa:XPathSelector ;
+_:c17f1bf0a55b2e9efe3027a6b9dc7438 oa:hasSource <../in/problem-status-from-concern-act.xml> .
+_:e75061b736485e5b9ff66132e5b48e9b oa:refinedBy _:d88fc8354c8853bde07b0b3837bee594 .
+_:d88fc8354c8853bde07b0b3837bee594 a oa:XPathSelector ;
 	rdf:value "*[local-name()='id' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:fe546b091bda6b6f3883d12f764ddb4b oa:hasSelector _:f531b39cbc315f2d988a214bf2edffb2 .
-_:c02e1cb3edd9fe777e702abbf35210bd oa:hasTarget _:fe546b091bda6b6f3883d12f764ddb4b .
-_:f081bb3daf0c9636099e362c5cba550 a oa:XPathSelector ;
+_:c17f1bf0a55b2e9efe3027a6b9dc7438 oa:hasSelector _:e75061b736485e5b9ff66132e5b48e9b .
+_:f7fad3fe920ee6b2c6ca3002c0fa3e32 oa:hasTarget _:c17f1bf0a55b2e9efe3027a6b9dc7438 .
+_:c509eb9e29914b2d21e2ee2125fd253f a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
-_:b4fe235e92f5a851f7f66105f1168c3d oa:hasSource <../in/problem-status-from-concern-act.xml> .
-_:f081bb3daf0c9636099e362c5cba550 oa:refinedBy _:bc66b4ffc1e43e146a1160fcc0f33128 .
-_:bc66b4ffc1e43e146a1160fcc0f33128 a oa:XPathSelector ;
+_:ba80809025d0e57f7ea7c80cc025b155 oa:hasSource <../in/problem-status-from-concern-act.xml> .
+_:c509eb9e29914b2d21e2ee2125fd253f oa:refinedBy _:f1abc01645910673feb1fc1f91194525 .
+_:f1abc01645910673feb1fc1f91194525 a oa:XPathSelector ;
 	rdf:value "*[local-name()='code' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:b4fe235e92f5a851f7f66105f1168c3d oa:hasSelector _:f081bb3daf0c9636099e362c5cba550 .
-_:bb7a4b3e0f7b928f484e22a2d864bf4e oa:hasTarget _:b4fe235e92f5a851f7f66105f1168c3d .
-_:c02e1cb3edd9fe777e702abbf35210bd sh:resultSeverity sh:Info .
-_:bb7a4b3e0f7b928f484e22a2d864bf4e sh:resultSeverity sh:Info .
-_:c02e1cb3edd9fe777e702abbf35210bd a oa:Annotation ;
+_:ba80809025d0e57f7ea7c80cc025b155 oa:hasSelector _:c509eb9e29914b2d21e2ee2125fd253f .
+_:fb49b173a1ef2a648ee029476f392e80 oa:hasTarget _:ba80809025d0e57f7ea7c80cc025b155 .
+_:f7fad3fe920ee6b2c6ca3002c0fa3e32 sh:resultSeverity sh:Info .
+_:fb49b173a1ef2a648ee029476f392e80 sh:resultSeverity sh:Info .
+_:f7fad3fe920ee6b2c6ca3002c0fa3e32 a oa:Annotation ;
 	oa:hasBody ccda:documentId ;
 	oa:motivatedBy oa:classifying ;
 	sh:value "2.16.840.1.113883.19.5.99999.1|CCD-2026-1033" .
-_:bb7a4b3e0f7b928f484e22a2d864bf4e a oa:Annotation ;
+_:fb49b173a1ef2a648ee029476f392e80 a oa:Annotation ;
 	oa:hasBody ccda:documentType ;
 	oa:motivatedBy oa:classifying ;
 	sh:value "34133-9" .
