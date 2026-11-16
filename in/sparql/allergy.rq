@@ -33,7 +33,7 @@ CONSTRUCT {
   ?version ?p ?o .
   ?version cascade:paddedDateTime ?paddedNode .
   ?paddedNode cascade:paddedDateTimeProperty ?p ;
-    cascade:writtenDate ?writtenTime .
+    cascade:timeAsWritten ?writtenTime .
   ?version cascade:valueAbsentForReason ?absentNode .
   ?absentNode cascade:absentValueProperty ?absentProperty ;
     cascade:absentReasonCode ?absentReason .
@@ -73,7 +73,7 @@ WHERE {
           ?allergy ?paS ?participant . ?participant a v3:participant ; ?prS ?role .
           ?role a v3:participantRole ; ?peS ?entity . ?entity a v3:playingEntity .
           BIND (STRAFTER(STR(?paS), "#_") AS ?at)
-          BIND (cascade:allergen AS ?p)
+          BIND (cascade:allergenName AS ?p)
           {
             ?entity ?cS ?code . ?code a v3:code ; ?otS ?originalText . ?originalText a v3:originalText ; ?rfS ?reference .
             ?reference a v3:reference ; xyz:value ?pointer .

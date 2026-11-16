@@ -327,17 +327,17 @@ the RxNorm or LOINC code as a `translation`.
 An immunization's `vaccineCode` is written as the first CVX code it carries, the `code` before a `translation`, and no other.
 
 A test's, a drug's, a problem's and a procedure's code and each of its
-translations are carried, every one, except a procedure's CPT code, of which the vocabulary holds one: the first, the code's own before a translation's, is carried and each later CPT code that differs is a finding, `ccda:onlyFirstCarried`. A code in a system its kind has a term
+translations are carried, every one. A code in a system its kind has a term
 for is that term's IRI: LOINC and SNOMED CT for a test, RxNorm and NDC for a
-drug, SNOMED CT and ICD-10-CM for a problem, SNOMED CT and CPT for a procedure.
+drug, and for a problem and for a procedure any system the table gives an IRI stem
+(`cascade:conditionCode`, `cascade:procedureCode`).
 Any other is a literal, the code trimmed of spaces, typed by its system's URI,
 on the kind's `cascade:testCodeInOtherSystem`, `medicationCodeInOtherSystem`,
 `conditionCodeInOtherSystem` or `procedureCodeInOtherSystem` (cascade-vocabulary's
 `decisions/code-iris.md`, the row "a code in a system the vocabulary lists no form
 for"). The URI is the `cascade:codingSystemUri` the table gives the OID, so an
-HCPCS code is typed `http://www.cms.gov/Medicare/Coding/HCPCSReleaseCodeSets`
-and an ICD-9-CM code `http://hl7.org/fhir/sid/icd-9-cm` under any of its four
-OIDs, and an OID the table does not hold is `urn:oid:` and the OID, read
+HCPCS code is typed `http://www.cms.gov/Medicare/Coding/HCPCSReleaseCodeSets`,
+and an OID the table does not hold is `urn:oid:` and the OID, read
 without regard to the prefix's case. A SNOMED CT code of a drug stays a
 literal while M16, how a drug's codes are matched (unruled, jayostis/cascade-vocabulary#286),
 is open. A code
@@ -371,7 +371,7 @@ no second has no XSD form, so it is an `xsd:dateTime` padded with zeros to the
 second, again with no offset invented, and the version carries a node
 `<version>#padded-` and the property's local name, naming the property
 (`cascade:paddedDateTimeProperty`) and the time exactly as it is written
-(`cascade:writtenDate`), so its precision is never lost. Of the times a record's
+(`cascade:timeAsWritten`), so its precision is never lost. Of the times a record's
 date is read from, the first in the order its query says is carried, whatever
 its precision.
 

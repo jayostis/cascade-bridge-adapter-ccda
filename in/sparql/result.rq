@@ -55,7 +55,7 @@ CONSTRUCT {
   ?version ?p ?o .
   ?version cascade:paddedDateTime ?paddedNode .
   ?paddedNode cascade:paddedDateTimeProperty ?p ;
-    cascade:writtenDate ?writtenTime .
+    cascade:timeAsWritten ?writtenTime .
   ?version cascade:valueAbsentForReason ?absentNode .
   ?absentNode cascade:absentValueProperty ?absentProperty ;
     cascade:absentReasonCode ?absentReason .
@@ -146,7 +146,7 @@ WHERE {
                   {
                     ?resultValue a v3:value ; xsi:type ?written ; ?vS ?value .
                     FILTER (REPLACE(?written, "^.*:", "") = "ST" && isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
-                    BIND (cascade:resultValue AS ?p)
+                    BIND (cascade:resultValueText AS ?p)
                     BIND ("1" AS ?tier)
                     BIND (STRAFTER(STR(?vS), "#_") AS ?within)
                   }
@@ -178,7 +178,7 @@ WHERE {
                         }
                       }
                     }
-                    BIND (cascade:resultValue AS ?p)
+                    BIND (cascade:resultValueText AS ?p)
                     BIND ("1" AS ?tier)
                   }
                   UNION
@@ -186,7 +186,7 @@ WHERE {
                     ?resultValue a v3:value ; xsi:type ?written ; ?otS ?originalText . ?originalText a v3:originalText ; ?vS ?value .
                     FILTER (REPLACE(?written, "^.*:", "") IN ("CD", "CE", "CV", "CO")
                             && isLiteral(?value) && STRSTARTS(STR(?vS), STR(rdf:_)))
-                    BIND (cascade:resultValue AS ?p)
+                    BIND (cascade:resultValueText AS ?p)
                     BIND ("2" AS ?tier)
                     BIND (STRAFTER(STR(?vS), "#_") AS ?within)
                   }
@@ -194,7 +194,7 @@ WHERE {
                   {
                     ?resultValue a v3:value ; xsi:type ?written ; xyz:displayName ?value .
                     FILTER (REPLACE(?written, "^.*:", "") IN ("CD", "CE", "CV", "CO"))
-                    BIND (cascade:resultValue AS ?p)
+                    BIND (cascade:resultValueText AS ?p)
                     BIND ("3" AS ?tier)
                   }
                 }
@@ -277,7 +277,7 @@ WHERE {
                   }
                 }
               }
-              BIND (cascade:referenceRange AS ?p)
+              BIND (cascade:referenceRangeText AS ?p)
               BIND (STRAFTER(STR(?rrS), "#_") AS ?at)
             }
             UNION
@@ -563,8 +563,8 @@ WHERE {
                  CONCAT(IF(COALESCE(?highInclusive, "true") = "false", "<", "<="), ?highValue))))) AS ?text)
         BIND (IF(?type IN ("PQ", "INT", "REAL"), ?plainUnit,
               IF(?type = "IVL_PQ" && !?twoBounds, COALESCE(?lowUnit, ?highUnit), 1/0)) AS ?unit)
-        VALUES ?p { cascade:resultValue cascade:resultUnit }
-        BIND (IF(?p = cascade:resultValue, ?text, ?unit) AS ?o)
+        VALUES ?p { cascade:resultValueText cascade:resultUnitText }
+        BIND (IF(?p = cascade:resultValueText, ?text, ?unit) AS ?o)
       }
       UNION
       {
@@ -590,7 +590,7 @@ WHERE {
         ?answerScheme skos:notation ?answerOid ; void:uriSpace ?answerStem .
         VALUES ?answerScheme { ccda:codeSystemSnomedCt ccda:codeSystemLoinc }
         FILTER (?type IN ("CD", "CE", "CV", "CO") && REPLACE(?answerSystem, "^urn:oid:", "") = ?answerOid)
-        BIND (cascade:resultCode AS ?p)
+        BIND (cascade:resultValueCode AS ?p)
         BIND (IRI(CONCAT(?answerStem, ENCODE_FOR_URI(?answer))) AS ?o)
       }
     }

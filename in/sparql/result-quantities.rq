@@ -100,8 +100,8 @@ WHERE {
       BIND ("interval" AS ?shape)
       OPTIONAL { ?quantity xyz:inclusive ?inclusive }
       VALUES (?side ?rangeRole ?rangeLink ?inclusiveComparator ?exclusiveComparator) {
-        (v3:low "range-low" cascade:resultRangeLow ">=" ">")
-        (v3:high "range-high" cascade:resultRangeHigh "<=" "<")
+        (v3:low "range-low" cascade:resultValueRangeLow ">=" ">")
+        (v3:high "range-high" cascade:resultValueRangeHigh "<=" "<")
       }
       FILTER (?bounds = 1 || COALESCE(?inclusive, "true") != "false")
       BIND (IF(?bounds = 1, "value", ?rangeRole) AS ?role)

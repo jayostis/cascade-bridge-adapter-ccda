@@ -16,7 +16,7 @@ WHERE {
   OPTIONAL { ?version cascade:medicationUseStartDate ?b }
   OPTIONAL { ?version cascade:medicationUseEndDate ?e }
   OPTIONAL { ?version cascade:prescriptionWrittenDate ?w }
-  OPTIONAL { ?version cascade:dosage ?g }
+  OPTIONAL { ?version cascade:dosageInstructionText ?g }
   BIND (STR(?id) AS ?sourceRecordId)
   BIND (STR(?n) AS ?drugName)
   BIND (REPLACE(STR(?c), "^https://ns.cascadeprotocol.org/codes/rxnorm/", "") AS ?rxNormCode)

@@ -9,7 +9,7 @@ WHERE {
   OPTIONAL { ?record cascade:currentRevision/cascade:version ?current }
   FILTER (!BOUND(?current) || ?current = ?version)
   OPTIONAL { { ?record cascade:sourceRecordId ?id } UNION { ?version cascade:sourceRecordId ?id } }
-  OPTIONAL { ?version cascade:allergen ?a }
+  OPTIONAL { ?version cascade:allergenName ?a }
   OPTIONAL { ?version cascade:allergenCode ?c }
   OPTIONAL { ?version cascade:clinicalStatus ?s }
   OPTIONAL { ?version cascade:verificationStatus ?v }

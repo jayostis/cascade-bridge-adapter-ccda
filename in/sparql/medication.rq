@@ -34,7 +34,7 @@ CONSTRUCT {
   ?version ?p ?o .
   ?version cascade:paddedDateTime ?paddedNode .
   ?paddedNode cascade:paddedDateTimeProperty ?p ;
-    cascade:writtenDate ?writtenTime .
+    cascade:timeAsWritten ?writtenTime .
   ?version cascade:valueAbsentForReason ?absentNode .
   ?absentNode cascade:absentValueProperty ?absentProperty ;
     cascade:absentReasonCode ?absentReason .
@@ -171,7 +171,7 @@ WHERE {
           ?sig a v3:substanceAdministration ; ?stS ?st ; ?txS ?text .
           ?st a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.147" .
           ?text a v3:text .
-          BIND (cascade:dosage AS ?p)
+          BIND (cascade:dosageInstructionText AS ?p)
           BIND (STRAFTER(STR(?rS), "#_") AS ?at)
           {
             ?text ?rfS ?reference . ?reference a v3:reference ; xyz:value ?pointer .

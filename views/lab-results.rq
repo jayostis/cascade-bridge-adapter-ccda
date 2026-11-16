@@ -11,8 +11,8 @@ WHERE {
   OPTIONAL { { ?record cascade:sourceRecordId ?id } UNION { ?version cascade:sourceRecordId ?id } }
   OPTIONAL { ?version cascade:testName ?n }
   OPTIONAL { ?version cascade:testCode ?c . FILTER (STRSTARTS(STR(?c), "http://loinc.org/rdf/")) }
-  OPTIONAL { ?version cascade:resultValue ?text }
-  OPTIONAL { ?version cascade:resultUnit ?textUnit }
+  OPTIONAL { ?version cascade:resultValueText ?text }
+  OPTIONAL { ?version cascade:resultUnitText ?textUnit }
   OPTIONAL {
     ?version cascade:resultQuantity ?quantity .
     ?quantity cascade:writtenValue ?written .
@@ -20,7 +20,7 @@ WHERE {
     OPTIONAL { ?quantity cascade:unitText ?unitText }
     OPTIONAL { ?quantity cascade:ucumUnit ?ucumUnit }
   }
-  OPTIONAL { ?version cascade:referenceRange ?r }
+  OPTIONAL { ?version cascade:referenceRangeText ?r }
   OPTIONAL { ?version cascade:resultInterpretationCode ?i }
   OPTIONAL { ?version cascade:workflowStatus ?s }
   OPTIONAL { ?version cascade:resultClinicallyRelevantTime ?d }
