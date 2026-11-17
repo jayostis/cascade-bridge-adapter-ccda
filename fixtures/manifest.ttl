@@ -20,6 +20,7 @@
     <#allergy-status-from-concern-act>
     <#allergy-status-observation-beside-concern-act>
     <#medications-ndc-translations>
+    <#medication-written-date>
     <#several-ids>
     <#repeated-ids>
     <#download-a>
@@ -279,6 +280,19 @@
   mf:result [
     bridge:expectedGraph <expected/medications-ndc-translations.ttl> ;
     bridge:expectedFindings <findings/medications-ndc-translations.ttl>
+  ] .
+
+<#medication-written-date> a bridge:IsomorphicConversionTest ;
+  mf:name "medication-written-date" ;
+  rdfs:comment "Two prescriptions whose author states the time the prescription was written: one to the day and one to the minute with an offset. The day is cascade:prescriptionWrittenDate as an xsd:date, and the minute is that property as an xsd:dateTime padded to the second beside a node keeping the characters written. A third prescription's author time is a nullFlavor, an absent prescriptionWrittenDate. A listed medication's author time, the day its entry was recorded, is a finding and no prescriptionWrittenDate." ;
+  mf:action [
+    bridge:input <in/medication-written-date.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/medication-written-date.ttl> ;
+    bridge:expectedFindings <findings/medication-written-date.ttl>
   ] .
 
 <#several-ids> a bridge:IsomorphicConversionTest ;
