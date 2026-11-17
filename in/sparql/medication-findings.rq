@@ -12,7 +12,8 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 
 # Each element of a structured dosage a medication states, at the element,
 # valued by its name; and each NDC medication.rq makes no 11-digit code of, at
-# the medication. A periodic effectiveTime is a dosage's timing; an
+# the medication; and each time a listed medication's (mood EVN) author states,
+# at the medication, valued by the time as written. A periodic effectiveTime is a dosage's timing; an
 # interval one is the medication's start and end. A route and a site are the
 # accounting's ccda:codedRouteAndSite, and a status and codes
 # entry-statement-findings.rq's.
@@ -72,6 +73,12 @@ WHERE {
     FILTER (REPLACE(?codeSystem, "^urn:oid:", "") = "2.16.840.1.113883.6.69"
             && !REGEX(?value, "^([0-9]{11}|[0-9]{5}-[0-9]{4}-[0-9]{2}|[0-9]{4}-[0-9]{4}-[0-9]{2}|[0-9]{5}-[0-9]{3}-[0-9]{2}|[0-9]{5}-[0-9]{4}-[0-9])$"))
     BIND (ccda:ndcNotNormalised AS ?gap)
+    BIND ("" AS ?dosingStep)
+  }
+  UNION
+  {
+    ?medication xyz:moodCode "EVN" ; ?aS ?author . ?author a v3:author ; ?atS ?authorTime . ?authorTime a v3:time ; xyz:value ?value .
+    BIND (ccda:listedMedicationAuthorTime AS ?gap)
     BIND ("" AS ?dosingStep)
   }
   BIND (CONCAT(?medicationAt, ?dosingStep) AS ?refinement)

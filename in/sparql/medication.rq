@@ -20,8 +20,10 @@ PREFIX ccda:    <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 #     name, the code's displayName, a translation's displayName;
 #   - the dosage, a Medication Free Text Sig's text, through its reference
 #     first. A structured dosage is a finding of medication-findings.rq;
-#   - the day the prescription was written, the time of the first author that
-#     states one, read as a start of use is.
+#   - the day a prescription (mood INT) was written, the time of the first
+#     author that states one, read as a start of use is. A listed medication's
+#     author time is when the entry was recorded, and medication-findings.rq
+#     reports it.
 # Every RxNorm code, and every NDC, of the drug's code and its translations is
 # carried, whichever comes first, so codes are a branch of their own. An NDC is
 # Cascade's 11-digit code: a C-CDA writes the 10-digit label code with its
@@ -148,11 +150,21 @@ WHERE {
         }
         UNION
         {
-          ?medication ?aS ?author . ?author a v3:author ; ?atS ?authorTime . ?authorTime a v3:time ; xyz:value ?value .
+          ?medication xyz:moodCode "INT" ; ?aS ?author . ?author a v3:author ; ?atS ?authorTime . ?authorTime a v3:time ; xyz:value ?value .
           BIND (cascade:prescriptionWrittenDate AS ?p)
           BIND (STRAFTER(STR(?aS), "#_") AS ?at)
           BIND ("1" AS ?tier)
           FILTER (REGEX(?value, "^[0-9]{4}([0-9]{2}([0-9]{2}([0-9]{2}([0-9]{2}([0-9]{2}(\\.[0-9]+)?)?)?)?)?)?([+-][0-9]{4})?$"))
+        }
+        UNION
+        {
+          ?medication xyz:moodCode "INT" ; ?aS ?author . ?author a v3:author ; ?atS ?authorTime . ?authorTime a v3:time ; xyz:nullFlavor ?flavour .
+          ?flavourConcept skos:inScheme ccda:nullFlavors ; skos:notation ?flavourKey ; skos:exactMatch ?flavourCode .
+          FILTER (?flavourKey = LCASE(REPLACE(?flavour, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))
+          BIND (CONCAT("nullFlavor ", STR(?flavourCode)) AS ?value)
+          BIND (cascade:prescriptionWrittenDate AS ?p)
+          BIND ("9" AS ?tier)
+          BIND (STRAFTER(STR(?aS), "#_") AS ?at)
         }
         UNION
         {

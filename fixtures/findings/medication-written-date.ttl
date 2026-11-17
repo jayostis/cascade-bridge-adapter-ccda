@@ -2,56 +2,69 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix oa: <http://www.w3.org/ns/oa#> .
-_:b8d620697cb641cb9b73bccc61c5f201 a oa:XPathSelector ;
+_:d63ccbeb674679c91ebef84c1f695735 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
-_:e706dafb25a111fe5a762209f316b1fd a oa:XPathSelector ;
+_:b52694177b9cadf52da5fa39dc235ae2 a oa:XPathSelector ;
 	rdf:value "*[local-name()='author' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:b8d620697cb641cb9b73bccc61c5f201 oa:refinedBy _:e706dafb25a111fe5a762209f316b1fd .
-_:e7ef5d7ca3b46612f757f7d5f860847f a oa:Annotation ;
-	oa:hasTarget _:e6125bc8daddc2f37890830e6097ffac .
-_:e6125bc8daddc2f37890830e6097ffac oa:hasSource <../in/medication-written-date.xml> ;
-	oa:hasSelector _:b8d620697cb641cb9b73bccc61c5f201 .
-_:e7ef5d7ca3b46612f757f7d5f860847f oa:hasBody ccda:documentAuthor ;
+_:d63ccbeb674679c91ebef84c1f695735 oa:refinedBy _:b52694177b9cadf52da5fa39dc235ae2 .
+_:e46bb327f9888e178412bf82bf45acfa a oa:Annotation ;
+	oa:hasTarget _:af1ce1e93253dc59e015f714fcc416bf .
+_:af1ce1e93253dc59e015f714fcc416bf oa:hasSource <../in/medication-written-date.xml> ;
+	oa:hasSelector _:d63ccbeb674679c91ebef84c1f695735 .
+_:e46bb327f9888e178412bf82bf45acfa oa:hasBody ccda:documentAuthor ;
 	oa:motivatedBy oa:classifying ;
 	sh:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='author' and namespace-uri()='urn:hl7-org:v3']" ;
 	sh:resultSeverity sh:Info .
-_:a39599955ddb9f08fa47a0ac7b8e2e53 a oa:XPathSelector ;
+_:be5ee4020f39dd312ddafb569eb158e5 a oa:XPathSelector ;
 	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
-_:b448fc37a36972b8c9514f7bb6b103e3 a oa:XPathSelector ;
+_:b549b3be2d3e55d82d7442ff9c8d1cf a oa:XPathSelector ;
 	rdf:value "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='substanceAdministration' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='author' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='assignedAuthor' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:a39599955ddb9f08fa47a0ac7b8e2e53 oa:refinedBy _:b448fc37a36972b8c9514f7bb6b103e3 .
-_:b855478142cde9a34159dfde7d5dddf a oa:Annotation ;
-	oa:hasTarget _:b97c025ee74d9e88dcd615b42fb9b8e4 .
-_:b97c025ee74d9e88dcd615b42fb9b8e4 oa:hasSource <../in/medication-written-date.xml> ;
-	oa:hasSelector _:a39599955ddb9f08fa47a0ac7b8e2e53 .
-_:b855478142cde9a34159dfde7d5dddf oa:hasBody ccda:medicationAuthor ;
+_:be5ee4020f39dd312ddafb569eb158e5 oa:refinedBy _:b549b3be2d3e55d82d7442ff9c8d1cf .
+_:c9f129e70714bdd41eabe0d1d97c2583 a oa:Annotation ;
+	oa:hasTarget _:c9104aa197ca602d36715e52bc7ea8bd .
+_:c9104aa197ca602d36715e52bc7ea8bd oa:hasSource <../in/medication-written-date.xml> ;
+	oa:hasSelector _:be5ee4020f39dd312ddafb569eb158e5 .
+_:c9f129e70714bdd41eabe0d1d97c2583 oa:hasBody ccda:medicationAuthor ;
 	oa:motivatedBy oa:classifying ;
 	sh:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='substanceAdministration' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='author' and namespace-uri()='urn:hl7-org:v3']/*[local-name()='assignedAuthor' and namespace-uri()='urn:hl7-org:v3']" ;
-	<https://ns.cascadeprotocol.org/cascade#occurrenceCount> 2 ;
+	<https://ns.cascadeprotocol.org/cascade#occurrenceCount> 4 ;
 	sh:resultSeverity sh:Info .
-_:ea48f95c0da19ed2506f811fdb6b3378 a oa:XPathSelector ;
-	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
-_:f9a36c3c363f996526931bdb0fa7c458 oa:hasSource <../in/medication-written-date.xml> .
-_:ea48f95c0da19ed2506f811fdb6b3378 oa:refinedBy _:aee6af4b0e4bd150099eeea174a73189 .
-_:aee6af4b0e4bd150099eeea174a73189 a oa:XPathSelector ;
-	rdf:value "*[local-name()='id' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:f9a36c3c363f996526931bdb0fa7c458 oa:hasSelector _:ea48f95c0da19ed2506f811fdb6b3378 .
-_:c989fd84b144b91462badcb711d97338 oa:hasTarget _:f9a36c3c363f996526931bdb0fa7c458 .
-_:b849e2d73fb881685b94a347899fdb78 a oa:XPathSelector ;
-	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" .
-_:d51ae7e8f18846879c82a5a91906bcee oa:hasSource <../in/medication-written-date.xml> .
-_:b849e2d73fb881685b94a347899fdb78 oa:refinedBy _:eae14cb220d43e7c3e34da924bbc0284 .
-_:eae14cb220d43e7c3e34da924bbc0284 a oa:XPathSelector ;
-	rdf:value "*[local-name()='code' and namespace-uri()='urn:hl7-org:v3'][1]" .
-_:d51ae7e8f18846879c82a5a91906bcee oa:hasSelector _:b849e2d73fb881685b94a347899fdb78 .
-_:acaac797139bf706846b2b5be3c8d04e oa:hasTarget _:d51ae7e8f18846879c82a5a91906bcee .
-_:c989fd84b144b91462badcb711d97338 sh:resultSeverity sh:Info .
-_:acaac797139bf706846b2b5be3c8d04e sh:resultSeverity sh:Info .
-_:c989fd84b144b91462badcb711d97338 a oa:Annotation ;
+_:f33e72b4877da5a56c5d2bf2c2996338 a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" ;
+	oa:refinedBy _:c61a6f0be145d418976aba6e52dd1b4d .
+_:c189b7e0c280f8d717ba62003db33265 oa:hasSource <../in/medication-written-date.xml> .
+_:c61a6f0be145d418976aba6e52dd1b4d rdf:value "*[local-name()='id' and namespace-uri()='urn:hl7-org:v3'][1]" ;
+	a oa:XPathSelector .
+_:c189b7e0c280f8d717ba62003db33265 oa:hasSelector _:f33e72b4877da5a56c5d2bf2c2996338 .
+_:c2e4a8728b620b58895dbd571fcdb3d4 oa:hasTarget _:c189b7e0c280f8d717ba62003db33265 .
+_:c6222b225b3928937152851f8a3dc7fb a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" ;
+	oa:refinedBy _:de4f0a831d6ab67e8f0198b769ef7fe6 .
+_:ab6494c89593fd3ca909cb4762eca690 oa:hasSource <../in/medication-written-date.xml> .
+_:de4f0a831d6ab67e8f0198b769ef7fe6 rdf:value "*[local-name()='code' and namespace-uri()='urn:hl7-org:v3'][1]" ;
+	a oa:XPathSelector .
+_:ab6494c89593fd3ca909cb4762eca690 oa:hasSelector _:c6222b225b3928937152851f8a3dc7fb .
+_:b83074c095aa5918626e5fbb18ad496f oa:hasTarget _:ab6494c89593fd3ca909cb4762eca690 .
+_:c2e4a8728b620b58895dbd571fcdb3d4 sh:resultSeverity sh:Info .
+_:b83074c095aa5918626e5fbb18ad496f sh:resultSeverity sh:Info .
+_:c2e4a8728b620b58895dbd571fcdb3d4 sh:value "2.16.840.1.113883.19.5.99999.1|CCD-2026-1020" ;
+	oa:motivatedBy oa:classifying ;
 	oa:hasBody ccda:documentId ;
+	a oa:Annotation .
+_:b83074c095aa5918626e5fbb18ad496f sh:value "34133-9" ;
 	oa:motivatedBy oa:classifying ;
-	sh:value "2.16.840.1.113883.19.5.99999.1|CCD-2026-1020" .
-_:acaac797139bf706846b2b5be3c8d04e a oa:Annotation ;
 	oa:hasBody ccda:documentType ;
+	a oa:Annotation .
+_:bf73463bb245af5edc6c98cf0c5dda01 a oa:XPathSelector ;
+	rdf:value "/*[local-name()='ClinicalDocument' and namespace-uri()='urn:hl7-org:v3']" ;
+	oa:refinedBy _:c70e3b77d02200e6cf6bd350e41a4923 .
+_:f04abd716758def97b91faa273c3defd oa:hasSource <../in/medication-written-date.xml> .
+_:c70e3b77d02200e6cf6bd350e41a4923 rdf:value "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='structuredBody' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='section' and namespace-uri()='urn:hl7-org:v3'][1]/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][3]/*[local-name()='substanceAdministration' and namespace-uri()='urn:hl7-org:v3'][1]" ;
+	a oa:XPathSelector .
+_:f04abd716758def97b91faa273c3defd oa:hasSelector _:bf73463bb245af5edc6c98cf0c5dda01 .
+_:ae1c0de7ea554af0b93eff95c1874f12 oa:hasTarget _:f04abd716758def97b91faa273c3defd ;
+	sh:resultSeverity sh:Info ;
+	sh:value "20261020" ;
 	oa:motivatedBy oa:classifying ;
-	sh:value "34133-9" .
+	oa:hasBody ccda:listedMedicationAuthorTime ;
+	a oa:Annotation .
