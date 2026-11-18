@@ -48,7 +48,9 @@ WHERE {
     OPTIONAL {
       ?root ?outerSlot ?outer . ?outer a v3:component ; ?bodySlot ?body . ?body a v3:nonXMLBody .
       BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_")) AS ?bodySlots)
-      ?bodyRow ccda:statementAt ?bodySlots ; ccda:recordClass "DocumentReference" .
+      ?bodyRow ccda:statementAt ?bodySlots .
+      # The row at these slots, and then its class: the class first is every row of it.
+      { SELECT ?bodyRow WHERE { ?bodyRow ccda:recordClass "DocumentReference" } }
       OPTIONAL { ?bodyRow ccda:identifierRoot ?bodyIdRoot ; ccda:identifierExtension ?bodyIdExtension }
     }
     BIND (COALESCE(REGEX(?idRoot, "^[0-2](\\.(0|[1-9][0-9]*))+$")

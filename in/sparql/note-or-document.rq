@@ -71,7 +71,9 @@ WHERE {
     ?outer a v3:component ; ?bodySlot ?statement . ?statement a v3:nonXMLBody .
     BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_")) AS ?slots)
   }
-  ?row ccda:statementAt ?slots ; ccda:recordClass "DocumentReference" .
+  ?row ccda:statementAt ?slots .
+  # The row at these slots, and then its class: the class first is every row of it.
+  { SELECT ?row WHERE { ?row ccda:recordClass "DocumentReference" } }
   BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(?slots))) AS ?version)
 
   {
