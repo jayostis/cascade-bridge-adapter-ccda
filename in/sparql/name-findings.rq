@@ -60,7 +60,7 @@ WHERE {
       FILTER (?patients = 1 && BOUND(?patientRoot))
     }
     BIND (BOUND(?identifier) && EXISTS {
-            ?other ccda:identifierRoot ?identifierRoot ; ccda:identifierExtension ?identifierExtension ;
+            ?other ccda:identifier ?identifier ; ccda:identifierRoot ?identifierRoot ; ccda:identifierExtension ?identifierExtension ;
               ccda:recordClass ?otherClass .
             OPTIONAL { ?other ccda:keyFingerprint ?otherKey }
             OPTIONAL { ?other ccda:membersFingerprint ?otherMembers }
