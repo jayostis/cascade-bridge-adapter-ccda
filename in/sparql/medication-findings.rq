@@ -40,7 +40,9 @@ WHERE {
           STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
           STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
           STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?statementSlot), "#_")) AS ?slots)
-  ?row ccda:recordClass "MedicationRequest" ; ccda:statementAt ?slots ; ccda:refinement ?medicationAt .
+  ?row ccda:statementAt ?slots ; ccda:refinement ?medicationAt .
+  # The row at these slots, and then its class: the class first is every row of it.
+  { SELECT ?row WHERE { ?row ccda:recordClass "MedicationRequest" } }
   {
     ?medication ?dosingSlot ?dosing . ?dosing a ?dosingType .
     FILTER (?dosingType IN (v3:doseQuantity, v3:rateQuantity, v3:maxDoseQuantity, v3:administrationUnitCode)
@@ -49,14 +51,17 @@ WHERE {
                   FILTER (REPLACE(?written, "^.*:", "") IN ("PIVL_TS", "EIVL_TS", "SXPR_TS"))
                 }))
     {
-      SELECT ?dosing (COUNT(?earlierDosing) + 1 AS ?dosingAt) WHERE {
-        ?dosingParent ?dosingS ?dosing . ?dosingParent a v3:substanceAdministration . ?dosing a ?type .
-        FILTER (?type IN (v3:doseQuantity, v3:rateQuantity, v3:maxDoseQuantity, v3:administrationUnitCode, v3:effectiveTime))
-        OPTIONAL {
-          ?dosingParent ?dosingE ?earlierDosing . ?earlierDosing a ?type .
-          FILTER (xsd:integer(STRAFTER(STR(?dosingE), "#_")) < xsd:integer(STRAFTER(STR(?dosingS), "#_")))
+      # Once for the document, joined to each row by its key; document-table.rq says why.
+      SELECT DISTINCT (?rankedDosing AS ?dosing) ?dosingAt WHERE {
+        {
+          SELECT ?rankedDosing (COUNT(?earlierDosing) AS ?dosingAt) WHERE {
+            ?dosingParent a v3:substanceAdministration ; ?dosingS ?rankedDosing . ?rankedDosing a ?type .
+            FILTER (?type IN (v3:doseQuantity, v3:rateQuantity, v3:maxDoseQuantity, v3:administrationUnitCode, v3:effectiveTime))
+            ?dosingParent ?dosingE ?earlierDosing . ?earlierDosing a ?type .
+            FILTER (xsd:integer(STRAFTER(STR(?dosingE), "#_")) <= xsd:integer(STRAFTER(STR(?dosingS), "#_")))
+          } GROUP BY ?rankedDosing
         }
-      } GROUP BY ?dosing
+      }
     }
     BIND (STRAFTER(STR(?dosingType), "urn:hl7-org:v3") AS ?value)
     BIND (ccda:structuredDosage AS ?gap)
