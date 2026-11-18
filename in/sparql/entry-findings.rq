@@ -45,10 +45,14 @@ WHERE {
   BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
                STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
                STRAFTER(STR(?entrySlot), "#_"), ".") AS ?entrySlots)
-  FILTER NOT EXISTS {
-    ?row ccda:statementAt ?slots .
-    FILTER (STRSTARTS(?slots, ?entrySlots))
+  OPTIONAL {
+    # Once for the document, joined to each row by its key; document-table.rq says why.
+    SELECT DISTINCT (?rowEntrySlots AS ?entrySlots) (true AS ?entryMapped) WHERE {
+      ?row ccda:statementAt ?slots .
+      BIND (REPLACE(?slots, "^([^.]*[.][^.]*[.][^.]*[.][^.]*[.][^.]*[.]).*$", "$1") AS ?rowEntrySlots)
+    }
   }
+  FILTER (!BOUND(?entryMapped))
   OPTIONAL {
     {
       SELECT ?entry (MIN(?claimed) AS ?value) WHERE {
@@ -58,31 +62,45 @@ WHERE {
     }
   }
   {
-    SELECT ?outer (COUNT(?earlierOuter) + 1 AS ?outerAt) WHERE {
-      ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
-      OPTIONAL {
-        ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
-        FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) < xsd:integer(STRAFTER(STR(?outerS), "#_")))
-      }
-    } GROUP BY ?outer
+    # Once for the document, joined to each row by its key; document-table.rq says why.
+    SELECT (?rankedOuter AS ?outer) (COUNT(?earlierOuter) AS ?outerAt) WHERE {
+      ?outerParent a fx:root ; ?outerS ?rankedOuter . ?rankedOuter a v3:component .
+      ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
+      FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) <= xsd:integer(STRAFTER(STR(?outerS), "#_")))
+    } GROUP BY ?rankedOuter
   }
   {
-    SELECT ?component (COUNT(?earlierComponent) + 1 AS ?componentAt) WHERE {
-      ?componentParent ?componentS ?component . ?componentParent a v3:structuredBody . ?component a v3:component .
-      OPTIONAL {
-        ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
-        FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) < xsd:integer(STRAFTER(STR(?componentS), "#_")))
-      }
-    } GROUP BY ?component
+    # Once for the document, joined to each row by its key; document-table.rq says why.
+    SELECT (?rankedComponent AS ?component) (COUNT(?earlierComponent) AS ?componentAt) WHERE {
+      ?componentParent a v3:structuredBody ; ?componentS ?rankedComponent . ?rankedComponent a v3:component .
+      ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
+      FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) <= xsd:integer(STRAFTER(STR(?componentS), "#_")))
+    } GROUP BY ?rankedComponent
   }
   {
-    SELECT ?entry (COUNT(?earlierEntry) + 1 AS ?entryAt) WHERE {
-      ?entryParent ?entryS ?entry . ?entry a v3:entry .
-      OPTIONAL {
-        ?entryParent ?entryE ?earlierEntry . ?earlierEntry a v3:entry .
-        FILTER (xsd:integer(STRAFTER(STR(?entryE), "#_")) < xsd:integer(STRAFTER(STR(?entryS), "#_")))
+    # Once for the document, joined to each row by its key; document-table.rq says why.
+    SELECT DISTINCT (?rankedEntry AS ?entry) ?entryAt WHERE {
+      {
+        SELECT ?rankedEntry (MAX(?rankedSlotAt) + 1 - COUNT(*) AS ?entryAt) WHERE {
+          {
+            SELECT DISTINCT ?entryParent ?otherAt WHERE {
+              { SELECT DISTINCT ?entryParent WHERE { ?anyEntry a v3:entry . ?entryParent ?anySlot ?anyEntry } }
+              { BIND (0 AS ?otherAt) }
+              UNION
+              {
+                ?entryParent ?otherSlot ?other .
+                FILTER (STRSTARTS(STR(?otherSlot), STR(rdf:_)))
+                FILTER NOT EXISTS { ?other a v3:entry }
+                BIND (xsd:integer(STRAFTER(STR(?otherSlot), "#_")) AS ?otherAt)
+              }
+            }
+          }
+          ?entryParent ?rankedSlot ?rankedEntry . ?rankedEntry a v3:entry .
+          BIND (xsd:integer(STRAFTER(STR(?rankedSlot), "#_")) AS ?rankedSlotAt)
+          FILTER (?otherAt < ?rankedSlotAt)
+        } GROUP BY ?rankedEntry
       }
-    } GROUP BY ?entry
+    }
   }
   BIND (CONCAT(
     "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?outerAt), "]",
