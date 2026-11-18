@@ -11,6 +11,7 @@
     <#epic-summarization>
     <#full-summarization>
     <#immunizations-section>
+    <#entries-among-comments-and-stray-text>
     <#labs-section>
     <#narrative-only-section>
     <#custodian-and-author>
@@ -1842,4 +1843,17 @@
   mf:result [
     bridge:expectedGraph <expected/section-text-referenced-in-a-header-row.ttl> ;
     bridge:expectedFindings <findings/section-text-referenced-in-a-header-row.ttl>
+  ] .
+
+<#entries-among-comments-and-stray-text> a bridge:IsomorphicConversionTest ;
+  mf:name "entries-among-comments-and-stray-text" ;
+  rdfs:comment "An Immunizations section whose entries have an XML comment, a blank line, a comment after a blank line, stray text and two comments in a row between them. An entry's position is its place among the entries, so the three immunizations are entries 1, 3 and 4, and the vital sign's entry, which this release makes no record of, is entry 2 in its finding." ;
+  mf:action [
+    bridge:input <in/entries-among-comments-and-stray-text.xml> ;
+    bridge:envelope <../ro-crate-metadata.json#envelope-document> ;
+    bridge:facts <facts/portal-download.ttl>
+  ] ;
+  mf:result [
+    bridge:expectedGraph <expected/entries-among-comments-and-stray-text.ttl> ;
+    bridge:expectedFindings <findings/entries-among-comments-and-stray-text.ttl>
   ] .
