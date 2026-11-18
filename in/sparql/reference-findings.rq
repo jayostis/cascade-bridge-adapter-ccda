@@ -41,6 +41,7 @@ WHERE {
     }
   }
   BIND (REPLACE(?pointer, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?trimmed)
+  # false stands in for a pointer with no anchor: an ID is a string, so the boolean is no ID's, and the join below binds nothing.
   BIND (COALESCE(STRAFTER(?trimmed, "#"), false) AS ?pointedAnchor)
   OPTIONAL {
     # Once for the document, joined to each row by its key; document-table.rq says why.

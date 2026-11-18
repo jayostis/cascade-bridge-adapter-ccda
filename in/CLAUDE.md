@@ -35,3 +35,22 @@ in place of each `?inputN` and the line breaks. A body is pasted from there, nev
   sys.exit(1 if bad else 0)
   EOF
   ```
+
+- Every copy of the entry rank is the same text. SPARQL has no include, and a rank is a subquery of its own in
+  each query for speed, so the copies are compared with whitespace collapsed:
+
+  ```
+  python3 - <<'EOF'
+  import pathlib, re, sys
+
+  start, block = r"SELECT DISTINCT \(\?rankedEntry AS \?entry\)", r".*?GROUP BY \?rankedEntry\s*\}\s*\}"
+  blocks = {}
+  for query in sorted(pathlib.Path("in/sparql").glob("*.rq")):
+      text = query.read_text(encoding="utf-8")
+      found = re.findall(start + block, text, re.S)
+      assert len(found) == len(re.findall(start, text)), f"{query.name}: a rank the check cannot read to its end"
+      blocks.update({f"{query.name} #{n}": " ".join(copy.split()) for n, copy in enumerate(found, 1)})
+  print(f"{len(blocks)} entry ranks, {len(set(blocks.values()))} distinct")
+  sys.exit(0 if len(set(blocks.values())) == 1 else 1)
+  EOF
+  ```
