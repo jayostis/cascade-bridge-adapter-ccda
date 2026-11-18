@@ -81,10 +81,10 @@ WHERE {
     # Once for the document, joined to each row by its key; document-table.rq says why.
     SELECT DISTINCT (?rankedEntry AS ?entry) ?entryAt WHERE {
       {
-        SELECT ?rankedEntry (MAX(?rankedSlotAt) + 1 - COUNT(*) AS ?entryAt) WHERE {
+        SELECT ?rankedEntry (MAX(?rankedEntryAt) + 1 - COUNT(*) AS ?entryAt) WHERE {
           {
             SELECT DISTINCT ?entryParent ?otherAt WHERE {
-              { SELECT DISTINCT ?entryParent WHERE { ?anyEntry a v3:entry . ?entryParent ?anySlot ?anyEntry } }
+              { SELECT DISTINCT ?entryParent WHERE { ?anyEntry a v3:entry . ?entryParent ?anyEntrySlot ?anyEntry } }
               { BIND (0 AS ?otherAt) }
               UNION
               {
@@ -95,9 +95,9 @@ WHERE {
               }
             }
           }
-          ?entryParent ?rankedSlot ?rankedEntry . ?rankedEntry a v3:entry .
-          BIND (xsd:integer(STRAFTER(STR(?rankedSlot), "#_")) AS ?rankedSlotAt)
-          FILTER (?otherAt < ?rankedSlotAt)
+          ?entryParent ?entryS ?rankedEntry . ?rankedEntry a v3:entry .
+          BIND (xsd:integer(STRAFTER(STR(?entryS), "#_")) AS ?rankedEntryAt)
+          FILTER (?otherAt < ?rankedEntryAt)
         } GROUP BY ?rankedEntry
       }
     }

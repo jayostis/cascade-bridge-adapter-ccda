@@ -147,6 +147,7 @@ WHERE {
   ?row ccda:statementAt ?slots ;
     ccda:recordClass ?class .
   BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(?slots))) AS ?version)
+  # "none" stands in for a row that is no observation, so has no organizer: a slot path is digits and dots, so no report row's key is it.
   BIND (IF(?class = "Observation", REPLACE(?slots, "^(.*)[.][^.]*[.][^.]*$", "$1"), "none") AS ?organizerSlots)
   OPTIONAL {
     # Once for the document, joined to each row by its key; document-table.rq says why.

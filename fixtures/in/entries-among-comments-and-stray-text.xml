@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <realmCode code="US"/>
+  <typeId root="2.16.840.1.113883.1.3" extension="POCD_HD000040"/>
+  <templateId root="2.16.840.1.113883.10.20.22.1.1"/>
+  <id root="2.16.840.1.113883.3.88.11.32.1" extension="ENTRIES-AMONG-COMMENTS-001"/>
+  <code code="34133-9" displayName="Summarization of Episode Note" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+  <title>Entries Among Comments and Stray Text</title>
+  <effectiveTime value="20260327120000+0000"/>
+  <confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25"/>
+  <languageCode code="en-US"/>
+  <recordTarget>
+    <patientRole>
+      <id root="2.16.840.1.113883.4.1" extension="000-00-0000"/>
+      <patient>
+        <name use="L"><given>Jane</given><family>Doe</family></name>
+        <administrativeGenderCode code="F" codeSystem="2.16.840.1.113883.5.1"/>
+        <birthTime value="19650101"/>
+      </patient>
+    </patientRole>
+  </recordTarget>
+  <component>
+    <structuredBody>
+      <component>
+        <section>
+          <templateId root="2.16.840.1.113883.10.20.22.2.2.1"/>
+          <code code="11369-6" displayName="History of Immunization Narrative" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+          <title>Immunizations</title>
+          <text>Influenza, seasonal (CVX 140) - 2021, 2022, 2023</text>
+          <!-- a comment before the first entry -->
+          <entry typeCode="DRIV">
+            <substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+              <templateId root="2.16.840.1.113883.10.20.22.4.52"/>
+              <id root="2.16.840.1.113883.3.88.11.32.1" extension="IMMUN-001"/>
+              <statusCode code="completed"/>
+              <effectiveTime value="20211001"/>
+              <consumable>
+                <manufacturedProduct classCode="MANU">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.54"/>
+                  <manufacturedMaterial>
+                    <code code="140" displayName="Influenza, seasonal, injectable, preservative free" codeSystem="2.16.840.1.113883.12.292" codeSystemName="CVX"/>
+                  </manufacturedMaterial>
+                </manufacturedProduct>
+              </consumable>
+            </substanceAdministration>
+          </entry>
+
+          <!-- a comment, then a blank line, between entries -->
+
+          <entry typeCode="DRIV">
+            <observation classCode="OBS" moodCode="EVN">
+              <templateId root="2.16.840.1.113883.10.20.22.4.27"/>
+              <id root="2.16.840.1.113883.3.88.11.32.1" extension="VITAL-001"/>
+              <code code="8310-5" codeSystem="2.16.840.1.113883.6.1"/>
+              <statusCode code="completed"/>
+            </observation>
+          </entry>
+          stray text between entries
+          <entry typeCode="DRIV">
+            <substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+              <templateId root="2.16.840.1.113883.10.20.22.4.52"/>
+              <id root="2.16.840.1.113883.3.88.11.32.1" extension="IMMUN-002"/>
+              <statusCode code="completed"/>
+              <effectiveTime value="20221001"/>
+              <consumable>
+                <manufacturedProduct classCode="MANU">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.54"/>
+                  <manufacturedMaterial>
+                    <code code="140" displayName="Influenza, seasonal, injectable, preservative free" codeSystem="2.16.840.1.113883.12.292" codeSystemName="CVX"/>
+                  </manufacturedMaterial>
+                </manufacturedProduct>
+              </consumable>
+            </substanceAdministration>
+          </entry>
+          <!-- two comments -->
+          <!-- in a row -->
+          <entry typeCode="DRIV">
+            <substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+              <templateId root="2.16.840.1.113883.10.20.22.4.52"/>
+              <id root="2.16.840.1.113883.3.88.11.32.1" extension="IMMUN-003"/>
+              <statusCode code="completed"/>
+              <effectiveTime value="20231001"/>
+              <consumable>
+                <manufacturedProduct classCode="MANU">
+                  <templateId root="2.16.840.1.113883.10.20.22.4.54"/>
+                  <manufacturedMaterial>
+                    <code code="140" displayName="Influenza, seasonal, injectable, preservative free" codeSystem="2.16.840.1.113883.12.292" codeSystemName="CVX"/>
+                  </manufacturedMaterial>
+                </manufacturedProduct>
+              </consumable>
+            </substanceAdministration>
+          </entry>
+        </section>
+      </component>
+    </structuredBody>
+  </component>
+</ClinicalDocument>
