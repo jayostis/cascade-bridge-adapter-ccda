@@ -19,9 +19,11 @@ the layout the README's. Do not re-derive them.
   specification. The lint measures this rather than taking it on trust.
 - **The manifest is the crate.** `ro-crate-metadata.json` is both the adapter's
   manifest and the provenance record for every file and dataset.
-- **No test code lives here; `compatibility.json` names the engines that must
-  pass it, and CI runs those.** Fixtures and how to judge them are declared as
-  data in `fixtures/manifest.ttl`; a Bridge's harness executes them.
+- **No test code lives here; `compatibility.json` names the engines and the
+  runtime that must pass it, and CI runs those.** Fixtures and how to judge them are declared as
+  data in `fixtures/manifest.ttl`; a Bridge's harness executes them. A change to
+  what an adapter writes that a vocabulary kit's saved output no longer matches
+  needs a pull request there that saves it again, named on a `Depends-On:` line.
 - **No copy of the specification.** The `bridge:` vocabulary and its SHACL shapes
   live in `cascade-bridge-spec`. To change one, change it there.
 - **No Cascade terms are minted here.** The terms this adapter writes are
