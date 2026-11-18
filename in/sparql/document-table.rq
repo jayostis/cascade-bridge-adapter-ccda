@@ -51,6 +51,13 @@ PREFIX ccda:   <https://ns.cascadeprotocol.org/adapter/ccda/v1-draft#>
 # Each template test and each set of fields is a subquery joined to the
 # statements, never a FILTER EXISTS or a pattern beside them: an engine may
 # evaluate those once per statement, scanning the whole document each time.
+# A rank and a section's templates are subqueries of the document alone whose
+# key is projected under a name the subquery does not bind itself, so that an
+# engine computes them once and joins each row to them by that key, rather than
+# once per row, walking every sibling of the row's element, or every child of
+# its section, again. An entry's rank is its slot less the slots before it that
+# hold something else, of which a section has few, not a count of the entries
+# before it, which grows with the section.
 #
 # Beside the rows, one triple for each ID a reference nested in a mapped
 # statement points to (ccda:referencedAnchor), and one for each of those a
@@ -118,11 +125,16 @@ WHERE {
           ?act ?relationshipSlot ?relationship . ?relationship a v3:entryRelationship .
           ?relationship ?statementSlot ?statement .
           {
-            SELECT ?relationship (COUNT(?earlierEr) AS ?erAt) WHERE {
-              ?erParent ?erS ?relationship . ?relationship a v3:entryRelationship .
-              ?erParent ?erE ?earlierEr . ?earlierEr a v3:entryRelationship .
-              FILTER (xsd:integer(STRAFTER(STR(?erE), "#_")) <= xsd:integer(STRAFTER(STR(?erS), "#_")))
-            } GROUP BY ?relationship
+            SELECT DISTINCT (?rankedEr AS ?relationship) ?erAt WHERE {
+              {
+                SELECT ?rankedEr (COUNT(?earlierEr) AS ?erAt) WHERE {
+                  ?rankedEr a v3:entryRelationship . ?erParent ?erS ?rankedEr .
+                  ?erParent ?erE ?earlierEr .
+                  FILTER (xsd:integer(STRAFTER(STR(?erE), "#_")) <= xsd:integer(STRAFTER(STR(?erS), "#_")))
+                  ?earlierEr a v3:entryRelationship .
+                } GROUP BY ?rankedEr
+              }
+            }
           }
           BIND (CONCAT(STRAFTER(STR(?relationshipSlot), "#_"), ".", STRAFTER(STR(?statementSlot), "#_")) AS ?innerSlots)
           BIND (CONCAT("/*[local-name()='entryRelationship' and namespace-uri()='urn:hl7-org:v3'][", STR(?erAt), "]") AS ?innerStep)
@@ -153,25 +165,42 @@ WHERE {
         }
         FILTER (?class != "Condition" || BOUND(?inConcern))
         {
-          SELECT ?outer (COUNT(?earlierOuter) AS ?outerAt) WHERE {
-            ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
+          SELECT (?rankedOuter AS ?outer) (COUNT(?earlierOuter) AS ?outerAt) WHERE {
+            ?outerParent a fx:root ; ?outerS ?rankedOuter . ?rankedOuter a v3:component .
             ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
             FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) <= xsd:integer(STRAFTER(STR(?outerS), "#_")))
-          } GROUP BY ?outer
+          } GROUP BY ?rankedOuter
         }
         {
-          SELECT ?component (COUNT(?earlierComponent) AS ?componentAt) WHERE {
-            ?componentParent ?componentS ?component . ?componentParent a v3:structuredBody . ?component a v3:component .
+          SELECT (?rankedComponent AS ?component) (COUNT(?earlierComponent) AS ?componentAt) WHERE {
+            ?componentParent a v3:structuredBody ; ?componentS ?rankedComponent . ?rankedComponent a v3:component .
             ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
             FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) <= xsd:integer(STRAFTER(STR(?componentS), "#_")))
-          } GROUP BY ?component
+          } GROUP BY ?rankedComponent
         }
         {
-          SELECT ?entry (COUNT(?earlierEntry) AS ?entryAt) WHERE {
-            ?entryParent ?entryS ?entry . ?entry a v3:entry .
-            ?entryParent ?entryE ?earlierEntry . ?earlierEntry a v3:entry .
-            FILTER (xsd:integer(STRAFTER(STR(?entryE), "#_")) <= xsd:integer(STRAFTER(STR(?entryS), "#_")))
-          } GROUP BY ?entry
+          SELECT DISTINCT (?rankedEntry AS ?entry) ?entryAt WHERE {
+            {
+              SELECT ?rankedEntry (MAX(?rankedEntryAt) + 1 - COUNT(*) AS ?entryAt) WHERE {
+                {
+                  SELECT DISTINCT ?entryParent ?otherAt WHERE {
+                    { SELECT DISTINCT ?entryParent WHERE { ?anyEntry a v3:entry . ?entryParent ?anyEntrySlot ?anyEntry } }
+                    { BIND (0 AS ?otherAt) }
+                    UNION
+                    {
+                      ?entryParent ?otherSlot ?other .
+                      FILTER (STRSTARTS(STR(?otherSlot), STR(rdf:_)))
+                      FILTER NOT EXISTS { ?other a v3:entry }
+                      BIND (xsd:integer(STRAFTER(STR(?otherSlot), "#_")) AS ?otherAt)
+                    }
+                  }
+                }
+                ?entryParent ?entryS ?rankedEntry . ?rankedEntry a v3:entry .
+                BIND (xsd:integer(STRAFTER(STR(?entryS), "#_")) AS ?rankedEntryAt)
+                FILTER (?otherAt < ?rankedEntryAt)
+              } GROUP BY ?rankedEntry
+            }
+          }
         }
         {
           SELECT ?statement (COUNT(DISTINCT ?earlierObservation) AS ?observationAt) WHERE {
@@ -221,8 +250,8 @@ WHERE {
         # only in either mood a medication can be listed in, and never negated:
         # a medication not taken is no entry on a list of what the person takes.
         OPTIONAL {
-          SELECT DISTINCT ?section (true AS ?medicationsSection) WHERE {
-            ?section ?sectionTemplateSlot ?sectionTemplate .
+          SELECT DISTINCT (?templatedSection AS ?section) (true AS ?medicationsSection) WHERE {
+            ?templatedSection ?sectionTemplateSlot ?sectionTemplate .
             ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot .
             VALUES ?sectionRoot { "2.16.840.1.113883.10.20.22.2.1" "2.16.840.1.113883.10.20.22.2.1.1" }
           }
@@ -232,25 +261,42 @@ WHERE {
           && NOT EXISTS { ?statement xyz:negationInd "true" }
           && BOUND(?medicationsSection)))
         {
-          SELECT ?outer (COUNT(?earlierOuter) AS ?outerAt) WHERE {
-            ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
+          SELECT (?rankedOuter AS ?outer) (COUNT(?earlierOuter) AS ?outerAt) WHERE {
+            ?outerParent a fx:root ; ?outerS ?rankedOuter . ?rankedOuter a v3:component .
             ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
             FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) <= xsd:integer(STRAFTER(STR(?outerS), "#_")))
-          } GROUP BY ?outer
+          } GROUP BY ?rankedOuter
         }
         {
-          SELECT ?component (COUNT(?earlierComponent) AS ?componentAt) WHERE {
-            ?componentParent ?componentS ?component . ?componentParent a v3:structuredBody . ?component a v3:component .
+          SELECT (?rankedComponent AS ?component) (COUNT(?earlierComponent) AS ?componentAt) WHERE {
+            ?componentParent a v3:structuredBody ; ?componentS ?rankedComponent . ?rankedComponent a v3:component .
             ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
             FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) <= xsd:integer(STRAFTER(STR(?componentS), "#_")))
-          } GROUP BY ?component
+          } GROUP BY ?rankedComponent
         }
         {
-          SELECT ?entry (COUNT(?earlierEntry) AS ?entryAt) WHERE {
-            ?entryParent ?entryS ?entry . ?entry a v3:entry .
-            ?entryParent ?entryE ?earlierEntry . ?earlierEntry a v3:entry .
-            FILTER (xsd:integer(STRAFTER(STR(?entryE), "#_")) <= xsd:integer(STRAFTER(STR(?entryS), "#_")))
-          } GROUP BY ?entry
+          SELECT DISTINCT (?rankedEntry AS ?entry) ?entryAt WHERE {
+            {
+              SELECT ?rankedEntry (MAX(?rankedEntryAt) + 1 - COUNT(*) AS ?entryAt) WHERE {
+                {
+                  SELECT DISTINCT ?entryParent ?otherAt WHERE {
+                    { SELECT DISTINCT ?entryParent WHERE { ?anyEntry a v3:entry . ?entryParent ?anyEntrySlot ?anyEntry } }
+                    { BIND (0 AS ?otherAt) }
+                    UNION
+                    {
+                      ?entryParent ?otherSlot ?other .
+                      FILTER (STRSTARTS(STR(?otherSlot), STR(rdf:_)))
+                      FILTER NOT EXISTS { ?other a v3:entry }
+                      BIND (xsd:integer(STRAFTER(STR(?otherSlot), "#_")) AS ?otherAt)
+                    }
+                  }
+                }
+                ?entryParent ?entryS ?rankedEntry . ?rankedEntry a v3:entry .
+                BIND (xsd:integer(STRAFTER(STR(?entryS), "#_")) AS ?rankedEntryAt)
+                FILTER (?otherAt < ?rankedEntryAt)
+              } GROUP BY ?rankedEntry
+            }
+          }
         }
         BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
                      STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
@@ -288,39 +334,60 @@ WHERE {
           }
         }
         {
-          SELECT DISTINCT ?section WHERE {
-            ?section ?sectionTemplateSlot ?sectionTemplate .
+          SELECT DISTINCT (?templatedSection AS ?section) WHERE {
+            ?templatedSection ?sectionTemplateSlot ?sectionTemplate .
             ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot .
             VALUES ?sectionRoot { "2.16.840.1.113883.10.20.22.2.3" "2.16.840.1.113883.10.20.22.2.3.1" }
           }
         }
         {
-          SELECT ?outer (COUNT(?earlierOuter) AS ?outerAt) WHERE {
-            ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
+          SELECT (?rankedOuter AS ?outer) (COUNT(?earlierOuter) AS ?outerAt) WHERE {
+            ?outerParent a fx:root ; ?outerS ?rankedOuter . ?rankedOuter a v3:component .
             ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
             FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) <= xsd:integer(STRAFTER(STR(?outerS), "#_")))
-          } GROUP BY ?outer
+          } GROUP BY ?rankedOuter
         }
         {
-          SELECT ?component (COUNT(?earlierComponent) AS ?componentAt) WHERE {
-            ?componentParent ?componentS ?component . ?componentParent a v3:structuredBody . ?component a v3:component .
+          SELECT (?rankedComponent AS ?component) (COUNT(?earlierComponent) AS ?componentAt) WHERE {
+            ?componentParent a v3:structuredBody ; ?componentS ?rankedComponent . ?rankedComponent a v3:component .
             ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
             FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) <= xsd:integer(STRAFTER(STR(?componentS), "#_")))
-          } GROUP BY ?component
+          } GROUP BY ?rankedComponent
         }
         {
-          SELECT ?entry (COUNT(?earlierEntry) AS ?entryAt) WHERE {
-            ?entryParent ?entryS ?entry . ?entry a v3:entry .
-            ?entryParent ?entryE ?earlierEntry . ?earlierEntry a v3:entry .
-            FILTER (xsd:integer(STRAFTER(STR(?entryE), "#_")) <= xsd:integer(STRAFTER(STR(?entryS), "#_")))
-          } GROUP BY ?entry
+          SELECT DISTINCT (?rankedEntry AS ?entry) ?entryAt WHERE {
+            {
+              SELECT ?rankedEntry (MAX(?rankedEntryAt) + 1 - COUNT(*) AS ?entryAt) WHERE {
+                {
+                  SELECT DISTINCT ?entryParent ?otherAt WHERE {
+                    { SELECT DISTINCT ?entryParent WHERE { ?anyEntry a v3:entry . ?entryParent ?anyEntrySlot ?anyEntry } }
+                    { BIND (0 AS ?otherAt) }
+                    UNION
+                    {
+                      ?entryParent ?otherSlot ?other .
+                      FILTER (STRSTARTS(STR(?otherSlot), STR(rdf:_)))
+                      FILTER NOT EXISTS { ?other a v3:entry }
+                      BIND (xsd:integer(STRAFTER(STR(?otherSlot), "#_")) AS ?otherAt)
+                    }
+                  }
+                }
+                ?entryParent ?entryS ?rankedEntry . ?rankedEntry a v3:entry .
+                BIND (xsd:integer(STRAFTER(STR(?entryS), "#_")) AS ?rankedEntryAt)
+                FILTER (?otherAt < ?rankedEntryAt)
+              } GROUP BY ?rankedEntry
+            }
+          }
         }
         {
-          SELECT ?member (COUNT(?earlierMember) AS ?memberAt) WHERE {
-            ?memberParent ?memberS ?member . ?memberParent a v3:organizer . ?member a v3:component .
-            ?memberParent ?memberE ?earlierMember . ?earlierMember a v3:component .
-            FILTER (xsd:integer(STRAFTER(STR(?memberE), "#_")) <= xsd:integer(STRAFTER(STR(?memberS), "#_")))
-          } GROUP BY ?member
+          SELECT DISTINCT (?rankedMember AS ?member) ?memberAt WHERE {
+            {
+              SELECT ?rankedMember (COUNT(?earlierMember) AS ?memberAt) WHERE {
+                ?memberParent a v3:organizer ; ?memberS ?rankedMember . ?rankedMember a v3:component .
+                ?memberParent ?memberE ?earlierMember . ?earlierMember a v3:component .
+                FILTER (xsd:integer(STRAFTER(STR(?memberE), "#_")) <= xsd:integer(STRAFTER(STR(?memberS), "#_")))
+              } GROUP BY ?rankedMember
+            }
+          }
         }
         BIND ("Observation" AS ?class)
         BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
@@ -354,32 +421,49 @@ WHERE {
           }
         }
         {
-          SELECT DISTINCT ?section WHERE {
-            ?section ?sectionTemplateSlot ?sectionTemplate .
+          SELECT DISTINCT (?templatedSection AS ?section) WHERE {
+            ?templatedSection ?sectionTemplateSlot ?sectionTemplate .
             ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot .
             VALUES ?sectionRoot { "2.16.840.1.113883.10.20.22.2.3" "2.16.840.1.113883.10.20.22.2.3.1" }
           }
         }
         {
-          SELECT ?outer (COUNT(?earlierOuter) AS ?outerAt) WHERE {
-            ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
+          SELECT (?rankedOuter AS ?outer) (COUNT(?earlierOuter) AS ?outerAt) WHERE {
+            ?outerParent a fx:root ; ?outerS ?rankedOuter . ?rankedOuter a v3:component .
             ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
             FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) <= xsd:integer(STRAFTER(STR(?outerS), "#_")))
-          } GROUP BY ?outer
+          } GROUP BY ?rankedOuter
         }
         {
-          SELECT ?component (COUNT(?earlierComponent) AS ?componentAt) WHERE {
-            ?componentParent ?componentS ?component . ?componentParent a v3:structuredBody . ?component a v3:component .
+          SELECT (?rankedComponent AS ?component) (COUNT(?earlierComponent) AS ?componentAt) WHERE {
+            ?componentParent a v3:structuredBody ; ?componentS ?rankedComponent . ?rankedComponent a v3:component .
             ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
             FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) <= xsd:integer(STRAFTER(STR(?componentS), "#_")))
-          } GROUP BY ?component
+          } GROUP BY ?rankedComponent
         }
         {
-          SELECT ?entry (COUNT(?earlierEntry) AS ?entryAt) WHERE {
-            ?entryParent ?entryS ?entry . ?entry a v3:entry .
-            ?entryParent ?entryE ?earlierEntry . ?earlierEntry a v3:entry .
-            FILTER (xsd:integer(STRAFTER(STR(?entryE), "#_")) <= xsd:integer(STRAFTER(STR(?entryS), "#_")))
-          } GROUP BY ?entry
+          SELECT DISTINCT (?rankedEntry AS ?entry) ?entryAt WHERE {
+            {
+              SELECT ?rankedEntry (MAX(?rankedEntryAt) + 1 - COUNT(*) AS ?entryAt) WHERE {
+                {
+                  SELECT DISTINCT ?entryParent ?otherAt WHERE {
+                    { SELECT DISTINCT ?entryParent WHERE { ?anyEntry a v3:entry . ?entryParent ?anyEntrySlot ?anyEntry } }
+                    { BIND (0 AS ?otherAt) }
+                    UNION
+                    {
+                      ?entryParent ?otherSlot ?other .
+                      FILTER (STRSTARTS(STR(?otherSlot), STR(rdf:_)))
+                      FILTER NOT EXISTS { ?other a v3:entry }
+                      BIND (xsd:integer(STRAFTER(STR(?otherSlot), "#_")) AS ?otherAt)
+                    }
+                  }
+                }
+                ?entryParent ?entryS ?rankedEntry . ?rankedEntry a v3:entry .
+                BIND (xsd:integer(STRAFTER(STR(?entryS), "#_")) AS ?rankedEntryAt)
+                FILTER (?otherAt < ?rankedEntryAt)
+              } GROUP BY ?rankedEntry
+            }
+          }
         }
         BIND ("DiagnosticReport" AS ?class)
         BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
@@ -399,11 +483,11 @@ WHERE {
         ?root ?outerSlot ?outer . ?outer a v3:component .
         ?outer ?bodySlot ?statement . ?statement a v3:nonXMLBody .
         {
-          SELECT ?outer (COUNT(?earlierOuter) AS ?outerAt) WHERE {
-            ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
+          SELECT (?rankedOuter AS ?outer) (COUNT(?earlierOuter) AS ?outerAt) WHERE {
+            ?outerParent a fx:root ; ?outerS ?rankedOuter . ?rankedOuter a v3:component .
             ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
             FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) <= xsd:integer(STRAFTER(STR(?outerS), "#_")))
-          } GROUP BY ?outer
+          } GROUP BY ?rankedOuter
         }
         BIND ("DocumentReference" AS ?class)
         BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_")) AS ?slots)
@@ -424,18 +508,18 @@ WHERE {
         FILTER NOT EXISTS { ?statement xyz:nullFlavor ?sectionNullFlavor }
         BIND (true AS ?noteSection)
         {
-          SELECT ?outer (COUNT(?earlierOuter) AS ?outerAt) WHERE {
-            ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
+          SELECT (?rankedOuter AS ?outer) (COUNT(?earlierOuter) AS ?outerAt) WHERE {
+            ?outerParent a fx:root ; ?outerS ?rankedOuter . ?rankedOuter a v3:component .
             ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
             FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) <= xsd:integer(STRAFTER(STR(?outerS), "#_")))
-          } GROUP BY ?outer
+          } GROUP BY ?rankedOuter
         }
         {
-          SELECT ?component (COUNT(?earlierComponent) AS ?componentAt) WHERE {
-            ?componentParent ?componentS ?component . ?componentParent a v3:structuredBody . ?component a v3:component .
+          SELECT (?rankedComponent AS ?component) (COUNT(?earlierComponent) AS ?componentAt) WHERE {
+            ?componentParent a v3:structuredBody ; ?componentS ?rankedComponent . ?rankedComponent a v3:component .
             ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
             FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) <= xsd:integer(STRAFTER(STR(?componentS), "#_")))
-          } GROUP BY ?component
+          } GROUP BY ?rankedComponent
         }
         BIND ("DocumentReference" AS ?class)
         BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
@@ -855,8 +939,9 @@ WHERE {
                                         }
                                         UNION
                                         {
-                                          ?section a v3:section ; ?entrySlot ?entry . ?section ?sectionTemplateSlot ?sectionTemplate . ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot .
                                           ?entry ?statementSlot ?mapped . ?mapped a ?element ; ?templateSlot ?template . ?template a v3:templateId ; xyz:root ?root .
+                                          ?section ?entrySlot ?entry .
+                                          { SELECT DISTINCT (?templatedSection AS ?section) ?sectionRoot WHERE { ?templatedSection a v3:section ; ?sectionTemplateSlot ?sectionTemplate . ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot } }
                                           VALUES (?sectionRoot ?root ?element) {
                                             ("2.16.840.1.113883.10.20.22.2.1" "2.16.840.1.113883.10.20.22.4.16" v3:substanceAdministration)
                                             ("2.16.840.1.113883.10.20.22.2.1.1" "2.16.840.1.113883.10.20.22.4.16" v3:substanceAdministration)
@@ -904,8 +989,9 @@ WHERE {
                                         }
                                         UNION
                                         {
-                                          ?section a v3:section ; ?entrySlot ?entry . ?section ?sectionTemplateSlot ?sectionTemplate . ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot .
                                           ?entry ?statementSlot ?mapped . ?mapped a ?element ; ?templateSlot ?template . ?template a v3:templateId ; xyz:root ?root .
+                                          ?section ?entrySlot ?entry .
+                                          { SELECT DISTINCT (?templatedSection AS ?section) ?sectionRoot WHERE { ?templatedSection a v3:section ; ?sectionTemplateSlot ?sectionTemplate . ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot } }
                                           VALUES (?sectionRoot ?root ?element) {
                                             ("2.16.840.1.113883.10.20.22.2.1" "2.16.840.1.113883.10.20.22.4.16" v3:substanceAdministration)
                                             ("2.16.840.1.113883.10.20.22.2.1.1" "2.16.840.1.113883.10.20.22.4.16" v3:substanceAdministration)
@@ -958,8 +1044,9 @@ WHERE {
                                             }
                                             UNION
                                             {
-                                              ?section a v3:section ; ?entrySlot ?entry . ?section ?sectionTemplateSlot ?sectionTemplate . ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot .
                                               ?entry ?statementSlot ?mapped . ?mapped a ?element ; ?templateSlot ?template . ?template a v3:templateId ; xyz:root ?root .
+                                              ?section ?entrySlot ?entry .
+                                              { SELECT DISTINCT (?templatedSection AS ?section) ?sectionRoot WHERE { ?templatedSection a v3:section ; ?sectionTemplateSlot ?sectionTemplate . ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot } }
                                               VALUES (?sectionRoot ?root ?element) {
                                                 ("2.16.840.1.113883.10.20.22.2.1" "2.16.840.1.113883.10.20.22.4.16" v3:substanceAdministration)
                                                 ("2.16.840.1.113883.10.20.22.2.1.1" "2.16.840.1.113883.10.20.22.4.16" v3:substanceAdministration)
@@ -1064,7 +1151,9 @@ WHERE {
                 }
               }
             }
-            ?statement (!rdf:type)* ?node .
+            # The walk leaves out the text properties, whose values are text, no
+            # node, and the whole of the text under the element they are on.
+            ?statement (!(rdf:type|dom:textcontent|bridge:textWithElementBreaks|bridge:textDecodedFromBase64))* ?node .
             ?node a ?nodeType ; ?predicate ?held .
             FILTER (isLiteral(?held) && ?predicate != xyz:ID)
             FILTER (?predicate NOT IN (dom:textcontent, bridge:textWithElementBreaks, bridge:textDecodedFromBase64))
@@ -1115,8 +1204,9 @@ WHERE {
           }
           UNION
           {
-            ?section a v3:section ; ?entrySlot ?entry . ?section ?sectionTemplateSlot ?sectionTemplate . ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot .
             ?entry ?statementSlot ?mapped . ?mapped a ?element ; ?templateSlot ?template . ?template a v3:templateId ; xyz:root ?templateRoot .
+            ?section ?entrySlot ?entry .
+            { SELECT DISTINCT (?templatedSection AS ?section) ?sectionRoot WHERE { ?templatedSection a v3:section ; ?sectionTemplateSlot ?sectionTemplate . ?sectionTemplate a v3:templateId ; xyz:root ?sectionRoot } }
             VALUES (?sectionRoot ?templateRoot ?element) {
               ("2.16.840.1.113883.10.20.22.2.1" "2.16.840.1.113883.10.20.22.4.16" v3:substanceAdministration)
               ("2.16.840.1.113883.10.20.22.2.1.1" "2.16.840.1.113883.10.20.22.4.16" v3:substanceAdministration)
@@ -1203,19 +1293,23 @@ WHERE {
             ?result ?firstValueSlot ?firstValue . ?firstValue a v3:value ; xsi:type ?written ; ?firstValueTextSlot ?firstValueText .
             ?firstValueText a v3:originalText ; ?firstValueReferenceSlot ?reference .
             FILTER (REPLACE(?written, "^.*:", "") IN ("CD", "CE", "CV", "CO"))
-            FILTER NOT EXISTS {
-              ?result ?earlierValueSlot ?earlierValue . ?earlierValue a v3:value .
-              FILTER (xsd:integer(STRAFTER(STR(?earlierValueSlot), "#_")) < xsd:integer(STRAFTER(STR(?firstValueSlot), "#_")))
+            {
+              SELECT ?result (MIN(xsd:integer(STRAFTER(STR(?valueSlot), "#_"))) AS ?firstValueAt) WHERE {
+                ?result ?valueSlot ?value . ?value a v3:value .
+              } GROUP BY ?result
             }
+            FILTER (xsd:integer(STRAFTER(STR(?firstValueSlot), "#_")) = ?firstValueAt)
           }
           UNION
           {
             ?result ?firstRangeSlot ?firstRange . ?firstRange a v3:referenceRange ; ?observationRangeSlot ?observationRange .
             ?observationRange a v3:observationRange ; ?rangeTextSlot ?rangeText . ?rangeText a v3:text ; ?rangeReferenceSlot ?reference .
-            FILTER NOT EXISTS {
-              ?result ?earlierRangeSlot ?earlierRange . ?earlierRange a v3:referenceRange .
-              FILTER (xsd:integer(STRAFTER(STR(?earlierRangeSlot), "#_")) < xsd:integer(STRAFTER(STR(?firstRangeSlot), "#_")))
+            {
+              SELECT ?result (MIN(xsd:integer(STRAFTER(STR(?rangeSlot), "#_"))) AS ?firstRangeAt) WHERE {
+                ?result ?rangeSlot ?range . ?range a v3:referenceRange .
+              } GROUP BY ?result
             }
+            FILTER (xsd:integer(STRAFTER(STR(?firstRangeSlot), "#_")) = ?firstRangeAt)
           }
         }
         BIND ("read" AS ?kind)
