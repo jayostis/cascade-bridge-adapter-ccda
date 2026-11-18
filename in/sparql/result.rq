@@ -74,7 +74,9 @@ WHERE {
                STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
                STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?organizerSlot), "#_"), ".",
                STRAFTER(STR(?memberSlot), "#_"), ".", STRAFTER(STR(?statementSlot), "#_")) AS ?slots)
-  ?row ccda:statementAt ?slots ; ccda:recordClass "Observation" .
+  ?row ccda:statementAt ?slots .
+  # The row at these slots, and then its class: the class first is every row of it.
+  { SELECT ?row WHERE { ?row ccda:recordClass "Observation" } }
   BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(?slots))) AS ?version)
 
   {

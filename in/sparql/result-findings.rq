@@ -192,13 +192,16 @@ WHERE {
       }
     }
     {
-      SELECT ?member (COUNT(?earlierMember) + 1 AS ?memberAt) WHERE {
-        ?memberParent ?memberS ?member . ?memberParent a v3:organizer . ?member a v3:component .
-        OPTIONAL {
-          ?memberParent ?memberE ?earlierMember . ?earlierMember a v3:component .
-          FILTER (xsd:integer(STRAFTER(STR(?memberE), "#_")) < xsd:integer(STRAFTER(STR(?memberS), "#_")))
+      # Once for the document, joined to each row by its key; document-table.rq says why.
+      SELECT DISTINCT (?rankedMember AS ?member) ?memberAt WHERE {
+        {
+          SELECT ?rankedMember (COUNT(?earlierMember) AS ?memberAt) WHERE {
+            ?memberParent a v3:organizer ; ?memberS ?rankedMember . ?rankedMember a v3:component .
+            ?memberParent ?memberE ?earlierMember . ?earlierMember a v3:component .
+            FILTER (xsd:integer(STRAFTER(STR(?memberE), "#_")) <= xsd:integer(STRAFTER(STR(?memberS), "#_")))
+          } GROUP BY ?rankedMember
         }
-      } GROUP BY ?member
+      }
     }
     OPTIONAL {
       {
@@ -212,12 +215,18 @@ WHERE {
     BIND (CONCAT(?organizerAt, "/*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?memberAt), "]") AS ?componentRefinement)
   }
   BIND (COALESCE(CONCAT(?memberSlots, ?statementAt), ?gap) AS ?slots)
-  OPTIONAL { ?row ccda:recordClass "Observation" ; ccda:statementAt ?slots ; ccda:refinement ?rowRefinement }
+  OPTIONAL {
+    ?row ccda:statementAt ?slots .
+    # The row at these slots, and then its class: the class first is every row of it.
+    { SELECT ?row ?rowRefinement WHERE { ?row ccda:recordClass "Observation" ; ccda:refinement ?rowRefinement } }
+  }
   BIND (COALESCE(?rowRefinement, ?componentRefinement) AS ?refinement)
-  FILTER (IF(?gap = ccda:resultComponentNotMapped,
-             NOT EXISTS {
-               ?own ccda:statementAt ?ownSlots .
-               FILTER (STRSTARTS(?ownSlots, ?memberSlots))
-             },
-             BOUND(?row)))
+  OPTIONAL {
+    # Once for the document, joined to each row by its key; document-table.rq says why.
+    SELECT DISTINCT (?ownMemberSlots AS ?memberSlots) (true AS ?memberHoldsRow) WHERE {
+      ?own ccda:statementAt ?ownSlots .
+      BIND (REPLACE(?ownSlots, "^([^.]*[.][^.]*[.][^.]*[.][^.]*[.][^.]*[.][^.]*[.][^.]*[.]).*$", "$1") AS ?ownMemberSlots)
+    }
+  }
+  FILTER (IF(?gap = ccda:resultComponentNotMapped, !BOUND(?memberHoldsRow), BOUND(?row)))
 }

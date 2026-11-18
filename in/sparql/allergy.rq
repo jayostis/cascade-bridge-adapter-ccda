@@ -146,12 +146,16 @@ WHERE {
         }
         UNION
         {
+          # The concern is found from the allergy, not among every act.
+          { ?concern ?cnS ?allergy }
+          UNION
+          {
+            ?concernRelationship ?cnrS ?allergy . ?concern ?cnS ?concernRelationship .
+            { SELECT ?concernRelationship WHERE { ?concernRelationship a v3:entryRelationship } }
+          }
           ?concern a v3:act ; ?cnTS ?concernTemplate ; ?cnSS ?concernStatus .
           ?concernTemplate a v3:templateId ; xyz:root "2.16.840.1.113883.10.20.22.4.30" .
           ?concernStatus a v3:statusCode ; xyz:code ?code .
-          { ?concern ?cnS ?allergy }
-          UNION
-          { ?concern ?cnS ?concernRelationship . ?concernRelationship a v3:entryRelationship ; ?cnrS ?allergy }
           ?concept skos:inScheme ccda:allergyConcernStatuses ; skos:notation ?key ; skos:exactMatch|skos:broadMatch ?match .
           ?match skos:notation ?value .
           FILTER (?key = LCASE(REPLACE(?code, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "")))

@@ -41,26 +41,29 @@ WHERE {
     }
   }
   BIND (REPLACE(?pointer, "^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "") AS ?trimmed)
+  BIND (COALESCE(STRAFTER(?trimmed, "#"), false) AS ?pointedAnchor)
   OPTIONAL {
-    {
-      SELECT ?anchor (COUNT(DISTINCT ?holder) AS ?holders) (COUNT(?text) AS ?texts) WHERE {
-        ?holder xyz:ID ?anchor .
-        OPTIONAL {
-          ?holder bridge:textWithElementBreaks ?text .
-          FILTER (REGEX(?text, "[^\\p{Z}\\p{Cc}\\p{Cf}]"))
-        }
-      } GROUP BY ?anchor
+    # Once for the document, joined to each row by its key; document-table.rq says why.
+    SELECT DISTINCT (?anchor AS ?pointedAnchor) ?holders ?texts WHERE {
+      {
+        SELECT ?anchor (COUNT(DISTINCT ?holder) AS ?holders) (COUNT(?text) AS ?texts) WHERE {
+          ?holder xyz:ID ?anchor .
+          OPTIONAL {
+            ?holder bridge:textWithElementBreaks ?text .
+            FILTER (REGEX(?text, "[^\\p{Z}\\p{Cc}\\p{Cf}]"))
+          }
+        } GROUP BY ?anchor
+      }
     }
-    FILTER (?anchor = STRAFTER(?trimmed, "#"))
   }
   FILTER (!(STRSTARTS(?trimmed, "#") && STRLEN(?trimmed) > 1 && COALESCE(?holders, 0) = 1 && COALESCE(?texts, 0) = 1))
   {
-    SELECT ?prefix (SAMPLE(?refinement) AS ?anyRefinement) WHERE {
+    SELECT ?prefix (MIN(?rowEntryRefinement) AS ?entryRefinement) WHERE {
       ?row ccda:statementAt ?slots ; ccda:refinement ?refinement .
       BIND (REPLACE(?slots, "^(([0-9]+\\.){5}).*$", "$1") AS ?prefix)
+      BIND ("/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][" AS ?entryStep)
+      BIND (CONCAT(STRBEFORE(?refinement, ?entryStep), ?entryStep,
+                   STRBEFORE(STRAFTER(?refinement, ?entryStep), "]"), "]") AS ?rowEntryRefinement)
     } GROUP BY ?prefix
   }
-  BIND ("/*[local-name()='entry' and namespace-uri()='urn:hl7-org:v3'][" AS ?entryStep)
-  BIND (CONCAT(STRBEFORE(?anyRefinement, ?entryStep), ?entryStep,
-               STRBEFORE(STRAFTER(?anyRefinement, ?entryStep), "]"), "]") AS ?entryRefinement)
 }

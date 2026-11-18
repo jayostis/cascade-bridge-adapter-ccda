@@ -101,7 +101,7 @@ WHERE {
         FILTER (?patients = 1 && BOUND(?patientRoot))
       }
       BIND (BOUND(?identifier) && EXISTS {
-              ?other ccda:identifierRoot ?identifierRoot ; ccda:identifierExtension ?identifierExtension ;
+              ?other ccda:identifier ?identifier ; ccda:identifierRoot ?identifierRoot ; ccda:identifierExtension ?identifierExtension ;
                 ccda:recordClass ?otherClass .
               OPTIONAL { ?other ccda:keyFingerprint ?otherKey }
               OPTIONAL { ?other ccda:membersFingerprint ?otherMembers }
@@ -147,10 +147,13 @@ WHERE {
   ?row ccda:statementAt ?slots ;
     ccda:recordClass ?class .
   BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(?slots))) AS ?version)
+  BIND (IF(?class = "Observation", REPLACE(?slots, "^(.*)[.][^.]*[.][^.]*$", "$1"), "none") AS ?organizerSlots)
   OPTIONAL {
-    ?reportRow ccda:recordClass "DiagnosticReport" ; ccda:statementAt ?reportSlots .
-    FILTER (?class = "Observation" && STRSTARTS(?slots, CONCAT(?reportSlots, ".")))
-    BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(?reportSlots))) AS ?reportVersion)
+    # Once for the document, joined to each row by its key; document-table.rq says why.
+    SELECT DISTINCT (?reportSlots AS ?organizerSlots) ?reportVersion WHERE {
+      ?reportRow ccda:recordClass "DiagnosticReport" ; ccda:statementAt ?reportSlots .
+      BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(?reportSlots))) AS ?reportVersion)
+    }
   }
   BIND (IF(!?scoped || !BOUND(?identifier), 1/0,
         IF(?identifierExtension != "",
@@ -203,7 +206,7 @@ WHERE {
           BIND (IF(?custodianType = "urn:ietf:rfc:3986", "", ?custodianValue) AS ?custodianExtension)
         }
         BIND (BOUND(?identifier) && EXISTS {
-                ?other ccda:identifierRoot ?identifierRoot ; ccda:identifierExtension ?identifierExtension ;
+                ?other ccda:identifier ?identifier ; ccda:identifierRoot ?identifierRoot ; ccda:identifierExtension ?identifierExtension ;
                   ccda:recordClass ?otherClass .
                 OPTIONAL { ?other ccda:keyFingerprint ?otherKey }
                 OPTIONAL { ?other ccda:membersFingerprint ?otherMembers }

@@ -54,7 +54,9 @@ WHERE {
   BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
                STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".",
                STRAFTER(STR(?entrySlot), "#_"), ".", STRAFTER(STR(?statementSlot), "#_")) AS ?slots)
-  ?row ccda:statementAt ?slots ; ccda:recordClass "MedicationRequest" .
+  ?row ccda:statementAt ?slots .
+  # The row at these slots, and then its class: the class first is every row of it.
+  { SELECT ?row WHERE { ?row ccda:recordClass "MedicationRequest" } }
   BIND (IRI(CONCAT("urn:cascade:version-at:", SHA256(?slots))) AS ?version)
 
   {

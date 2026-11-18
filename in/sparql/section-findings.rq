@@ -41,29 +41,32 @@ WHERE {
       "2.16.840.1.113883.10.20.22.2.3" "2.16.840.1.113883.10.20.22.2.3.1"
     }
   }
-  FILTER NOT EXISTS {
-    ?row ccda:statementAt ?rowSlots .
-    FILTER (STRSTARTS(CONCAT(?rowSlots, "."), CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
-                                         STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".")))
+  BIND (CONCAT(STRAFTER(STR(?outerSlot), "#_"), ".", STRAFTER(STR(?bodySlot), "#_"), ".",
+               STRAFTER(STR(?componentSlot), "#_"), ".", STRAFTER(STR(?sectionSlot), "#_"), ".") AS ?sectionSlots)
+  OPTIONAL {
+    # Once for the document, joined to each row by its key; document-table.rq says why.
+    SELECT DISTINCT (?rowSectionSlots AS ?sectionSlots) (true AS ?sectionHoldsRow) WHERE {
+      ?row ccda:statementAt ?rowSlots .
+      BIND (REPLACE(CONCAT(?rowSlots, "."), "^([^.]*[.][^.]*[.][^.]*[.][^.]*[.]).*$", "$1") AS ?rowSectionSlots)
+    }
   }
+  FILTER (!BOUND(?sectionHoldsRow))
   OPTIONAL { ?section ?codeSlot ?code . ?code a v3:code ; xyz:code ?value }
   {
-    SELECT ?outer (COUNT(?earlierOuter) + 1 AS ?outerAt) WHERE {
-      ?outerParent ?outerS ?outer . ?outer a v3:component . ?outerParent a fx:root .
-      OPTIONAL {
-        ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
-        FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) < xsd:integer(STRAFTER(STR(?outerS), "#_")))
-      }
-    } GROUP BY ?outer
+    # Once for the document, joined to each row by its key; document-table.rq says why.
+    SELECT (?rankedOuter AS ?outer) (COUNT(?earlierOuter) AS ?outerAt) WHERE {
+      ?outerParent a fx:root ; ?outerS ?rankedOuter . ?rankedOuter a v3:component .
+      ?outerParent ?outerE ?earlierOuter . ?earlierOuter a v3:component .
+      FILTER (xsd:integer(STRAFTER(STR(?outerE), "#_")) <= xsd:integer(STRAFTER(STR(?outerS), "#_")))
+    } GROUP BY ?rankedOuter
   }
   {
-    SELECT ?component (COUNT(?earlierComponent) + 1 AS ?componentAt) WHERE {
-      ?componentParent ?componentS ?component . ?componentParent a v3:structuredBody . ?component a v3:component .
-      OPTIONAL {
-        ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
-        FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) < xsd:integer(STRAFTER(STR(?componentS), "#_")))
-      }
-    } GROUP BY ?component
+    # Once for the document, joined to each row by its key; document-table.rq says why.
+    SELECT (?rankedComponent AS ?component) (COUNT(?earlierComponent) AS ?componentAt) WHERE {
+      ?componentParent a v3:structuredBody ; ?componentS ?rankedComponent . ?rankedComponent a v3:component .
+      ?componentParent ?componentE ?earlierComponent . ?earlierComponent a v3:component .
+      FILTER (xsd:integer(STRAFTER(STR(?componentE), "#_")) <= xsd:integer(STRAFTER(STR(?componentS), "#_")))
+    } GROUP BY ?rankedComponent
   }
   BIND (CONCAT(
     "*[local-name()='component' and namespace-uri()='urn:hl7-org:v3'][", STR(?outerAt), "]",
