@@ -20,3 +20,6 @@ because its dependency failed counts as passing.
 The `adapter` job lints the package, then runs each engine `compatibility.json`
 names on it and judges the report. Executing the fixtures stays a Bridge's job:
 nothing here runs a mapping or compares a graph.
+
+`perf.yml` has no logic either: it calls the specification's `perf` action. Its `perf-data` job is
+the only one that holds `contents: write`, and it writes only to the `perf-data` branch.
