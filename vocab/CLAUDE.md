@@ -6,7 +6,7 @@ prefix `ccda:`. No Cascade term is minted here.
 ## A lookup table is a concept map, and its rows are transcribed
 
 The form a `skos:notation` key is written in is
-[`shapes/concept-map.shapes.ttl`](https://github.com/jayostis/cascade-bridge-spec/blob/main/shapes/concept-map.shapes.ttl)'s
+[`shapes/concept-map.shapes.ttl`](https://github.com/the-cascade-protocol/cascade-bridge-spec/blob/main/shapes/concept-map.shapes.ttl)'s
 to say, and a failing run prints it.
 
 - A row leads to the FHIR code as a node holding the code as its

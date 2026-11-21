@@ -18,5 +18,5 @@ git -C <a clone of HL7/CDA-core-2.0> show <commit>:schema/extensions/SDTC/<path>
 ```
 
 A Bridge validates a `ts` against only part of its pattern
-([jayostis/cascade-bridge-rs#75](https://github.com/jayostis/cascade-bridge-rs/issues/75)),
+([the-cascade-protocol/cascade-bridge-rs#75](https://github.com/the-cascade-protocol/cascade-bridge-rs/issues/75)),
 so a malformed timestamp may pass in a Bridge and fail in the lint.
