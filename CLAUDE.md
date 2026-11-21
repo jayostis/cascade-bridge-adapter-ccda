@@ -5,10 +5,10 @@ Bridge** runs to turn a C-CDA `ClinicalDocument` into Cascade records.
 Import-only. Its mapping is SPARQL queries in `in/sparql/`, which a Bridge runs
 over the whole document, the one source record a C-CDA is.
 
-The contract is the **Cascade Bridge Specification**, [cascade-bridge-spec](https://github.com/jayostis/cascade-bridge-spec).
+The contract is the **Cascade Bridge Specification**, [cascade-bridge-spec](https://github.com/the-cascade-protocol/cascade-bridge-spec).
 Dependencies point one way: an adapter knows about the specification, and the
 specification knows nothing about any adapter. The scope of the first release is
-[issue #1](https://github.com/jayostis/cascade-bridge-adapter-ccda/issues/1),
+[issue #1](https://github.com/the-cascade-protocol/cascade-bridge-adapter-ccda/issues/1),
 the layout the README's. Do not re-derive them.
 
 ## The rules
@@ -27,7 +27,7 @@ the layout the README's. Do not re-derive them.
 - **No copy of the specification.** The `bridge:` vocabulary and its SHACL shapes
   live in `cascade-bridge-spec`. To change one, change it there.
 - **No Cascade terms are minted here.** The terms this adapter writes are
-  [cascade-vocabulary](https://github.com/jayostis/cascade-vocabulary)'s, the
+  [cascade-vocabulary](https://github.com/the-cascade-protocol/cascade-vocabulary)'s, the
   repository the crate's `bridge:cascadeVocabularyRepository` names. A value with no term
   there goes in the adapter's own namespace (`vocab/`) or is reported as a
   finding; a missing term is added in that repository.

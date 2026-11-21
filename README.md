@@ -1,22 +1,22 @@
 # cascade-bridge-adapter-ccda
 
-[![compatibility](https://github.com/jayostis/cascade-bridge-adapter-ccda/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/jayostis/cascade-bridge-adapter-ccda/actions/workflows/validate.yml?query=branch%3Amain)
+[![compatibility](https://github.com/the-cascade-protocol/cascade-bridge-adapter-ccda/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/the-cascade-protocol/cascade-bridge-adapter-ccda/actions/workflows/validate.yml?query=branch%3Amain)
 
 The **Cascade Bridge Adapter** for C-CDA R2.1 XML: the package of data a
 **Cascade Bridge** runs to turn a C-CDA `ClinicalDocument`, as a patient portal
 hands one out, into Cascade records. Import-only.
 
 The contract it is written against is the
-[Cascade Bridge Specification](https://github.com/jayostis/cascade-bridge-spec),
+[Cascade Bridge Specification](https://github.com/the-cascade-protocol/cascade-bridge-spec),
 and the terms it writes are
-[cascade-vocabulary](https://github.com/jayostis/cascade-vocabulary)'s. There is
+[cascade-vocabulary](https://github.com/the-cascade-protocol/cascade-vocabulary)'s. There is
 no code here: an adapter is mappings, schemas, fixtures and a manifest, and the
 thing that runs it is a Bridge.
 
 ## Docs
 
-- [The Cascade hub](https://jayostis.github.io/cascade-runtime-js/): where to go for each thing, and every repository.
-- [This adapter's crosswalk](https://jayostis.github.io/cascade-runtime-js/adapters/ccda/): this adapter's crosswalk and what it drops.
+- [The Cascade hub](https://the-cascade-protocol.github.io/cascade-runtime-js/): where to go for each thing, and every repository.
+- [This adapter's crosswalk](https://the-cascade-protocol.github.io/cascade-runtime-js/adapters/ccda/): this adapter's crosswalk and what it drops.
 
 ## Layout
 
@@ -34,8 +34,8 @@ bench/                   the inputs a benchmark harness runs on, and what it mea
 ```
 
 How a Bridge runs an adapter, and what the lint checks, are the specification's:
-[`engine/stages.md`](https://github.com/jayostis/cascade-bridge-spec/blob/main/engine/stages.md)
-and [`adapter/validation.md`](https://github.com/jayostis/cascade-bridge-spec/blob/main/adapter/validation.md).
+[`engine/stages.md`](https://github.com/the-cascade-protocol/cascade-bridge-spec/blob/main/engine/stages.md)
+and [`adapter/validation.md`](https://github.com/the-cascade-protocol/cascade-bridge-spec/blob/main/adapter/validation.md).
 
 ## Licence
 

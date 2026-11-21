@@ -352,7 +352,7 @@ for"). The URI is the `cascade:codingSystemUri` the table gives the OID, so an
 HCPCS code is typed `http://www.cms.gov/Medicare/Coding/HCPCSReleaseCodeSets`,
 and an OID the table does not hold is `urn:oid:` and the OID, read
 without regard to the prefix's case. A SNOMED CT code of a drug stays a
-literal while M16, how a drug's codes are matched (unruled, jayostis/cascade-vocabulary#286),
+literal while M16, how a drug's codes are matched (unruled, the-cascade-protocol/cascade-vocabulary#286),
 is open. A code
 stated with no code system, or with one that is no OID, or a code system with
 no code, or a code of spaces only, is not carried and is a finding, `ccda:codeNotCarried`, as an
@@ -447,7 +447,7 @@ HL7's CDA schema with the SDTC extensions, eight files under `../schema/`,
 `infrastructure/cda/CDA_SDTC.xsd` its entry point. It checks structure, data
 types and vocabulary domains, and no C-CDA template: Schematron is out of
 scope. A Bridge checks a `ts` against only part of its pattern
-([jayostis/cascade-bridge-rs#75](https://github.com/jayostis/cascade-bridge-rs/issues/75)).
+([the-cascade-protocol/cascade-bridge-rs#75](https://github.com/the-cascade-protocol/cascade-bridge-rs/issues/75)).
 
 ## The committed inputs, and what is known about them
 
